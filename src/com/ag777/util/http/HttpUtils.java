@@ -244,16 +244,21 @@ public class HttpUtils {
 		if(params == null || url.isEmpty()) {
 			return url;
 		}
-		StringBuilder tail = new StringBuilder();
+		StringBuilder tail = null;;
 		Iterator<String> itor = params.keySet().iterator();
 		while(itor.hasNext()) {
+			if(tail == null) {
+				tail = new StringBuilder();
+			} else {
+				tail.append('&');
+			}
 			String key = itor.next();
 			String value = params.get(key).toString();
 			tail.append(key)
 				.append("=")
 				.append(value);
 		}
-		if(tail.length()>0) {
+		if(tail != null && tail.length()>0) {
 			 return url+"?"+tail.toString();
 		}
 		return url;
