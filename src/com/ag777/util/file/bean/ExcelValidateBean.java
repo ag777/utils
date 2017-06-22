@@ -1,7 +1,7 @@
 package com.ag777.util.file.bean;
 
 /**
- * @author wanggz
+ * @author ag777
  * @Description excel验证中介类
  * Time: created at 2017/6/15. last modify at 2017/6/19.
  * Mark: 所有的复制方法都会根据原列表vector则会复制成vector，linkList复制成linklist,其余均复制成arrayList

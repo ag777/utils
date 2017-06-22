@@ -1,7 +1,7 @@
 package com.ag777.util.jsoup.bean;
 
 /**
- * @author wanggz
+ * @author ag777
  * @Description 网页信息辅助类,提取整理自某开源爬虫库
  * Time: created at 2017/6/19. last modify at 2017/6/19.
  * Mark: 

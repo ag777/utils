@@ -8,7 +8,7 @@ import com.ag777.util.lang.ListHelper;
 
 /**
  * @Description 异常辅助类
- * @author wanggz
+ * @author ag777
  * Time: created at 2017/6/6. last modify at 2017/6/15.
  * Mark: 
  */

@@ -5,7 +5,7 @@ import com.ag777.util.other.ExceptionHelper;
 
 /**
  * @Description 控制台输出辅助类
- * @author wanggz
+ * @author ag777
  * Time: created at 2017/6/6. last modify at 2017/6/13.
  * Mark: 
  */

@@ -8,7 +8,7 @@ import com.ag777.util.lang.interf.JsonUtilsInterf;
 
 /**
  * @Description 工具包用的通用方法类
- * @author wanggz
+ * @author ag777
  * Time: created at 2017/6/6. last modify at 2017/6/6.
  * Mark: 所有定制操作最好在程序初始化时执行以确保程序能照预想的运行
  */

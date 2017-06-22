@@ -2,7 +2,7 @@ package com.ag777.util.jsoup.bean;
 
 
 /**
- * Created by wanggz on 2017/2/14.
+ * Created by ag777 on 2017/2/14.
  */
 public class Rule implements RuleInterf{
     

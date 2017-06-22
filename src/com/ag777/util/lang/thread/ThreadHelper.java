@@ -6,7 +6,7 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 
 /**
- * @author wanggz
+ * @author ag777
  * @Description 多线程工具类(只辅助,外部靠内存共享数据实现结果处理)
  * Time: created at 2017/3/21. last modify at 2017/4/17.
  */

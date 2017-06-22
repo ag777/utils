@@ -9,7 +9,7 @@ import com.ag777.util.file.base.BaseExcelHelper;
 import com.ag777.util.file.bean.ExcelValidateBean;
 
 /**
- * @author wanggz
+ * @author ag777
  * @Description excel验证辅助类
  * Time: created at 2017/6/19. last modify at 2017/6/19.
  * Mark: 

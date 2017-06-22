@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * @Description cmd命令执行辅助类(针对linux)
- * @author wanggz
+ * @author ag777
  * Time: last modify at 2017/6/16.
  * Mark: 执行一个cmd命令会产生三个流（input/output/err），其中一个不处理就有可能产生程序挂起问题，永远不可能得到返回了
  */

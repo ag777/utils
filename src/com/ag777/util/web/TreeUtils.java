@@ -7,7 +7,7 @@ import java.util.Map;
 import com.ag777.util.lang.MapHelper;
 
 /**
- * @author wanggz
+ * @author ag777
  * @Description 树结构工具类
  * Time: created at 2017/6/20. last modify at 2017/6/20.
  * Mark: 

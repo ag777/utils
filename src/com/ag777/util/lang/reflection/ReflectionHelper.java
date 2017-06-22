@@ -14,7 +14,7 @@ import com.ag777.util.lang.ListHelper;
 
 /**
  * @Description 反射工具类
- * @author wanggz
+ * @author ag777
  * Time: created at 2017/6/7. last modify at 2017/6/20.
  * Mark: 
  */

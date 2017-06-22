@@ -28,7 +28,7 @@ import java.lang.reflect.Type;
 
 /**
  * @Description gson统一管理类，全局保持一个gson对象
- * @author wanggz
+ * @author ag777
  * Time: created at 2017/5/27. last modify at 2017/6/7.
  * Mark: 
  */
@@ -220,7 +220,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	/*=================辅助类============*/
 	/**
 	 * @Description 重载json转换类,主要目的是为了防止转为map时double型变量错误地转换为long型变量
-	 * @author wanggz
+	 * @author ag777
 	 * Time: created at 2017/6/6. last modify at 2017/6/6.
 	 */
 	public static class MapTypeAdapter extends TypeAdapter<Object> {
@@ -292,7 +292,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 实现Class类型变量的解析器
-	 * @author wanggz
+	 * @author ag777
 	 *
 	 */
 	public static class ClassTypeAdapter implements JsonSerializer<Class<?>>, JsonDeserializer<Class<?>> {

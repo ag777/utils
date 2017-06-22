@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author wanggz
+ * @author ag777
  * @Description 哈希表辅助类(废弃maputils)
  * Time: created at 2017/6/15. last modify at 2017/6/15.
  * Mark: 所有的复制方法都会根据原列表vector则会复制成vector，linkList复制成linklist,其余均复制成arrayList

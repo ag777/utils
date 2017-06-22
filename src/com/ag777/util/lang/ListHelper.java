@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.Vector;
 
 /**
- * @author wanggz
+ * @author ag777
  * @Description 列表工具类(废弃ListUtils)
  * Time: created at 2017/6/15. last modify at 2017/6/19.
  * Mark: 所有的复制方法都会根据原列表vector则会复制成vector，linkList复制成linklist,其余均复制成arrayList
@@ -370,7 +370,7 @@ public class ListHelper<T> {
 	/*------------辅助类--------------*/
 	/**
 	 * 过滤器/拦截器
-	 * @author wanggz
+	 * @author ag777
 	 * @param <T>
 	 */
 	public interface Filter<T> {
@@ -379,7 +379,7 @@ public class ListHelper<T> {
 	
 	/**
 	 * 编辑器
-	 * @author wanggz
+	 * @author ag777
 	 * @param <T>
 	 */
 	public interface Editor<T> {
@@ -388,7 +388,7 @@ public class ListHelper<T> {
 	
 	/**
 	 * 比较器
-	 * @author wanggz
+	 * @author ag777
 	 * @param <T>
 	 */
 	public interface Comparator<T> {

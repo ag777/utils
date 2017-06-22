@@ -15,7 +15,7 @@ import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.RegexUtils;
 
 /**
- * Author: xsf,wanggz
+ * Author: xsf,ag777
  * Time: created at 2016/4/25.
  * Email: xsf_uestc_ncl@163.com
  */

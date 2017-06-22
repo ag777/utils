@@ -6,7 +6,7 @@ import com.ag777.util.file.FileUtils;
 
 /**
  * @Description 系统常量获取工具类
- * @author wanggz
+ * @author ag777
  * Time: created at 2017/6/12. last modify at 2017/6/16.
  * Mark: 部分参考文献:http://blog.csdn.net/kongqz/article/details/3987198
  */

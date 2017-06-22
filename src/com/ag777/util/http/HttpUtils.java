@@ -20,7 +20,7 @@ import okhttp3.Response;
 
 /**
  * http请求类(二次封装okhttp3)
- * @author wanggz
+ * @author ag777
  * Time: last modify at 2017/6/22.
  * MARK:
  * 		6/8:尝试通过反射机制参数callback<T>来转换结果为类达成优雅代码的目的,没成功,原因如下:

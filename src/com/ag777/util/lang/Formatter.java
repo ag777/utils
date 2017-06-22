@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * @Description 单位格式化
- * @author wanggz
+ * @author ag777
  * Time: created at 2017/6/13. last modify at 2017/6/16.
  * Mark: 
  */

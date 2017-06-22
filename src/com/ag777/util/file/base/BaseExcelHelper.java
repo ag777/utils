@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author wanggz
+ * @author ag777
  * @Description excel验证辅助基类,子类定义验证方法
  * Time: created at 2017/6/19. last modify at 2017/6/19.
  * Mark: 

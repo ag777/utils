@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * @Description 算法辅助类
- * @author wanggz
+ * @author ag777
  * Time: created at 2017/6/21. last modify at 2017/6/21.
  * Mark: 
  */
