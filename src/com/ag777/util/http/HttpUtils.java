@@ -253,7 +253,7 @@ public class HttpUtils {
 				tail.append('&');
 			}
 			String key = itor.next();
-			String value = params.get(key).toString();
+			String value = params.get(key)==null?"":params.get(key).toString();
 			tail.append(key)
 				.append("=")
 				.append(value);
