@@ -21,15 +21,15 @@ Utils
 #-Formatter【格式化工具类】<br>
 【说明】提供一些格式化方法,应对前端页面展示或者与项目中其他成员进行数据交互特殊需求的情况<br>
 【例子】<br>
-    Console.log(<br>
-        Formatter.formatJson(<br>
-            GsonUtils.get().toJson(<br>
-                new MapHelper<String,Object>()<br>
-                    .put("a", 1).getMap()<br>
-                ),<br>
-            "\t")<br>
-    );<br>
+>Console.log(<br>
+>>Formatter.formatJson(<br>
+>>>GsonUtils.get().toJson(<br>
+>>>>new MapHelper<String,Object>()<br>
+>>>>>.put("a", 1).getMap()<br>
+>>>),<br>
+>>>"\t")<br>
+>);<br>
 【输出】<br>
-    {<br>
-        "a" : 1<br>
-    }<br>
+>{<br>
+>>"a" : 1<br>
+>}<br>
