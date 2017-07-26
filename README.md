@@ -21,7 +21,7 @@ Utils
 #-Formatter【格式化工具类】<br>
 【说明】提供一些格式化方法,应对前端页面展示或者与项目中其他成员进行数据交互特殊需求的情况<br>
 【例子】<br>
-` ``Java
+```Java
   Console.log(
     Formatter.formatJson(
       GsonUtils.get().toJson(
@@ -30,7 +30,7 @@ Utils
           ),
       "\t")
   );
-` ``
+```
 【输出】<br>
   {
     "a" : 1
