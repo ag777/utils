@@ -26,8 +26,8 @@ Utils
 >>>GsonUtils.get().toJson(<br>
 >>>>new MapHelper<String,Object>()<br>
 >>>>>.put("a", 1).getMap()<br>
->>>),<br>
->>>"\t")<br>
+>>),<br>
+>>"\t")<br>
 >);<br>
 【输出】<br>
 >{<br>
