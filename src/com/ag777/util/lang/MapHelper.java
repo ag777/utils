@@ -5,10 +5,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.ag777.util.gson.GsonUtils;
+
 /**
  * @author ag777
  * @Description 哈希表辅助类(废弃maputils)
- * Time: created at 2017/6/15. last modify at 2017/6/15.
+ * Time: created at 2017/6/15. last modify at 2017/7/24.
  * Mark: 所有的复制方法都会根据原列表vector则会复制成vector，linkList复制成linklist,其余均复制成arrayList
  */
 public class MapHelper<K,V> {
@@ -55,6 +57,24 @@ public class MapHelper<K,V> {
 	//--静态构造
 	public static <K,V>MapHelper<K,V> empty() {
 		return new MapHelper<K,V>();
+	}
+	
+	/**
+	 * 通过json串构造对象(调用GsonUtils.toMap方法)，注意json串有可能转换失败
+	 * @param json
+	 * @return
+	 * @throws Exception
+	 */
+	public static MapHelper<String, Object> fromJson(String json) throws Exception {
+		try {
+			Map<String, Object> temp = GsonUtils.get().toMap(json);
+			if(temp == null)  {
+				throw new Exception("JSON转换失败!");
+			}
+			return new MapHelper<String, Object>(temp);
+		} catch(Exception ex) {
+			throw ex ;
+		}
 	}
 	
 	/**
@@ -120,6 +140,68 @@ public class MapHelper<K,V> {
 	 */
 	public <T>T get(K key) {
 		return get(key, null);
+	}
+	
+	/**
+	 * 通过key提取int，如果类型不为Integer会尝试进行转换
+	 * @param key
+	 * @return 失败返回null
+	 */
+	public Integer getInteger(K key) {
+		return getInteger(key, null);
+	}
+	
+	/**
+	 * 通过key提取int，如果类型不为Integer会尝试进行转换
+	 * @param key
+	 * @param defaultValue 默认值
+	 * @return 失败返回默认值
+	 */
+	public Integer getInteger(K key, Integer defaultValue) {
+		if(map.containsKey(key)) {
+			V value = map.get(key);
+			if(value != null && value instanceof Integer) {
+				return (int) value;
+			} else {
+				try {
+					return Integer.parseInt(value.toString());
+				} catch(Exception ex) {
+					return defaultValue;
+				}
+			}
+		}
+		return defaultValue;
+	}
+	
+	/**
+	 * 通过key提取double，如果类型不为Double会尝试进行转换
+	 * @param key
+	 * @return 失败返回null
+	 */
+	public Double getDouble(K key) {
+		return getDouble(key, null);
+	}
+	
+	/**
+	 * 通过key提取double，如果类型不为Double会尝试进行转换
+	 * @param key
+	 * @param defaultValue 默认值
+	 * @return 失败返回默认值
+	 */
+	public Double getDouble(K key, Double defaultValue) {
+		if(map.containsKey(key)) {
+			V value = map.get(key);
+			if(value != null && value instanceof Double) {
+				return (double) value;
+			} else {
+				try {
+					return Double.parseDouble(value.toString());
+				} catch(Exception ex) {
+					return defaultValue;
+				}
+			}
+		}
+		return defaultValue;
 	}
 	
 	/**

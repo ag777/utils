@@ -2,6 +2,7 @@ package com.ag777.util;
 
 import com.ag777.util.file.FileUtils;
 import com.ag777.util.gson.GsonUtils;
+import com.ag777.util.jsoup.JsoupUtils;
 import com.ag777.util.lang.CMDUtils;
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.interf.JsonUtilsInterf;
@@ -44,6 +45,18 @@ public class Utils {
 	 */
 	public static void cmdEncoding(String encoding) {
 		CMDUtils.setReadEncoding(encoding);
+	}
+	
+	public static int jsoupTimeOut() {
+		return JsoupUtils.defaultTimeOut();
+	}
+	/**
+	 * 定制jsoup连接默认的超时时间
+	 * @param timeOut
+	 * @return 
+	 */
+	public static void jsoupTimeOut(int timeOut) {
+		JsoupUtils.defaultTimeOut(timeOut);
 	}
 	
 	/**

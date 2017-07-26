@@ -17,6 +17,7 @@ import com.ag777.util.lang.RegexUtils;
 /**
  * Author: xsf,ag777
  * Time: created at 2016/4/25.
+ * last modify time: 2017/07/25.
  * Email: xsf_uestc_ncl@163.com
  */
 public class FileUtils {
@@ -39,16 +40,16 @@ public class FileUtils {
     
     /**
      * 读取文件内容
-     * @param _sFileName
+     * @param filePath 文件路径
      * @param separator 换行时插入的字符
      * @param _sEncoding
      * @return
      * @throws Exception
      */
-    public static String readText(String _sFileName, String lineSparator) throws Exception {
+    public static String readText(String filePath, String lineSparator) throws Exception {
 
         try {
-        	FileInputStream fis = new FileInputStream(_sFileName);
+        	FileInputStream fis = new FileInputStream(filePath);
             return IOUtils.readText(fis, lineSparator, FILE_READING_ENCODING);
         } catch (FileNotFoundException ex) {
             throw new Exception("要读取的文件没有找到!", ex);
@@ -56,11 +57,36 @@ public class FileUtils {
             throw new Exception("读取文件时错误!", ex);
         }
     }
+    
+    /**
+     * 读取文件中的所有行
+     * @param filePath 文件路径
+     * @return
+     * @throws Exception
+     */
+    public static List<String> readLines(String filePath) throws Exception {
+    	 try {
+         	FileInputStream fis = new FileInputStream(filePath);
+             return IOUtils.readLines(fis, FILE_READING_ENCODING);
+         } catch (FileNotFoundException ex) {
+             throw new Exception("要读取的文件没有找到!", ex);
+         } catch (IOException ex) {
+             throw new Exception("读取文件时错误!", ex);
+         }
+    }
 
-    public static String findText(String _sFileName,String regex, String replacement) throws Exception {
+    /**
+     * 从文件内容中定位信息并以一定格式返回
+     * @param filePath 文件路径
+     * @param regex 匹配用的正则表达式
+     * @param replacement 替换式
+     * @return
+     * @throws Exception
+     */
+    public static String findText(String filePath,String regex, String replacement) throws Exception {
     	
 		try {
-            FileInputStream fis = new FileInputStream(_sFileName);
+            FileInputStream fis = new FileInputStream(filePath);
             return IOUtils.find(fis, regex, replacement, FILE_READING_ENCODING);	//关闭流的操作里面都做了
         } catch (FileNotFoundException ex) {
             throw new Exception("要读取的文件没有找到!", ex);

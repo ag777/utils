@@ -1,12 +1,14 @@
 package com.ag777.util.lang;
 
+import java.util.Arrays;
+
 import com.ag777.util.Utils;
 import com.ag777.util.other.ExceptionHelper;
 
 /**
  * @Description 控制台输出辅助类
  * @author ag777
- * Time: created at 2017/6/6. last modify at 2017/6/13.
+ * Time: created at 2017/6/6. last modify at 2017/7/24.
  * Mark: 
  */
 public class Console {
@@ -43,6 +45,22 @@ public class Console {
 			return msg;
 		} 
 		return null;
+	}
+	
+	/**
+	 * 将传入参数转为list并进行输出
+	 * @param objs
+	 * @return
+	 */
+	public static String log(Object... objs) {
+		String msg = null;
+		if(isDevMode()) {
+			if(objs != null) {
+				msg = Utils.jsonUtils().toJson(Arrays.asList(objs));
+			}
+		}
+		System.out.println(msg);
+		return msg;
 	}
 	
 	/**

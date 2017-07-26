@@ -44,10 +44,8 @@ public class Formatter {
 	
 	/**
 	 * json字符串的格式化(用于输出文件)
-	 * 
 	 * @param json
-	 * @param fillStringUnit
-	 *            换行后添加的字符串
+	 * @param fillStringUnit 换行后添加的字符串，一般传\t或者4个空格
 	 * @return
 	 */
 	public static String formatJson(String json, String fillStringUnit) {

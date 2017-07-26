@@ -1,5 +1,6 @@
 package com.ag777.util.jsoup;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,10 +26,20 @@ import com.ag777.util.lang.reflection.ReflectionHelper;
 /**
  * @Description 爬虫工具类
  * @author ag777
- * Time: created at 2017/6/5. last modify at 2017/6/12.
+ * Time: created at 2017/6/5. last modify at 2017/6/27.
  * Mark: 
  */
 public class JsoupUtils {
+
+	private static int DEFAULT_TIME_OUT = 5000;	//默认超时时间
+	
+	public static int defaultTimeOut() {
+		return DEFAULT_TIME_OUT;
+	}
+
+	public static void defaultTimeOut(int defaultTimeOut) {
+		DEFAULT_TIME_OUT = defaultTimeOut;
+	}
 
 	private Document doc;
 	private String html;
@@ -41,17 +52,51 @@ public class JsoupUtils {
 
 	/*==================入口函数======================*/
 	/**
-	 * 连接url构建工具类
+	 * 通过字符串构建
+	 * @param html
+	 * @return
+	 */
+	public static JsoupUtils parse(String html) {
+		return new JsoupUtils(Jsoup.parse(html));
+	}
+	/**
+	 * 通过文件构建
+	 * @param in
+	 * @param charsetName
+	 * @return
+	 * @throws IOException
+	 */
+	public static JsoupUtils parse(File in, String charsetName) throws IOException {
+		try {
+			return new JsoupUtils(Jsoup.parse(in, charsetName));
+		} catch (IOException e) {
+			throw e;
+		}
+	}
+	
+	/**
+	 * 连接目标url
 	 * @param url
 	 * @return
 	 * @throws Exception
 	 */
 	public static JsoupUtils connect(String url) throws Exception{
+		return connect(url, DEFAULT_TIME_OUT);
+	}
+	/**
+	 * 连接目标url
+	 * @param url
+	 * @param timeOut
+	 * @return
+	 * @throws Exception
+	 */
+	public static JsoupUtils connect(String url, int timeOut) throws Exception{
 		try {
 			Whitelist whitelist = Whitelist.basicWithImages();
 			Cleaner cleaner = new Cleaner(whitelist);
 			Document doc = Jsoup.connect(url)
-					.userAgent("Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36").timeout(5000).get();
+					.userAgent("Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36")
+					.timeout(timeOut).get();
 
 //			doc = cleaner.clean(doc);
 			return new JsoupUtils(doc);
@@ -62,6 +107,42 @@ public class JsoupUtils {
 	}
 
 	/**
+	 * 连接url(通过代理)
+	 * @param url
+	 * @param proxyIp		代理ip
+	 * @param proxyPort	代理端口号
+	 * @return
+	 * @throws Exception
+	 */
+	public static JsoupUtils connect(String url, String proxyIp, int proxyPort) throws Exception{
+		return connect(url, proxyIp, proxyPort, DEFAULT_TIME_OUT);
+	}
+	/**
+	 * 连接url(通过代理)
+	 * @param url
+	 * @param proxyIp		代理ip
+	 * @param proxyPort	代理端口号
+	 * @param timeOut
+	 * @return
+	 * @throws Exception
+	 */
+	public static JsoupUtils connect(String url, String proxyIp, int proxyPort, int timeOut) throws Exception{
+		try {
+			Whitelist whitelist = Whitelist.basicWithImages();
+			Cleaner cleaner = new Cleaner(whitelist);
+			Document doc = Jsoup.connect(url)
+					.userAgent("Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36")
+					.proxy(proxyIp, proxyPort).timeout(timeOut).get();
+
+//			doc = cleaner.clean(doc);
+			return new JsoupUtils(doc);
+
+		} catch (IOException e) {
+			throw e;
+		}
+	}
+	
+	/**
 	 * 通过站点信息获取列表信息
 	 * 流程:
 	 * 	1.拉取JSiteInterf所有类型为RuleInterf(及其子类)的成员变量
@@ -71,9 +152,19 @@ public class JsoupUtils {
 	 * @return
 	 */
 	public static List<Map<String,Object>> findBySite(JSiteInterf JSiteInterf) throws Exception {
+		return findBySite(JSiteInterf, DEFAULT_TIME_OUT);
+	}
+	/**
+	 * 通过站点信息获取列表信息
+	 * @param JSiteInterf
+	 * @param timeOut
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<Map<String,Object>> findBySite(JSiteInterf JSiteInterf,  int timeOut) throws Exception {
 		Map<String, RuleInterf> params = new ReflectionHelper<>(JSiteInterf.class)
 				.getFieldMap(JSiteInterf, RuleInterf.class);
-		return connect(JSiteInterf.getUrl()).findByRule(JSiteInterf.getCssQuery(), params);
+		return connect(JSiteInterf.getUrl(), timeOut).findByRule(JSiteInterf.getCssQuery(), params);
 	}
 	
 	/*===============接口方法======================*/

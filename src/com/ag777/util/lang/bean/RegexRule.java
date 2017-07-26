@@ -54,6 +54,13 @@ public class RegexRule {
 	}
 	
 	/**
+	 * 端口号
+	 */
+	public static class Port {
+		public static final String DEFAULT = "[1-9]$|(^[1-9][0-9]$)|(^[1-9][0-9][0-9]$)|(^[1-9][0-9][0-9][0-9]$)|(^[1-6][0-5][0-5][0-3][0-5]$)";	//1-65535
+	}
+	
+	/**
 	 * 电话号码
 	 */
 	public static class PHONE {
@@ -66,4 +73,10 @@ public class RegexRule {
 		
 	}
 	
+	/**
+	 * 身份证号
+	 */
+	public static class IDNumber {
+		public static final String DEFAULT = "^[1-9]\\d{5}[1-9]\\d{3}((0\\d)|(1[0-2]))(([0|1|2]\\d)|3[0-1])\\d{3}([0-9]|X)$";	//18位身份证号
+	}
 }

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ag777.util.gson.GsonUtils.MapTypeAdapter;
 import com.ag777.util.lang.interf.JsonUtilsInterf;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -29,7 +30,7 @@ import java.lang.reflect.Type;
 /**
  * @Description gson统一管理类，全局保持一个gson对象
  * @author ag777
- * Time: created at 2017/5/27. last modify at 2017/6/7.
+ * Time: created at 2017/5/27. last modify at 2017/7/26.
  * Mark: 
  */
 public class GsonUtils implements JsonUtilsInterf{
@@ -154,9 +155,12 @@ public class GsonUtils implements JsonUtilsInterf{
 		return new GsonBuilder()
 				.disableHtmlEscaping()	//html标签不转义 (避免符号被转义)
 				.setDateFormat("yyyy-MM-dd HH:mm:ss")	//序列化和反序化时将时间以此形式输出
-
 				.registerTypeAdapter(
 						new TypeToken<Map<String, Object>>() {}.getType(), 
+						new MapTypeAdapter()
+				)
+				.registerTypeAdapter(
+						new TypeToken<List<Object>>() {}.getType(), 
 						new MapTypeAdapter()
 				)
 				.registerTypeAdapter(Class.class, new ClassTypeAdapter());
@@ -175,7 +179,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	/**
 	 * 转化json串为map
 	 * @param json
-	 * @return
+	 * @return 返回null则表示json转换失败
 	 */
 	@Override
 	public Map<String, Object> toMap(String json) {
@@ -190,7 +194,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * 转化json串为javaBean
 	 * @param json
 	 * @param classOfT
-	 * @return
+	 * @return 返回null则表示json转换失败
 	 */
 	@Override
 	public <T> T fromJson(String json,Class<T> classOfT) {
@@ -205,7 +209,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * 转化json串为javaBean，类型不支持时会报错
 	 * @param json
 	 * @param type 例:new TypeToken<Map<String, Object>>() {}.getType()
-	 * @return
+	 * @return 返回null则表示json转换失败
 	 */
 	@Override
 	public <T> T fromJson(String json, Type type) {

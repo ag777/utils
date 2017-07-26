@@ -13,6 +13,7 @@ import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -22,7 +23,7 @@ import java.util.Map;
 /**
  * Author: ag777
  * Time: created at 2016/7/7.
- * Last modify: 2017/4/20.
+ * Last modify: 2017/4/26.
  * MARK:
  * 巧妙的考勤统计:http://www.01happy.com/mysql-bit_count-bit_or/
  * SELECT year,month,BIT_COUNT(BIT_OR(1<<day)) AS days FROM t1
@@ -48,13 +49,13 @@ public class DateUtils {
 	 * @param template
 	 * @return
 	 */
-	public static DateTime convertToDateTime(String date, String template){
+	public static DateTime toDateTime(String date, String template){
 		DateTimeFormatter format = DateTimeFormat.forPattern(template);
 		return DateTime.parse(date, format);
 	}
 	//重载
-	public static DateTime convertToDateTime(String date){
-		return convertToDateTime(date, DEFAULT_TEMPLATE_TIME);
+	public static DateTime toDateTime(String date){
+		return toDateTime(date, DEFAULT_TEMPLATE_TIME);
 	}
 	
 	/**
@@ -62,7 +63,7 @@ public class DateUtils {
 	 * @param ld
 	 * @return
 	 */
-	public static DateTime convertToDateTime(LocalDate ld){
+	public static DateTime toDateTime(LocalDate ld){
 		return ld.toDateTimeAtStartOfDay();
 	}
 	
@@ -72,13 +73,13 @@ public class DateUtils {
 	 * @param template
 	 * @return
 	 */
-	public static LocalDate convertToLocalDate(String date, String template){
+	public static LocalDate toLocalDate(String date, String template){
 		DateTimeFormatter format = DateTimeFormat.forPattern(template);
 		return LocalDate.parse(date, format);
 	}
 	//重载
-	public static LocalDate convertToLocalDate(String date){
-		return convertToLocalDate(date, DEFAULT_TEMPLATE);
+	public static LocalDate toLocalDate(String date){
+		return toLocalDate(date, DEFAULT_TEMPLATE);
 	}
 	
 	/**
@@ -86,7 +87,7 @@ public class DateUtils {
 	 * @param dt
 	 * @return
 	 */
-	public static LocalDate convertToLocalDate(DateTime dt){
+	public static LocalDate toLocalDate(DateTime dt){
 		return dt.toLocalDate();
 	}
 	
@@ -97,7 +98,7 @@ public class DateUtils {
 	 * @param day
 	 * @return
 	 */
-	public static long convertToLong(int year,int month,int day) {
+	public static long toLong(int year,int month,int day) {
 		return new LocalDate(year,month,day).toDate().getTime();
 	}
 	
@@ -107,7 +108,7 @@ public class DateUtils {
 	 * @param template
 	 * @return
 	 */
-	public static String convertToString(long time,String template) {
+	public static String toString(long time,String template) {
 		return new DateTime(time).toString(template);
 	}
 
@@ -117,12 +118,34 @@ public class DateUtils {
 	 * @param template
 	 * @return
 	 */
-	public static String convertToString(Calendar cld,String template) {
+	public static String toString(Calendar cld,String template) {
 		return new DateTime(cld).toString(template);
 	}
 	//重载
-	public static String convertToString(java.util.Date date,String template) {
+	public static String toString(java.util.Date date,String template) {
 		return new DateTime(date).toString(template);
+	}
+	//重载
+	public static String toString(java.sql.Timestamp ts, String template) {
+		return new DateTime(ts).toString(template);
+	}
+	
+	/**
+	 * 等同于dt.toString(DEFAULT_TEMPLATE_TIME);
+	 * @param dt
+	 * @return
+	 */
+	public static String toString(DateTime dt) {
+		return dt.toString(DEFAULT_TEMPLATE_TIME);
+	}
+	
+	/**
+	 * 等同于ld.toString(DEFAULT_TEMPLATE_TIME);
+	 * @param dt
+	 * @return
+	 */
+	public static String toString(LocalDate ld) {
+		return ld.toString(DEFAULT_TEMPLATE);
 	}
 	
 	/**
@@ -131,18 +154,36 @@ public class DateUtils {
 	 * @param template
 	 * @return  失败返回null
 	 */
-	public static Calendar convertToCalendar(String str,String template) {
-		DateTime dt = convertToDateTime(str, template);
+	public static Calendar toCalendar(String str,String template) {
+		DateTime dt = toDateTime(str, template);
 		if(dt!=null){
 			return dt.toCalendar(null);
 		}
 		return null;
 	}
-	//重载
-	public static java.util.Date convertToDate(String str,String template) {
-		DateTime dt = convertToDateTime(str, template);
+	/**
+	 * 转换为Date
+	 * @param str
+	 * @param template
+	 * @return
+	 */
+	public static java.util.Date toDate(String str,String template) {
+		DateTime dt = toDateTime(str, template);
 		if(dt!=null){
 			return dt.toDate();
+		}
+		return null;
+	}
+	/**
+	 * 转换为TimeStamp
+	 * @param str
+	 * @param template
+	 * @return
+	 */
+	public static java.sql.Timestamp toTimeStamp(String str, String template) {
+		DateTime dt = toDateTime(str, template);
+		if(dt!=null){
+			return new Timestamp(dt.getMillis());
 		}
 		return null;
 	}
@@ -154,8 +195,8 @@ public class DateUtils {
 	 * @param template_dest	目标格式
 	 * @return
 	 */
-	public String convertFormat(String date, String template_src, String template_dest) {
-		return convertToDateTime(date, template_src).toString(template_dest);
+	public String format(String date, String template_src, String template_dest) {
+		return toDateTime(date, template_src).toString(template_dest);
 	}
 	
 	/*==============遍历==============*/
@@ -191,8 +232,8 @@ public class DateUtils {
 	 * @param viewer 可以为null
 	 */
 	public static void ergodiceDateList(String start_date,String end_date,String template,TimeUnit unit,Viewer<DateTime> viewer) {
-		DateTime start = convertToDateTime(start_date, template);
-		DateTime end = convertToDateTime(end_date, template);
+		DateTime start = toDateTime(start_date, template);
+		DateTime end = toDateTime(end_date, template);
 		
 		while(!start.isAfter(end)){
 			if(viewer != null) {
@@ -216,8 +257,8 @@ public class DateUtils {
 	 */
 	public static List<String> getList(String start_date,String end_date,String template_src,String template_dest,TimeUnit unit, Filter<DateTime> filter) {
 		List<String> list = new ArrayList<>();
-		DateTime start = convertToDateTime(start_date, template_src);
-		DateTime end = convertToDateTime(end_date, template_src);
+		DateTime start = toDateTime(start_date, template_src);
+		DateTime end = toDateTime(end_date, template_src);
 		while(!start.isAfter(end)){
 				
 			if(filter == null || filter.doFilter(new DateTime(start))) {		//过滤 || 建立副本以防影响遍历结果
@@ -243,8 +284,8 @@ public class DateUtils {
 	 */
 	public static List<String> getList(String start_date,String end_date,String template_src,String template_dest,TimeUnit unit, Editor<DateTime> editor) {
 		List<String> list = new ArrayList<>();
-		DateTime start = convertToDateTime(start_date, template_src);
-		DateTime end = convertToDateTime(end_date, template_src);
+		DateTime start = toDateTime(start_date, template_src);
+		DateTime end = toDateTime(end_date, template_src);
 		while(!start.isAfter(end)){
 			DateTime temp = new DateTime(start);	//建立副本以防影响遍历结果
 			DateTime result = editor.doEdit(temp);
@@ -274,8 +315,8 @@ public class DateUtils {
 	 */
 	public static <T>List<T> getList(String start_date,String end_date,String template_src,TimeUnit unit, Editor1<DateTime,T> editor) {
 		List<T> list = new ArrayList<>();
-		DateTime start = convertToDateTime(start_date, template_src);
-		DateTime end = convertToDateTime(end_date, template_src);
+		DateTime start = toDateTime(start_date, template_src);
+		DateTime end = toDateTime(end_date, template_src);
 		while(!start.isAfter(end)){
 			DateTime temp = new DateTime(start);	//建立副本以防影响遍历结果
 			T item = editor.doEdit(temp);
@@ -315,8 +356,8 @@ public class DateUtils {
 	public static List<String> getDateListWithoutWeeken(String startDate,String endDate,String template_src, String template_dest){
 		List<String> list = new ArrayList<>();
 
-		LocalDate start = convertToLocalDate(startDate, template_src);
-		LocalDate end = convertToLocalDate(endDate, template_src);
+		LocalDate start = toLocalDate(startDate, template_src);
+		LocalDate end = toLocalDate(endDate, template_src);
 		while(!start.isAfter(end)){
 			
 			if(!isWeeken(start)) {	//非周末
@@ -346,8 +387,8 @@ public class DateUtils {
 	public static List<String> getWeekenDateList(String startDate,String endDate,String template_src, String template_dest){
 		List<String> list = new ArrayList<>();
 
-		LocalDate start = convertToLocalDate(startDate, template_src);
-		LocalDate end = convertToLocalDate(endDate, template_src);
+		LocalDate start = toLocalDate(startDate, template_src);
+		LocalDate end = toLocalDate(endDate, template_src);
 		while(!start.isAfter(end)){
 			if(isWeeken(start)){	//周末
 				list.add(start.toString(template_dest));	
@@ -376,8 +417,8 @@ public class DateUtils {
 	public static List<String> getMonthList(String startDate,String endDate,String template_src, String template_dest){
 		List<String> list = new ArrayList<>();
 
-		LocalDate start = convertToLocalDate(startDate, template_src).dayOfMonth().withMinimumValue();
-		LocalDate end = convertToLocalDate(endDate, template_src).dayOfMonth().withMinimumValue();
+		LocalDate start = toLocalDate(startDate, template_src).dayOfMonth().withMinimumValue();
+		LocalDate end = toLocalDate(endDate, template_src).dayOfMonth().withMinimumValue();
 		while(!start.isAfter(end)){
 			list.add(start.toString(template_dest));
 			start = start.plusMonths(1);
@@ -423,7 +464,7 @@ public class DateUtils {
 	 * @return
 	 */
 	public static String getBeginOfDay(String date,String template) {
-		return getMinimumToCopy(convertToDateTime(date, template), TimeUnit.DAY)
+		return getMinimumToCopy(toDateTime(date, template), TimeUnit.DAY)
 				.toString(DEFAULT_TEMPLATE_TIME);
 	}
 	//重载
@@ -438,7 +479,7 @@ public class DateUtils {
 	 * @return
 	 */
 	public static String getEndOfDay(String date,String template) {
-		return getMaximumToCopy(convertToDateTime(date, template), TimeUnit.DAY)
+		return getMaximumToCopy(toDateTime(date, template), TimeUnit.DAY)
 				.toString(DEFAULT_TEMPLATE_TIME);
 	}
 	//重载
@@ -456,7 +497,7 @@ public class DateUtils {
 	}
 	//重载
 	public static boolean isWeeken(String date, String template) {
-		LocalDate ld = convertToLocalDate(date,template);
+		LocalDate ld = toLocalDate(date,template);
 		return isWeeken(ld);
 	}
 	//重载
@@ -546,6 +587,7 @@ public class DateUtils {
 	
 	/**
 	 * 获取两个时间差(通用)
+	 * 注意00:15和01:00之间的分钟差 相当于00:00和01:00之间的分钟差,所以结果是1分钟,相差的时间为1分钟
 	 * @param start_time
 	 * @param end_time
 	 * @param template
@@ -579,6 +621,7 @@ public class DateUtils {
 	}
 	/**
 	 * 获取两个时间差(通用)
+	 * 注意00:15和01:00之间的分钟差 相当于00:00和01:00之间的分钟差,所以结果是1分钟,相差的时间为1分钟
 	 * @param start_time
 	 * @param end_time
 	 * @param template
@@ -602,16 +645,24 @@ public class DateUtils {
 		return 0;
 	}
 	
-	//重载
+	/**
+	 * 获取两个时间差(通用)
+	 * 注意00:15和01:00之间的分钟差 相当于00:00和01:00之间的分钟差,所以结果是1分钟,相差的时间为1分钟
+	 * @param start_time
+	 * @param end_time
+	 * @param template
+	 * @param unit 时间单位/遍历的步长,如TimeUnit.SECONDS表示计算另个时间差多少秒
+	 * @return
+	 */
 	public static int between(String start_time,String end_time,String template,TimeUnit unit) {
 		
 		if(unit == TimeUnit.DAY || unit == TimeUnit.WEEK || unit == TimeUnit.MONTH || unit == TimeUnit.YEAR) {
-			LocalDate start = convertToLocalDate(start_time, template);
-			LocalDate end = convertToLocalDate(end_time, template);
+			LocalDate start = toLocalDate(start_time, template);
+			LocalDate end = toLocalDate(end_time, template);
 			return between(start, end, unit);
 		}else {
-			DateTime start = convertToDateTime(start_time, template);	
-			DateTime end = convertToDateTime(end_time, template);
+			DateTime start = toDateTime(start_time, template);	
+			DateTime end = toDateTime(end_time, template);
 			return between(start, end, unit);
 		}
 		
@@ -714,14 +765,14 @@ public class DateUtils {
 	 * @return
 	 */
 	public static String dateStatistics(List<String> dateList, String startDateStr,String endDateStr) {
-		LocalDate startDate = convertToLocalDate(startDateStr);
-		LocalDate endDate = convertToLocalDate(endDateStr);
+		LocalDate startDate = toLocalDate(startDateStr);
+		LocalDate endDate = toLocalDate(endDateStr);
 		long interval = between(startDate, endDate, TimeUnit.DAY);	//首尾日期差
 		long num = 1<<interval;
 		
 		for (String date : dateList) {
 			if(date != null) {
-				int dayBetween = between(startDate, convertToLocalDate(date), TimeUnit.DAY);
+				int dayBetween = between(startDate, toLocalDate(date), TimeUnit.DAY);
 				if(dayBetween>-1) {
 					num = num | (1<<dayBetween);
 				}
@@ -736,14 +787,14 @@ public class DateUtils {
 	}
 	
 	public static String dateStatistics(List<String> dateList, List<String> holidayList, String startDateStr,String endDateStr) {
-		LocalDate startDate = convertToLocalDate(startDateStr);
-		LocalDate endDate = convertToLocalDate(endDateStr);
+		LocalDate startDate = toLocalDate(startDateStr);
+		LocalDate endDate = toLocalDate(endDateStr);
 		long interval = between(startDate, endDate, TimeUnit.DAY);	//首尾日期差
 		long num = 1<<(interval*3);
 		
 		for (String date : dateList) {
 			if(date != null) {
-				int dayBetween = between(startDate, convertToLocalDate(date), TimeUnit.DAY)*3;
+				int dayBetween = between(startDate, toLocalDate(date), TimeUnit.DAY)*3;
 				if(dayBetween>-1) {
 					num = num | (1<<dayBetween);
 				}
@@ -751,7 +802,7 @@ public class DateUtils {
 		}
 		for (String holiday : holidayList) {
 			if(holiday != null) {
-				int dayBetween = between(startDate, convertToLocalDate(holiday), TimeUnit.DAY)*3;
+				int dayBetween = between(startDate, toLocalDate(holiday), TimeUnit.DAY)*3;
 				if(dayBetween>-1) {
 					num = num | (2<<dayBetween);
 				}
@@ -796,8 +847,8 @@ public class DateUtils {
 			String start_date = date_group[0];
 			String end_date = date_group[1];
 			if(!template.equals("yyyy-MM-dd")) {
-				start_date = convertToLocalDate(start_date,template).toString(DEFAULT_TEMPLATE);
-				end_date = convertToLocalDate(end_date, template).toString(DEFAULT_TEMPLATE);
+				start_date = toLocalDate(start_date,template).toString(DEFAULT_TEMPLATE);
+				end_date = toLocalDate(end_date, template).toString(DEFAULT_TEMPLATE);
 			}
 			date_group[0] = start_date;
 			date_group[1] = end_date;
@@ -835,12 +886,12 @@ public class DateUtils {
 			String reg = "[0-9]{4}-[0-9]{2}-[0-9]{2}";
 			if(params.containsKey("start_date") && ((String)params.get("start_date")).matches(reg)) {	//格式为yyyy-MM-dd
 				params.put("start_date", 
-						DateUtils.convertToDateTime((String) params.get("start_date"), "yyyy-MM-dd")
+						DateUtils.toDateTime((String) params.get("start_date"), "yyyy-MM-dd")
 						.secondOfDay().withMinimumValue().toString("yyyy-MM-dd HH:mm:ss"));
 			}
 			if(params.containsKey("end_date") && ((String)params.get("end_date")).matches(reg)) {	//格式为yyyy-MM-dd
 				params.put("end_date", 
-						DateUtils.convertToDateTime((String) params.get("end_date"), "yyyy-MM-dd")
+						DateUtils.toDateTime((String) params.get("end_date"), "yyyy-MM-dd")
 						.secondOfDay().withMaximumValue().toString("yyyy-MM-dd HH:mm:ss"));
 			}
 		}
@@ -917,13 +968,13 @@ public class DateUtils {
 //		for (String date : list) {
 //			System.out.println(date);
 //		}
-//		System.out.println(convertToLocalDate("2017-02-03").toString(DEFAULT_TEMPLATE_TIME));
-//		System.out.println(convertToDateTime("23:01","mm:ss").toString(DEFAULT_TEMPLATE_TIME));
+//		System.out.println(toLocalDate("2017-02-03").toString(DEFAULT_TEMPLATE_TIME));
+//		System.out.println(toDateTime("23:01","mm:ss").toString(DEFAULT_TEMPLATE_TIME));
 		LocalDateTime ldt = new LocalDateTime();
 		
 		System.out.println(ldt.toString(DEFAULT_TEMPLATE_TIME));
 		System.out.println(DateUtils.getMinimumToCopy(
-				DateUtils.convertToDateTime("23:02","mm:ss"),
+				DateUtils.toDateTime("23:02","mm:ss"),
 				TimeUnit.MINUTE).toString("mm:ss"));
 	}
 }
