@@ -68,4 +68,29 @@ Utils
 【说明】本来叫ConstantUtils,存放诸如换行符,路径分割符等作为项目统一获取这些常量的方法，后台加入了一些其他东西，改名为SystemUtils<br>
 【例子】SystemUtils.isLinux()通过该方法可以判断运行的系统是否为linux系统(麒麟系统判断比较粗糙，尽量不要使用)<br>
 
+-AlgorithmUtils【算法辅助类】
+【说明】目前只有一个方法，比较抽象，特殊用途(比如统计连续签到用)，可以无视
+```Java
+	Console.log(
+		AlgorithmUtils.statisticsString(
+			new MapHelper<Integer, Integer>().put(1, 3).put(6, 2).put(2, 3).getMap(), 4));
+```
+【输出】2000330
 
+-ExceptionHelper异常【信息采集类】
+【说明】帮助从异常中提取信息，可以作为异常日志的信息提取类(web/安卓通用)
+【例子】
+```Java
+	ExceptionHelper eh = new ExceptionHelper("com.ag777.test");
+	try {
+		throw new NullPointerException();
+	} catch (Exception e) {
+		Console.log(eh.getErrMsg(e));
+		Console.log(ExceptionHelper.getStackTrace(e));
+	}
+```
+【输出】
+```
+{ "异常信息": "java.lang.NullPointerException", "异常发生位置": "com.ag777.test.Test", "方法": "main", "行数": 427 }
+["java.lang.NullPointerException","com.ag777.test.Test.main(Test.java:427)"]
+```
