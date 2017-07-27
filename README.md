@@ -63,3 +63,9 @@ Utils
 
 -StringUtils【字符串处理工具类】<br>
 【说明】包含一些对字符串处理的方法，几乎每个工具库都会有<br>
+
+-SystemUtils【系统常变量获取工具】<br>
+【说明】本来叫ConstantUtils,存放诸如换行符,路径分割符等作为项目统一获取这些常量的方法，后台加入了一些其他东西，改名为SystemUtils<br>
+【例子】SystemUtils.isLinux()通过该方法可以判断运行的系统是否为linux系统(麒麟系统判断比较粗糙，尽量不要使用)<br>
+
+
