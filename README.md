@@ -1,7 +1,7 @@
 Utils
 ====
 工具库大致分为几个模块<br>
-基础/jsoup爬虫/文件/gson封装<br>
+基础/网络/其它<br>
 一.基础模块<br>
 ----
 -CMDUtils【命令行执行工具类】<br>
@@ -94,3 +94,26 @@ Utils
 { "异常信息": "java.lang.NullPointerException", "异常发生位置": "com.ag777.test.Test", "方法": "main", "行数": 427 }
 ["java.lang.NullPointerException","com.ag777.test.Test.main(Test.java:427)"]
 ```
+
+-ReflectionHelper【反射辅助类】<br>
+
+-TreeUtils【树结构工具类】<br>
+
+二.网络模块<br>
+----
+-HttpUtils【网络工具类】<br>
+【说明】二次封装开源库okhttp,这个库常用语在安卓上单独或配合retrofit等网络框架食用,偶然间发现可以在web项目中使用(jfinal的微信框架用的就是这个),直接就拉过来用了<br>
+
+-JsoupUtils【jsoup爬虫工具类】<br>
+【说明】配合正则表达式和css选择器可以快速提取目标网页中的信息(灵感来源某开源库)，可以用于做网页客户端<br>
+
+三.其它<br>
+----
+-FileUtils【文件操作工具类】<br>
+
+-ExcelHelper【excel验证辅助类】<br>
+
+-PropertyUtils【.property文件的读取辅助类】<br>
+
+-GsonUtils【json转换辅助类】<br>
+【说明】支持链式调用，支持自定义拓展,具体请看代码。建议在工程初始化的时候全局持有一个对象<br>
