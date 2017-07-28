@@ -84,16 +84,15 @@ public class MapHelper<K,V> {
 	 * @param key_value 源List<Map>中key_value对应的值作为结果Map中的value
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public static <K,V>MapHelper<K,V> listMap(List<Map<String, Object>> list, String key_tilte, String key_value) {
+	public static MapHelper<String, Object> listMap(List<Map<String, Object>> list, String key_tilte, String key_value) {
 		if(list == null) {
 			return new MapHelper<>();
 		}
-		Map<K,V> map = new HashMap<K, V>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		for (Map<String, Object> item : list) {
 			if(item.containsKey(key_tilte) && item.get(key_tilte) != null && item.containsKey(key_value)) {
 				try {
-					map.put((K)item.get(key_tilte), (V)item.get(key_value));
+					map.put(item.get(key_tilte).toString(), item.get(key_value));
 				} catch(Exception ex) {
 				}
 			}

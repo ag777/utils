@@ -92,6 +92,29 @@ public class ListHelper<T> {
 		return new ListHelper<>(resultList);
 	}
 	
+	/**
+	 * 将list<Map>中每个map的第一个值(非空)整合成一个列表,适用于单列list
+	 * @param list	列表
+	 * @param filter 过滤器 return true表示加入列表
+	 * @return 
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T>ListHelper<T> listMap(List<Map<String, Object>> list, String key, Filter<T> filter) {
+		List<T> resultList = new LinkedList<T>();
+		for (Map<String, Object> item : list) {
+			try {
+				T obj = (T) item.get(key);
+				if(obj != null && (filter == null || filter.dofilter(obj))) {
+					resultList.add(obj);
+				}
+			}catch(Exception ex) {
+				//如果类型不匹配则不加入列表
+			}
+			
+		}
+		return new ListHelper<>(resultList);
+	}
+	
 	/*------工具方法-----*/
 	/**
 	 * 获取list

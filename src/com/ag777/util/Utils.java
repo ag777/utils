@@ -1,5 +1,6 @@
 package com.ag777.util;
 
+import com.ag777.util.db.DbHelper;
 import com.ag777.util.file.FileUtils;
 import com.ag777.util.gson.GsonUtils;
 import com.ag777.util.jsoup.JsoupUtils;
@@ -77,6 +78,17 @@ public class Utils {
 	 */
 	public static void jsonUtils(JsonUtilsInterf JsonUtils) {
 		Utils.jsonUtil = JsonUtils;
+	}
+	
+	public static String dbDriverClassName() {
+		return DbHelper.driverClassName();
+	}
+	/**
+	 * 定制数据库连接的驱动类,默认为"com.mysql.jdbc.Driver"
+	 * @param driverClassName
+	 */
+	public static void dbDriverClassName(String driverClassName) {
+		DbHelper.driverClassName(driverClassName);
 	}
 	
 	/*=============内部方法==================*/
