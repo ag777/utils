@@ -1,6 +1,7 @@
 package com.ag777.util.lang;
 
 import java.util.Arrays;
+import java.util.List;
 
 import com.ag777.util.Utils;
 import com.ag777.util.other.ExceptionHelper;
@@ -8,7 +9,7 @@ import com.ag777.util.other.ExceptionHelper;
 /**
  * @Description 控制台输出辅助类
  * @author ag777
- * Time: created at 2017/6/6. last modify at 2017/7/24.
+ * Time: created at 2017/6/6. last modify at 2017/7/31.
  * Mark: 
  */
 public class Console {
@@ -80,6 +81,17 @@ public class Console {
 	
 	public static void err(String msg) {
 		System.err.println(msg);
+	}
+	
+	/**
+	 * 打印错误栈信息(效果差不多等于throwable.printStackTrace())
+	 * @param throwable
+	 */
+	public static void err(Throwable throwable) {
+		List<String> list = ExceptionHelper.getStackTrace(throwable);
+		for (String line : list) {
+			System.err.println(line);
+		}
 	}
 	
 }

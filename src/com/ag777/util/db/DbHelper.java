@@ -15,11 +15,12 @@ import java.util.Map;
 /**
  * 数据库操作辅助类
  * @author ag777
- * Time: created at 2017/7/28. last modify at 2017/7/28.
+ * Time: created at 2017/7/28. last modify at 2017/7/31.
  */
 public class DbHelper {
 
 	private static String DRIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
+	private static String URL_TAIL = "?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull";
 	
 	public static String driverClassName() {
 		return DRIVER_CLASS_NAME;
@@ -35,23 +36,45 @@ public class DbHelper {
 		this.conn = conn;
 	}
 	
-	public static DbHelper connectDB(String url,String user, String password)
-    {
+	public static DbHelper connectDB(String ip, int port, String dbName, String user, String password) throws ClassNotFoundException, SQLException {
+		return connectDB(getDbUrlString(ip, port, dbName), user, password);
+	}
+	
+	public static DbHelper connectDB(String url,String user, String password) throws ClassNotFoundException, SQLException {
 		
 		// 加载驱动程序
-		try {
-			Class.forName(DRIVER_CLASS_NAME);
-			// 连接数据库
-			return new DbHelper(
-					DriverManager.getConnection(url, user, password));
+		Class.forName(DRIVER_CLASS_NAME);
+		// 连接数据库
+		return new DbHelper(
+				DriverManager.getConnection(url, user, password));
 
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
     }
+	
+	/**
+	 * 通过ip端口号和数据库名称获取用于连接数据库的url
+	 * @param ip
+	 * @param port
+	 * @param dbName
+	 * @return
+	 */
+	public static String getDbUrlString(String ip, int port, String dbName){
+		return new StringBuilder()
+						.append("jdbc:mysql://")
+						.append(ip)
+						.append(':')
+						.append(port)
+						.append('/')
+						.append(dbName)
+						.append(URL_TAIL).toString();
+	}
+	
+	/**
+	 * 获取连接
+	 * @return
+	 */
+	public Connection getConn() {
+		return conn;
+	}
 	
 	/**
 	 * 关闭数据库连接.释放资源
@@ -68,7 +91,7 @@ public class DbHelper {
 	}
 	
 	/**
-	 * 查询多行
+	 * 查询多行, 通过Statement执行
 	 * @param sql
 	 * @return
 	 */
@@ -78,7 +101,7 @@ public class DbHelper {
     	try {
 	    	stmt = conn.createStatement();
 	    	rs = stmt.executeQuery(sql);
-	    	return convertList(rs);
+	    	return convert2List(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
@@ -86,19 +109,129 @@ public class DbHelper {
     }
 	
 	/**
-	 * 查询单行
+	 * 查询多行，带参数，通过PreparedStatement执行
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
+	public List<Map<String, Object>> queryList(String sql, Object[] params) {
+		if(isNullOrEmpty(params)) {
+			return queryList(sql);
+		}
+		try {
+			PreparedStatement ps = getPreparedStatement(sql, params);
+			ResultSet rs = ps.executeQuery();
+			return convert2List(rs);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 查询单行, 通过Statement执行
 	 * @param sql
 	 * @param conn
 	 * @return
 	 */
-	public Map<String, Object> getMap(String sql,Connection conn) {
+	public Map<String, Object> getMap(String sql) {
 		List<Map<String, Object>> list = queryList(sql);
-		if(list.isEmpty()) {
+		if(list == null || list.isEmpty()) {
 			return null;
 		}
 		return list.get(0);
 	}
 	
+	/**
+	 * 查询单行,带参数，通过PreparedStatement执行
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
+	public Map<String, Object> getMap(String sql, Object[] params) {
+		if(isNullOrEmpty(params)) {
+			return getMap(sql);
+		}
+		List<Map<String, Object>> list = queryList(sql, params);
+		if(list == null || list.isEmpty()) {
+			return null;
+		}
+		return list.get(0);
+	}
+	
+	/**
+	 * 获取int类型的结果
+	 * @param sql
+	 * @return
+	 */
+	public Integer getInteger(String sql, Object[] params) {
+		try {
+			Map<String, Object> resultMap = getMap(sql, params);
+			if(resultMap != null) {
+				Object value = resultMap.get(0);
+				if(value != null) {
+					
+					if(value instanceof Integer) {
+						return (Integer) value;
+					} else {
+						return Integer.parseInt(value.toString());
+					}
+					
+				}
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 获取double类型的返回
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
+	public Double getDouble(String sql, Object[] params) {
+		try {
+			Map<String, Object> resultMap = getMap(sql, params);
+			if(resultMap != null) {
+				Object value = resultMap.get(0);
+				if(value != null) {
+					
+					if(value instanceof Double) {
+						return (Double) value;
+					} else {
+						return Double.parseDouble(value.toString());
+					}
+					
+				}
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 获取字符串类型的返回
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
+	public String getString(String sql, Object[] params) {
+		try {
+			Map<String, Object> resultMap = getMap(sql, params);
+			if(resultMap != null) {
+				Object value = resultMap.get(0);
+				if(value != null) {
+					return value.toString();
+				}
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
 	
 	/**
 	 * 插入或更新
@@ -126,6 +259,9 @@ public class DbHelper {
 	 * @return
 	 */
 	public int update(String sql, Object[] params) {
+		if(isNullOrEmpty(params)) {
+			return update(sql);
+		}
     	try {
 	    	PreparedStatement pstmt = getPreparedStatement(sql, params);
 	    	return pstmt.executeUpdate(); 
@@ -181,15 +317,22 @@ public class DbHelper {
 	 */
 	public PreparedStatement getPreparedStatement(String sql, Object[] params) throws SQLException {
 		PreparedStatement pstmt = conn.prepareStatement(sql);
-	
-    	for (int i = 0; i < params.length; i++) {
-    		Object item = params[i];
-    		pstmt.setObject(i+1, item);
+		if(params != null) {
+	    	for (int i = 0; i < params.length; i++) {
+	    		Object item = params[i];
+	    		pstmt.setObject(i+1, item);
+			}
 		}
     	return pstmt;
 	}
 	
-	private static List<Map<String, Object>> convertList(ResultSet rs) throws SQLException {
+	/**
+	 * 将resultset转化为List<Map<String, Object>>
+	 * @param rs
+	 * @return
+	 * @throws SQLException
+	 */
+	public static List<Map<String, Object>> convert2List(ResultSet rs) throws SQLException {
 
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 
@@ -212,6 +355,10 @@ public class DbHelper {
 		}
 		return list;
 
+	}
+	
+	private boolean isNullOrEmpty(Object[] params) {
+		return params == null || params.length == 0;
 	}
 	
 }
