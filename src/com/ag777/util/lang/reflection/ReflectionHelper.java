@@ -15,7 +15,7 @@ import com.ag777.util.lang.ListHelper;
 /**
  * @Description 反射工具类
  * @author ag777
- * Time: created at 2017/6/7. last modify at 2017/6/20.
+ * Time: created at 2017/6/7. last modify at 2017/7/31.
  * Mark: 
  */
 public class ReflectionHelper<T> {
@@ -50,7 +50,7 @@ public class ReflectionHelper<T> {
 	 * @return
 	 * @throws Exception
 	 */
-	public Method getMethod(String name, Class<?> parameterTypes) throws Exception {
+	public Method getMethod(String name, Class<?>... parameterTypes) throws Exception {
 		return mClazz.getMethod(name, parameterTypes);
 	}
 	

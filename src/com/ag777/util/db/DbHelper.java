@@ -1,5 +1,6 @@
 package com.ag777.util.db;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,6 +12,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.ag777.util.lang.StringUtils;
+import com.ag777.util.lang.reflection.ReflectionHelper;
 
 /**
  * 数据库操作辅助类
@@ -90,17 +94,37 @@ public class DbHelper {
 		conn = null;
 	}
 	
+	public ResultSet getResultSet(String sql) {
+    	try {
+    		Statement stmt = conn.createStatement();
+	    	return stmt.executeQuery(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+    	return null;
+	}
+	
+	public ResultSet getResultSet(String sql, Object[] params) {
+		if(isNullOrEmpty(params)) {
+			return getResultSet(sql);
+		}
+		try {
+			PreparedStatement ps = getPreparedStatement(sql, params);
+			return ps.executeQuery();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	/**
 	 * 查询多行, 通过Statement执行
 	 * @param sql
 	 * @return
 	 */
 	public List<Map<String, Object>> queryList(String sql) {
-    	Statement stmt = null;
-    	ResultSet rs = null;
     	try {
-	    	stmt = conn.createStatement();
-	    	rs = stmt.executeQuery(sql);
+	    	ResultSet rs = getResultSet(sql);
 	    	return convert2List(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -115,15 +139,44 @@ public class DbHelper {
 	 * @return
 	 */
 	public List<Map<String, Object>> queryList(String sql, Object[] params) {
-		if(isNullOrEmpty(params)) {
-			return queryList(sql);
-		}
 		try {
-			PreparedStatement ps = getPreparedStatement(sql, params);
-			ResultSet rs = ps.executeQuery();
+			ResultSet rs =getResultSet(sql, params);
 			return convert2List(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
+	public <T>List<T> queryObjectList(String sql, Object[] params, Class<T> clazz) {
+		
+		try {
+			List<T> list = null;
+			ResultSet rs =getResultSet(sql, params);
+			if(clazz.isAssignableFrom(Integer.class) ||	//clazz是基本类型
+					clazz.isAssignableFrom(Byte.class) ||
+					clazz.isAssignableFrom(Short.class) ||
+					clazz.isAssignableFrom(Long.class) ||
+					clazz.isAssignableFrom(Float.class) ||
+					clazz.isAssignableFrom(Double.class) ||
+					clazz.isAssignableFrom(Boolean.class) ||
+					clazz.isAssignableFrom(Character.class)){
+				list = new ArrayList<>();
+				while(rs.next()) {
+					list.add((T) rs.getObject(1));
+				}
+			} else {
+				list = convert2List(rs, clazz);
+			}
+			return list;
+		} catch(Exception ex) {
+			ex.printStackTrace();
 		}
 		return null;
 	}
@@ -355,6 +408,55 @@ public class DbHelper {
 		}
 		return list;
 
+	}
+	
+	/**
+	 * 将resultSet转化为对象列表(方法有待验证及优化)
+	 * @param rs
+	 * @param clazz
+	 * @return
+	 * @throws SQLException
+	 */
+	public static <T>List<T> convert2List(ResultSet rs, Class<T> clazz) throws SQLException {
+		try {
+			List<T> list = new ArrayList<T>();
+	
+			ResultSetMetaData md = rs.getMetaData();
+	
+			int columnCount = md.getColumnCount(); // Map rowData;
+	
+			String[] cols = new String[columnCount];
+			for (int i = 1; i <= columnCount; i++) {
+				cols[i-1] = StringUtils.underline2Camel(md.getColumnName(i), false);	//首字母大写，驼峰
+			}
+			
+			while (rs.next()) { // rowData = new HashMap(columnCount);
+				
+				T rowData = clazz.newInstance();
+	
+				for (int i = 1; i <= columnCount; i++) {
+					Object value = rs.getObject(1);
+					Field[] fields = clazz.getFields();
+					for (Field field : fields) {
+						if(field.getName().equalsIgnoreCase(cols[i])) {
+							boolean flag = field.isAccessible();
+							field.setAccessible(true);
+							field.set(rowData, value);
+							field.setAccessible(flag);
+						}
+					}
+					
+	
+				}
+	
+				list.add(rowData);
+	
+			}
+			return list;
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
 	}
 	
 	private boolean isNullOrEmpty(Object[] params) {
