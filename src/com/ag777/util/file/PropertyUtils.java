@@ -9,9 +9,6 @@ package com.ag777.util.file;
  */
 public class PropertyUtils extends java.util.Properties{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 5668981040083393897L;
 
 	public String get(String key) {

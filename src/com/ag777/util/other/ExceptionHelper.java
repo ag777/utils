@@ -48,10 +48,12 @@ public class ExceptionHelper {
 	}
 	
 	/*====================外部方法==================*/
+
 	/**
 	 * 从捕获的异常中提取错误信息
-	 * @param throwable
-	 * @param basePackageName 该方法会从错误栈中查找第一条该包下找到的异常信息作为异常源
+	 * @param throwable				异常
+	 * @param workPackageName		该方法会从错误栈中查找第一条该包下找到的异常信息作为异常源
+	 * @param excludePackageList	排除包
 	 * @return
 	 */
 	public static String getErrMsg(Throwable throwable, String workPackageName,List<String> excludePackageList) {
@@ -124,7 +126,6 @@ public class ExceptionHelper {
 	/**
 	 * 从抛出的一场中提取错误信息(工作目录为app中的目录，排除目录包含Utils类中的目录)
 	 * @param throwable
-	 * @param basePackageName 该方法会从错误栈中查找第一条该包下找到的异常信息作为异常源
 	 * @return
 	 */
 	public String getErrMsg(Throwable throwable) {
@@ -138,7 +139,7 @@ public class ExceptionHelper {
 	 * @param excludePackages
 	 * @return
 	 */
-	private static List<String> filterExcludePackages(String workPackageName,List<String> excludePackages) {
+	private static List<String> filterExcludePackages(final String workPackageName, List<String> excludePackages) {
 		if(excludePackages == null || excludePackages.isEmpty()) {
 			return excludePackages;
 		}

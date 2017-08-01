@@ -9,7 +9,7 @@ public interface JsonUtilsInterf {
 	
 	public Map<String, Object> toMap(String json) throws Exception;
 	
-	public <T>T fromJson(String json,Class<T> classOfT) throws Exception;
+	public <T>T fromJson(String json, Class<T> classOfT) throws Exception;
 	
 	public <T>T fromJson(String json, Type type);
 }

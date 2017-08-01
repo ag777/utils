@@ -12,19 +12,19 @@ import java.util.concurrent.Callable;
  */
 public class ThreadHelper<T> implements TaskHelperInterf<T>{
 
-	private List<java.lang.Thread> threadList;
+	private List<Thread> threadList;
 	private List<T> result;
 	
 	public ThreadHelper(){	
-		threadList = new ArrayList<java.lang.Thread>();
+		threadList = new ArrayList<Thread>();
 		result = new ArrayList<T>();
 	}
 	
 	/*==============添加单个任务==============*/
 	
 	@Override
-	public ThreadHelper<T> addTask(Callable<T> callable) {
-		Thread t = new java.lang.Thread(new Runnable() {
+	public ThreadHelper<T> addTask(final Callable<T> callable) {
+		Thread t = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -68,7 +68,7 @@ public class ThreadHelper<T> implements TaskHelperInterf<T>{
 	
 	
 	/*===静态方法===*/
-	public static void startThread(Callable<Void> t) {
+	public static void startThread(final Callable<Void> t) {
 		new Thread(new Runnable() {
 			
 			@Override

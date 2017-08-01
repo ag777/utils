@@ -215,7 +215,7 @@ public class ReflectionHelper<T> {
 			String name =method.getName();											//方法名
 			List<Class<?>> parameterTypes = ListHelper.addAllItem(method.getParameterTypes()).getList();	//参数类型列表
 			if(!root.containsKey(name)) {
-				root.put(name, new HashMap<>());
+				root.put(name, new HashMap<List<Class<?>>, Method>());
 			}
 			Map<List<Class<?>>, Method> item = root.get(name);
 			item.put(parameterTypes, method);

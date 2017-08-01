@@ -37,7 +37,7 @@ public class IOUtils {
 	
 	/**
 	 * 关闭流(批量)
-	 * @param closeable
+	 * @param closeables
 	 */
 	public static void close(Closeable... closeables) {
 		for (Closeable closeable : closeables) {

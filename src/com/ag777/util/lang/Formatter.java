@@ -12,7 +12,7 @@ public class Formatter {
 
 	/**
 	 * 存储单位格式化输出，初始单位Byte
-	 * @param fileSize
+	 * @param b
 	 * @return
 	 */
 	public static String storage(long b) {

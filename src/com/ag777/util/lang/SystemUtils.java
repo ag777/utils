@@ -11,14 +11,7 @@ import com.ag777.util.file.FileUtils;
  * Mark: 部分参考文献:http://blog.csdn.net/kongqz/article/details/3987198
  */
 public class SystemUtils {
-	private static OsType osType;	//系统
-	
-	public enum OsType  {
-		UNKOWN,
-		WINDOWS,	
-		LINUX,
-		KYLIN
-	}
+
 	
 	/**
 	 * 获取cpu核数(可用于确定子线程数量以优化程序执行效率)
@@ -112,64 +105,6 @@ public class SystemUtils {
 	 */
 	public static String javaHome() {
 		return System.getProperty("java.home");
-	}
-	
-	/*--------------------操作系统相关-------------- */
-	
-	/**
-	 * 获取操作系统的版本
-	 * @return
-	 */
-	public static String osVersion() {
-		return System.getProperty("os.version");
-	}
-	
-	/**
-	 * 获取操作系统名
-	 * @return
-	 */
-	public static String osName() {
-		return System.getProperty("os.name");
-	}
-	
-	/**
-	 * 获取操作系统类型
-	 * @return
-	 */
-	public static OsType osType() {
-		if(osType == null) {
-			synchronized (SystemUtils.class) {
-				if(osType == null) {
-					String osName = osName();
-					if(osName.toLowerCase().startsWith("windows")) {
-						osType = OsType.WINDOWS;
-					}else if(osName.toLowerCase().startsWith("linux")) {
-						try{	//linux下有两个文件/etc/issue和/etc/issue.net两个文件都能读出系统，但是都可以被修改,所以这么判断系统是不保险的
-							String s = FileUtils.findText("/etc/issue", "^\\s*([^\\s]*).*release","$1");
-							//理想的对应行为NeoKylin Desktop release 7.0 (x86)
-							if("NeoKylin".equals(s)) {
-								osType = OsType.KYLIN;
-							}
-						} catch(Exception ex) {
-							ex.printStackTrace();
-						}
-						osType = OsType.LINUX;
-					}
-					osType = OsType.UNKOWN;
-				}
-			}
-		}
-		return osType;
-	}
-	
-	public static boolean isWindows() {
-		return osType() == OsType.WINDOWS;
-	}
-	public static boolean isLinux() {
-		return osType() == OsType.LINUX;
-	}
-	public static boolean isKylin() {
-		return osType() == OsType.KYLIN;
 	}
 	
 }

@@ -126,7 +126,7 @@ public class DateUtils {
 		return new DateTime(date).toString(template);
 	}
 	//重载
-	public static String toString(java.sql.Timestamp ts, String template) {
+	public static String toString(Timestamp ts, String template) {
 		return new DateTime(ts).toString(template);
 	}
 	
@@ -180,7 +180,7 @@ public class DateUtils {
 	 * @param template
 	 * @return
 	 */
-	public static java.sql.Timestamp toTimeStamp(String str, String template) {
+	public static Timestamp toTimeStamp(String str, String template) {
 		DateTime dt = toDateTime(str, template);
 		if(dt!=null){
 			return new Timestamp(dt.getMillis());
@@ -308,7 +308,6 @@ public class DateUtils {
 	 * @param start_date
 	 * @param end_date
 	 * @param template_src
-	 * @param template_dest
 	 * @param unit 时间单位/遍历的步长,如TimeUnit.SECONDS表示每次增加一秒
 	 * @param editor 返回null则表示不写入列表
 	 * @return 列表项为editor1的返回值,null不加入列表
@@ -327,11 +326,13 @@ public class DateUtils {
 		return list;
 	}
 	
+
 	/**
 	 * 获取两个时间间隔(天)内的所有日期
-	 * @param startDate 开始日期
-	 * @param endDate	结束日期
-	 * @param template	日期格式("yyyy-MM-dd")
+	 * @param startDate		开始日期
+	 * @param endDate		结束日期
+	 * @param template_src	源日期格式("yyyy-MM-dd")
+	 * @param template_dest	目标日期格式("yyyy-MM-dd")
 	 * @return
 	 */
 	public static List<String> getDateList(String startDate,String endDate,String template_src, String template_dest){
@@ -350,7 +351,8 @@ public class DateUtils {
 	 * 获取两个时间间隔(天)内的所有日期(排除周末)
 	 * @param startDate
 	 * @param endDate
-	 * @param template
+	 * @param template_src
+	 * @param template_dest
 	 * @return
 	 */
 	public static List<String> getDateListWithoutWeeken(String startDate,String endDate,String template_src, String template_dest){
@@ -381,7 +383,8 @@ public class DateUtils {
 	 * 获取两个时间间隔(天)内的周末日期
 	 * @param startDate
 	 * @param endDate
-	 * @param template
+	 * @param template_src
+	 * @param template_dest
 	 * @return
 	 */
 	public static List<String> getWeekenDateList(String startDate,String endDate,String template_src, String template_dest){
@@ -411,7 +414,8 @@ public class DateUtils {
 	 * 获取两个时间间隔内的所有月份（包含首尾时间）
 	 * @param startDate 开始日期
 	 * @param endDate	结束日期
-	 * @param template	日期格式("yyyy-MM-dd"),可以是("yyyy-MM")
+	 * @param template_src
+	 * @param template_dest
 	 * @return
 	 */
 	public static List<String> getMonthList(String startDate,String endDate,String template_src, String template_dest){
@@ -588,9 +592,8 @@ public class DateUtils {
 	/**
 	 * 获取两个时间差(通用)
 	 * 注意00:15和01:00之间的分钟差 相当于00:00和01:00之间的分钟差,所以结果是1分钟,相差的时间为1分钟
-	 * @param start_time
-	 * @param end_time
-	 * @param template
+	 * @param start
+	 * @param end
 	 * @param unit 时间单位/遍历的步长,如TimeUnit.SECONDS表示计算另个时间差多少秒
 	 * @return
 	 */
@@ -622,9 +625,8 @@ public class DateUtils {
 	/**
 	 * 获取两个时间差(通用)
 	 * 注意00:15和01:00之间的分钟差 相当于00:00和01:00之间的分钟差,所以结果是1分钟,相差的时间为1分钟
-	 * @param start_time
-	 * @param end_time
-	 * @param template
+	 * @param start	开始时间
+	 * @param end	结束时间
 	 * @param unit 时间单位/遍历的步长,如TimeUnit.SECONDS表示计算另个时间差多少秒
 	 * @return
 	 */
@@ -648,9 +650,9 @@ public class DateUtils {
 	/**
 	 * 获取两个时间差(通用)
 	 * 注意00:15和01:00之间的分钟差 相当于00:00和01:00之间的分钟差,所以结果是1分钟,相差的时间为1分钟
-	 * @param start_time
-	 * @param end_time
-	 * @param template
+	 * @param start_time	开始时间
+	 * @param end_time		结束时间
+	 * @param template		时间格式("yyyy-MM-dd")
 	 * @param unit 时间单位/遍历的步长,如TimeUnit.SECONDS表示计算另个时间差多少秒
 	 * @return
 	 */
@@ -672,8 +674,8 @@ public class DateUtils {
 	
 	/**
 	 * 清空某个时间单位底下的时间(最小值),递归清空
-	 * @param dt
-	 * @param unit
+	 * @param dt	原始时间
+	 * @param unit 	时间单位，这个单位下的时间将会被设置为最小值(0)
 	 * @return
 	 */
 	public static DateTime getMinimumToCopy(DateTime dt, TimeUnit unit) {
@@ -697,8 +699,8 @@ public class DateUtils {
 	
 	/**
 	 * 清空某个时间单位底下的时间(最小值),递归清空
-	 * @param dt
-	 * @param unit
+	 * @param ld	原始时间
+	 * @param unit	时间单位，这个单位下的时间将会被设置为最小值(0)
 	 * @return
 	 */
 	public static LocalDate getMinimumToCopy(LocalDate ld, TimeUnit unit) {
@@ -714,8 +716,8 @@ public class DateUtils {
 	
 	/**
 	 * 最大化某个时间单位底下的时间(最小值),递归赋值,比如23点底下的最大时间为23:59:59.999
-	 * @param dt
-	 * @param unit
+	 * @param dt	原始时间
+	 * @param unit	时间单位,这个时间下的单位将会被设置为最大值
 	 * @return
 	 */
 	public static DateTime getMaximumToCopy(DateTime dt, TimeUnit unit) {
@@ -739,8 +741,8 @@ public class DateUtils {
 	
 	/**
 	 * 最大化某个时间单位底下的时间(最小值),递归赋值,比如1月份最大时间为1-31
-	 * @param dt
-	 * @param unit
+	 * @param ld	原始时间
+	 * @param unit	时间单位,这个时间下的单位将会被设置为最大值
 	 * @return
 	 */
 	public static LocalDate getMaximumToCopy(LocalDate ld, TimeUnit unit) {
@@ -759,9 +761,9 @@ public class DateUtils {
 	 * 转换日期集合为统计字符串（可以给考勤统计模块用）
 	 * 例子:传{"2017-06-20","2017-06-22"},"2017-06-20", "2017-06-23",返回1010
 	 * 实现方式:二进制位与
-	 * @param dateList
-	 * @param startDateStr
-	 * @param endDateStr
+	 * @param dateList		日期列表
+	 * @param startDateStr	开始日期
+	 * @param endDateStr	结束日期
 	 * @return
 	 */
 	public static String dateStatistics(List<String> dateList, String startDateStr,String endDateStr) {
@@ -785,7 +787,15 @@ public class DateUtils {
 		}
 		return sb.reverse().toString();
 	}
-	
+
+	/**
+	 * 转换日期集合为统计字符串（可以给考勤统计模块用）
+	 * @param dateList 		日期列表
+	 * @param holidayList	假期列表
+	 * @param startDateStr	开始时间
+	 * @param endDateStr	结束时间
+	 * @return
+	 */
 	public static String dateStatistics(List<String> dateList, List<String> holidayList, String startDateStr,String endDateStr) {
 		LocalDate startDate = toLocalDate(startDateStr);
 		LocalDate endDate = toLocalDate(endDateStr);

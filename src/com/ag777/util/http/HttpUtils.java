@@ -287,7 +287,7 @@ public class HttpUtils {
 	 * @param request
 	 * @return
 	 */
-	private static void call(Request request, Callback callback) {
+	private static void call(Request request, final Callback callback) {
 		Call call = client().newCall(request); 
 		try {
 			call.enqueue(new okhttp3.Callback() {

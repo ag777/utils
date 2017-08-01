@@ -9,7 +9,7 @@ import com.ag777.util.other.ExceptionHelper;
 /**
  * @Description 控制台输出辅助类
  * @author ag777
- * Time: created at 2017/6/6. last modify at 2017/7/31.
+ * Time: created at 2017/6/6. last modify at 2017/8/1.
  * Mark: 
  */
 public class Console {
@@ -34,12 +34,12 @@ public class Console {
 	 */
 	public static String log(Object obj) {
 		if(isDevMode()) {
-			String msg = null;
+			String msg = getMethod();
 			
 			if(obj != null && obj instanceof String) {
-				msg = (String) obj;
+				msg += (String) obj;
 			} else {
-				msg = Utils.jsonUtils().toJson(obj);
+				msg += Utils.jsonUtils().toJson(obj);
 			}
 			
 			System.out.println(msg);
@@ -54,14 +54,18 @@ public class Console {
 	 * @return
 	 */
 	public static String log(Object... objs) {
-		String msg = null;
+		String msg = getMethod();
 		if(isDevMode()) {
 			if(objs != null) {
-				msg = Utils.jsonUtils().toJson(Arrays.asList(objs));
+				msg += Utils.jsonUtils().toJson(Arrays.asList(objs));
 			}
 		}
 		System.out.println(msg);
 		return msg;
+	}
+	
+	public static void err(String msg) {
+		System.err.println(getMethod()+msg);
 	}
 	
 	/**
@@ -70,17 +74,13 @@ public class Console {
 	 * @param helper
 	 * @return
 	 */
-	public static String log(Throwable throwable, ExceptionHelper helper) {
+	public static String err(Throwable throwable, ExceptionHelper helper) {
 		if(isDevMode()) {
 			String errMsg = helper.getErrMsg(throwable);
 			System.err.println(errMsg);
 			return errMsg;
 		}
 		return null;
-	}
-	
-	public static void err(String msg) {
-		System.err.println(msg);
 	}
 	
 	/**
@@ -92,6 +92,27 @@ public class Console {
 		for (String line : list) {
 			System.err.println(line);
 		}
+	}
+	
+	/*=================工具方法====================*/
+	/**
+	 * 获取调用该方法的信息
+	 * @return
+	 */
+	private static String getMethod() {
+		
+		StackTraceElement[] stacks = (new Throwable()).getStackTrace();
+		if(stacks.length > 0) {
+			StackTraceElement stack = stacks[stacks.length-1];
+			return new StringBuilder()
+					.append(stack.getClassName())
+					.append('【').append(stack.getMethodName()).append('】')
+					.append(":").toString();
+		} else {
+			return "";
+		}
+		
+		
 	}
 	
 }

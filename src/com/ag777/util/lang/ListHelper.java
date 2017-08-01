@@ -237,7 +237,6 @@ public class ListHelper<T> {
     
     /**
 	 * 列表分段(将一个列表，每limit长度分一个列表并将这些新列表整合到一个列表里),多用于数据库批量插入拆分
-	 * @param list
 	 * @param limit 每段数组的长度 > 0
 	 * @return
 	 */
@@ -311,7 +310,6 @@ public class ListHelper<T> {
 	
 	/**
 	 * 列表转map
-	 * @param values 值列表,null时返回key对应为null的map
 	 * @param keys	标题列表,null时返回null
 	 * @return {标题:值}
 	 */
@@ -336,10 +334,9 @@ public class ListHelper<T> {
 	//--排序
 	/**
 	 * 列表排序
-	 * @param list	列表
 	 * @param comparator	比较器 ,胜利的一方(isWinner)排名向上(排在前面)
 	 */
-	public ListHelper<T> sort(Comparator<T> comparator) {
+	public ListHelper<T> sort(final Comparator<T> comparator) {
 		Collections.sort(list,new java.util.Comparator<T>() {
 
 			@Override
@@ -415,7 +412,7 @@ public class ListHelper<T> {
 	 * @param <T>
 	 */
 	public interface Comparator<T> {
-		boolean isWinner(T o1,T o2);	//胜利者排前面
+		boolean isWinner(T o1, T o2);	//胜利者排前面
 	}
 	
 }

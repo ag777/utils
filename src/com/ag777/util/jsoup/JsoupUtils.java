@@ -262,10 +262,9 @@ public class JsoupUtils {
 	 * 1.通过cssQuery获取目标节点的html
 	 * 2.直接进行正则匹配
 	 * 3.通过replacement拼接结果添加到集合里并返回
-	 * @param cssQuery
-	 * @param attr
-	 * @param regex
-	 * @param replacement 置换规则
+	 * @param cssQuery		css选择器，想找到目标容器的大致范围(目标的父容器)
+	 * @param regex			匹配用的正则表达式
+	 * @param replacement	置换规则（将正则匹配的结果替换为想要的格式）
 	 * @return
 	 */
 	public List<String> findByReg(String cssQuery, String regex, String replacement) {

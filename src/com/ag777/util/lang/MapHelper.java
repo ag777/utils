@@ -221,7 +221,6 @@ public class MapHelper<K,V> {
 	
 	/**
 	 * 删除map中符合要求的元素
-	 * @param map
 	 * @param filter 返回true的时候删除
 	 */
 	public void remove(Filter<K, V> filter) {
@@ -237,7 +236,6 @@ public class MapHelper<K,V> {
 	
 	/**
 	 * 编辑哈希表中的项,doEdit返回null则会删除该项
-	 * @param map
 	 * @param editor
 	 */
 	public void edit(Editor<K, V> editor) {

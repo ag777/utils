@@ -72,7 +72,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	}
 	/**
 	 * 自定义构建gson
-	 * @param pattern
+	 * @param builder
 	 * @return
 	 */
 	public static GsonUtils custom(GsonBuilder builder) {

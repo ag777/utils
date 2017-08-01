@@ -9,14 +9,14 @@ package com.ag777.util.jsoup.bean;
 public interface RuleInterf {
 
 	//模块筛选(大致范围)
-	public String getSelector();
+	String getSelector();
 	//获取方法,是html还是attr
-	public String getFun();
+	String getFun();
 	//参数，配合attr使用
-	public String getParam();
+	String getParam();
 	//匹配或捕获用的正则表达式
-	public String getRegex();
+	String getRegex();
 	//替换用的正则表达式(结果格式)
-	public String getReplacement();
+	String getReplacement();
 
 }

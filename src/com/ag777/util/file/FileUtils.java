@@ -17,7 +17,7 @@ import com.ag777.util.lang.RegexUtils;
 /**
  * Author: xsf,ag777
  * Time: created at 2016/4/25.
- * last modify time: 2017/07/25.
+ * last modify time: 2017/08/01.
  * Email: xsf_uestc_ncl@163.com
  */
 public class FileUtils {
@@ -41,8 +41,7 @@ public class FileUtils {
     /**
      * 读取文件内容
      * @param filePath 文件路径
-     * @param separator 换行时插入的字符
-     * @param _sEncoding
+     * @param lineSparator 换行时插入的字符
      * @return
      * @throws Exception
      */
@@ -161,13 +160,11 @@ public class FileUtils {
         } 
     }
 
-    /**
+
+	/**
 	 * 移动文件或者文件夹,如从e:/aa.txt到e:/tmp/aa.txt, 从e:/aa到e:/bb/aa
-	 * 
-	 * @param input
-	 *            String
-	 * @param output
-	 *            String
+	 * @param source	源文件路径
+	 * @param target	目标路径
 	 */
 	public static void move(String source, String target) {
 		File sourceFile = new File(source);
@@ -181,8 +178,8 @@ public class FileUtils {
     
 	/**
 	 * 复制文件
-	 * @param source
-	 * @param target
+	 * @param source	源文件路径
+	 * @param target	目标路径
 	 * @return
 	 */
 	public static boolean copy(String source, String target) {
@@ -200,7 +197,7 @@ public class FileUtils {
 	
 	/**
      * 递归删除文件夹及文件夹下的文件
-     * @param path
+     * @param path	要删除的文件/文件夹路径
      */
     public static boolean delete(File path) {  
 	    if (!path.exists())  
@@ -224,21 +221,11 @@ public class FileUtils {
     public static boolean delete(String path) {
     	return delete(new File(path));
     }
-    
-    /**	获取文件名
-	 * @author CRZ
-	 * @param imgPath
-	 * @return
-	 */
-	public static String getFileName(String imgPath) {
-		File file=new File(imgPath);
-		String fileName = file.getName();
-		return fileName;
-	}
+
 	
 	/**
 	 * 获取文件拓展名
-	 * @param fileName
+	 * @param fileName 源文件路径
 	 * @return
 	 */
 	public static String getFilePrefix(String fileName) {
@@ -276,7 +263,7 @@ public class FileUtils {
     /**
      * 从文件的完整路径名（路径+文件名）中提取 路径（包括：Drive+Directroy )
      *
-     * @param _sFilePathName
+     * @param _sFilePathName 文件路径
      * @return
      */
     public static String extractFilePath(String _sFilePathName) {
@@ -331,8 +318,8 @@ public class FileUtils {
 	/**
 	 * 复制单个文件
 	 * 
-	 * @param source
-	 * @param dest
+	 * @param source	源文件路径
+	 * @param target	目标路径
 	 * @throws IOException
 	 */
 	private static boolean copyFile(String source, String target) {
@@ -367,10 +354,8 @@ public class FileUtils {
 	/**
 	 * 复制文件夹及其子文件夹
 	 * 
-	 * @param source
-	 *            String 源文件夹,如: d:/tmp
-	 * @param dest
-	 *            String 目标文件夹,如: e:/tmp
+	 * @param source 源文件夹,如: d:/tmp
+	 * @param target 目标文件夹,如: e:/tmp
 	 * @throws IOException
 	 */
 	private static boolean copyFolder(String source, String target) {
