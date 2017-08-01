@@ -32,9 +32,10 @@
 【例子】DateUtils.between("2016-04-23", "2017-07-01", "yyyy-MM-dd", DateUtils.TimeUnit.DAY)计算出两天的日期差为434天<br>
 
 -Formatter【格式化工具类】<br>
-【说明】提供一些格式化方法,应对前端页面展示或者与项目中其他成员进行数据交互特殊需求的情况<br>
+【说明】提供一些格式化方法,应对前端页面展示或者与项目中其他成员进行数据交互特殊需求的情况，值得注意的是,方法默认不会输出调用的类及方法，可以通过Console.showSourceMethod(boolean); 来开关该功能<br>
 【例子】<br>
 ```Java
+  Console.showSourceMethod(true);
   Console.log(
     Formatter.formatJson(
       GsonUtils.get().toJson(
