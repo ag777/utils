@@ -46,9 +46,10 @@
 ```
 【输出】<br>
 ```
-  {
-    "a" : 1
-  }
+    com.ag777.test.Test【main】:
+    {
+        "a" : 1
+    }
 ```
 
 -IOUtils【IO操作工具类】<br>
