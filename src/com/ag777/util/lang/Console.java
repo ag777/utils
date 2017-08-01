@@ -15,6 +15,7 @@ import com.ag777.util.other.ExceptionHelper;
 public class Console {
 
 	private static boolean devMode = true;
+	private static boolean showSourceMethod = false;
 	
 	/**
 	 * getter/setter 控制是否打印日志
@@ -25,6 +26,14 @@ public class Console {
 	}
 	public static boolean isDevMode() {
 		return devMode;
+	}
+	
+	public static void showSourceMethod(boolean showSourceMethod) {
+		Console.showSourceMethod = showSourceMethod;
+	}
+	
+	public static boolean showSourceMethod() {
+		return showSourceMethod;
 	}
 	
 	/**
@@ -100,6 +109,9 @@ public class Console {
 	 * @return
 	 */
 	private static String getMethod() {
+		if(!showSourceMethod) {
+			return "";
+		}
 		
 		StackTraceElement[] stacks = (new Throwable()).getStackTrace();
 		if(stacks.length > 0) {
@@ -107,7 +119,7 @@ public class Console {
 			return new StringBuilder()
 					.append(stack.getClassName())
 					.append('【').append(stack.getMethodName()).append('】')
-					.append(":").toString();
+					.append(':').append(System.lineSeparator()).toString();
 		} else {
 			return "";
 		}
