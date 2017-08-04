@@ -2,6 +2,7 @@ package com.ag777.util.db;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,7 +20,7 @@ import com.ag777.util.lang.reflection.ReflectionHelper;
 /**
  * 数据库操作辅助类
  * @author ag777
- * Time: created at 2017/7/28. last modify at 2017/7/31.
+ * Time: created at 2017/7/28. last modify at 2017/8/2.
  */
 public class DbHelper {
 
@@ -94,6 +95,11 @@ public class DbHelper {
 		conn = null;
 	}
 	
+	/**
+	 * 根据sql获取结果集
+	 * @param sql
+	 * @return
+	 */
 	public ResultSet getResultSet(String sql) {
     	try {
     		Statement stmt = conn.createStatement();
@@ -104,6 +110,12 @@ public class DbHelper {
     	return null;
 	}
 	
+	/**
+	 * 根据sql和参数获取结果集，如果参数数组为空或者为null，则调通过Statement获取结果集，反之通过PreparedStatement获取
+	 * @param sql
+	 * @param params 参数列表，按顺序写入sql
+	 * @return
+	 */
 	public ResultSet getResultSet(String sql, Object[] params) {
 		if(isNullOrEmpty(params)) {
 			return getResultSet(sql);
@@ -159,14 +171,7 @@ public class DbHelper {
 		try {
 			List<T> list = null;
 			ResultSet rs =getResultSet(sql, params);
-			if(clazz.isAssignableFrom(Integer.class) ||	//clazz是基本类型
-					clazz.isAssignableFrom(Byte.class) ||
-					clazz.isAssignableFrom(Short.class) ||
-					clazz.isAssignableFrom(Long.class) ||
-					clazz.isAssignableFrom(Float.class) ||
-					clazz.isAssignableFrom(Double.class) ||
-					clazz.isAssignableFrom(Boolean.class) ||
-					clazz.isAssignableFrom(Character.class)){
+			if(isBasicClass(Character.class)){
 				list = new ArrayList<>();
 				while(rs.next()) {
 					list.add((T) rs.getObject(1));
@@ -212,6 +217,32 @@ public class DbHelper {
 		return list.get(0);
 	}
 	
+	/**
+	 * 获取第一条记录的第一个值(待测)
+	 * @param sql
+	 * @param params
+	 * @param clazz
+	 * @return
+	 */
+	public <T>T getObject(String sql, Object[] params, Class<T> clazz) {
+		try{
+			ResultSet rs =getResultSet(sql, params);
+			if(rs.next()) {
+				if(isBasicClass(clazz)) {
+					return (T) rs.getObject(1);
+				} else {
+					List<T> list = convert2List(rs, clazz);
+					if(list != null && !list.isEmpty()) {
+						return list.get(0);
+					}
+				}
+			}
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return null;
+	}
 	/**
 	 * 获取int类型的结果
 	 * @param sql
@@ -398,9 +429,7 @@ public class DbHelper {
 			Map<String, Object> rowData = new HashMap<String, Object>();
 
 			for (int i = 1; i <= columnCount; i++) {
-
 				rowData.put(md.getColumnName(i), rs.getObject(i));
-
 			}
 
 			list.add(rowData);
@@ -459,8 +488,90 @@ public class DbHelper {
 		return null;
 	}
 	
+	/*-----数据库结构层面的工具方法-----*/
+	/**
+	 * 获取所有表的名称
+	 * @param tableName
+	 * @return
+	 */
+	public ArrayList<String> tableList() {
+		try {
+			DatabaseMetaData dbmd = conn.getMetaData();
+			ArrayList<String> tableNameList = new ArrayList<>();
+	        ResultSet rs = null;
+	        String[] typeList = new String[] { "TABLE" };
+	        rs = dbmd.getTables(null, "%", "%",  typeList);
+	        for (boolean more = rs.next(); more; more = rs.next()) {
+	            String s = rs.getString("TABLE_NAME");
+	            String type = rs.getString("TABLE_TYPE");
+	            if (type.equalsIgnoreCase("table") && s.indexOf("$") == -1)
+	            	tableNameList.add(s);
+	        }
+	        return tableNameList;
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * 通过表名获取每一个字段的信息
+	 * @param tableName
+	 * @return
+	 */
+	public List<Map<String, Object>> columnList(String tableName) {
+		List<Map<String, Object>> columns = new ArrayList<>();
+		
+		try {
+			DatabaseMetaData dbmd = conn.getMetaData();
+			ResultSet columnSet = dbmd.getColumns(null, "%", tableName, "%");
+
+			while (columnSet.next()) {
+				Map<String, Object> column = new HashMap<>();
+				String columnName = columnSet.getString("COLUMN_NAME");
+			    String remarks = columnSet.getString("REMARKS");
+			    Integer sqlType = columnSet.getInt("DATA_TYPE");
+			    Long columnSize = columnSet.getLong("COLUMN_SIZE");
+			    
+			    column.put("COLUMN_NAME", columnName);
+			    column.put("REMARKS", remarks);
+			    column.put("DATA_TYPE", sqlType);
+			    column.put("COLUMN_SIZE", columnSize);
+			     
+			    columns.add(column);
+			}
+			
+			return columns;
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+	
+	/*----内部工具方法------*/
+	
+	/**
+	 * 是否为空指针或空字符串
+	 * @param params
+	 * @return
+	 */
 	private boolean isNullOrEmpty(Object[] params) {
 		return params == null || params.length == 0;
 	}
 	
+	/**
+	 * 判断一个类是否为基础类型
+	 * @param clazz
+	 * @return
+	 */
+	private static boolean isBasicClass(Class<?> clazz) {
+		return clazz.isAssignableFrom(Integer.class) ||	//clazz是基本类型
+				clazz.isAssignableFrom(Byte.class) ||
+				clazz.isAssignableFrom(Short.class) ||
+				clazz.isAssignableFrom(Long.class) ||
+				clazz.isAssignableFrom(Float.class) ||
+				clazz.isAssignableFrom(Double.class) ||
+				clazz.isAssignableFrom(Boolean.class) ||
+				clazz.isAssignableFrom(Character.class);
+	}
 }

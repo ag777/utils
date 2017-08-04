@@ -1,6 +1,14 @@
 package com.ag777.util;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 import com.ag777.util.file.FileUtils;
+import com.ag777.util.file.PropertyUtils;
 import com.ag777.util.gson.GsonUtils;
 import com.ag777.util.jsoup.JsoupUtils;
 import com.ag777.util.lang.Console;
@@ -67,6 +75,20 @@ public class Utils {
 		Utils.jsonUtil = JsonUtils;
 	}
 
+	public static String info() {
+		PropertyUtils pu = new PropertyUtils();
+		try {
+			
+			pu.load(Utils.class.getResourceAsStream("/config/config.properties"));
+			Map<String, Object> infoMap = new HashMap<String, Object>();
+			infoMap.put("last_release_date", pu.get("last_release_date"));
+			return jsonUtils().toJson(infoMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		return null;
+	}
+	
 	
 	/*=============内部方法==================*/
 	/**
@@ -99,5 +121,6 @@ public class Utils {
 	public static String getParentPackageName(String packageName) {
 		return packageName.replaceFirst("\\.[^\\.]+$", "");
 	} 
+	
 	
 }

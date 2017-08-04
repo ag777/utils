@@ -1,16 +1,32 @@
 package com.ag777.util.file;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * 针对属性文件的读写操作工具类
  * @Description 针对属性文件的读写操作工具类
  * @version 1.0 
- * @date 2015年4月4日 下午9:26:56
+ * @date 2015年4月4日 下午9:26:56 last modify 2017-08-03
  */
 public class PropertyUtils extends java.util.Properties{
 
 	private static final long serialVersionUID = 5668981040083393897L;
 
+	/**
+	 * 加载文件
+	 * @param filePath
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public PropertyUtils load(String filePath) throws FileNotFoundException, IOException {
+		load(new FileInputStream(new File(filePath)));
+		return this;
+	}
+	
 	public String get(String key) {
 		return getProperty(key);
 	}

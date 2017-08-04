@@ -10,7 +10,7 @@ import com.ag777.util.gson.GsonUtils;
 /**
  * @author ag777
  * @Description 哈希表辅助类(废弃maputils)
- * Time: created at 2017/6/15. last modify at 2017/7/24.
+ * Time: created at 2017/6/15. last modify at 2017/8/4.
  * Mark: 所有的复制方法都会根据原列表vector则会复制成vector，linkList复制成linklist,其余均复制成arrayList
  */
 public class MapHelper<K,V> {
@@ -55,8 +55,8 @@ public class MapHelper<K,V> {
 	}
 	
 	//--静态构造
-	public static <K,V>MapHelper<K,V> empty() {
-		return new MapHelper<K,V>();
+	public static <K,V>MapHelper<K,V> parse(Map<K, V> map) {
+		return new MapHelper<K,V>(map);
 	}
 	
 	/**
@@ -142,6 +142,36 @@ public class MapHelper<K,V> {
 	}
 	
 	/**
+	 * 通过key提取字符串，如果类型不为会返回结果.toString()
+	 * @param key
+	 * @return
+	 */
+	public String getString(K key) {
+		return getString(key, null);
+	}
+	
+	/**
+	 * 通过key提取字符串，如果类型不为会返回结果.toString()
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	public String getString(K key, String defaultValue) {
+		if(map.containsKey(key)) {
+			V value = map.get(key);
+			if(value == null) {
+				return defaultValue;
+			}
+			if(value instanceof String) {
+				return (String) value;
+			} else {
+				return value.toString();
+			}
+		}
+		return defaultValue;
+	}
+	
+	/**
 	 * 通过key提取int，如果类型不为Integer会尝试进行转换
 	 * @param key
 	 * @return 失败返回null
@@ -159,7 +189,10 @@ public class MapHelper<K,V> {
 	public Integer getInteger(K key, Integer defaultValue) {
 		if(map.containsKey(key)) {
 			V value = map.get(key);
-			if(value != null && value instanceof Integer) {
+			if(value == null) {
+				return defaultValue;
+			}
+			if(value instanceof Integer) {
 				return (int) value;
 			} else {
 				try {
@@ -190,7 +223,10 @@ public class MapHelper<K,V> {
 	public Double getDouble(K key, Double defaultValue) {
 		if(map.containsKey(key)) {
 			V value = map.get(key);
-			if(value != null && value instanceof Double) {
+			if(value == null) {
+				return defaultValue;
+			}
+			if(value instanceof Double) {
 				return (double) value;
 			} else {
 				try {
