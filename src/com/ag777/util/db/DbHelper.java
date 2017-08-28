@@ -14,9 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import com.ag777.util.lang.StringUtils;
-import com.ag777.util.lang.reflection.ReflectionHelper;
 
 /**
  * 数据库操作辅助类
@@ -434,7 +432,7 @@ public class DbHelper {
 	}
 	
 	/**
-	 * 批量执行sql语句
+	 * 批量执行sql语句,这里记得只能执行dml语句(针对数据的语句),执行ddl语句(表结构操作)时会立即触发commit导致无法回滚
 	 * @param sqlList
 	 * @return
 	 */
