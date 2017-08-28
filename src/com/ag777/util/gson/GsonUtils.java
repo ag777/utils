@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.ag777.util.gson.GsonUtils.MapTypeAdapter;
 import com.ag777.util.lang.interf.JsonUtilsInterf;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -185,6 +183,15 @@ public class GsonUtils implements JsonUtilsInterf{
 	public Map<String, Object> toMap(String json) {
 		try {
 			return gson().fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
+		} catch(Exception ex) {
+			return null;
+		}
+	}
+	
+	@Override
+	public List<Map<String, Object>> toListMap(String json) {
+		try {
+			return gson().fromJson(json, new TypeToken<List<Map<String, Object>>>() {}.getType());
 		} catch(Exception ex) {
 			return null;
 		}

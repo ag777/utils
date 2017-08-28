@@ -28,6 +28,9 @@ public class IOUtils {
 	public static void close(Closeable closeable) {
 		try{
 			if(closeable != null) {
+				if(closeable instanceof OutputStream) {
+					((OutputStream) closeable).flush();
+				}
 				closeable.close();
 			}
 		} catch(Exception ex) {

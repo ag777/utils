@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import com.ag777.util.Utils;
@@ -136,6 +137,22 @@ public class HttpUtils {
 		 return callForMap(request);
 	}
 	
+	
+	/**
+	 * post请求获取List<Map>
+	 * @param url
+	 * @param params
+	 * @return
+	 */
+	public static List<Map<String, Object>> doPostForListMap(String url, Map<String, Object> params) {
+		 Request request = new Request.Builder()
+	                .url(url)
+	                .post(getRequestBody(params))
+	                .build();
+		 
+		return callForListMap(request);
+	}
+	
 	//--异步
 	/**
 	 * get请求获取结果
@@ -209,6 +226,27 @@ public class HttpUtils {
 	 */
 	public static Map<String, Object> doGetForMap(String url, Map<String, Object> params) {
 		return doGetForMap(
+				getGetUrl(url, params));
+	}
+	
+	/**
+	 * get请求获取List<Map>
+	 * @param url
+	 * @return
+	 */
+	public static List<Map<String, Object>> doGetForListMap(String url) {
+		Request.Builder requestBuilder = new Request.Builder().url(url);
+		return callForListMap(requestBuilder.build());
+	}
+	
+	/**
+	 * get请求(带参数)获取List<Map>
+	 * @param url
+	 * @param params
+	 * @return
+	 */
+	public static List<Map<String, Object>> doGetForListMap(String url, Map<String, Object> params) {
+		return doGetForListMap(
 				getGetUrl(url, params));
 	}
 	
@@ -319,6 +357,23 @@ public class HttpUtils {
 			String result = call(request);
 			if(result != null) {
 				return Utils.jsonUtils().toMap(result);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return  null;
+	}
+	
+	/**
+	 * 请求并获取结果List<Map<String, Object>>(同步请求)
+	 * @param request
+	 * @return
+	 */
+	private static List<Map<String, Object>> callForListMap(Request request) {
+		try {
+			String result = call(request);
+			if(result != null) {
+				return Utils.jsonUtils().toListMap(result);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

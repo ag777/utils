@@ -1,12 +1,7 @@
 package com.ag777.util;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
-
 import com.ag777.util.file.FileUtils;
 import com.ag777.util.file.PropertyUtils;
 import com.ag777.util.gson.GsonUtils;
@@ -76,19 +71,26 @@ public class Utils {
 	}
 
 	public static String info() {
+		Map<String, Object> infoMap = infoMap();
+		if(infoMap != null) {
+			return jsonUtils().toJson(infoMap);
+		}
+		return null;
+	}
+	
+	public static Map<String, Object> infoMap() {
 		PropertyUtils pu = new PropertyUtils();
 		try {
 			
 			pu.load(Utils.class.getResourceAsStream("/config/config.properties"));
 			Map<String, Object> infoMap = new HashMap<String, Object>();
 			infoMap.put("last_release_date", pu.get("last_release_date"));
-			return jsonUtils().toJson(infoMap);
+			return infoMap;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 		return null;
 	}
-	
 	
 	/*=============内部方法==================*/
 	/**

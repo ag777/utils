@@ -14,7 +14,7 @@ import java.util.Vector;
 /**
  * @author ag777
  * @Description 列表工具类(废弃ListUtils)
- * Time: created at 2017/6/15. last modify at 2017/8/4.
+ * Time: created at 2017/6/15. last modify at 2017/8/28.
  * Mark: 所有的复制方法都会根据原列表vector则会复制成vector，linkList复制成linklist,其余均复制成arrayList
  */
 public class ListHelper<T> {
@@ -281,9 +281,10 @@ public class ListHelper<T> {
 	 * list外部再包一层list
 	 * @return
 	 */
-	public ListHelper<T> toList() {
-		List<T> list2 = new ArrayList<>();
-		return new ListHelper<T>(list2);
+	public ListHelper<List<T>> toList() {
+		List<List<T>> list2 = new ArrayList<>();
+		list2.add(list);
+		return new ListHelper<List<T>>(list2);
 	}
 	
 	/**
