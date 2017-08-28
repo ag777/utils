@@ -1,17 +1,38 @@
 package com.ag777.util.lang;
 
 import java.io.File;
-
-import com.ag777.util.file.FileUtils;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 
 /**
  * @Description 系统常量获取工具类
  * @author ag777
- * Time: created at 2017/6/12. last modify at 2017/6/16.
+ * Time: created at 2017/6/12. last modify at 2017/8/23.
  * Mark: 部分参考文献:http://blog.csdn.net/kongqz/article/details/3987198
  */
 public class SystemUtils {
 
+	/**
+	 * 将控制台输出重定向到文件
+	 * @param filePath
+	 * @return
+	 */
+	public boolean setSystemOut(String filePath) {
+		try {
+			System.setOut(new PrintStream(new File(filePath)));
+			return true;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
+	 * 还原控制台输出到控制台
+	 */
+	public void resetSystemOut() {
+		System.setOut(System.out);
+	}
 	
 	/**
 	 * 获取cpu核数(可用于确定子线程数量以优化程序执行效率)

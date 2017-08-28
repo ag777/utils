@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -252,15 +253,18 @@ public class DbHelper {
 		try {
 			Map<String, Object> resultMap = getMap(sql, params);
 			if(resultMap != null) {
-				Object value = resultMap.get(0);
-				if(value != null) {
-					
-					if(value instanceof Integer) {
-						return (Integer) value;
-					} else {
-						return Integer.parseInt(value.toString());
+				Iterator<String> itor = resultMap.keySet().iterator();
+				if(itor.hasNext()) {
+					Object value = resultMap.get(itor.next());
+					if(value != null) {
+						
+						if(value instanceof Integer) {
+							return (Integer) value;
+						} else {
+							return Integer.parseInt(value.toString());
+						}
+						
 					}
-					
 				}
 			}
 		} catch(Exception ex) {
@@ -279,15 +283,18 @@ public class DbHelper {
 		try {
 			Map<String, Object> resultMap = getMap(sql, params);
 			if(resultMap != null) {
-				Object value = resultMap.get(0);
-				if(value != null) {
-					
-					if(value instanceof Double) {
-						return (Double) value;
-					} else {
-						return Double.parseDouble(value.toString());
+				Iterator<String> itor = resultMap.keySet().iterator();
+				if(itor.hasNext()) {
+					Object value = resultMap.get(itor.next());
+					if(value != null) {
+						
+						if(value instanceof Double) {
+							return (Double) value;
+						} else {
+							return Double.parseDouble(value.toString());
+						}
+						
 					}
-					
 				}
 			}
 		} catch(Exception ex) {
@@ -306,9 +313,15 @@ public class DbHelper {
 		try {
 			Map<String, Object> resultMap = getMap(sql, params);
 			if(resultMap != null) {
-				Object value = resultMap.get(0);
-				if(value != null) {
-					return value.toString();
+				if(resultMap != null) {
+					Iterator<String> itor = resultMap.keySet().iterator();
+					if(itor.hasNext()) {
+						Object value = resultMap.get(itor.next());
+						if(value != null) {
+							return value.toString();
+						}
+					}
+					
 				}
 			}
 		} catch(Exception ex) {
@@ -370,7 +383,17 @@ public class DbHelper {
 	    	return results;
     	} catch (SQLException e) {
     		e.printStackTrace();
-		} 
+    		try {
+				conn.rollback();
+			} catch (SQLException e1) {
+			}
+		}  finally {
+			try {
+				conn.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
     	return null;
     }
 	
@@ -408,6 +431,38 @@ public class DbHelper {
 			}
 		}
     	return pstmt;
+	}
+	
+	/**
+	 * 批量执行sql语句
+	 * @param sqlList
+	 * @return
+	 */
+	public boolean batchExcute(List<String> sqlList) {
+		try {
+			conn.setAutoCommit(false);
+			Statement stmt = conn.createStatement();
+			for (String sql : sqlList) {
+				try {
+					stmt.executeUpdate(sql);
+				} catch(SQLException ex) {
+					throw ex;
+				}
+			}
+			conn.commit();
+			return true;
+		} catch(Exception ex) {
+			try {
+				conn.rollback();
+			} catch (SQLException e) {
+			}
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+			} catch (SQLException e) {
+			}
+		}
+		return false;
 	}
 	
 	/**
