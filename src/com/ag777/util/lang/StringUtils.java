@@ -1,5 +1,6 @@
 package com.ag777.util.lang;
 
+import java.net.MalformedURLException;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -118,4 +119,17 @@ public class StringUtils {
 		return UUID.randomUUID().toString().replace("-", "");
 	}
 	
+	/**
+	 * 将url字符串转化成java.net.URL对象
+	 * @param urlStr
+	 * @return
+	 * @throws MalformedURLException
+	 */
+	public java.net.URL toURL(String urlStr) throws MalformedURLException {
+		if(urlStr.startsWith("http")) {
+			urlStr = "http://"+urlStr;
+		}
+		java.net.URL url = new java.net.URL(urlStr);
+		return url;
+	}
 }
