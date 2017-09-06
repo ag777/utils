@@ -50,7 +50,7 @@ public class ReflectionHelper<T> {
 	@SuppressWarnings("unchecked")
 	public static <T>T newInstace(Class<T> clazz) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
 		Class<?> outerClass = getOuterClass(clazz);
-		if(outerClass == null) {	//是内部类
+		if(outerClass == null) {	//不是内部类
 			return clazz.newInstance();
 		}
 		
@@ -58,16 +58,16 @@ public class ReflectionHelper<T> {
 		
 		Constructor<?>[] c = clazz.getDeclaredConstructors();
 		int modifier_class = clazz.getModifiers();
-		boolean flag = c[0].isAccessible();
+		boolean flag = c[0].isAccessible();	//记录原本的可访问性
 		c[0].setAccessible(true);
 		
-		if(Modifier.isStatic(modifier_class)) {
+		if(Modifier.isStatic(modifier_class)) {	//带static的类直接实例化对象
 			obj =  (T) c[0].newInstance();
-		}  else {
+		}  else {	//其余的都需要先实例化外部对象再实例化内部类
 			obj = (T) c[0].newInstance(newInstace(outerClass));
 		}
 		
-		c[0].setAccessible(flag);
+		c[0].setAccessible(flag);	//还原可访问性
 		return obj;
 	}
 	
