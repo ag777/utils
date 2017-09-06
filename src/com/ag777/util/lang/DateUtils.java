@@ -973,6 +973,10 @@ public class DateUtils {
 		V doEdit(T item);		
 	}
 	
+	public static int betweenMonth(LocalDate start_date,LocalDate end_date) {
+		return Months.monthsBetween(start_date, end_date).getMonths();
+	}
+	
 	public static void main(String[] args) {
 //		List<String> list = getList("2017-04-01", "2017-04-14", "yyyy-MM-dd", "yyyy-MM-dd", TimeUnit.DAY,(Filter<DateTime>)null);
 //		for (String date : list) {
@@ -980,11 +984,13 @@ public class DateUtils {
 //		}
 //		System.out.println(toLocalDate("2017-02-03").toString(DEFAULT_TEMPLATE_TIME));
 //		System.out.println(toDateTime("23:01","mm:ss").toString(DEFAULT_TEMPLATE_TIME));
-		LocalDateTime ldt = new LocalDateTime();
-		
-		System.out.println(ldt.toString(DEFAULT_TEMPLATE_TIME));
-		System.out.println(DateUtils.getMinimumToCopy(
-				DateUtils.toDateTime("23:02","mm:ss"),
-				TimeUnit.MINUTE).toString("mm:ss"));
+//		LocalDateTime ldt = new LocalDateTime();
+//		
+//		System.out.println(ldt.toString(DEFAULT_TEMPLATE_TIME));
+//		System.out.println(DateUtils.getMinimumToCopy(
+//				DateUtils.toDateTime("23:02","mm:ss"),
+//				TimeUnit.MINUTE).toString("mm:ss"));
+		Console.log(
+				betweenMonth(toLocalDate("2017-02-03"), toLocalDate("2017-01-04")));
 	}
 }

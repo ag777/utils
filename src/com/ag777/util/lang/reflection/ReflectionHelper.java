@@ -1,7 +1,9 @@
 package com.ag777.util.lang.reflection;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -15,7 +17,7 @@ import com.ag777.util.lang.ListHelper;
 /**
  * @Description 反射工具类
  * @author ag777
- * Time: created at 2017/6/7. last modify at 2017/7/31.
+ * Time: created at 2017/6/7. last modify at 2017/9/6.
  * Mark: 
  */
 public class ReflectionHelper<T> {
@@ -35,12 +37,74 @@ public class ReflectionHelper<T> {
 	}
 	
 	/*=============外部调用=================*/
+	//--静态方法
+	/**
+	 * 实例化class对象,支持内部类
+	 * @return
+	 * @throws InvocationTargetException 
+	 * @throws IllegalArgumentException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 * @throws ClassNotFoundException 
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T>T newInstace(Class<T> clazz) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
+		Class<?> outerClass = getOuterClass(clazz);
+		if(outerClass == null) {	//是内部类
+			return clazz.newInstance();
+		}
+		
+		T obj = null;
+		
+		Constructor<?>[] c = clazz.getDeclaredConstructors();
+		int modifier_class = clazz.getModifiers();
+		boolean flag = c[0].isAccessible();
+		c[0].setAccessible(true);
+		
+		if(Modifier.isStatic(modifier_class)) {
+			obj =  (T) c[0].newInstance();
+		}  else {
+			obj = (T) c[0].newInstance(newInstace(outerClass));
+		}
+		
+		c[0].setAccessible(flag);
+		return obj;
+	}
+	
+	/**
+	 * 获取内部类的外包类
+	 * @param clazz
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	private static <T>Class<?> getOuterClass(Class<T> clazz) throws ClassNotFoundException {
+		String className = clazz.getName();
+		if(className.contains("$")) {
+			return Class.forName(className.split("\\$")[0]);
+		}
+		return null;
+	}
+	
+	//--非静态方法
 	/**
 	 * 获取类路径,如java.lang.String
 	 * @return
 	 */
 	public String getName() {
 		return mClazz.getName();
+	}
+	
+	/**
+	 * 实例化成对象,支持内部类,如果失败返回null
+	 * @return
+	 */
+	public T newInstance()  {
+		try {
+			return newInstace(mClazz);
+		}catch(Exception ex) {
+			
+		}
+		return null;
 	}
 	
 	/**

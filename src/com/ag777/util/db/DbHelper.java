@@ -15,11 +15,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import com.ag777.util.lang.StringUtils;
+import com.ag777.util.lang.reflection.ReflectionHelper;
 
 /**
  * 数据库操作辅助类
  * @author ag777
- * Time: created at 2017/7/28. last modify at 2017/8/2.
+ * Time: created at 2017/7/28. last modify at 2017/9/6.
  */
 public class DbHelper {
 
@@ -170,7 +171,7 @@ public class DbHelper {
 		try {
 			List<T> list = null;
 			ResultSet rs =getResultSet(sql, params);
-			if(isBasicClass(Character.class)){
+			if(isBasicClass(clazz)){
 				list = new ArrayList<>();
 				while(rs.next()) {
 					list.add((T) rs.getObject(1));
@@ -514,11 +515,11 @@ public class DbHelper {
 			
 			while (rs.next()) { // rowData = new HashMap(columnCount);
 				
-				T rowData = clazz.newInstance();
+				T rowData = ReflectionHelper.newInstace(clazz);
 	
-				for (int i = 1; i <= columnCount; i++) {
+				for (int i = 1; i < columnCount; i++) {
 					Object value = rs.getObject(1);
-					Field[] fields = clazz.getFields();
+					Field[] fields = clazz.getDeclaredFields();
 					for (Field field : fields) {
 						if(field.getName().equalsIgnoreCase(cols[i])) {
 							boolean flag = field.isAccessible();
@@ -537,8 +538,8 @@ public class DbHelper {
 			return list;
 		} catch(Exception ex) {
 			ex.printStackTrace();
+			throw new SQLException("转换结果为对象列表失败");
 		}
-		return null;
 	}
 	
 	/*-----数据库结构层面的工具方法-----*/
