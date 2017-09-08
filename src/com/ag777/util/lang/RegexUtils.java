@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 /**
  * @Description 正则表达式工具类
  * @author ag777
- * Time: created at 2017/6/6. last modify at 2017/6/16.
- * Mark: 
+ * Time: created at 2017/6/6. last modify at 2017/9/7.
+ * Mark: 2017/09/07 增加对pattern支持
  */
 public class RegexUtils {
 
@@ -27,14 +27,35 @@ public class RegexUtils {
 	}
 	
 	/**
+	 * 替换
+	 * @param src
+	 * @param pattern
+	 * @param replacement
+	 * @return
+	 */
+	public static String replaceAll(String src, Pattern pattern, String replacement) {
+		return pattern.matcher(src).replaceAll(replacement);
+	}
+	
+	/**
 	 * 统计出现次数
 	 * @param src
 	 * @param regex
 	 * @return
 	 */
 	public static long count(String src, String regex) {
+		return count(src, getPattern(regex));
+	}
+	
+	/**
+	 * 统计出现次数
+	 * @param src
+	 * @param pattern
+	 * @return
+	 */
+	public static long count(String src, Pattern pattern) {
 		long count = 0;
-		Matcher matcher = getMatcher(src, regex);
+		Matcher matcher = getMatcher(src, pattern);
 		while(matcher.find()) {
 			count++;
 		}
@@ -48,7 +69,17 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static String find(String src, String regex) {
-		Matcher matcher = getMatcher(src, regex);
+		return find(src, getPattern(regex));
+	}
+	
+	/**
+	 * 从字符串中找到第一个匹配的字符串
+	 * @param src
+	 * @param pattern
+	 * @return
+	 */
+	public static String find(String src, Pattern pattern) {
+		Matcher matcher = getMatcher(src, pattern);
 		if(matcher.find()) {
 			return matcher.group();
 		}
@@ -62,7 +93,17 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static Long findLong(String src, String regex) {
-		Matcher matcher = getMatcher(src, regex);
+		return findLong(src, getPattern(regex));
+	}
+	
+	/**
+	 * 从字符串中找到第一个匹配的字符串并转为Long型
+	 * @param src
+	 * @param regex
+	 * @return
+	 */
+	public static Long findLong(String src, Pattern pattern) {
+		Matcher matcher = getMatcher(src, pattern);
 		if(matcher.find()) {
 			try {
 				return Long.parseLong(matcher.group());
@@ -79,8 +120,18 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<String> findAll(String src, String regex) {
+		return findAll(src, getPattern(regex));
+	}
+	
+	/**
+	 * 从字符串中查找所有正则匹配的字符串列表
+	 * @param src
+	 * @param pattern
+	 * @return
+	 */
+	public static List<String> findAll(String src, Pattern pattern) {
 		List<String> list = new ArrayList<String>();
-		Matcher matcher = getMatcher(src, regex);
+		Matcher matcher = getMatcher(src, pattern);
 		while(matcher.find()) {
 			list.add(matcher.group());
 		}
@@ -94,8 +145,18 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<Integer> findAllInt(String src, String regex) {
+		return findAllInt(src, getPattern(regex));
+	}
+	
+	/**
+	 * 从字符串中查找所有正则匹配的int型数字列表
+	 * @param src
+	 * @param pattern
+	 * @return
+	 */
+	public static List<Integer> findAllInt(String src, Pattern pattern) {
 		List<Integer> list = new ArrayList<Integer>();
-		Matcher matcher = getMatcher(src, regex);
+		Matcher matcher = getMatcher(src, pattern);
 		while(matcher.find()) {
 			try{	//转为数字，非数字不计入结果
 				list.add(
@@ -114,8 +175,18 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<Long> findAllLong(String src, String regex) {
+		return findAllLong(src, getPattern(regex));
+	}
+	
+	/**
+	 * 从字符串中查找所有正则匹配的long型数字列表
+	 * @param src
+	 * @param pattern
+	 * @return
+	 */
+	public static List<Long> findAllLong(String src, Pattern pattern) {
 		List<Long> list = new ArrayList<Long>();
-		Matcher matcher = getMatcher(src, regex);
+		Matcher matcher = getMatcher(src, pattern);
 		while(matcher.find()) {
 			try{	//转为数字，非数字不计入结果
 				list.add(
@@ -134,8 +205,18 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<Double> findAllDouble(String src, String regex) {
+		return findAllDouble(src, getPattern(regex));
+	}
+	
+	/**
+	 * 从字符串中查找所有正则匹配的double型数字列表
+	 * @param src
+	 * @param pattern
+	 * @return
+	 */
+	public static List<Double> findAllDouble(String src, Pattern pattern) {
 		List<Double> list = new ArrayList<Double>();
-		Matcher matcher = getMatcher(src, regex);
+		Matcher matcher = getMatcher(src, pattern);
 		while(matcher.find()) {
 			try{	//转为数字，非数字不计入结果
 				list.add(
@@ -154,8 +235,18 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<Boolean> findAllBoolean(String src, String regex) {
+		return findAllBoolean(src, getPattern(regex));
+	}
+	
+	/**
+	 * 从字符串中查找所有正则匹配的boolean型数字列表
+	 * @param src
+	 * @param pattern
+	 * @return
+	 */
+	public static List<Boolean> findAllBoolean(String src, Pattern pattern) {
 		List<Boolean> list = new ArrayList<Boolean>();
-		Matcher matcher = getMatcher(src, regex);
+		Matcher matcher = getMatcher(src, pattern);
 		while(matcher.find()) {
 			try{	//转为数字，非数字不计入结果
 				list.add(
@@ -176,8 +267,19 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static String find(String src, String regex, String replacement) {
-		if(src != null && regex != null) {
-			Matcher matcher = getMatcher(src, regex);
+		return find(src, getPattern(regex));
+	}
+	
+	/**
+	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(借鉴某爬虫app的github开源代码，这是真心好用)
+	 * @param src
+	 * @param pattern
+	 * @param replacement
+	 * @return
+	 */
+	public static String find(String src, Pattern pattern, String replacement) {
+		if(src != null && pattern != null) {
+			Matcher matcher = getMatcher(src, pattern);
 
 			if (!matcher.find()) {	//没有匹配到则返回null
 
@@ -209,6 +311,23 @@ public class RegexUtils {
 	}
 	
 	/**
+	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回
+	 * 若获取值为null则返回默认值
+	 * @param src
+	 * @param pattern
+	 * @param replacement
+	 * @param defaultValue
+	 * @return
+	 */
+	public static String find(String src, Pattern pattern, String replacement, String defaultValue) {
+		String result = find(src, pattern, replacement);
+		if(result == null) {
+			return defaultValue;
+		}
+		return result;
+	}
+	
+	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(借鉴某爬虫app的github开源代码，这是真心好用)
 	 * @param src 源字符串
 	 * @param regex	匹配用的正则表达式
@@ -216,8 +335,19 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static Long findLong(String src, String regex, String replacement) {
-		if(src != null && regex != null) {
-			Matcher matcher = getMatcher(src, regex);
+		return findLong(src, getPattern(regex));
+	}
+	
+	/**
+	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(借鉴某爬虫app的github开源代码，这是真心好用)
+	 * @param src
+	 * @param pattern
+	 * @param replacement
+	 * @return
+	 */
+	public static Long findLong(String src, Pattern pattern, String replacement) {
+		if(src != null && pattern != null) {
+			Matcher matcher = getMatcher(src, pattern);
 
 			if (!matcher.find()) {	//没有匹配到则返回null
 
@@ -243,9 +373,20 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<String> findAll(String src, String regex, String replacement) {
+		return findAll(src, getPattern(regex));
+	}
+	
+	/**
+	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(列表)
+	 * @param src
+	 * @param pattern
+	 * @param replacement
+	 * @return
+	 */
+	public static List<String> findAll(String src, Pattern pattern, String replacement) {
 		List<String> result = new ArrayList<>();
-		if(src != null && regex != null) {
-			Matcher matcher = getMatcher(src, regex);
+		if(src != null && pattern != null) {
+			Matcher matcher = getMatcher(src, pattern);
 
 			while(matcher.find()) {
 				result.add(
@@ -266,9 +407,13 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<Long> findAllLong(String src, String regex, String replacement) {
+		return findAllLong(src, getPattern(regex));
+	}
+	
+	public static List<Long> findAllLong(String src, Pattern pattern, String replacement) {
 		List<Long> result = new ArrayList<>();
-		if(src != null && regex != null) {
-			Matcher matcher = getMatcher(src, regex);
+		if(src != null && pattern != null) {
+			Matcher matcher = getMatcher(src, pattern);
 
 			while(matcher.find()) {
 				try {
@@ -285,8 +430,11 @@ public class RegexUtils {
 	}
 	
 	/*--------------内部方法----------------*/
-	private static Matcher getMatcher(String src, String regex) {
-		Pattern pattern = Pattern.compile(regex);
+	private static Pattern getPattern(String regex) {
+		return Pattern.compile(regex);
+	}
+	
+	private static Matcher getMatcher(String src, Pattern pattern) {
 		return pattern.matcher(src);
 	}
 	

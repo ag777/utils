@@ -9,16 +9,21 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.RegexUtils;
 
 /**
- * Author: xsf,ag777
+ * Author: ag777
  * Time: created at 2016/4/25.
- * last modify time: 2017/08/01.
- * Email: xsf_uestc_ncl@163.com
+ * last modify time: 2017/09/08.
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = "UTF-8";
@@ -72,6 +77,77 @@ public class FileUtils {
          } catch (IOException ex) {
              throw new Exception("读取文件时错误!", ex);
          }
+    }
+    
+    /**
+     * 读取文件中的所有行(排除注释和空行)
+     * @param filePath 文件路径
+     * @return
+     * @throws Exception
+     */
+    public static List<String> readLinesWithoutAnnotation(String filePath, FileAnnotation[] annotations) throws Exception {
+    	List<String> resultList = new ArrayList<>(); 
+    	List<String> lineList = readLines(filePath);
+    	 if(annotations != null && annotations.length > 0) {
+    		FileAnnotation curAnnotation = null;
+    		
+    		Map<FileAnnotation, Pattern[]> cpMap = new HashMap<>();
+    		for (FileAnnotation annotation : annotations) {
+    			Pattern[] ps;
+    			if(annotation.isLineOnly()) {
+    				ps = new Pattern[2];
+    				ps[0] = annotation.pattern();
+    				ps[1] = annotation.startPattern();
+    			} else {
+    				ps = new Pattern[3];
+    				ps[0] = annotation.pattern();
+    				ps[1] = annotation.startPattern();
+    				ps[2] = annotation.endPattern();
+    			}
+				cpMap.put(annotation, ps);
+			}
+    		for (String line : lineList) {
+    			if(curAnnotation != null) {	//已经被标记了
+    				Matcher matcher = cpMap.get(curAnnotation)[2].matcher(line);
+    				if(matcher.find()) {	//如果该行存在对应的尾标注,则删除未标注前的部分
+    					line = matcher.replaceAll("");
+    					curAnnotation = null;
+    				} else {	//没有尾标注，则为无效行，直接删除
+    					line = null;
+    				}
+    			} else {	//未被标记
+    				Matcher m = null;
+    				for (FileAnnotation annotation : annotations) {	//轮询标识,找出最靠前的标注并记录
+    					Matcher matcher = cpMap.get(annotation)[1].matcher(line);
+    					if(matcher.find()) {
+    						int start = matcher.start();
+    						if(m == null || start < m.start()) {
+    							m = matcher;
+    							curAnnotation = annotation;
+    						}
+    					}
+    				}
+    				if(curAnnotation != null) {
+    					Matcher matcher = cpMap.get(curAnnotation)[0].matcher(line);		//是否被首尾标注都在该行
+						if(matcher.find()) {		//如果找到直接替换为空字符串
+							line = matcher.replaceAll("");
+							curAnnotation = null;
+						} else {	//只有首标注，说明尾标注在后面的行
+							line = m.replaceAll("");
+							if(curAnnotation.isLineOnly()) {	//如果注释为单行注释，则取消标记
+								curAnnotation = null;
+							}
+						}
+						
+    				}
+    			}
+    			
+    			if(line !=null && !line.trim().isEmpty()) {	//去除空行
+					resultList.add(line);
+				}
+			}
+    	 }
+    	 return resultList;
     }
 
     /**
@@ -388,5 +464,14 @@ public class FileUtils {
 			}
 		}
 		return true;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		List<String> lineList = readLinesWithoutAnnotation(
+				"e://config.properties",
+				new FileAnnotation[]{FileAnnotation.TYPE_XML_LINE, FileAnnotation.TYPE_XML_PARAGRAPH});
+		for (String line : lineList) {
+			System.out.println(line);
+		}
 	}
 }
