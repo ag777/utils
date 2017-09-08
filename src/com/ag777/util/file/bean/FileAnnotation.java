@@ -1,4 +1,4 @@
-package com.ag777.util.file;
+package com.ag777.util.file.bean;
 
 import java.util.regex.Pattern;
 
