@@ -14,13 +14,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import com.ag777.util.db.model.ColumnPojo;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.reflection.ReflectionHelper;
 
 /**
  * 数据库操作辅助类
  * @author ag777
- * Time: created at 2017/7/28. last modify at 2017/9/6.
+ * Time: created at 2017/7/28. last modify at 2017/9/13.
  */
 public class DbHelper {
 
@@ -573,24 +575,20 @@ public class DbHelper {
 	 * @param tableName
 	 * @return
 	 */
-	public List<Map<String, Object>> columnList(String tableName) {
-		List<Map<String, Object>> columns = new ArrayList<>();
+	public List<ColumnPojo> columnList(String tableName) {
+		List<ColumnPojo> columns = new ArrayList<>();
 		
 		try {
 			DatabaseMetaData dbmd = conn.getMetaData();
 			ResultSet columnSet = dbmd.getColumns(null, "%", tableName, "%");
 
 			while (columnSet.next()) {
-				Map<String, Object> column = new HashMap<>();
-				String columnName = columnSet.getString("COLUMN_NAME");
-			    String remarks = columnSet.getString("REMARKS");
-			    Integer sqlType = columnSet.getInt("DATA_TYPE");
-			    Long columnSize = columnSet.getLong("COLUMN_SIZE");
-			    
-			    column.put("COLUMN_NAME", columnName);
-			    column.put("REMARKS", remarks);
-			    column.put("DATA_TYPE", sqlType);
-			    column.put("COLUMN_SIZE", columnSize);
+				ColumnPojo column = new ColumnPojo();
+				
+			    column.setName(columnSet.getString("COLUMN_NAME"));
+			    column.setSqlType(columnSet.getInt("DATA_TYPE"));
+			    column.setSize(columnSet.getLong("COLUMN_SIZE"));
+			    column.setRemarks(columnSet.getString("REMARKS"));
 			     
 			    columns.add(column);
 			}

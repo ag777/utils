@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import com.ag777.util.file.base.BaseExcelHelper;
-import com.ag777.util.file.bean.ExcelValidateBean;
+import com.ag777.util.lang.model.ValidatePojo;
 
 /**
  * @author ag777
@@ -18,18 +18,18 @@ import com.ag777.util.file.bean.ExcelValidateBean;
 public abstract class ExcelValidateHelper extends BaseExcelHelper{
 	
 	private List<List<String>> titles;
-	private Map<String, ExcelValidateBean> validateMap;
+	private Map<String, ValidatePojo> validateMap;
 	
-	public ExcelValidateHelper(List<List<ExcelValidateBean>> validateList) {
+	public ExcelValidateHelper(List<List<ValidatePojo>> validateList) {
 		titles = new ArrayList<>();
-		validateMap = new LinkedHashMap<String, ExcelValidateBean>();
+		validateMap = new LinkedHashMap<String, ValidatePojo>();
 		
-		for (List<ExcelValidateBean> list2 : validateList) {
+		for (List<ValidatePojo> list2 : validateList) {
 			List<String> items = new ArrayList<String>();
-			for (ExcelValidateBean orgExcelValidateBean : list2) {
-				String title = orgExcelValidateBean.title();
+			for (ValidatePojo orgValidatePojo : list2) {
+				String title = orgValidatePojo.title();
 				items.add(title);
-				validateMap.put(title, orgExcelValidateBean);
+				validateMap.put(title, orgValidatePojo);
 			}
 			titles.add(items);
 		}
@@ -60,7 +60,7 @@ public abstract class ExcelValidateHelper extends BaseExcelHelper{
 	private String validateItem(String key,Map<String, String> map) {
 		String val = map.get(key);
 		
-		ExcelValidateBean v = validateMap.get(key);
+		ValidatePojo v = validateMap.get(key);
 		StringBuilder err;
 		
 		//初始化错误提示

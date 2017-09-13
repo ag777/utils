@@ -61,6 +61,23 @@ public class StringUtils {
 	}
 	
 	/**
+	 * 通过StringBuilder连接字符串
+	 * @param obj 	第一个值
+	 * @param objs 	后续的值
+	 * @return
+	 */
+	public String concat(Object obj, Object... objs) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(obj);
+		if(objs != null) {
+			for (Object item : objs) {
+				sb.append(item);
+			}
+		}
+		return sb.toString();
+	}
+	
+	/**
 	 * 利用StringBuilder替换起止位置的字符串
 	 * @param src
 	 * @param start

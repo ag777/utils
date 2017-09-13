@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.ag777.util.file.bean.FileAnnotation;
+import com.ag777.util.file.model.FileAnnotation;
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.RegexUtils;

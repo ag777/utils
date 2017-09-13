@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import com.ag777.util.db.model.VersionSql;
-import com.ag777.util.db.model.VersionSql.DdlListBean;
+import com.ag777.util.db.model.VersionSqlPojo;
+import com.ag777.util.db.model.VersionSqlPojo.DdlListBean;
 import com.ag777.util.lang.Console;
 
 /**
@@ -20,14 +20,14 @@ public abstract class UpdateDBHelper {
 		MODE_DEBUG = isDebugMode;
 	}
 	
-	private List<VersionSql> versionSqlList;	//版本号及对应sql列表
+	private List<VersionSqlPojo> VersionSqlPojoList;	//版本号及对应sql列表
 	
 	/**
 	 * 执行更新数据库操作
 	 * @throws SQLException
 	 */
-	private UpdateDBHelper(List<VersionSql> versionSqlList) throws SQLException{
-		this.versionSqlList = versionSqlList;
+	private UpdateDBHelper(List<VersionSqlPojo> VersionSqlPojoList) throws SQLException{
+		this.VersionSqlPojoList = VersionSqlPojoList;
 	}
 	
 	/**
@@ -38,8 +38,8 @@ public abstract class UpdateDBHelper {
 	 */
 	public void update(String versionCodeOld, Connection conn) throws SQLException {
 		
-		for (int i = 0; i < versionSqlList.size(); i++) {
-			VersionSql verionSql = versionSqlList.get(i);
+		for (int i = 0; i < VersionSqlPojoList.size(); i++) {
+			VersionSqlPojo verionSql = VersionSqlPojoList.get(i);
 			String versionCodeNew = verionSql.getCode();
 			if(isBefore(versionCodeOld, versionCodeNew)) {
 				Console.log(
