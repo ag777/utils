@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import com.ag777.util.Utils;
 import com.ag777.util.file.FileUtils;
-import com.ag777.util.http.bean.SSLSocketClient;
+import com.ag777.util.http.model.SSLSocketClient;
+
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.FormBody.Builder;
