@@ -4,7 +4,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Hours;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.joda.time.Minutes;
 import org.joda.time.Months;
 import org.joda.time.Seconds;
@@ -12,7 +11,6 @@ import org.joda.time.Weeks;
 import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -23,7 +21,7 @@ import java.util.Map;
 /**
  * Author: ag777
  * Time: created at 2016/7/7.
- * Last modify: 2017/4/26.
+ * Last modify: 2017/9/13.
  * MARK:
  * 巧妙的考勤统计:http://www.01happy.com/mysql-bit_count-bit_or/
  * SELECT year,month,BIT_COUNT(BIT_OR(1<<day)) AS days FROM t1
@@ -556,33 +554,124 @@ public class DateUtils {
 	}
 	
 	/**====================================日期比较===================================**/
+	/**
+	 * yyyy-MM-dd格式的日期是否小于
+	 * @param target
+	 * @param compare
+	 * @return
+	 */
+	public static boolean isDateBefore(String target, String compare) {
+		return toLocalDate(target).isBefore(toLocalDate(compare));
+	}
 	
-	//target 日期是否在 compare 日期之前
-	public static boolean isBefore(LocalDate target,LocalDate compare) {
+	/**
+	 * yyyy-MM-dd格式的日期是否大于
+	 * @param target
+	 * @param compare
+	 * @return
+	 */
+	public static boolean isDateAfter(String target, String compare) {
+		return toLocalDate(target).isAfter(toLocalDate(compare));
+	}
+	
+	/**
+	 * target 时间是否在 compare 时间之前
+	 * @param target
+	 * @param compare
+	 * @param template
+	 * @return
+	 */
+	public static boolean isBefore(String target, String compare, String template) {
+		DateTime dt1 = toDateTime(target, template);
+		DateTime dt2 = toDateTime(compare, template);
+		return isBefore(dt1, dt2);
+	}
+	
+	/**
+	 * target 时间是否不在 compare 时间之前(大等于)
+	 * @param target
+	 * @param compare
+	 * @param template
+	 * @return
+	 */
+	public static boolean isNotBefore(String target, String compare, String template) {
+		DateTime dt1 = toDateTime(target, template);
+		DateTime dt2 = toDateTime(compare, template);
+		return isNotBefore(dt1, dt2);
+	}
+	
+	/**
+	 * target 时间是否不在 compare 时间之后(小等于)
+	 * @param target
+	 * @param compare
+	 * @param template
+	 * @return
+	 */
+	public static boolean isNotAfter(String target, String compare, String template) {
+		DateTime dt1 = toDateTime(target, template);
+		DateTime dt2 = toDateTime(compare, template);
+		return isNotAfter(dt1, dt2);
+	}
+	
+	/**
+	 * target 时间是否在 compare 时间之后
+	 * @param target
+	 * @param compare
+	 * @param template
+	 * @return
+	 */
+	public static boolean isAfter(String target, String compare, String template) {
+		DateTime dt1 = toDateTime(target, template);
+		DateTime dt2 = toDateTime(compare, template);
+		return isAfter(dt1, dt2);
+	}
+	
+	/**
+	 * target 时间是否在 compare 时间之前
+	 * @param target
+	 * @param compare
+	 * @return
+	 */
+	public static boolean isBefore(DateTime target,DateTime compare) {
 		if(target.compareTo(compare) == -1) {	//1 大于 0 等于 -1 小于
 			return true;
 		}
 		return false;
 	}
 	
-	//target 日期是否在 compare 日期之后
-	public static boolean isAfter(LocalDate target,LocalDate compare) {
+	/**
+	 * target 时间是否在 compare 时间之后
+	 * @param target
+	 * @param compare
+	 * @return
+	 */
+	public static boolean isAfter(DateTime target,DateTime compare) {
 		if(target.compareTo(compare) == 1) {	//1 大于 0 等于 -1 小于
 			return true;
 		}
 		return false;
 	}
 	
-	//target 日期是否不在 compare 日期之前(大等于)
-	public static boolean isNotBefore(LocalDate target,LocalDate compare) {
+	/**
+	 * target 时间是否不在 compare 时间之前(大等于)
+	 * @param target
+	 * @param compare
+	 * @return
+	 */
+	public static boolean isNotBefore(DateTime target,DateTime compare) {
 		if(target.compareTo(compare) == -1) {	//1 大于 0 等于 -1 小于
 			return false;
 		}
 		return true;
 	}
 	
-	//target 日期是否不在 compare 日期之后(小等于)
-	public static boolean isNotAfter(LocalDate target,LocalDate compare) {
+	/**
+	 * target 时间是否不在 compare 时间之后(小等于)
+	 * @param target
+	 * @param compare
+	 * @return
+	 */
+	public static boolean isNotAfter(DateTime target,DateTime compare) {
 		if(target.compareTo(compare) == 1) {	//1 大于 0 等于 -1 小于
 			return false;
 		}

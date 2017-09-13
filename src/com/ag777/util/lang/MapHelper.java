@@ -101,6 +101,18 @@ public class MapHelper<K,V> {
 	}
 	
 	/*------工具方法-----*/
+	//--静态
+	
+	@SuppressWarnings("unchecked")
+	public static <K,V,T>T getValue(Map<K,V> map, K key) {
+		try {
+			return (T) map.get(key);
+		} catch(Exception ex) {
+			return null;
+		}
+	} 
+	
+	//--非静态
 	/**
 	 * 获取map
 	 * @return

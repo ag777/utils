@@ -5,6 +5,12 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * @author ag777
+ * @Description 字符串处理工具类
+ * Time: last modify at 2017/9/13.
+ * Mark:
+ */
 public class StringUtils {
 
 	/**
@@ -19,15 +25,39 @@ public class StringUtils {
 	}
 	
 	/**
-	 * 字符串是否为null或者长度为0或者都是空格
+	 * 字符串是否为null或者长度为0
 	 * @param src
 	 * @return
 	 */
 	public static boolean isNullOrEmpty(String src) {
-		if(src == null || src.isEmpty() || src.matches("^\\s*$")) {
+		if(src == null || src.length() == 0) {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * 判断字符串是否为null获取为空字符串(最多只含制表符 \t ('\u0009'),换行符 \n ('\u000A'),回车符 \r ('\u000D')，换页符 \f ('\u000C')以及半角/全角空格)
+	 * @param src
+	 * @return
+	 */
+	public static boolean isNullOrBlank(String src) {
+		if(src == null || src.matches("^[\\s　]*$")) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 如果字符串为null则返回空字符串
+	 * @param src
+	 * @return
+	 */
+	public static String emptyIfNull(String src) {
+		if(src == null) {
+			return "";
+		}
+		return src;
 	}
 	
 	/**

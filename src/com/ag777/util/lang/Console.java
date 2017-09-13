@@ -16,9 +16,10 @@ public class Console {
 
 	private static boolean devMode = true;
 	private static boolean showSourceMethod = false;
+	private static boolean formatMode = false;
 	
 	/**
-	 * getter/setter 控制是否打印日志
+	 * 控制是否打印日志, 默认为true
 	 * @param devMode
 	 */
 	public static void setDevMode(boolean devMode) {
@@ -28,10 +29,24 @@ public class Console {
 		return devMode;
 	}
 	
+	/**
+	 * 控制输出是否格式化,默认为false
+	 * @param formatMode
+	 */
+	public static void formatMode(boolean formatMode) {
+		Console.formatMode = formatMode;
+	}
+	public static boolean formatMode() {
+		return Console.formatMode;
+	}
+	
+	/**
+	 * 控制是否在输出时显示调用源方法,默认为false
+	 * @param showSourceMethod
+	 */
 	public static void showSourceMethod(boolean showSourceMethod) {
 		Console.showSourceMethod = showSourceMethod;
 	}
-	
 	public static boolean showSourceMethod() {
 		return showSourceMethod;
 	}
@@ -48,7 +63,7 @@ public class Console {
 			if(obj != null && obj instanceof String) {
 				msg += (String) obj;
 			} else {
-				msg += Utils.jsonUtils().toJson(obj);
+				msg += toJson(obj);
 			}
 			
 			System.out.println(msg);
@@ -66,7 +81,7 @@ public class Console {
 		String msg = getMethod();
 		if(isDevMode()) {
 			if(objs != null) {
-				msg += Utils.jsonUtils().toJson(Arrays.asList(objs));
+				msg += toJson(Arrays.asList(objs));
 			}
 		}
 		System.out.println(msg);
@@ -127,4 +142,16 @@ public class Console {
 		
 	}
 	
+	/**
+	 * 统一json转化
+	 * @param obj
+	 * @return
+	 */
+	private static String toJson(Object obj) {
+		String result = Utils.jsonUtils().toJson(Arrays.asList(obj));
+		if(result != null && formatMode) {	//需要被格式化
+			return Formatter.formatJson(result, "    ");
+		}
+		return result;
+	}
 }

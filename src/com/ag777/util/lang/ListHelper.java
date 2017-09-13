@@ -14,7 +14,7 @@ import java.util.Vector;
 /**
  * @author ag777
  * @Description 列表工具类(废弃ListUtils)
- * Time: created at 2017/6/15. last modify at 2017/8/28.
+ * Time: created at 2017/6/15. last modify at 2017/9/13.
  * Mark: 所有的复制方法都会根据原列表vector则会复制成vector，linkList复制成linklist,其余均复制成arrayList
  */
 public class ListHelper<T> {
@@ -116,6 +116,25 @@ public class ListHelper<T> {
 	}
 	
 	/*------工具方法-----*/
+	//--静态方法
+	public static <T>String toString(List<T> list, String separator) {
+		StringBuilder sb = null;
+		for (T item : list) {
+			if(sb == null) {
+				sb = new StringBuilder();
+			} else if(separator != null) {
+				sb.append(separator);
+			}
+			if(item != null) {
+				sb.append(item.toString());
+			} else {
+				sb.append("null");
+			}
+		}
+		return sb!=null?sb.toString():"";
+	}
+	
+	//--非静态方法
 	/**
 	 * 获取list
 	 * @return
@@ -294,19 +313,7 @@ public class ListHelper<T> {
 	 * @return
 	 */
 	public String toString(String separator) {
-		StringBuilder sb = new StringBuilder();
-		for (T item : list) {
-			sb.append(item.toString());
-			if(separator != null) {
-				sb.append(separator);
-			}
-		}
-		//开始去除最后一个分割符
-		int length = sb.length();
-		if(separator != null && length>0) {
-			sb.delete(length-separator.length(), length);
-		}
-		return sb.toString();
+		return toString(list, separator);
 	}
 	
 	/**

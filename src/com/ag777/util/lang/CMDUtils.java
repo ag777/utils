@@ -165,6 +165,18 @@ public class CMDUtils {
 	}
 	
 	/**
+	 * 执行shell命令获取所有返回行
+	 * @param cmd
+	 * @param isShell
+	 * @return
+	 * @throws Exception
+	 */
+	public static List<String> readShellLines(String cmd) throws Exception {
+		InputStream in = doShellForStream(cmd);
+		return IOUtils.readLines(in, DEFAULT_ENCODING);
+	}
+	
+	/**
 	 * 执行cmd获取结果
 	 * @param cmd				cmd命令
 	 * @param filePath			执行命令的路径
@@ -174,6 +186,18 @@ public class CMDUtils {
 	 */
 	public static String readText(String cmd, String filePath, String lineSparator) throws Exception {
 		InputStream in = doCmdForStream(cmd, filePath);
+		return IOUtils.readText(in, lineSparator, DEFAULT_ENCODING);
+	}
+	
+	/**
+	 * 执行shell获取结果
+	 * @param cmd
+	 * @param lineSparator
+	 * @return
+	 * @throws Exception
+	 */
+	public static String readShellText(String cmd, String lineSparator) throws Exception {
+		InputStream in = doShellForStream(cmd);
 		return IOUtils.readText(in, lineSparator, DEFAULT_ENCODING);
 	}
 	
@@ -260,6 +284,21 @@ public class CMDUtils {
 		} else {
 			pro = Runtime.getRuntime().exec(cmd, null, new File(filePath));// 执行删除默认路由命令
 		}
+		pre(pro);
+		return pro.getInputStream();
+	}
+	
+	/**
+	 * 通过shell执行cmd命令得到返回流
+	 * @param cmd
+	 * @param filePath
+	 * @return
+	 * @throws Exception
+	 */
+	private static InputStream doShellForStream(String cmd) throws Exception {
+		Process pro = null;
+		String[] cmdA = { "/bin/sh", "-c", cmd };
+		pro = Runtime.getRuntime().exec(cmdA);
 		pre(pro);
 		return pro.getInputStream();
 	}
