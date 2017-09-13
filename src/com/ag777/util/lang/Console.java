@@ -33,10 +33,10 @@ public class Console {
 	 * 控制输出是否格式化,默认为false
 	 * @param formatMode
 	 */
-	public static void formatMode(boolean formatMode) {
+	public static void setFormatMode(boolean formatMode) {
 		Console.formatMode = formatMode;
 	}
-	public static boolean formatMode() {
+	public static boolean isFormatMode() {
 		return Console.formatMode;
 	}
 	

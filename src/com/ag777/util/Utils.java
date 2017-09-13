@@ -71,6 +71,7 @@ public class Utils {
 			
 			pu.load(Utils.class.getResourceAsStream("/config/config.properties"));
 			Map<String, Object> infoMap = new HashMap<String, Object>();
+			infoMap.put("version", pu.get("versionName"));
 			infoMap.put("last_release_date", pu.get("last_release_date"));
 			return infoMap;
 		} catch (Exception e) {
