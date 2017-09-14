@@ -24,7 +24,7 @@ import com.ag777.util.lang.RegexUtils;
 /**
  * Author: ag777
  * Time: created at 2016/4/25.
- * last modify time: 2017/09/08.
+ * last modify time: 2017/09/14.
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = "UTF-8";
@@ -49,17 +49,17 @@ public class FileUtils {
      * @param filePath 文件路径
      * @param lineSparator 换行时插入的字符
      * @return
-     * @throws Exception
+     * @throws IOException
      */
-    public static String readText(String filePath, String lineSparator) throws Exception {
+    public static String readText(String filePath, String lineSparator) throws IOException {
 
         try {
         	FileInputStream fis = new FileInputStream(filePath);
             return IOUtils.readText(fis, lineSparator, FILE_READING_ENCODING);
         } catch (FileNotFoundException ex) {
-            throw new Exception("要读取的文件没有找到!", ex);
+            throw new IOException("要读取的文件没有找到!", ex);
         } catch (IOException ex) {
-            throw new Exception("读取文件时错误!", ex);
+            throw new IOException("读取文件时错误!", ex);
         }
     }
     
@@ -67,16 +67,16 @@ public class FileUtils {
      * 读取文件中的所有行
      * @param filePath 文件路径
      * @return
-     * @throws Exception
+     * @throws IOException
      */
-    public static List<String> readLines(String filePath) throws Exception {
+    public static List<String> readLines(String filePath) throws IOException {
     	 try {
          	FileInputStream fis = new FileInputStream(filePath);
              return IOUtils.readLines(fis, FILE_READING_ENCODING);
          } catch (FileNotFoundException ex) {
-             throw new Exception("要读取的文件没有找到!", ex);
+             throw new IOException("要读取的文件没有找到!", ex);
          } catch (IOException ex) {
-             throw new Exception("读取文件时错误!", ex);
+             throw new IOException("读取文件时错误!", ex);
          }
     }
     
@@ -84,9 +84,9 @@ public class FileUtils {
      * 读取文件中的所有行(排除注释和空行)
      * @param filePath 文件路径
      * @return
-     * @throws Exception
+     * @throws IOException
      */
-    public static List<String> readLinesWithoutAnnotation(String filePath, FileAnnotation[] annotations) throws Exception {
+    public static List<String> readLinesWithoutAnnotation(String filePath, FileAnnotation[] annotations) throws IOException {
     	List<String> resultList = new ArrayList<>(); 
     	List<String> lineList = readLines(filePath);
     	 if(annotations != null && annotations.length > 0) {
@@ -157,17 +157,17 @@ public class FileUtils {
      * @param regex 匹配用的正则表达式
      * @param replacement 替换式
      * @return
-     * @throws Exception
+     * @throws IOException
      */
-    public static String findText(String filePath,String regex, String replacement) throws Exception {
+    public static String findText(String filePath,String regex, String replacement) throws IOException {
     	
 		try {
             FileInputStream fis = new FileInputStream(filePath);
             return IOUtils.find(fis, regex, replacement, FILE_READING_ENCODING);	//关闭流的操作里面都做了
         } catch (FileNotFoundException ex) {
-            throw new Exception("要读取的文件没有找到!", ex);
+            throw new IOException("要读取的文件没有找到!", ex);
         } catch (IOException ex) {
-            throw new Exception("读取文件时错误!", ex);
+            throw new IOException("读取文件时错误!", ex);
         } 
     }
     
@@ -177,17 +177,17 @@ public class FileUtils {
      * @param regex
      * @param replacement
      * @return
-     * @throws Exception
+     * @throws IOException
      */
-    public static List<String> findAllText(String _sFileName,String regex, String replacement) throws Exception {
+    public static List<String> findAllText(String _sFileName,String regex, String replacement) throws IOException {
     	
 		try {
             FileInputStream fis = new FileInputStream(_sFileName);
             return IOUtils.findAll(fis, regex, replacement, FILE_READING_ENCODING);
         } catch (FileNotFoundException ex) {
-            throw new Exception("要读取的文件没有找到!", ex);
+            throw new IOException("要读取的文件没有找到!", ex);
         } catch (IOException ex) {
-            throw new Exception("读取文件时错误!", ex);
+            throw new IOException("读取文件时错误!", ex);
         } 
     }
     
@@ -198,9 +198,9 @@ public class FileUtils {
      * @param encoding
      * @param isOverride
      * @return
-     * @throws Exception
+     * @throws IOException
      */
-    public static File write(String path, String content, String encoding, boolean isOverride) throws Exception {
+    public static File write(String path, String content, String encoding, boolean isOverride) throws IOException {
         if (isEmpty(encoding)) {
             encoding = FILE_WRITING_ENCODING;
         }
@@ -214,9 +214,9 @@ public class FileUtils {
      * @param path
      * @param isOverride
      * @return
-     * @throws Exception
+     * @throws IOException
      */
-    public static File write(InputStream in, String path, boolean isOverride) throws Exception {
+    public static File write(InputStream in, String path, boolean isOverride) throws IOException {
         String sPath = extractFilePath(path);
         if (!pathExists(sPath)) {
             makeDir(sPath, true);
@@ -231,9 +231,9 @@ public class FileUtils {
             FileOutputStream out = new FileOutputStream(file);
             IOUtils.write(in, out, BUFFSIZE);
             return file;
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
-            throw new Exception("写文件错误", e);
+            throw new IOException("写文件错误", e);
         } 
     }
 
@@ -422,7 +422,7 @@ public class FileUtils {
 					new FileOutputStream(fout));
 			IOUtils.write(bis, bos, BUFFSIZE);
 			return true;
-		} catch(Exception ex) {
+		} catch(IOException ex) {
 			ex.printStackTrace();
 		} 
 		return false;
@@ -467,7 +467,7 @@ public class FileUtils {
 		return true;
 	}
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException {
 		List<String> lineList = readLinesWithoutAnnotation(
 				"e://config.properties",
 				new FileAnnotation[]{FileAnnotation.TYPE_XML_LINE, FileAnnotation.TYPE_XML_PARAGRAPH});

@@ -1,4 +1,4 @@
-package com.ag777.util.other;
+package com.ag777.util.lang.exception.model;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

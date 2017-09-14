@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @Description cmd命令执行辅助类(针对linux)
  * @author ag777
- * Time: last modify at 2017/6/16.
+ * Time: last modify at 2017/9/14.
  * Mark: 执行一个cmd命令会产生三个流（input/output/err），其中一个不处理就有可能产生程序挂起问题，永远不可能得到返回了
  */
 public class CMDUtils {
@@ -157,9 +157,9 @@ public class CMDUtils {
 	 * @param cmd
 	 * @param filePath
 	 * @return
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public static List<String> readLines(String cmd, String filePath) throws Exception {
+	public static List<String> readLines(String cmd, String filePath) throws IOException {
 		InputStream in = doCmdForStream(cmd, filePath);
 		return IOUtils.readLines(in, DEFAULT_ENCODING);
 	}
@@ -169,9 +169,9 @@ public class CMDUtils {
 	 * @param cmd
 	 * @param isShell
 	 * @return
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public static List<String> readShellLines(String cmd) throws Exception {
+	public static List<String> readShellLines(String cmd) throws IOException {
 		InputStream in = doShellForStream(cmd);
 		return IOUtils.readLines(in, DEFAULT_ENCODING);
 	}
@@ -184,7 +184,7 @@ public class CMDUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static String readText(String cmd, String filePath, String lineSparator) throws Exception {
+	public static String readText(String cmd, String filePath, String lineSparator) throws IOException {
 		InputStream in = doCmdForStream(cmd, filePath);
 		return IOUtils.readText(in, lineSparator, DEFAULT_ENCODING);
 	}
@@ -194,9 +194,10 @@ public class CMDUtils {
 	 * @param cmd
 	 * @param lineSparator
 	 * @return
-	 * @throws Exception
+	 * @throws IOException 
+	 * @throws IOException
 	 */
-	public static String readShellText(String cmd, String lineSparator) throws Exception {
+	public static String readShellText(String cmd, String lineSparator) throws IOException  {
 		InputStream in = doShellForStream(cmd);
 		return IOUtils.readText(in, lineSparator, DEFAULT_ENCODING);
 	}
@@ -209,9 +210,9 @@ public class CMDUtils {
 	 * @param regex
 	 * @param replacement 如$1-$2-$3
 	 * @return
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public static String find(String cmd, String filePath, String regex, String replacement) throws Exception {
+	public static String find(String cmd, String filePath, String regex, String replacement) throws IOException {
 		InputStream in = doCmdForStream(cmd, filePath);
 		return IOUtils.find(in, regex, replacement, DEFAULT_ENCODING);
 	}
@@ -224,9 +225,9 @@ public class CMDUtils {
 	 * @param regex
 	 * @param replacement
 	 * @return
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public static Long findLong(String cmd, String filePath, String regex, String replacement) throws Exception {
+	public static Long findLong(String cmd, String filePath, String regex, String replacement) throws IOException {
 		InputStream in = doCmdForStream(cmd, filePath);
 		return IOUtils.findLong(in, regex, replacement, DEFAULT_ENCODING);
 	}
@@ -239,9 +240,9 @@ public class CMDUtils {
 	 * @param regex
 	 * @param replacement 如$1-$2-$3
 	 * @return
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public static List<String> findAll(String cmd, String filePath, String regex, String replacement) throws Exception {
+	public static List<String> findAll(String cmd, String filePath, String regex, String replacement) throws IOException {
 		InputStream in = doCmdForStream(cmd, filePath);
 		return IOUtils.findAll(in, regex, replacement, DEFAULT_ENCODING);
 	}
@@ -275,9 +276,9 @@ public class CMDUtils {
 	 * @param cmd
 	 * @param filePath
 	 * @return
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	private static InputStream doCmdForStream(String cmd, String filePath) throws Exception {
+	private static InputStream doCmdForStream(String cmd, String filePath) throws IOException {
 		Process pro = null;
 		if(filePath == null) {
 			pro = Runtime.getRuntime().exec(cmd);
@@ -293,9 +294,9 @@ public class CMDUtils {
 	 * @param cmd
 	 * @param filePath
 	 * @return
-	 * @throws Exception
+	 * @throws IOException 
 	 */
-	private static InputStream doShellForStream(String cmd) throws Exception {
+	private static InputStream doShellForStream(String cmd) throws IOException {
 		Process pro = null;
 		String[] cmdA = { "/bin/sh", "-c", cmd };
 		pro = Runtime.getRuntime().exec(cmdA);
@@ -313,7 +314,7 @@ public class CMDUtils {
 				public void run() {
 					try {
 						IOUtils.readLines(pro.getErrorStream(), "gb2312");
-					} catch (Exception e) {
+					} catch (IOException e) {
 					}
 				}
 			};

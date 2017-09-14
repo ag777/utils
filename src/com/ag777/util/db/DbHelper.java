@@ -1,6 +1,8 @@
 package com.ag777.util.db;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -9,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,7 +25,7 @@ import com.ag777.util.lang.reflection.ReflectionHelper;
 /**
  * 数据库操作辅助类
  * @author ag777
- * Time: created at 2017/7/28. last modify at 2017/9/13.
+ * Time: created at 2017/7/28. last modify at 2017/9/14.
  */
 public class DbHelper {
 
@@ -625,5 +628,98 @@ public class DbHelper {
 				clazz.isAssignableFrom(Double.class) ||
 				clazz.isAssignableFrom(Boolean.class) ||
 				clazz.isAssignableFrom(Character.class);
+	}
+	
+	/**
+	 * 数据库类型转java类型
+	 * @param sqlType
+	 * @param size
+	 * @return
+	 */
+	public Class<?> convertType(int sqlType, int size) {
+		Class<?> clazz = null;
+		switch(sqlType) {
+			case Types.VARCHAR:	//12
+			case Types.CHAR:			//1
+			case Types.LONGVARCHAR:	//-1
+				clazz = String.class;
+				break;
+			case Types.BLOB:			//-4
+				clazz = Byte[].class;
+				break;
+			case Types.INTEGER:	//4
+			case Types.SMALLINT:	//5
+				clazz = Integer.class;
+				break;
+			case Types.TINYINT:		//-6
+				if(size == 1) {
+					clazz =Boolean.class;
+				} else {
+					clazz = Integer.class;
+				}
+				break;
+			case Types.BIT:				//-7
+				clazz = Boolean.class;
+				break;
+			case Types.BIGINT:		//-5
+				clazz = BigInteger.class;
+				break;
+			case Types.FLOAT:		//7
+				clazz = Float.class;
+				break;
+			case Types.DOUBLE:		//8
+				clazz = Double.class;
+				break;
+			case Types.DECIMAL:	//3
+				clazz = BigDecimal.class;
+				break;
+			case Types.DATE:			//91
+				clazz = java.util.Date.class;	//java.sql.Date
+				break;
+			case Types.TIME:			//92
+				clazz = java.sql.Time.class;
+				break;
+			case Types.TIMESTAMP:	//93
+				clazz = java.sql.Timestamp.class;
+				break;
+			default:
+				break;
+		}
+		return clazz;
+	}
+	
+	/**
+	 * java类型转数据库类型
+	 * @param clazz
+	 * @return
+	 */
+	public String toSqlDate(Class<?> clazz) {
+		if(Number.class.isAssignableFrom(clazz)) {
+			if(Float.class == clazz) {
+				return "float";
+			} else if(Double.class == clazz) {
+				return "double";
+			} else if(BigInteger.class == clazz) {
+				return "bigint";
+			} else if(BigDecimal.class == clazz) {
+				return "decimal";
+			} else  {
+				return "int";
+			}
+		} else if(Boolean.class == clazz) {
+			return "boolean";
+		} else if(java.sql.Date.class == clazz || java.util.Date.class == clazz) {
+			return "date";
+		} else if(java.sql.Timestamp.class == clazz) {
+			return "timestamp";
+		} else if(java.sql.Time.class == clazz) {
+			return "time";
+		} else if(Byte[].class == clazz) {
+			return "blob";
+		}  else {
+			return "varchar";
+		}
+		
+		
 	}
 }

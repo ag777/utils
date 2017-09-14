@@ -34,7 +34,7 @@ public class IOUtils {
 				}
 				closeable.close();
 			}
-		} catch(Exception ex) {
+		} catch(IOException ex) {
 		}
 		
 	}
@@ -56,9 +56,9 @@ public class IOUtils {
 	 * @param lineSparator
 	 * @param encoding
 	 * @return
-	 * @throws Exception 
+	 * @throws IOException 
 	 */
-	public static String readText(InputStream in, String lineSparator, String encoding) throws Exception {
+	public static String readText(InputStream in, String lineSparator, String encoding) throws IOException {
 		
 		try{
 			StringBuilder sb = null;
@@ -74,7 +74,7 @@ public class IOUtils {
 				
 			}
 			return sb.toString();
-		} catch(Exception ex) {
+		} catch(IOException ex) {
 			throw ex;
 		} finally {
 			close(in);
@@ -86,9 +86,9 @@ public class IOUtils {
 	 * @param in
 	 * @param encoding
 	 * @return
-	 * @throws Exception 
+	 * @throws IOException 
 	 */
-	public static List<String> readLines(InputStream in, String encoding) throws Exception {
+	public static List<String> readLines(InputStream in, String encoding) throws IOException {
 		
 		try{
 			List<String> lines = new ArrayList<>();
@@ -98,7 +98,7 @@ public class IOUtils {
 				lines.add(s);
 			}
 			return lines;
-		} catch(Exception ex) {
+		} catch(IOException ex) {
 			throw ex;
 		} finally {
 			close(in);
@@ -112,9 +112,9 @@ public class IOUtils {
 	 * @param replacement
 	 * @param encoding
 	 * @return
-	 * @throws Exception 
+	 * @throws IOException 
 	 */
-	public static List<String> findAll(InputStream in, String regex, String replacement, String encoding) throws Exception {
+	public static List<String> findAll(InputStream in, String regex, String replacement, String encoding) throws IOException {
 		return findAll(in, Pattern.compile(regex), replacement, encoding);
 	}
 	
@@ -125,9 +125,9 @@ public class IOUtils {
 	 * @param replacement
 	 * @param encoding
 	 * @return
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public static List<String> findAll(InputStream in, Pattern pattern, String replacement, String encoding) throws Exception {
+	public static List<String> findAll(InputStream in, Pattern pattern, String replacement, String encoding) throws IOException {
 		try{
 			List<String> result = new ArrayList<>();
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, encoding));
@@ -136,7 +136,7 @@ public class IOUtils {
 				result.addAll(RegexUtils.findAll(s, pattern, replacement));
 			}
 			return result;
-		} catch(Exception ex) {
+		} catch(IOException ex) {
 			throw ex;
 		} finally {
 			close(in);
@@ -150,9 +150,9 @@ public class IOUtils {
 	 * @param replacement
 	 * @param encoding
 	 * @return
-	 * @throws Exception 
+	 * @throws IOException 
 	 */
-	public static List<Long> findAllLong(InputStream in, String regex, String replacement, String encoding) throws Exception {
+	public static List<Long> findAllLong(InputStream in, String regex, String replacement, String encoding) throws IOException {
 		return findAllLong(in, Pattern.compile(regex), replacement, encoding);
 	}
 	
@@ -163,9 +163,9 @@ public class IOUtils {
 	 * @param replacement
 	 * @param encoding
 	 * @return
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public static List<Long> findAllLong(InputStream in, Pattern pattern, String replacement, String encoding) throws Exception {
+	public static List<Long> findAllLong(InputStream in, Pattern pattern, String replacement, String encoding) throws IOException {
 		try{
 			List<Long> result = new ArrayList<>();
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, encoding));
@@ -174,7 +174,7 @@ public class IOUtils {
 				result.addAll(RegexUtils.findAllLong(s, pattern, replacement));
 			}
 			return result;
-		} catch(Exception ex) {
+		} catch(IOException ex) {
 			throw ex;
 		} finally {
 			close(in);
@@ -188,9 +188,9 @@ public class IOUtils {
 	 * @param replacement
 	 * @param encoding
 	 * @return
-	 * @throws Exception 
+	 * @throws IOException 
 	 */
-	public static String find(InputStream in, String regex, String replacement, String encoding) throws Exception {	
+	public static String find(InputStream in, String regex, String replacement, String encoding) throws IOException {	
 		return find(in, Pattern.compile(regex), replacement, encoding);
 	}
 	
@@ -201,9 +201,9 @@ public class IOUtils {
 	 * @param replacement
 	 * @param encoding
 	 * @return
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public static String find(InputStream in, Pattern pattern, String replacement, String encoding) throws Exception {
+	public static String find(InputStream in, Pattern pattern, String replacement, String encoding) throws IOException {
 		try{
 			String result = null;
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, encoding));
@@ -214,7 +214,7 @@ public class IOUtils {
 					return result;
 				}
 			}
-		} catch(Exception ex) {
+		} catch(IOException ex) {
 			throw ex;
 		} finally {
 			close(in);
@@ -229,9 +229,9 @@ public class IOUtils {
 	 * @param replacement
 	 * @param encoding
 	 * @return
-	 * @throws Exception 
+	 * @throws IOException 
 	 */
-	public static Long findLong(InputStream in, String regex, String replacement, String encoding) throws Exception {
+	public static Long findLong(InputStream in, String regex, String replacement, String encoding) throws IOException {
 		return findLong(in, Pattern.compile(regex), replacement, encoding);
 	}
 	
@@ -242,9 +242,9 @@ public class IOUtils {
 	 * @param replacement
 	 * @param encoding
 	 * @return
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public static Long findLong(InputStream in, Pattern pattern, String replacement, String encoding) throws Exception {
+	public static Long findLong(InputStream in, Pattern pattern, String replacement, String encoding) throws IOException {
 		try{
 			Long result = null;
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, encoding));
@@ -255,7 +255,7 @@ public class IOUtils {
 					return result;
 				}
 			}
-		} catch(Exception ex) {
+		} catch(IOException ex) {
 			throw ex;
 		} finally {
 			close(in);
@@ -273,14 +273,14 @@ public class IOUtils {
 	 */
 	public static void write(InputStream in, OutputStream out, int buffSize) throws IOException {
 		try { 
-		int byteCount = 0;
-         byte[] bytes = new byte[buffSize];
+			int byteCount = 0;
+			byte[] bytes = new byte[buffSize];
 
-         while ((byteCount = in.read(bytes)) != -1) {
-             out.write(bytes, 0, byteCount);
-         }
+			while ((byteCount = in.read(bytes)) != -1) {
+				out.write(bytes, 0, byteCount);
+			}
          out.flush();
-		} catch(Exception ex) {
+		} catch(IOException ex) {
 			throw ex;
 		} finally {
 			close(in,out);

@@ -29,7 +29,7 @@ public class StringUtils {
 	 * @param src
 	 * @return
 	 */
-	public static boolean isNullOrEmpty(String src) {
+	public static boolean isEmpty(String src) {
 		if(src == null || src.length() == 0) {
 			return true;
 		}
@@ -41,7 +41,7 @@ public class StringUtils {
 	 * @param src
 	 * @return
 	 */
-	public static boolean isNullOrBlank(String src) {
+	public static boolean isBlank(String src) {
 		if(src == null || src.matches("^[\\s　]*$")) {
 			return true;
 		}

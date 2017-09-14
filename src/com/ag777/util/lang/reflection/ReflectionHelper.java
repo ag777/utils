@@ -17,19 +17,19 @@ import com.ag777.util.lang.ListHelper;
 /**
  * @Description 反射工具类
  * @author ag777
- * Time: created at 2017/6/7. last modify at 2017/9/6.
+ * Time: created at 2017/6/7. last modify at 2017/9/14.
  * Mark: 
  */
 public class ReflectionHelper<T> {
 
 	private Class<T> mClazz;
-	private List<Field> fieldList;
-	private List<Method> methodList;
+	private Field[] fields;
+	private Method[] methods;
 	
 	public ReflectionHelper(Class<T> clazz) {
 		this.mClazz = clazz;
-		initFieldList();
-		initMethodList();
+		initFields();
+		initMethods();
 	}
 	
 	public static <T>ReflectionHelper<T> get(Class<T> clazz) {
@@ -38,6 +38,38 @@ public class ReflectionHelper<T> {
 	
 	/*=============外部调用=================*/
 	//--静态方法
+	/**
+	 * 通过注释获取变量列表
+	 * @param annotationClass
+	 * @return
+	 */
+	public static List<Field> getFieldListByAnnotation(Class<?> clazz,Class<? extends Annotation> annotationClass) {
+		List<Field> result = new ArrayList<>();
+		Field[] fields = clazz.getDeclaredFields();
+		for (Field field : fields) {
+			if(field.isAnnotationPresent(annotationClass)) {
+				result.add(field);
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * 通过注释获取方法列表
+	 * @param annotationClass
+	 * @return
+	 */
+	public static List<Method> getMethodListByAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+		List<Method> result = new ArrayList<>();
+		Method[] methods = clazz.getDeclaredMethods();
+		for (Method method : methods) {
+			if(method.isAnnotationPresent(annotationClass)) {
+				result.add(method);
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * 实例化class对象,支持内部类
 	 * @return
@@ -137,9 +169,9 @@ public class ReflectionHelper<T> {
 	 * 获取所有成员变量名
 	 * @return
 	 */
-	public List<String> getFieldNames() {
+	public List<String> getFieldNameList() {
 		List<String> fieldNameList = new ArrayList<>();
-		for (Field field : fieldList) {
+		for (Field field : fields) {
 			fieldNameList.add(field.getName());
 		}
 		return fieldNameList;
@@ -152,7 +184,7 @@ public class ReflectionHelper<T> {
 	 */
 	public Map<String, Object> getFieldMap(T obj) {
 		Map<String, Object> fieldMap = new HashMap<>();
-		for (Field field : fieldList) {
+		for (Field field : fields) {
 			String name = field.getName();
 			try {
 				Object value = field.get(obj);
@@ -174,7 +206,7 @@ public class ReflectionHelper<T> {
 	 */
 	public <V>Map<String, V> getFieldMap(T obj, Class<V> targetClazz) {
 		Map<String, V> fieldMap = new HashMap<>();
-		for (Field field : fieldList) {
+		for (Field field : fields) {
 			Class<?> c = field.getType();
 			//判断c是否为targetClazz或者其子类
 			if(targetClazz == null || !(targetClazz.equals(c) || targetClazz.isAssignableFrom(c)) ) {
@@ -194,6 +226,21 @@ public class ReflectionHelper<T> {
 		return fieldMap;
 	}
 	
+	/**
+	 * 通过注释获取变量列表
+	 * @param annotationClass
+	 * @return
+	 */
+	public List<Field> getFieldListByAnnotation(Class<? extends Annotation> annotationClass) {
+		List<Field> result = new ArrayList<>();
+		for (Field field : fields) {
+			if(field.isAnnotationPresent(annotationClass)) {
+				result.add(field);
+			}
+		}
+		return result;
+	}
+	
 	//--方法相关
 	/**
 	 * 获取所有方法名
@@ -201,7 +248,7 @@ public class ReflectionHelper<T> {
 	 */
 	public List<String> getMethodNameList() {
 		List<String> methodNameList = new ArrayList<>();
-		for (Method method : methodList) {
+		for (Method method : methods) {
 			String name = method.getName();
 			methodNameList.add(name);
 		}
@@ -250,12 +297,27 @@ public class ReflectionHelper<T> {
 	}
 	
 	/**
+	 * 通过注释获取方法列表
+	 * @param annotationClass
+	 * @return
+	 */
+	public List<Method> getMethodListByAnnotation(Class<? extends Annotation> annotationClass) {
+		List<Method> result = new ArrayList<>();
+		for (Method method : methods) {
+			if(method.isAnnotationPresent(annotationClass)) {
+				result.add(method);
+			}
+		}
+		return result;
+	}
+	
+	/**
 	 * 获取所有方法名及对应的基本信息
 	 * @return {"methodName":方法名,"parameterTypes":参数类型列表, "returnType":返回类型,"isStatic":是否为静态方法}
 	 */
 	public Map<String, Object> getMethodMap() {
 		Map<String, Object> result = new HashMap<>();
-		for (Method method : methodList) {
+		for (Method method : methods) {
 				String methodName = method.getName();							//方法名
 				Class<?>[] parameterTypes = method.getParameterTypes();	//参数类型列表
 				Class<?> returnType = method.getReturnType();					//返回类型
@@ -275,7 +337,7 @@ public class ReflectionHelper<T> {
 	 */
 	public Map<String, Map<List<Class<?>>, Method>> getMethodTree() {
 		Map<String, Map<List<Class<?>>, Method>> root = new HashMap<>();
-		for (Method method : methodList) {
+		for (Method method : methods) {
 			String name =method.getName();											//方法名
 			List<Class<?>> parameterTypes = ListHelper.addAllItem(method.getParameterTypes()).getList();	//参数类型列表
 			if(!root.containsKey(name)) {
@@ -294,7 +356,7 @@ public class ReflectionHelper<T> {
 	 */
 	public List<Method> getMethodList(Filter filter) {
 		List<Method> result = new ArrayList<>();
-		for (Method method : methodList) {
+		for (Method method : methods) {
 			String methodName = method.getName();
 			Class<?>[] parameterTypes = method.getParameterTypes();
 			Class<?> returnType = method.getReturnType();
@@ -313,7 +375,7 @@ public class ReflectionHelper<T> {
 	 */
 	public List<Field> findByAnnotation(Class<? extends Annotation> annotationClass) {
 		List<Field> result = new ArrayList<>();
-		for (Field field : fieldList) {
+		for (Field field : fields) {
 			if(field.isAnnotationPresent(annotationClass)) {
 				result.add(field);
 			}
@@ -392,21 +454,19 @@ public class ReflectionHelper<T> {
 	/**
 	 * 初始化变量列表
 	 */
-	private void initFieldList() {
-		fieldList = new ArrayList<>();
-		Field[] fields = mClazz.getDeclaredFields();
+	private void initFields() {
+		fields = mClazz.getDeclaredFields();
 		for (Field field : fields) {
 	        field.setAccessible(true);	//这步是为了能获取到private修饰的变量值
-	        fieldList.add(field);
 		}
 	}
 
 	/**
 	 * 初始化方法列表
 	 */
-	private void initMethodList() {
-		methodList = ListHelper.addAllItem(mClazz.getDeclaredMethods()).getList();
-		for (Method method : methodList) {
+	private void initMethods() {
+		methods= mClazz.getDeclaredMethods();
+		for (Method method : methods) {
 			method.setAccessible(true);
 		}
 	}
