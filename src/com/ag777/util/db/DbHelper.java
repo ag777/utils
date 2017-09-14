@@ -60,6 +60,7 @@ public class DbHelper {
 
     }
 	
+	//--静态方法
 	/**
 	 * 通过ip端口号和数据库名称获取用于连接数据库的url
 	 * @param ip
@@ -78,6 +79,160 @@ public class DbHelper {
 						.append(URL_TAIL).toString();
 	}
 	
+	/**
+	 * 数据库类型转java类型(不全，只列出常用的，不在范围内返回null)
+	 * @param sqlType
+	 * @param size
+	 * @return
+	 */
+	public static Class<?> toPojoType(int sqlType, int size) {
+		Class<?> clazz = null;
+		switch(sqlType) {
+			case Types.VARCHAR:	//12
+			case Types.CHAR:			//1
+			case Types.LONGVARCHAR:	//-1
+				clazz = String.class;
+				break;
+			case Types.BLOB:			//-4
+				clazz = Byte[].class;
+				break;
+			case Types.INTEGER:	//4
+			case Types.SMALLINT:	//5
+				clazz = Integer.class;
+				break;
+			case Types.TINYINT:		//-6
+				if(size == 1) {
+					clazz =Boolean.class;
+				} else {
+					clazz = Integer.class;
+				}
+				break;
+			case Types.BIT:				//-7
+				clazz = Boolean.class;
+				break;
+			case Types.BIGINT:		//-5
+				clazz = BigInteger.class;
+				break;
+			case Types.FLOAT:		//7
+				clazz = Float.class;
+				break;
+			case Types.DOUBLE:		//8
+				clazz = Double.class;
+				break;
+			case Types.DECIMAL:	//3
+				clazz = BigDecimal.class;
+				break;
+			case Types.DATE:			//91
+				clazz = java.util.Date.class;	//java.sql.Date
+				break;
+			case Types.TIME:			//92
+				clazz = java.sql.Time.class;
+				break;
+			case Types.TIMESTAMP:	//93
+				clazz = java.sql.Timestamp.class;
+				break;
+			default:
+				break;
+		}
+		return clazz;
+	}
+	
+	/**
+	 * int型的type对应mysql数据库的类型名称(不全，只列出常用的，不在范围内返回null)
+	 * @param sqlType
+	 * @param size
+	 * @return
+	 */
+	public static String toString(int sqlType) {
+		switch(sqlType) {
+			case Types.TINYINT:
+				return "tinyint";
+			case Types.SMALLINT:
+				return "smallint";
+			case Types.INTEGER:
+				return "int";
+			case Types.BIGINT:
+				return "bigint";
+			case Types.BIT:
+				return "bit";
+			case Types.REAL:
+				return "real";
+			case Types.DOUBLE:
+				return "double";
+			case Types.FLOAT:
+				return "float";
+			case Types.DECIMAL:
+				return "decimal";
+			case Types.NUMERIC:
+				return "numeric";
+			case Types.CHAR:
+				return "char";
+			case Types.VARCHAR:
+				return "varchar";
+			case Types.DATE:
+				return "date";
+			case Types.TIME:
+				return "time";
+			case Types.TIMESTAMP:
+				return "timestamp";
+			case Types.BLOB:
+				return "blob";
+			case Types.BINARY:
+				return "binary";
+			case Types.VARBINARY:
+				return "varbinary";
+			default:
+				return null;
+		}
+	}
+	
+	/**
+	 * java类型转数据库类型(不全，只列出常用的，不在范围内返回varchar)
+	 * @param clazz
+	 * @return
+	 */
+	public static Integer toSqlType(Class<?> clazz) {
+		if(Number.class.isAssignableFrom(clazz)) {
+			if(Float.class == clazz) {
+				return Types.FLOAT;
+			} else if(Double.class == clazz) {
+				return Types.DOUBLE;
+			} else if(BigInteger.class == clazz) {
+				return Types.BIGINT;
+			} else if(BigDecimal.class == clazz) {
+				return Types.DECIMAL;
+			} else  {
+				return Types.INTEGER;
+			}
+		} else if(Boolean.class == clazz) {
+			return Types.BOOLEAN;
+		} else if(java.sql.Date.class == clazz || java.util.Date.class == clazz) {
+			return Types.DATE;
+		} else if(java.sql.Timestamp.class == clazz) {
+			return Types.TIMESTAMP;
+		} else if(java.sql.Time.class == clazz) {
+			return Types.TIME;
+		} else if(Byte[].class == clazz) {
+			return Types.BLOB;
+		}  else {
+			return Types.VARCHAR;
+		}
+	}
+	
+	/**
+	 * 将java类型转为数据库字段类型，返回对应的字符串
+	 * @param clazz
+	 * @return
+	 */
+	public String toSqlTypeStr(Class<?> clazz) {
+		Integer sqlType = toSqlType(clazz);
+		if(sqlType != null) {
+			return toString(sqlType);
+		}
+		return null;
+	}
+	
+	//--非静态方法
 	/**
 	 * 获取连接
 	 * @return
@@ -628,98 +783,5 @@ public class DbHelper {
 				clazz.isAssignableFrom(Double.class) ||
 				clazz.isAssignableFrom(Boolean.class) ||
 				clazz.isAssignableFrom(Character.class);
-	}
-	
-	/**
-	 * 数据库类型转java类型
-	 * @param sqlType
-	 * @param size
-	 * @return
-	 */
-	public Class<?> convertType(int sqlType, int size) {
-		Class<?> clazz = null;
-		switch(sqlType) {
-			case Types.VARCHAR:	//12
-			case Types.CHAR:			//1
-			case Types.LONGVARCHAR:	//-1
-				clazz = String.class;
-				break;
-			case Types.BLOB:			//-4
-				clazz = Byte[].class;
-				break;
-			case Types.INTEGER:	//4
-			case Types.SMALLINT:	//5
-				clazz = Integer.class;
-				break;
-			case Types.TINYINT:		//-6
-				if(size == 1) {
-					clazz =Boolean.class;
-				} else {
-					clazz = Integer.class;
-				}
-				break;
-			case Types.BIT:				//-7
-				clazz = Boolean.class;
-				break;
-			case Types.BIGINT:		//-5
-				clazz = BigInteger.class;
-				break;
-			case Types.FLOAT:		//7
-				clazz = Float.class;
-				break;
-			case Types.DOUBLE:		//8
-				clazz = Double.class;
-				break;
-			case Types.DECIMAL:	//3
-				clazz = BigDecimal.class;
-				break;
-			case Types.DATE:			//91
-				clazz = java.util.Date.class;	//java.sql.Date
-				break;
-			case Types.TIME:			//92
-				clazz = java.sql.Time.class;
-				break;
-			case Types.TIMESTAMP:	//93
-				clazz = java.sql.Timestamp.class;
-				break;
-			default:
-				break;
-		}
-		return clazz;
-	}
-	
-	/**
-	 * java类型转数据库类型
-	 * @param clazz
-	 * @return
-	 */
-	public String toSqlDate(Class<?> clazz) {
-		if(Number.class.isAssignableFrom(clazz)) {
-			if(Float.class == clazz) {
-				return "float";
-			} else if(Double.class == clazz) {
-				return "double";
-			} else if(BigInteger.class == clazz) {
-				return "bigint";
-			} else if(BigDecimal.class == clazz) {
-				return "decimal";
-			} else  {
-				return "int";
-			}
-		} else if(Boolean.class == clazz) {
-			return "boolean";
-		} else if(java.sql.Date.class == clazz || java.util.Date.class == clazz) {
-			return "date";
-		} else if(java.sql.Timestamp.class == clazz) {
-			return "timestamp";
-		} else if(java.sql.Time.class == clazz) {
-			return "time";
-		} else if(Byte[].class == clazz) {
-			return "blob";
-		}  else {
-			return "varchar";
-		}
-		
-		
 	}
 }
