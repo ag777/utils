@@ -25,7 +25,7 @@ import com.ag777.util.lang.reflection.ReflectionHelper;
 /**
  * 数据库操作辅助类
  * @author ag777
- * Time: created at 2017/7/28. last modify at 2017/9/14.
+ * Time: created at 2017/7/28. last modify at 2017/9/15.
  */
 public class DbHelper {
 
@@ -91,6 +91,7 @@ public class DbHelper {
 			case Types.VARCHAR:	//12
 			case Types.CHAR:			//1
 			case Types.LONGVARCHAR:	//-1
+			case Types.NVARCHAR:	//-9
 				clazz = String.class;
 				break;
 			case Types.BLOB:			//-4
@@ -187,15 +188,34 @@ public class DbHelper {
 	}
 	
 	/**
+	 * 判断数据库类型是否为字符串类型
+	 * @param sqlType
+	 * @return
+	 */
+	public static boolean isSqlTypeVarchar(int sqlType) {
+		switch(sqlType) {
+			case Types.CHAR:
+			case Types.VARCHAR:
+			case Types.VARBINARY:
+			case Types.LONGNVARCHAR:
+			case Types.LONGVARCHAR:
+			case Types.NVARCHAR:
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	/**
 	 * java类型转数据库类型(不全，只列出常用的，不在范围内返回varchar)
 	 * @param clazz
 	 * @return
 	 */
 	public static Integer toSqlType(Class<?> clazz) {
-		if(Number.class.isAssignableFrom(clazz)) {
-			if(Float.class == clazz) {
+		if(ReflectionHelper.isNumberType(clazz)) {
+			if(Float.class == clazz || float.class == clazz) {
 				return Types.FLOAT;
-			} else if(Double.class == clazz) {
+			} else if(Double.class == clazz || double.class == clazz) {
 				return Types.DOUBLE;
 			} else if(BigInteger.class == clazz) {
 				return Types.BIGINT;
@@ -204,7 +224,7 @@ public class DbHelper {
 			} else  {
 				return Types.INTEGER;
 			}
-		} else if(Boolean.class == clazz) {
+		} else if(Boolean.class == clazz || boolean.class == clazz) {
 			return Types.BOOLEAN;
 		} else if(java.sql.Date.class == clazz || java.util.Date.class == clazz) {
 			return Types.DATE;
@@ -214,7 +234,7 @@ public class DbHelper {
 			return Types.TIME;
 		} else if(Byte[].class == clazz) {
 			return Types.BLOB;
-		}  else {
+		}  else {		//char,void
 			return Types.VARCHAR;
 		}
 	}
@@ -326,6 +346,7 @@ public class DbHelper {
 	 * @param params
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public <T>List<T> queryObjectList(String sql, Object[] params, Class<T> clazz) {
 		
 		try {
@@ -384,6 +405,7 @@ public class DbHelper {
 	 * @param clazz
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public <T>T getObject(String sql, Object[] params, Class<T> clazz) {
 		try{
 			ResultSet rs =getResultSet(sql, params);

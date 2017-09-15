@@ -3,6 +3,7 @@ package com.ag777.util.lang.thread;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Vector;
 import java.util.concurrent.Callable;
 
 /**
@@ -17,7 +18,7 @@ public class ThreadHelper<T> implements TaskHelperInterf<T>{
 	
 	public ThreadHelper(){	
 		threadList = new ArrayList<Thread>();
-		result = new ArrayList<T>();
+		result = new Vector<T>();
 	}
 	
 	/*==============添加单个任务==============*/

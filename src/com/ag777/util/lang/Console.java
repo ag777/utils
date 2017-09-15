@@ -9,7 +9,7 @@ import com.ag777.util.lang.exception.model.ExceptionHelper;
 /**
  * @Description 控制台输出辅助类
  * @author ag777
- * Time: created at 2017/6/6. last modify at 2017/8/1.
+ * Time: created at 2017/6/6. last modify at 2017/9/15.
  * Mark: 
  */
 public class Console {
@@ -148,7 +148,7 @@ public class Console {
 	 * @return
 	 */
 	private static String toJson(Object obj) {
-		String result = Utils.jsonUtils().toJson(Arrays.asList(obj));
+		String result = Utils.jsonUtils().toJson(obj);
 		if(result != null && formatMode) {	//需要被格式化
 			return Formatter.formatJson(result, "    ");
 		}

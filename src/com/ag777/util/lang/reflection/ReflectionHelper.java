@@ -17,7 +17,7 @@ import com.ag777.util.lang.ListHelper;
 /**
  * @Description 反射工具类
  * @author ag777
- * Time: created at 2017/6/7. last modify at 2017/9/14.
+ * Time: created at 2017/6/7. last modify at 2017/9/15.
  * Mark: 
  */
 public class ReflectionHelper<T> {
@@ -38,6 +38,22 @@ public class ReflectionHelper<T> {
 	
 	/*=============外部调用=================*/
 	//--静态方法
+	/**
+	 * 判断一个类是否是数值类型,不能直接用Number.class.isAssignableFrom(clazz)判断
+	 * @param targetClazz
+	 * @return
+	 */
+	public static boolean isNumberType(Class<?> clazz) {
+	    // 判断包装类
+	    if (Number.class.isAssignableFrom(clazz)) {
+	        return true;
+	    }
+	    // 判断原始类,过滤掉特殊的基本类型
+	    if (clazz == boolean.class || clazz == char.class || clazz == void.class) {
+	        return false;
+	    }
+	    return clazz.isPrimitive();
+	}
 	/**
 	 * 通过注释获取变量列表
 	 * @param annotationClass

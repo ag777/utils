@@ -2,10 +2,12 @@ package com.ag777.util.db.model;
 
 public class ColumnPojo {
 
-	private String name;
-	private Integer sqlType;
-	private Long size;
-	private String remarks;
+	private String name;				//字段名
+	private Integer sqlType;		//sql类型
+	private Long size;					//字段长度
+	private String remarks;			//注释说明
+	private boolean isNotNull;	//是否不能为空
+	private boolean isPK;			//是否是主键
 	
 	public String getName() {
 		return name;
@@ -30,5 +32,17 @@ public class ColumnPojo {
 	}
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+	public boolean isNotNull() {
+		return isNotNull;
+	}
+	public void setNotNull(boolean isNotNull) {
+		this.isNotNull = isNotNull;
+	}
+	public boolean isPK() {
+		return isPK;
+	}
+	public void setPK(boolean isPK) {
+		this.isPK = isPK;
 	}
 }
