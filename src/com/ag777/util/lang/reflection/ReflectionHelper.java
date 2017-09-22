@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.ag777.util.lang.ListHelper;
+import com.ag777.util.lang.collection.ListUtils;
 
 /**
  * @Description 反射工具类
@@ -355,7 +355,7 @@ public class ReflectionHelper<T> {
 		Map<String, Map<List<Class<?>>, Method>> root = new HashMap<>();
 		for (Method method : methods) {
 			String name =method.getName();											//方法名
-			List<Class<?>> parameterTypes = ListHelper.addAllItem(method.getParameterTypes()).getList();	//参数类型列表
+			List<Class<?>> parameterTypes = ListUtils.toList(method.getParameterTypes());	//参数类型列表
 			if(!root.containsKey(name)) {
 				root.put(name, new HashMap<List<Class<?>>, Method>());
 			}

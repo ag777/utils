@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import com.ag777.util.Utils;
-import com.ag777.util.lang.ListHelper;
+import com.ag777.util.lang.collection.ListUtils;
+import com.ag777.util.lang.collection.interf.ListFilter;
 
 /**
  * @Description 异常辅助类
@@ -143,7 +144,7 @@ public class ExceptionHelper {
 		if(excludePackages == null || excludePackages.isEmpty()) {
 			return excludePackages;
 		}
-		return new ListHelper<>(excludePackages).remove(new ListHelper.Filter<String>() {
+		return ListUtils.remove(excludePackages, new ListFilter<String>() {
 
 			@Override
 			public boolean dofilter(String item) {
@@ -152,7 +153,7 @@ public class ExceptionHelper {
 				}
 				return false;
 			}
-		}).getList();
+		});
 	}
 	
 	/**

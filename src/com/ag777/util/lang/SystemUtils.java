@@ -7,7 +7,7 @@ import java.io.PrintStream;
 /**
  * @Description 系统常量获取工具类
  * @author ag777
- * Time: created at 2017/6/12. last modify at 2017/8/23.
+ * Time: created at 2017/06/12. last modify at 2017/09/21.
  * Mark: 部分参考文献:http://blog.csdn.net/kongqz/article/details/3987198
  */
 public class SystemUtils {
@@ -17,7 +17,7 @@ public class SystemUtils {
 	 * @param filePath
 	 * @return
 	 */
-	public boolean setSystemOut(String filePath) {
+	public static boolean setSystemOut(String filePath) {
 		try {
 			System.setOut(new PrintStream(new File(filePath)));
 			return true;
@@ -30,7 +30,7 @@ public class SystemUtils {
 	/**
 	 * 还原控制台输出到控制台
 	 */
-	public void resetSystemOut() {
+	public static void resetSystemOut() {
 		System.setOut(System.out);
 	}
 	

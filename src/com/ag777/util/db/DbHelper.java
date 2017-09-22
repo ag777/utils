@@ -25,7 +25,7 @@ import com.ag777.util.lang.reflection.ReflectionHelper;
 /**
  * 数据库操作辅助类
  * @author ag777
- * Time: created at 2017/7/28. last modify at 2017/9/15.
+ * Time: created at 2017/7/28. last modify at 2017/9/20.
  */
 public class DbHelper {
 
@@ -85,7 +85,7 @@ public class DbHelper {
 	 * @param size
 	 * @return
 	 */
-	public static Class<?> toPojoType(int sqlType, int size) {
+	public static Class<?> toPojoType(int sqlType, long size) {
 		Class<?> clazz = null;
 		switch(sqlType) {
 			case Types.VARCHAR:	//12

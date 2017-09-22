@@ -172,11 +172,48 @@ public class StringUtils {
 	 * @return
 	 * @throws MalformedURLException
 	 */
-	public java.net.URL toURL(String urlStr) throws MalformedURLException {
+	public static java.net.URL toURL(String urlStr) throws MalformedURLException {
 		if(urlStr.startsWith("http")) {
 			urlStr = "http://"+urlStr;
 		}
 		java.net.URL url = new java.net.URL(urlStr);
 		return url;
 	}
+	
+	public static Double toDouble(String src) {
+		try {
+			return Double.parseDouble(src);
+		} catch(Exception ex) {
+			//转换失败
+		}
+		return null;
+	}
+	
+	public static Float toFloat(String src) {
+		try {
+			return Float.parseFloat(src);
+		} catch(Exception ex) {
+			//转换失败
+		}
+		return null;
+	}
+	
+	public static Integer toInteger(String src) {
+		try {
+			return Integer.parseInt(src);
+		} catch(Exception ex) {
+			//转换失败
+		}
+		return null;
+	}
+	
+	public static Long toLong(String src) {
+		try {
+			return Long.parseLong(src);
+		} catch(Exception ex) {
+			//转换失败
+		}
+		return null;
+	}
+	
 }

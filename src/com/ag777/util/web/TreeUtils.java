@@ -3,8 +3,7 @@ package com.ag777.util.web;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.ag777.util.lang.MapHelper;
+import com.ag777.util.lang.collection.MapUtils;
 
 /**
  * @author ag777
@@ -75,7 +74,7 @@ public class TreeUtils {
 	 * @param filter 筛选器
 	 */
 	public static void convertToShortTree(List<Map<String, Object>> root, String targetKey, String targetValue, Filter filter) {
-		List<Map<String, Object>> list = MapHelper.get(root.get(0), CHILDREN);
+		List<Map<String, Object>> list = MapUtils.get(root.get(0), CHILDREN);
 		convertToShortTreeWithoutRoot(list, targetKey, targetValue, filter);
 	}
 	
@@ -88,7 +87,7 @@ public class TreeUtils {
 				Map<String, Object> item = list.get(i);
 				
 				if(!filter.shouldFold(item)) {	//不需要被折叠
-					List<Map<String, Object>> children = MapHelper.get(item, CHILDREN);
+					List<Map<String, Object>> children = MapUtils.get(item, CHILDREN);
 					List<String> childrenList = convertToShortTreeWithoutRoot(children, targetValue, targetValue, filter);
 					if(targetKey != null) {
 						item.put(targetKey, childrenList);
@@ -96,7 +95,7 @@ public class TreeUtils {
 					
 				} else {	//除了菜单其余均认为是按钮
 					if(targetValue != null) {
-						String id = MapHelper.get(item, targetValue);
+						String id = MapUtils.get(item, targetValue);
 						if(id != null) {
 							ids.add(id);
 						}
