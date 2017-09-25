@@ -17,7 +17,7 @@ import com.ag777.util.lang.collection.ListUtils;
 /**
  * @Description 反射工具类
  * @author ag777
- * Time: created at 2017/6/7. last modify at 2017/9/15.
+ * Time: created at 2017/6/7. last modify at 2017/9/25.
  * Mark: 
  */
 public class ReflectionHelper<T> {
@@ -84,6 +84,21 @@ public class ReflectionHelper<T> {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * 获取成员变量对应的值
+	 * @param obj
+	 * @param fieldName
+	 * @return
+	 */
+	public static Object getFieldValue(Object obj, String fieldName) {
+		try {
+			return obj.getClass().getDeclaredField(fieldName).get(obj);
+		} catch (Exception e) {
+//			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	/**

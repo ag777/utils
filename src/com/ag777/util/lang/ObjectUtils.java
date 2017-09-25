@@ -1,7 +1,15 @@
 package com.ag777.util.lang;
 
+
+/**
+ * @author ag777
+ * @Description 列表工具类
+ * Time: created at 2017/09/22. last modify at 2017/09/22.
+ * Mark: 
+ */
 public class ObjectUtils {
 
+	//--转换
 	public static String toString(Object obj) {
 		if(obj != null) {
 			return obj.toString();
@@ -77,4 +85,19 @@ public class ObjectUtils {
 		Long result = toLong(obj);
 		return result!=null?result:defaultValue;
 	}
+	
+	//--判断
+	/**
+	 * 判断是否为数组
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean isArray(Object obj) throws Exception {
+		if(obj == null) {
+			throw new RuntimeException("对象为空,不能判断是否为数组");
+		}
+		return obj.getClass().isArray();
+	}
+	
 }

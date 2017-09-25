@@ -15,16 +15,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import com.ag777.util.file.model.FileAnnotation;
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.RegexUtils;
+import com.ag777.util.lang.StringUtils;
+import com.ag777.util.lang.SystemUtils;
 
 /**
  * Author: ag777
  * Time: created at 2016/4/25.
- * last modify time: 2017/09/14.
+ * last modify time: 2017/09/25.
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = "UTF-8";
@@ -151,6 +152,100 @@ public class FileUtils {
     	 return resultList;
     }
 
+    /**
+     * 替换文件内容(逐行匹配)
+     * @param filePath 文件路径
+     * @param pattern 正则
+     * @param replacement 替换式
+     * @param isReplaceAll 是否替换全部匹配
+     * @throws IOException
+     */
+    public static void replaceByLines(String filePath, Pattern pattern, String replacement, boolean isReplaceAll) throws IOException {
+    	if(StringUtils.isBlank(filePath)) {
+    		throw new IOException("文件名为空");
+    	} else if(pattern == null) {
+    		throw new IOException("正则表达式不正确");
+    	} 
+    	List<String> lines = readLines(filePath);
+    	for(int i=0; i<lines.size(); i++) {
+    		String line = lines.get(i);
+    		Matcher matcher = pattern.matcher(line);
+			if(matcher.matches()) {
+				if(isReplaceAll) {
+					lines.set(i, matcher.replaceAll(replacement));
+				} else {
+					lines.set(i, matcher.replaceFirst(replacement));
+					break;
+				}
+			}
+    	}
+    	
+    }
+    
+    /**
+     * 替换文件中所有匹配内容(逐行匹配)
+     * @param filePath 文件路径
+     * @param regex 正则
+     * @param replacement 替换式
+     * @throws IOException
+     */
+    public static void replaceAllByLines(String filePath, String regex, String replacement) throws IOException {
+    	Pattern pattern = Pattern.compile(regex);
+    	replaceByLines(filePath, pattern, replacement, true);
+    }
+    
+    /**
+     * 替换文件中第一处匹配内容(逐行匹配，匹配到则终止循环)
+     * @param filePath 文件路径
+     * @param regex 正则
+     * @param replacement 替换式
+     * @throws IOException
+     */
+    public static void replaceFirstByLines(String filePath, String regex, String replacement) throws IOException {
+    	Pattern pattern = Pattern.compile(regex);
+    	replaceByLines(filePath, pattern, replacement, false);
+    }
+    
+    /**
+     * 替换文件的内容(全文档，包括换行符)
+     * @param filePath
+     * @param regex
+     * @param replacement
+     * @param isReplaceAll
+     * @throws IOException
+     */
+    public static void replaceByWhole(String filePath, String regex, String replacement, boolean isReplaceAll) throws IOException {
+    	String content = readText(filePath, SystemUtils.lineSeparator());
+    	if(isReplaceAll) {
+    		content.replaceAll(regex, replacement);
+    	} else {
+    		content.replaceFirst(regex, replacement);
+    	}
+    }
+    
+    /**
+     * 替换文件中所有匹配的内容(全文档，包括换行符)
+     * @param filePath
+     * @param regex
+     * @param replacement
+     * @throws IOException
+     */
+    public static void replaceAllByWhole(String filePath, String regex, String replacement) throws IOException {
+    	replaceByWhole(filePath, regex, replacement, true);
+    }
+    
+    /**
+     * 替换文件中第一处匹配的内容(全文档，包括换行符)
+     * @param filePath
+     * @param regex
+     * @param replacement
+     * @throws IOException
+     */
+    public static void replaceFirstByWhole(String filePath, String regex, String replacement) throws IOException {
+    	replaceByWhole(filePath, regex, replacement, false);
+    }
+    
+    
     /**
      * 从文件内容中定位信息并以一定格式返回
      * @param filePath 文件路径

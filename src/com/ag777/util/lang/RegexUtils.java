@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * @Description 正则表达式工具类
@@ -13,6 +14,15 @@ import java.util.regex.Pattern;
  */
 public class RegexUtils {
 
+	
+	public static Pattern getPatternWithException(String regex) throws PatternSyntaxException{
+		return Pattern.compile(regex);
+	}
+	
+	public static Pattern getPatternWithException(String regex, int flags) {
+		return Pattern.compile(regex, flags);
+	}
+	
 	/**
 	 * 字符串是否匹配正则,多做了一步非空判断
 	 * @param src

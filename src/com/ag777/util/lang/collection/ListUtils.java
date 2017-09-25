@@ -1,6 +1,5 @@
 package com.ag777.util.lang.collection;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-
 import com.ag777.util.lang.collection.interf.Comparator;
 import com.ag777.util.lang.collection.interf.ListFilter;
 
