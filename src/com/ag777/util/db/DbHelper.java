@@ -24,8 +24,9 @@ import com.ag777.util.lang.reflection.ReflectionHelper;
 
 /**
  * 数据库操作辅助类
+ * 
  * @author ag777
- * Time: created at 2017/7/28. last modify at 2017/9/20.
+ * @version create on 2017年07月28日,last modify at 2017年09月20日
  */
 public class DbHelper {
 

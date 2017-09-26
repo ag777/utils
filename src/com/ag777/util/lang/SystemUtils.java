@@ -5,10 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 /**
- * @Description 系统常量获取工具类
+ * 系统常量获取工具类
+ * <p>
+ * 		部分参考文献:http://blog.csdn.net/kongqz/article/details/3987198
+ * </p>
+ * 
  * @author ag777
- * Time: created at 2017/06/12. last modify at 2017/09/21.
- * Mark: 部分参考文献:http://blog.csdn.net/kongqz/article/details/3987198
+ * @version create on 2017年06月12日,last modify at 2017年09月21日
  */
 public class SystemUtils {
 

@@ -10,7 +10,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
 /**
  * @Description 异常辅助类
  * @author ag777
- * Time: created at 2017/6/6. last modify at 2017/7/31.
+ * Time: created at 2017/06/06. last modify at 2017/09/26.
  * Mark: 
  */
 public class ExceptionHelper {
@@ -144,14 +144,14 @@ public class ExceptionHelper {
 		if(excludePackages == null || excludePackages.isEmpty()) {
 			return excludePackages;
 		}
-		return ListUtils.remove(excludePackages, new ListFilter<String>() {
+		return ListUtils.removeByFilter(excludePackages, new ListFilter<String>() {
 
 			@Override
 			public boolean dofilter(String item) {
 				if(item.contains(workPackageName)) {
-					return true;
+					return false;
 				}
-				return false;
+				return true;
 			}
 		});
 	}

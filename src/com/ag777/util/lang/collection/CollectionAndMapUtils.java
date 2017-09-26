@@ -11,11 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+
 /**
+ * 有关 <code>Collection和Map</code> 工具类。
+ * 
  * @author ag777
- * @Description collection辅助类
- * Time: created at 2017/06/15. last modify at 2017/09/22.
- * Mark: 
+ * @version create on 2017年06月15日,last modify at 2017年09月26日
  */
 public class CollectionAndMapUtils {
 

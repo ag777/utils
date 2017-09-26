@@ -10,10 +10,10 @@ import com.ag777.util.file.base.BaseExcelHelper;
 import com.ag777.util.lang.model.ValidatePojo;
 
 /**
+ * 验证辅助类
+ * 
  * @author ag777
- * @Description excel验证辅助类
- * Time: created at 2017/6/19. last modify at 2017/6/19.
- * Mark: 
+ * @version create on 2017年06月19日,last modify at 2017年06月19日
  */
 public abstract class ExcelValidateHelper extends BaseExcelHelper{
 	

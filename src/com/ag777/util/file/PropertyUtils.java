@@ -7,9 +7,9 @@ import java.io.IOException;
 
 /**
  * 针对属性文件的读写操作工具类
- * @Description 针对属性文件的读写操作工具类
- * @version 1.0 
- * @date 2015年4月4日 下午9:26:56 last modify 2017-08-03
+ * 
+ * @author ag777
+ * @version create on 2015年04月04日,last modify at 2017年08月03日
  */
 public class PropertyUtils extends java.util.Properties{
 

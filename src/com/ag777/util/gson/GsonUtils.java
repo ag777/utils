@@ -26,10 +26,10 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 
 /**
- * @Description gson统一管理类，全局保持一个gson对象
+ * gson统一管理类，全局保持一个gson对象
+ * 
  * @author ag777
- * Time: created at 2017/5/27. last modify at 2017/7/26.
- * Mark: 
+ * @version create on 2017年05月27日,last modify at 2017年07月26日
  */
 public class GsonUtils implements JsonUtilsInterf{
 	

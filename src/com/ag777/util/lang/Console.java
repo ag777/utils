@@ -6,11 +6,15 @@ import java.util.List;
 import com.ag777.util.Utils;
 import com.ag777.util.lang.exception.model.ExceptionHelper;
 
+
 /**
- * @Description 控制台输出辅助类
+ * 控制台输出辅助类
+ * <p>
+ * 	目的是为了能在项目后期能方便地定位控制台输出代码的位置及控制其输出
+ * </p>
+ * 
  * @author ag777
- * Time: created at 2017/6/6. last modify at 2017/9/15.
- * Mark: 
+ * @version last modify at 2017年09月15日
  */
 public class Console {
 

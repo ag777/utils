@@ -4,10 +4,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * @Description 算法辅助类
+ * 算法辅助类
+ * 
  * @author ag777
- * Time: created at 2017/6/21. last modify at 2017/6/21.
- * Mark: 
+ * @version create on 2017年06月21日,last modify at 2017年06月21日
  */
 public class AlgorithmUtils {
 

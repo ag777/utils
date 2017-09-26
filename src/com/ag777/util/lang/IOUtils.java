@@ -11,10 +11,12 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * @Description IO操作工具类
+ * IO操作工具类
+ * <p>
+ * 		有很多操作，比如文件，cmd命令，都是通过操作流来完成目的，为了避免重复及统一代码新建此类
+ * </p>
  * @author ag777
- * Time: created at 2017/06/16. last modify at 2017/09/08.
- * Mark: 有很多操作，比如文件，cmd命令，都是通过操作流来完成目的，为了避免重复及统一代码新建此类
+ * @version create on 2017年06月16日,last modify at 2017年09月08日
  */
 public class IOUtils {
 

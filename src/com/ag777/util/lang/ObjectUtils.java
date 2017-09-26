@@ -1,11 +1,12 @@
 package com.ag777.util.lang;
 
 
+
 /**
+ * 有关 <code>Object</code> 工具类
+ * 
  * @author ag777
- * @Description 列表工具类
- * Time: created at 2017/09/22. last modify at 2017/09/22.
- * Mark: 
+ * @version create on 2017年09月22日,last modify at 2017年09月22日
  */
 public class ObjectUtils {
 

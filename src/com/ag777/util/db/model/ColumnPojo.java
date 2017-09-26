@@ -1,5 +1,11 @@
 package com.ag777.util.db.model;
 
+/**
+ * 数据库字段信息存放pojo
+ * 
+ * @author ag777
+ * @version 
+ */
 public class ColumnPojo {
 
 	private String name;				//字段名

@@ -19,13 +19,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Author: ag777
- * Time: created at 2016/7/7.
- * Last modify: 2017/9/13.
- * MARK:
- * 巧妙的考勤统计:http://www.01happy.com/mysql-bit_count-bit_or/
- * SELECT year,month,BIT_COUNT(BIT_OR(1<<day)) AS days FROM t1
+ * 有关 <code>List</code> 列表工具类。
+ * <p>
+ * 	巧妙的考勤统计:http://www.01happy.com/mysql-bit_count-bit_or/
+ * 	SELECT year,month,BIT_COUNT(BIT_OR(1<<day)) AS days FROM t1
        GROUP BY year,month;
+ * </p>
+ * 
+ * @author ag777
+ * @version create on 2016年07月07日,last modify at 2017年09月13日
  */
 public class DateUtils {
 

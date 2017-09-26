@@ -9,10 +9,13 @@ import com.ag777.util.lang.Console;
 import com.ag777.util.lang.interf.JsonUtilsInterf;
 
 /**
- * @Description 工具包用的通用方法类
+ * 工具包用的通用方法类
+ * <p>
+ * 		所有定制操作最好在程序初始化时执行以确保程序能照预想的运行
+ * </p>
+ * 
  * @author ag777
- * Time: created at 2017/6/6. last modify at 2017/9/15.
- * Mark: 所有定制操作最好在程序初始化时执行以确保程序能照预想的运行
+ * @version create on 2017年06月06日,last modify at 2017年09月15日
  */
 public class Utils {
 

@@ -10,8 +10,12 @@ import com.ag777.util.lang.Console;
 
 /**
  * 数据库版本升级辅助类
+ * <p>
+ * 		直接引入项目可以作为数据库版本控制模块使用
+ * </p>
+ * 
  * @author ag777
- * Time: created at 2017/09/06. last modify at 2017/09/07.
+ * @version create on 2017年09月06日,last modify at 2017年09月07日
  */
 public abstract class UpdateDBHelper {
 

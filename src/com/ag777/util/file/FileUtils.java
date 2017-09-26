@@ -21,11 +21,14 @@ import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.RegexUtils;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.SystemUtils;
+import com.ag777.util.lang.collection.ListUtils;
+import com.ag777.util.lang.filter.StringFilter;
 
 /**
- * Author: ag777
- * Time: created at 2016/4/25.
- * last modify time: 2017/09/25.
+ * 文件操作工具类
+ * 
+ * @author ag777
+ * @version create on 2017年04月25日,last modify at 2017年09月26日
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = "UTF-8";
@@ -58,9 +61,9 @@ public class FileUtils {
         	FileInputStream fis = new FileInputStream(filePath);
             return IOUtils.readText(fis, lineSparator, FILE_READING_ENCODING);
         } catch (FileNotFoundException ex) {
-            throw new IOException("要读取的文件没有找到!", ex);
+            throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
         } catch (IOException ex) {
-            throw new IOException("读取文件时错误!", ex);
+            throw new IOException(StringUtils.concat("读取文件[",filePath,"]时发生错误!"), ex);
         }
     }
     
@@ -75,9 +78,9 @@ public class FileUtils {
          	FileInputStream fis = new FileInputStream(filePath);
              return IOUtils.readLines(fis, FILE_READING_ENCODING);
          } catch (FileNotFoundException ex) {
-             throw new IOException("要读取的文件没有找到!", ex);
+             throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
          } catch (IOException ex) {
-             throw new IOException("读取文件时错误!", ex);
+             throw new IOException(StringUtils.concat("读取文件[",filePath,"]时发生错误!"), ex);
          }
     }
     
@@ -90,7 +93,7 @@ public class FileUtils {
     public static List<String> readLinesWithoutAnnotation(String filePath, FileAnnotation[] annotations) throws IOException {
     	List<String> resultList = new ArrayList<>(); 
     	List<String> lineList = readLines(filePath);
-    	 if(annotations != null && annotations.length > 0) {
+    	if(annotations != null && annotations.length > 0) {
     		FileAnnotation curAnnotation = null;
     		
     		Map<FileAnnotation, Pattern[]> cpMap = new HashMap<>();
@@ -153,6 +156,32 @@ public class FileUtils {
     }
 
     /**
+     * 逐行(倒序)替换文件中的内容
+     * @param filePath 文件路径
+     * @param stringFilter 参数为当前行内容,结果返回null则删除该行，其余则替换掉源内容
+     * @throws IOException
+     */
+    public static void replaceAllByLines(String filePath, StringFilter stringFilter) throws IOException {
+    	if(StringUtils.isBlank(filePath)) {
+    		throw new IOException("文件名为空");
+    	}
+    	if(stringFilter == null) {
+    		return;
+    	}
+    	List<String> lines = readLines(filePath);
+    	for(int i=lines.size()-1; i>=0; i--) {
+    		String line = lines.get(i);
+    		String temp = stringFilter.doFilter(line);
+    		if(temp != null) {
+    			lines.set(i, temp);
+    		} else {
+    			lines.remove(i);
+    		}
+    	}
+    	write(filePath, lines, null, true);
+    }
+    
+    /**
      * 替换文件内容(逐行匹配)
      * @param filePath 文件路径
      * @param pattern 正则
@@ -170,7 +199,7 @@ public class FileUtils {
     	for(int i=0; i<lines.size(); i++) {
     		String line = lines.get(i);
     		Matcher matcher = pattern.matcher(line);
-			if(matcher.matches()) {
+			if(matcher.find()) {
 				if(isReplaceAll) {
 					lines.set(i, matcher.replaceAll(replacement));
 				} else {
@@ -179,7 +208,7 @@ public class FileUtils {
 				}
 			}
     	}
-    	
+    	write(filePath, lines, null, true);
     }
     
     /**
@@ -221,6 +250,7 @@ public class FileUtils {
     	} else {
     		content.replaceFirst(regex, replacement);
     	}
+    	write(filePath,content, null, true);
     }
     
     /**
@@ -260,75 +290,89 @@ public class FileUtils {
             FileInputStream fis = new FileInputStream(filePath);
             return IOUtils.find(fis, regex, replacement, FILE_READING_ENCODING);	//关闭流的操作里面都做了
         } catch (FileNotFoundException ex) {
-            throw new IOException("要读取的文件没有找到!", ex);
+            throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
         } catch (IOException ex) {
-            throw new IOException("读取文件时错误!", ex);
+            throw new IOException(StringUtils.concat("读取文件[",filePath,"]时发生错误!"), ex);
         } 
     }
     
     /**
      * 查找文件中所有匹配的字符串
-     * @param _sFileName
+     * @param filePath
      * @param regex
      * @param replacement
      * @return
      * @throws IOException
      */
-    public static List<String> findAllText(String _sFileName,String regex, String replacement) throws IOException {
+    public static List<String> findAllText(String filePath,String regex, String replacement) throws IOException {
     	
 		try {
-            FileInputStream fis = new FileInputStream(_sFileName);
+            FileInputStream fis = new FileInputStream(filePath);
             return IOUtils.findAll(fis, regex, replacement, FILE_READING_ENCODING);
         } catch (FileNotFoundException ex) {
-            throw new IOException("要读取的文件没有找到!", ex);
+            throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
         } catch (IOException ex) {
-            throw new IOException("读取文件时错误!", ex);
+            throw new IOException(StringUtils.concat("读取文件[",filePath,"]时发生错误!"), ex);
         } 
     }
     
     /**
      * 将内容写入文件
-     * @param path
+     * @param filePath
      * @param content
      * @param encoding
      * @param isOverride
      * @return
      * @throws IOException
      */
-    public static File write(String path, String content, String encoding, boolean isOverride) throws IOException {
-        if (isEmpty(encoding)) {
+    public static File write(String filePath, String content, String encoding, boolean isOverride) throws IOException {
+        if (StringUtils.isEmpty(encoding)) {
             encoding = FILE_WRITING_ENCODING;
         }
         InputStream is = new ByteArrayInputStream(content.getBytes(encoding));
-        return write(is, path, isOverride);
+        return write(is, filePath, isOverride);
+    }
+    
+    /**
+     * 将所有行写出到文件
+     * @param filePath
+     * @param lines
+     * @param encoding
+     * @param isOverride
+     * @return
+     * @throws IOException
+     */
+    public static File write(String filePath, List<String> lines, String encoding, boolean isOverride) throws IOException {
+    	String content = ListUtils.toString(lines, SystemUtils.lineSeparator());
+    	return write(filePath, content, encoding, isOverride);
     }
 
     /**
      * 将流写文件
      * @param is
-     * @param path
+     * @param filePath
      * @param isOverride
      * @return
      * @throws IOException
      */
-    public static File write(InputStream in, String path, boolean isOverride) throws IOException {
-        String sPath = extractFilePath(path);
+    public static File write(InputStream in, String filePath, boolean isOverride) throws IOException {
+        String sPath = extractFilePath(filePath);
         if (!pathExists(sPath)) {
             makeDir(sPath, true);
         }
         
-        if (!isOverride && fileExists(path)) {
-            return new File(path);
+        if (!isOverride && fileExists(filePath)) {
+            return new File(filePath);
         }
         
         try {
-            File file = new File(path);
+            File file = new File(filePath);
             FileOutputStream out = new FileOutputStream(file);
             IOUtils.write(in, out, BUFFSIZE);
             return file;
         } catch (IOException e) {
             e.printStackTrace();
-            throw new IOException("写文件错误", e);
+            throw new IOException(StringUtils.concat("写入文件[",filePath,"]时发生错误!"), e);
         } 
     }
 
@@ -369,25 +413,25 @@ public class FileUtils {
 	
 	/**
      * 递归删除文件夹及文件夹下的文件
-     * @param path	要删除的文件/文件夹路径
+     * @param file	要删除的文件/文件夹
      */
-    public static boolean delete(File path) {  
-	    if (!path.exists())  
+    public static boolean delete(File file) {  
+	    if (!file.exists())  
 	        return true;  
-	    if (path.isFile()) {  
-	        if(path.delete()) {
+	    if (file.isFile()) {  
+	        if(file.delete()) {
 	        	return true;
 	        }  
-	        Console.err("文件:"+path+"删除失败");
+	        Console.err(StringUtils.concat("文件[", file.getPath()+"]删除失败"));
 	        return false;  
 	    }  
-	    File[] files = path.listFiles();  
+	    File[] files = file.listFiles();  
 	    for (int i = 0; i < files.length; i++) {  
 	        if(!delete(files[i])) {
 	        	return false;
 	        }
 	    }  
-	    path.delete();  
+	    file.delete();  
 	    return true;
 	}
     public static boolean delete(String path) {
@@ -397,26 +441,26 @@ public class FileUtils {
 	
 	/**
 	 * 获取文件拓展名
-	 * @param fileName 源文件路径
+	 * @param filePath 源文件路径
 	 * @return
 	 */
-	public static String getFilePrefix(String fileName) {
+	public static String getFilePrefix(String filePath) {
 		//String prefix=fileName.substring(fileName.lastIndexOf(".")+1);
 	    //return prefix;
-		return RegexUtils.find(fileName, "\\.([^\\.]*)$","$1","");
+		return RegexUtils.find(filePath, "\\.([^\\.]*)$","$1","");
 	}	
 	
     /**
      * 移除字符串中的BOM前缀
      *
-     * @param _sLine 需要处理的字符串
+     * @param content 需要处理的字符串
      * @return 移除BOM后的字符串.
      */
-	public static String removeBomHeaderIfExists(String _sLine) {
-        if (_sLine == null) {
+	public static String removeBomHeaderIfExists(String content) {
+        if (content == null) {
             return null;
         }
-        String line = _sLine;
+        String line = content;
         if (line.length() > 0) {
             char ch = line.charAt(0);
             // 使用while是因为用一些工具看到过某些文件前几个字节都是0xfffe.
@@ -435,45 +479,45 @@ public class FileUtils {
     /**
      * 从文件的完整路径名（路径+文件名）中提取 路径（包括：Drive+Directroy )
      *
-     * @param _sFilePathName 文件路径
+     * @param filePath 文件路径
      * @return
      */
-    public static String extractFilePath(String _sFilePathName) {
-        int nPos = _sFilePathName.lastIndexOf('/');
+    public static String extractFilePath(String filePath) {
+        int nPos = filePath.lastIndexOf('/');
         if (nPos < 0) {
-            nPos = _sFilePathName.lastIndexOf('\\');
+            nPos = filePath.lastIndexOf('\\');
         }
 
-        return (nPos >= 0 ? _sFilePathName.substring(0, nPos + 1) : "");
+        return (nPos >= 0 ? filePath.substring(0, nPos + 1) : "");
     }
 
     /**
      * 检查指定文件的路径是否存在
      *
-     * @param _sPathFileName 文件名称(含路径）
+     * @param filePath 文件名称(含路径）
      * @return 若存在，则返回true；否则，返回false
      */
-    public static boolean pathExists(String _sPathFileName) {
-        String sPath = extractFilePath(_sPathFileName);
+    public static boolean pathExists(String filePath) {
+        String sPath = extractFilePath(filePath);
         return fileExists(sPath);
     }
 
-    public static boolean fileExists(String _sPathFileName) {
-        File file = new File(_sPathFileName);
+    public static boolean fileExists(String filePath) {
+        File file = new File(filePath);
         return file.exists();
     }
 
     /**
      * 创建目录
      *
-     * @param _sDir             目录名称
-     * @param _bCreateParentDir 如果父目录不存在，是否创建父目录
+     * @param dirPath             目录名称
+     * @param needCreateParentDir 如果父目录不存在，是否创建父目录
      * @return
      */
-    public static boolean makeDir(String _sDir, boolean _bCreateParentDir) {
+    public static boolean makeDir(String dirPath, boolean needCreateParentDir) {
         boolean zResult = false;
-        File file = new File(_sDir);
-        if (_bCreateParentDir)
+        File file = new File(dirPath);
+        if (needCreateParentDir)
             zResult = file.mkdirs(); // 如果父目录不存在，则创建所有必需的父目录
         else
             zResult = file.mkdir(); // 如果父目录不存在，不做处理
@@ -483,9 +527,6 @@ public class FileUtils {
     }
    
     /*----------内部工具-----------*/
-    public static boolean isEmpty(String src) {
-    	return src == null || src.isEmpty();
-    }
     
 	/**
 	 * 复制单个文件
@@ -501,7 +542,7 @@ public class FileUtils {
 			File fin = new File(source);
 			File fout = new File(target);
 			if (!fin.exists()) {
-				Console.err("源文件:"+source+"不存在");
+				Console.err(StringUtils.concat("源文件夹[", source,"]不存在"));
 				return false;
 			}
 			if (!fout.exists()) {
@@ -535,7 +576,7 @@ public class FileUtils {
 		File f1 = new File(source);
 		File f2 = new File(target);
 		if (!f1.exists()) {
-			Console.err("源文件夹:"+source+"不存在");
+			Console.err(StringUtils.concat("源文件夹[", source,"]不存在"));
 			return false;
 		}
 		if ((!f2.exists()) && (f1.isDirectory())) {
@@ -554,20 +595,11 @@ public class FileUtils {
 				}
 			} else {
 				if(!copyFile(newSource, newTarget)) {
-					Console.err("移动文件:"+newSource+"失败");
+					Console.err(StringUtils.concat("移动文件[", newSource,"]失败"));
 					return false;
 				}
 			}
 		}
 		return true;
-	}
-	
-	public static void main(String[] args) throws IOException {
-		List<String> lineList = readLinesWithoutAnnotation(
-				"e://config.properties",
-				new FileAnnotation[]{FileAnnotation.TYPE_XML_LINE, FileAnnotation.TYPE_XML_PARAGRAPH});
-		for (String line : lineList) {
-			System.out.println(line);
-		}
 	}
 }

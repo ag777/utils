@@ -2,7 +2,6 @@ package com.ag777.util.lang.collection;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,29 +13,37 @@ import com.ag777.util.lang.collection.interf.Comparator;
 import com.ag777.util.lang.collection.interf.ListFilter;
 
 /**
+ * 有关 <code>List</code> 列表工具类。
+ * 
  * @author ag777
- * @Description 列表工具类
- * Time: created at 2017/09/22. last modify at 2017/09/22.
- * Mark: 
+ * @version create on 2017年09月22日,last modify at 2017年09月26日
  */
 public class ListUtils {
 
 	private ListUtils(){}
 	
-	public <T>List<T> newArrayList() {
+	public static <T>List<T> newArrayList() {
 		return CollectionAndMapUtils.newArrayList();
 	}
 	
-	public <T>List<T> newVector() {
+	public static <T>List<T> newVector() {
 		return CollectionAndMapUtils.newVector();
 	}
 	
-	/**
-	 * 格式化字符串(a,b,c)转化为列表
-	 * @param src
-	 * @param separator
-	 * @return
-	 */
+	 /**
+     * 拆分字符串组成列表
+     * <p>
+     * 例如：
+     * <p/>
+     * 
+     * <pre>
+     * 		List<String> list = ListUtils.toList("1,2,3", ",");
+     *		结果为包含"1","2"和"3"的列表
+     *		值得注意的是由于调用的是String.split(String regex)方法所以参数separator为正则表达式,注意字符串转义
+     * </pre>
+     * <p/>
+     * </p>
+     */
 	public static List<String> toList(String src, String separator) {
 		List<String> result = CollectionAndMapUtils.newArrayList();
 		if(src == null) {
@@ -50,36 +57,60 @@ public class ListUtils {
 		return result;
 	}
 	
-	/**
-	 * 数组转列表
-	 * @param items
-	 * @return
-	 */
+	 /**
+     * 数组转列表
+     * <p>
+     * 例如：
+     * <p/>
+     * 
+     * <pre>
+     * 		List<Integer> list = ListUtils.toFinalList(new Integer[]{1,2,3});
+     *		之后可以随意操作该列表
+     * </pre>
+     * <p/>
+     * </p>
+     */
 	public static <T>List<T> toList(T[] items) {
 		List<T> result = CollectionAndMapUtils.newArrayList();
 		if(items != null && items.length > 0) {
-			for (T item : result) {
+			for (T item : items) {
 				result.add(item);
 			}
 		}
 		return result;
 	}
 	
-	/**
-	 * 数组转定长列表(后续不可改变列表长度，否则报错)
-	 * @param items
-	 * @return
-	 */
+	 /**
+     * 数组转定长列表(后续不可改变列表长度，否则报错)
+     * <p>
+     * 例如：
+     * <p/>
+     * 
+     * <pre>
+     * 		List<Integer> list = ListUtils.toFinalList(new Integer[]{1,2,3});
+     *		这时如果调用list.add(3)或者list.remove(2)就会报错
+     * </pre>
+     * <p/>
+     * </p>
+     */
 	public static <T>List<T> toFinalList(T[] items) {
 		return Arrays.asList(items);
 	}
 	
-	/**
-	 * 将list<Map>中每个map的key对应的值(非空)整合成一个列表,适用于单列list
-	 * @param list
-	 * @param key
-	 * @return
-	 */
+	 /**
+     * 数组转列表
+     * <p>
+     * 例如：
+     * <p/>
+     * 
+     * <pre>
+     * 		现有key-value 为[{a:1,b:2},{a:2},{a:3}]的列表list
+     *		ListUtils.toList(list, "a");
+     *		结果将是值[1,2,3] 的列表
+     * </pre>
+     * <p/>
+     * </p>
+     */
 	public static List<Object> toList(List<Map<String, Object>> list, String key) {
 		List<Object> resultList = CollectionAndMapUtils.newArrayList();
 		for (Map<String, Object> item : list) {
@@ -97,10 +128,19 @@ public class ListUtils {
 	}
 	
 	/**
-	 * 将list<Map>中每个map的第一个值(非空)整合成一个列表,适用于单列list
-	 * @param list	列表
-	 * @return 
-	 */
+     *  将list<Map>中每个map的第一个值(非空)整合成一个列表,适用于单列list
+     * <p>
+     * 例如：
+     * <p/>
+     * 
+     * <pre>
+     * 		现有key-value 为[{a:1},{a:2},{a:3}]的列表list
+     *		ListUtils.toList(list);
+     *		结果将是值[1,2,3] 的列表
+     * </pre>
+     * <p/>
+     * </p>
+     */
 	public static List<Object> toList(List<Map<String, Object>> list) {
 		List<Object> resultList = CollectionAndMapUtils.newArrayList();
 		for (Map<String, Object> item : list) {
@@ -118,6 +158,20 @@ public class ListUtils {
 		return resultList;
 	}
 	
+	 /**
+     * 拆分字符串获取list
+     * <p>
+     * 例如：
+     * <p/>
+     * 
+     * <pre>
+     * 		ListUtils.toList(new Integer[]{1,2,3});
+     *		ListUtils.toString(list,",");
+     *		得到的结果是1,2,3
+     * </pre>
+     * <p/>
+     * </p>
+     */
 	public static <T>String toString(List<T> list, String separator) {
 		if(CollectionAndMapUtils.isEmpty(list)) {	//列表为空则返回空字符串
 			return "";
@@ -140,9 +194,8 @@ public class ListUtils {
 	
 	/**
 	 * 去重
-	 * @return
 	 */
-    public <T>List<T> distinct(List<T> list) {
+    public static <T>List<T> distinct(List<T> list) {
         Set<T> set = new HashSet<T>();
         for (int i = list.size() - 1; i > 0; i--) {	//倒序遍历，为了能删除数据
         	T item = list.get(i);
@@ -155,24 +208,65 @@ public class ListUtils {
 	
 	/**
      * 删除值为null的项
-     * @return
+     * <p>
+     * 	用Iterator遍历
+     * </p>
      */
-    public <T>List<T> removeNull(List<T> list) {
-        for (int i = list.size() - 1; i > 0; i--) {	//倒序遍历，为了能删除数据
-        	T item = list.get(i);
-        	if (item == null) {	//数据项为null则删除
-            	list.remove(item);
-            }
-        }
+    public static <T>List<T> removeNull(List<T> list) {
+    	Iterator<T> itor = list.iterator();
+    	while(itor.hasNext()) {
+    		if(itor.next() == null) {
+    			itor.remove();
+    		}
+    	}
         return list;
     }
 	
-	 /**
-	 * 列表分段(将一个列表，每limit长度分一个列表并将这些新列表整合到一个列表里),多用于数据库批量插入拆分
-	 * @param limit 每段数组的长度 > 0
-	 * @return
-	 */
-	public <T>List<List<T>> splitList(List<T> list, int limit) {
+    /**
+     * 删除列表中某项元素，避免list<Integer> 的下标陷阱
+     * <p>
+     * 例如：
+     * <p/>
+     * 
+     * <pre>
+     * List<Integer> list = CollectionAndMapUtils.newArrayList();
+		list.add(1);
+		list.add(2);
+		list.add(3);
+		这时我们需要删除值为2的元素,于是我们调用
+		list.remove(2);
+		结果是1,2而不是预期的1,3
+		通常情况下,我们需要用list.remove((Object)2);来得到预期的结果
+     * </pre>
+     * <p/>
+     * </p>
+     */
+    public static <T>List<T> remove(List<T> list, Object item) {
+    	list.remove(item);
+    	return list;
+    }
+    
+    
+    /**
+     * 列表分段(将一个列表，每limit长度分一个列表并将这些新列表整合到一个列表里),多用于数据库批量插入拆分
+     * <p>
+     * 	该方法原用于解决一次性批量插入数据到数据库时数据量太大导致插入失败的异常，将列表数据分次插入
+     * 例如：
+     * <p/>
+     * 
+     * <pre>
+     * 		现有值为[1,2,3]的列表list,执行
+     * 		ListUtils.splitList(list, 2);
+     * 		将会得到值为[[1,2],[3]]的嵌套列表
+     * 		值得注意的是如果传入的limit不为正数，则会抛出RuntimeException
+     * </pre>
+     * <p/>
+     * </p>
+     */
+	public static <T>List<List<T>> splitList(List<T> list, int limit) {
+		if(limit <= 0) {
+			throw new RuntimeException("参数limit必须大于0");
+		} 
 		List<List<T>> result = CollectionAndMapUtils.newArrayList();
 		int size = list.size()/limit+1;
 		for (int i = 0; i < size; i++) {
@@ -190,17 +284,20 @@ public class ListUtils {
 	
 	
 	/**
-	 * 倒序删除列表项
-	 * @param list
-	 * @param filter
-	 * @return
-	 */
-	public static <T>List<T> remove(List<T> list, ListFilter<T> filter) {
-		//倒序循环删除对应数据
-		for (int i = list.size() - 1; i > 0; i--) {
-			T item = list.get(i);
-			if(!filter.dofilter(item)) {	//删除对应数据
-				list.remove(i);
+     * 删除符合条件的列表项
+     * 
+     * <pre>
+     * 		filter返回true时则会删除该项
+     * </pre>
+     * <p/>
+     * </p>
+     */
+	public static <T>List<T> removeByFilter(List<T> list, ListFilter<T> filter) {
+		Iterator<T> itor = list.iterator();
+		while(itor.hasNext()) {
+			T item = itor.next();
+			if(filter.dofilter(item)) {	//删除对应数据
+				itor.remove();
 			}
 		}
 		return list;
@@ -208,27 +305,35 @@ public class ListUtils {
 	
 	
 	/**
-	 * 列表转map
-	 * @param list
-	 * @param keys 标题列表,null时返回null
-	 * @return {标题:值}
-	 */
-	public static <T>Map<String, Object> toMap(List<T> list, List<String> keys) {
-		if(keys == null) {	//键为null的情况
+     * 列表转List<Map<String, Object>>
+     * <p>
+     * 例如：
+     * <p/>
+     * 
+     * <pre>
+     * 		现有值为[1,2,3]的列表list,执行
+     * 		ListUtils.toMap(list, "a");
+     * 		将会得到值为[{a:1},{a:2},{a:3}]的列表
+     * 		值得注意的是如果传入的key为null的话返回也会是null,传入的list为null返回的将是空列表
+     * </pre>
+     * <p/>
+     * </p>
+     */
+	public static <T>List<Map<String, Object>> toListMap(List<T> list, String key) {
+		if(key == null) {	//键为null的情况
 			return null;
 		}
-		
-		Map<String, Object> map = new HashMap<String, Object>();
-		int i = 0;
-		for (String key : keys) {
-			if(i < list.size()) {
-				map.put(key, list.get(i));
-			}else {	//超过值列表的大小
-				map.put(key, null);
-			}
-			i++;
+		if(list == null) {
+			return CollectionAndMapUtils.newArrayList();
 		}
-		return map;
+		
+		List<Map<String, Object>> newList =CollectionAndMapUtils.newArrayList();
+		for (T item : list) {
+			Map<String,	Object> map = CollectionAndMapUtils.newHashMap();
+			map.put(key, item);
+			newList.add(map);
+		}
+		return newList;
 	} 
 	
 	//--复制

@@ -3,10 +3,10 @@ package com.ag777.util.lang;
 import java.util.ArrayList;
 
 /**
- * @Description 单位格式化
+ * 单位格式化
+ * 
  * @author ag777
- * Time: created at 2017/6/13. last modify at 2017/6/16.
- * Mark: 
+ * @version create on 2017年06月13日,last modify at 2017年06月16日
  */
 public class Formatter {
 

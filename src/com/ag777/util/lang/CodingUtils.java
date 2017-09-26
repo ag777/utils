@@ -4,11 +4,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
+
 /**
- * @Description 编码转换辅助类
- * @author 
- * Time: 
- * Mark: 
+ * 编码转换辅助类
+ * 
+ * @author ag777
+ * @version 
  */
 public class CodingUtils {
 

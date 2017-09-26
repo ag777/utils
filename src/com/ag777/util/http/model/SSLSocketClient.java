@@ -9,6 +9,12 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+/**
+ * 用于连接https
+ * 
+ * @author ag777
+ * @version create on 2017年06月06日,last modify at 2017年09月15日
+ */
 public class SSLSocketClient {  
 	  
     //获取这个SSLSocketFactory  

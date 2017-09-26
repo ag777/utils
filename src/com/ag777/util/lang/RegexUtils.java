@@ -7,10 +7,13 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * @Description 正则表达式工具类
+ * 正则表达式工具类
+ * <p>
+ * 		2017年09月07日 增加对pattern支持
+ * </p>
+ * 
  * @author ag777
- * Time: created at 2017/6/6. last modify at 2017/9/7.
- * Mark: 2017/09/07 增加对pattern支持
+ * @version create on 2017年06月06日,last modify at 2017年09月07日
  */
 public class RegexUtils {
 

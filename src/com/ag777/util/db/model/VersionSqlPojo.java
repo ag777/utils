@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 升级数据库用的存放版本对应sql的容器类
- * Created by ag777 on 2017/8/18.
+ *  升级数据库用的存放版本对应sql的容器类
+ * 
+ * @author ag777
+ * @version create on 2017年08月18日,last modify at 2017年08月18日
  */
 public class VersionSqlPojo {
 

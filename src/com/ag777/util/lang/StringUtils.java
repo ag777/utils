@@ -6,10 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * 字符串处理工具类
+ * 
  * @author ag777
- * @Description 字符串处理工具类
- * Time: last modify at 2017/9/13.
- * Mark:
+ * @version last modify at 2017年09月22日
  */
 public class StringUtils {
 
@@ -66,7 +66,7 @@ public class StringUtils {
 	 * @param objs 	后续的值
 	 * @return
 	 */
-	public String concat(Object obj, Object... objs) {
+	public static String concat(Object obj, Object... objs) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(obj);
 		if(objs != null) {

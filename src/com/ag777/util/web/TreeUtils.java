@@ -6,10 +6,10 @@ import java.util.Map;
 import com.ag777.util.lang.collection.MapUtils;
 
 /**
+ * 树结构工具类
+ * 
  * @author ag777
- * @Description 树结构工具类
- * Time: created at 2017/6/20. last modify at 2017/6/20.
- * Mark: 
+ * @version create on 2017年06月20日,last modify at 2017年06月20日
  */
 public class TreeUtils {
 	

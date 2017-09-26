@@ -7,11 +7,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+
 /**
- * @Description cmd命令执行辅助类(针对linux)
+ * cmd命令执行辅助类(针对linux)
+ * <p>
+ * 		执行一个cmd命令会产生三个流（input/output/err），其中一个不处理就有可能产生程序挂起问题，永远不可能得到返回了
+ * </p>
  * @author ag777
- * Time: last modify at 2017/9/14.
- * Mark: 执行一个cmd命令会产生三个流（input/output/err），其中一个不处理就有可能产生程序挂起问题，永远不可能得到返回了
+ * @version last modify at 2017年09月14日
  */
 public class CMDUtils {
 	

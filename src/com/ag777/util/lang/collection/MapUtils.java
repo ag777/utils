@@ -5,10 +5,10 @@ import java.util.Map;
 import com.ag777.util.lang.ObjectUtils;
 
 /**
+ * 有关 <code>Map</code> 哈希表工具类。
+ * 
  * @author ag777
- * @Description 哈希表工具类
- * Time: created at 2017/09/22. last modify at 2017/09/22.
- * Mark: 
+ * @version create on 2017年09月22日,last modify at 2017年09月22日
  */
 public class MapUtils {
 
@@ -22,12 +22,24 @@ public class MapUtils {
 	}
 	
 	/**
-	 * 获取map里key对应的值，不存在或null返回defaultValue
-	 * @param map
-	 * @param key
-	 * @param defaultValue
-	 * @return
-	 */
+     * 获取map里key对应的值，不存在或null返回defaultValue
+     * <p>
+     * 例如：
+     * <p/>
+     * 
+     * <pre>
+     * 		现有值为{a:1,b:2}的map
+     *		MapUtils.get(map, a, 2) = 1
+     *		MapUtils.get(map, c, 2) = 2
+     * </pre>
+     * <p/>
+     * </p>
+     * 
+     * @param map 校验的类
+     * @param key 键
+     * @param defaultValue 默认值
+     * @return 
+     */
 	@SuppressWarnings("unchecked")
 	public static <K,V,T>T get(Map<K, V> map, K key, T defaultValue) {
 		try {
@@ -39,12 +51,25 @@ public class MapUtils {
 		return defaultValue;
 	}
 	
+	
 	/**
-	 * 获取map里key对应的值，不存在或null返回null
-	 * @param map
-	 * @param key
-	 * @return
-	 */
+     * 获取map里key对应的值，不存在或null返回null
+     * <p>
+     * 例如：
+     * <p/>
+     * 
+     * <pre>
+     * 		现有值为{a:1,b:2}的map
+     *		MapUtils.get(map, a) = 1
+     *		MapUtils.get(map, c) = null
+     * </pre>
+     * <p/>
+     * </p>
+     * 
+     * @param map 校验的类
+     * @param key 键
+     * @return 
+     */
 	public static <K,V,T>T get(Map<K, V> map, K key) {
 		return get(map, key, null);
 	}
@@ -164,22 +189,35 @@ public class MapUtils {
 				get(map, key), defaultValue);
 	}
 	
+
 	/**
-	 * 将List<Map> 中的键值从新组成map(不做类型转化判断，就是说结果类型要是对不上，强转报错请注意)
-	 * @param list 源列表 List<Map>,为null返回空列表
-	 * @param key_tilte 源List<Map>中key_tilte对应的值(不允许为null)作为结果Map中的key
-	 * @param key_value 源List<Map>中key_value对应的值作为结果Map中的value
-	 * @return
-	 */
-	public static Map<String, Object> toMap(List<Map<String, Object>> list, String key_tilte, String key_value) {
+     * 将List<Map> 中的键值从新组成map(不做类型转化判断，就是说结果类型要是对不上，强转报错请注意)
+     * <p>
+     * 可以理解为纵表转横表
+     * 例如：
+     * <p/>
+     * 
+     * <pre>
+     * 		现有值为[{a:key1,b:2}{a:key2,b:3}]的list
+     *		MapUtils.toMap(list, "a", "b") = {key1:2, key2:3}
+     * </pre>
+     * <p/>
+     * </p>
+     * 
+     * @param list 校验的类
+     * @param keyTilte 作为新map的key的键
+     * @param keyValue 作为新map的值的键
+     * @return 
+     */
+	public static Map<String, Object> toMap(List<Map<String, Object>> list, String keyTilte, String keyValue) {
 		if(list == null) {
 			return CollectionAndMapUtils.newHashMap();
 		}
 		Map<String, Object> map = CollectionAndMapUtils.newHashMap();
 		for (Map<String, Object> item : list) {
-			if(item.containsKey(key_tilte) && item.get(key_tilte) != null && item.containsKey(key_value)) {
+			if(item.containsKey(keyTilte) && item.get(keyTilte) != null && item.containsKey(keyValue)) {
 				try {
-					map.put(item.get(key_tilte).toString(), item.get(key_value));
+					map.put(item.get(keyTilte).toString(), item.get(keyValue));
 				} catch(Exception ex) {
 				}
 			}
