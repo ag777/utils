@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +29,7 @@ import com.ag777.util.lang.filter.StringFilter;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2017年09月26日
+ * @version create on 2017年04月25日,last modify at 2017年09月27日
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = "UTF-8";
@@ -376,7 +377,23 @@ public class FileUtils {
         } 
     }
 
+    /**
+     * 通过文件路径获取输出流
+     * 
+     * @param filePath
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static OutputStream getOutputStream(String filePath) throws FileNotFoundException {
+    	File file = new File(filePath);
+    	return new FileOutputStream(file);
+    }
 
+    public static InputStream getInputStream(String filePath) throws FileNotFoundException {
+    	File file = new File(filePath);
+    	return new FileInputStream(file);
+    }
+    
 	/**
 	 * 移动文件或者文件夹,如从e:/aa.txt到e:/tmp/aa.txt, 从e:/aa到e:/bb/aa
 	 * @param source	源文件路径

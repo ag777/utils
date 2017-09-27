@@ -1,9 +1,10 @@
 package com.ag777.util.lang.filter;
 
 /**
- * Author: ag777
- * Time: created at 2016/09/26.
- * last modify time: 2017/09/26.
+ * 字符串过滤器
+ * 
+ * @author ag777
+ * @version create on 2017年09月26日,last modify at 2017年09月26日
  */
 public interface StringFilter {
 

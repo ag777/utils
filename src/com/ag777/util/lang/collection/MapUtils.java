@@ -21,6 +21,42 @@ public class MapUtils {
 		return CollectionAndMapUtils.newHashTable();
 	}
 	
+	
+	/**
+     * 将List<Map> 中的键值从新组成map(不做类型转化判断，就是说结果类型要是对不上，强转报错请注意)
+     * <p>
+     * 可以理解为纵表转横表
+     * 例如：
+     * <p/>
+     * 
+     * <pre>
+     * 		现有值为[{a:key1,b:2}{a:key2,b:3}]的list
+     *		MapUtils.toMap(list, "a", "b") = {key1:2, key2:3}
+     * </pre>
+     * <p/>
+     * </p>
+     * 
+     * @param list 校验的类
+     * @param keyTilte 作为新map的key的键
+     * @param keyValue 作为新map的值的键
+     * @return 
+     */
+	public static Map<String, Object> toMap(List<Map<String, Object>> list, String keyTilte, String keyValue) {
+		if(list == null) {
+			return CollectionAndMapUtils.newHashMap();
+		}
+		Map<String, Object> map = CollectionAndMapUtils.newHashMap();
+		for (Map<String, Object> item : list) {
+			if(item.containsKey(keyTilte) && item.get(keyTilte) != null && item.containsKey(keyValue)) {
+				try {
+					map.put(item.get(keyTilte).toString(), item.get(keyValue));
+				} catch(Exception ex) {
+				}
+			}
+		}
+		return map;
+	}
+	
 	/**
      * 获取map里key对应的值，不存在或null返回defaultValue
      * <p>
@@ -187,42 +223,6 @@ public class MapUtils {
 	public static <K,V>long getLong(Map<K, V> map, K key, long defaultValue) {
 		return ObjectUtils.toLong(
 				get(map, key), defaultValue);
-	}
-	
-
-	/**
-     * 将List<Map> 中的键值从新组成map(不做类型转化判断，就是说结果类型要是对不上，强转报错请注意)
-     * <p>
-     * 可以理解为纵表转横表
-     * 例如：
-     * <p/>
-     * 
-     * <pre>
-     * 		现有值为[{a:key1,b:2}{a:key2,b:3}]的list
-     *		MapUtils.toMap(list, "a", "b") = {key1:2, key2:3}
-     * </pre>
-     * <p/>
-     * </p>
-     * 
-     * @param list 校验的类
-     * @param keyTilte 作为新map的key的键
-     * @param keyValue 作为新map的值的键
-     * @return 
-     */
-	public static Map<String, Object> toMap(List<Map<String, Object>> list, String keyTilte, String keyValue) {
-		if(list == null) {
-			return CollectionAndMapUtils.newHashMap();
-		}
-		Map<String, Object> map = CollectionAndMapUtils.newHashMap();
-		for (Map<String, Object> item : list) {
-			if(item.containsKey(keyTilte) && item.get(keyTilte) != null && item.containsKey(keyValue)) {
-				try {
-					map.put(item.get(keyTilte).toString(), item.get(keyValue));
-				} catch(Exception ex) {
-				}
-			}
-		}
-		return map;
 	}
 	
 }

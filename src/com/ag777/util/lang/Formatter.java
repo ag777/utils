@@ -12,6 +12,7 @@ public class Formatter {
 
 	/**
 	 * 存储单位格式化输出，初始单位Byte
+	 * 
 	 * @param b
 	 * @return
 	 */
@@ -44,6 +45,7 @@ public class Formatter {
 	
 	/**
 	 * json字符串的格式化(用于输出文件)
+	 * 
 	 * @param json
 	 * @param fillStringUnit 换行后添加的字符串，一般传\t或者4个空格
 	 * @return
@@ -177,8 +179,15 @@ public class Formatter {
 		return buf.toString();
 	}
 
+	/**
+	 * 添加换行符及缩进字符
+	 * 
+	 * @param buf
+	 * @param count
+	 * @param fillStringUnit
+	 */
 	private static void doFill(StringBuilder buf, int count, String fillStringUnit) {
-		buf.append("\r\n");
+		buf.append(SystemUtils.lineSeparator());
 		for (int i = 0; i < count; i++) {
 			buf.append(fillStringUnit);
 		}

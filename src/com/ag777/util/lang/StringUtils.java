@@ -15,6 +15,7 @@ public class StringUtils {
 
 	/**
 	 * 获得字符串长度（一个汉字算两个字节）
+	 * 
 	 * @param s
 	 * @return
 	 */
@@ -26,6 +27,7 @@ public class StringUtils {
 	
 	/**
 	 * 字符串是否为null或者长度为0
+	 * 
 	 * @param src
 	 * @return
 	 */
@@ -38,6 +40,7 @@ public class StringUtils {
 	
 	/**
 	 * 判断字符串是否为null获取为空字符串(最多只含制表符 \t ('\u0009'),换行符 \n ('\u000A'),回车符 \r ('\u000D')，换页符 \f ('\u000C')以及半角/全角空格)
+	 * 
 	 * @param src
 	 * @return
 	 */
@@ -50,6 +53,7 @@ public class StringUtils {
 	
 	/**
 	 * 如果字符串为null则返回空字符串
+	 * 
 	 * @param src
 	 * @return
 	 */
@@ -62,6 +66,7 @@ public class StringUtils {
 	
 	/**
 	 * 通过StringBuilder连接字符串
+	 * 
 	 * @param obj 	第一个值
 	 * @param objs 	后续的值
 	 * @return
@@ -79,6 +84,7 @@ public class StringUtils {
 	
 	/**
 	 * 利用StringBuilder替换起止位置的字符串
+	 * 
 	 * @param src
 	 * @param start
 	 * @param end
@@ -92,6 +98,7 @@ public class StringUtils {
 	
 	/**
 	 * StringBuilder拼接字符串
+	 * 
 	 * @param objs
 	 * @return
 	 */
@@ -110,6 +117,7 @@ public class StringUtils {
 	
 	/**
 	 * 利用StringBuilder倒置字符串
+	 * 
 	 * @param src
 	 * @return
 	 */
@@ -119,6 +127,7 @@ public class StringUtils {
 	
 	/**
      * 下划线转驼峰法
+     * 
      * @param line 源字符串
      * @param smallCamel 大小驼峰,是否为小驼峰（如果为false则首字母大写）
      * @return 转换后的字符串
@@ -147,6 +156,7 @@ public class StringUtils {
 	
 	/**
 	 * 首字母大写
+	 * 
 	 * @param str
 	 * @return
 	 */
@@ -160,6 +170,7 @@ public class StringUtils {
 	
 	/**
 	 * 生成随机的uuid
+	 * 
 	 * @return
 	 */
 	public static String uuid(){
@@ -168,6 +179,7 @@ public class StringUtils {
 	
 	/**
 	 * 将url字符串转化成java.net.URL对象
+	 * 
 	 * @param urlStr
 	 * @return
 	 * @throws MalformedURLException
@@ -180,6 +192,12 @@ public class StringUtils {
 		return url;
 	}
 	
+	/**
+	 * 字符串转Double
+	 * 
+	 * @param src
+	 * @return
+	 */
 	public static Double toDouble(String src) {
 		try {
 			return Double.parseDouble(src);
@@ -189,6 +207,12 @@ public class StringUtils {
 		return null;
 	}
 	
+	/**
+	 * 字符串转Float
+	 * 
+	 * @param src
+	 * @return
+	 */
 	public static Float toFloat(String src) {
 		try {
 			return Float.parseFloat(src);
@@ -198,6 +222,12 @@ public class StringUtils {
 		return null;
 	}
 	
+	/**
+	 * 字符串转Integer
+	 * 
+	 * @param src
+	 * @return
+	 */
 	public static Integer toInteger(String src) {
 		try {
 			return Integer.parseInt(src);
@@ -207,6 +237,11 @@ public class StringUtils {
 		return null;
 	}
 	
+	/**
+	 * 字符串转Long
+	 * @param src
+	 * @return
+	 */
 	public static Long toLong(String src) {
 		try {
 			return Long.parseLong(src);

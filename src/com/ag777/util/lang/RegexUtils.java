@@ -28,6 +28,7 @@ public class RegexUtils {
 	
 	/**
 	 * 字符串是否匹配正则,多做了一步非空判断
+	 * 
 	 * @param src
 	 * @param regex
 	 * @return
@@ -41,6 +42,7 @@ public class RegexUtils {
 	
 	/**
 	 * 替换
+	 * 
 	 * @param src
 	 * @param pattern
 	 * @param replacement
@@ -52,6 +54,7 @@ public class RegexUtils {
 	
 	/**
 	 * 统计出现次数
+	 * 
 	 * @param src
 	 * @param regex
 	 * @return
@@ -62,6 +65,7 @@ public class RegexUtils {
 	
 	/**
 	 * 统计出现次数
+	 * 
 	 * @param src
 	 * @param pattern
 	 * @return
@@ -77,6 +81,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中找到第一个匹配的字符串
+	 * 
 	 * @param src
 	 * @param regex
 	 * @return
@@ -87,6 +92,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中找到第一个匹配的字符串
+	 * 
 	 * @param src
 	 * @param pattern
 	 * @return
@@ -101,6 +107,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中找到第一个匹配的字符串并转为Long型
+	 * 
 	 * @param src
 	 * @param regex
 	 * @return
@@ -111,6 +118,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中找到第一个匹配的字符串并转为Long型
+	 * 
 	 * @param src
 	 * @param regex
 	 * @return
@@ -128,6 +136,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中查找所有正则匹配的字符串列表
+	 * 
 	 * @param src 源字符串
 	 * @param regex	正则
 	 * @return
@@ -138,6 +147,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中查找所有正则匹配的字符串列表
+	 * 
 	 * @param src
 	 * @param pattern
 	 * @return
@@ -153,6 +163,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中查找所有正则匹配的int型数字列表
+	 * 
 	 * @param src 源字符串
 	 * @param regex	正则
 	 * @return
@@ -163,6 +174,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中查找所有正则匹配的int型数字列表
+	 * 
 	 * @param src
 	 * @param pattern
 	 * @return
@@ -183,6 +195,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中查找所有正则匹配的long型数字列表
+	 * 
 	 * @param src 源字符串
 	 * @param regex	正则
 	 * @return
@@ -193,6 +206,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中查找所有正则匹配的long型数字列表
+	 * 
 	 * @param src
 	 * @param pattern
 	 * @return
@@ -213,6 +227,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中查找所有正则匹配的double型数字列表
+	 * 
 	 * @param src 源字符串
 	 * @param regex	正则
 	 * @return
@@ -223,6 +238,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中查找所有正则匹配的double型数字列表
+	 * 
 	 * @param src
 	 * @param pattern
 	 * @return
@@ -243,6 +259,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中查找所有正则匹配的boolean型数字列表
+	 * 
 	 * @param src 源字符串
 	 * @param regex	正则
 	 * @return
@@ -253,6 +270,7 @@ public class RegexUtils {
 	
 	/**
 	 * 从字符串中查找所有正则匹配的boolean型数字列表
+	 * 
 	 * @param src
 	 * @param pattern
 	 * @return
@@ -274,6 +292,7 @@ public class RegexUtils {
 	//--查找单个带正则替换
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(借鉴某爬虫app的github开源代码，这是真心好用)
+	 * 
 	 * @param src 源字符串
 	 * @param regex	匹配用的正则表达式
 	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
@@ -285,6 +304,7 @@ public class RegexUtils {
 	
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(借鉴某爬虫app的github开源代码，这是真心好用)
+	 * 
 	 * @param src
 	 * @param pattern
 	 * @param replacement
@@ -308,7 +328,10 @@ public class RegexUtils {
 	
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回
+	 * <p>
 	 * 若获取值为null则返回默认值
+	 * </p>
+	 * 
 	 * @param src
 	 * @param regex
 	 * @param replacement
@@ -325,7 +348,10 @@ public class RegexUtils {
 	
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回
+	 * <p>
 	 * 若获取值为null则返回默认值
+	 * </p>
+	 * 
 	 * @param src
 	 * @param pattern
 	 * @param replacement
@@ -342,6 +368,7 @@ public class RegexUtils {
 	
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(借鉴某爬虫app的github开源代码，这是真心好用)
+	 * 
 	 * @param src 源字符串
 	 * @param regex	匹配用的正则表达式
 	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
@@ -353,6 +380,7 @@ public class RegexUtils {
 	
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(借鉴某爬虫app的github开源代码，这是真心好用)
+	 * 
 	 * @param src
 	 * @param pattern
 	 * @param replacement
@@ -380,6 +408,7 @@ public class RegexUtils {
 	//--查找所有带正则替换
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(列表)
+	 * 
 	 * @param src 源字符串
 	 * @param regex	匹配用的正则表达式
 	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
@@ -391,6 +420,7 @@ public class RegexUtils {
 	
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(列表)
+	 * 
 	 * @param src
 	 * @param pattern
 	 * @param replacement
@@ -414,6 +444,7 @@ public class RegexUtils {
 	
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(列表)
+	 * 
 	 * @param src 源字符串
 	 * @param regex	匹配用的正则表达式
 	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
@@ -423,6 +454,14 @@ public class RegexUtils {
 		return findAllLong(src, getPattern(regex));
 	}
 	
+	/**
+	 * 查找字符串中所有匹配的内容，并转化为Long型
+	 * 
+	 * @param src
+	 * @param pattern
+	 * @param replacement
+	 * @return
+	 */
 	public static List<Long> findAllLong(String src, Pattern pattern, String replacement) {
 		List<Long> result = new ArrayList<>();
 		if(src != null && pattern != null) {

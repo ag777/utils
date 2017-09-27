@@ -17,6 +17,7 @@ public class SystemUtils {
 
 	/**
 	 * 将控制台输出重定向到文件
+	 * 
 	 * @param filePath
 	 * @return
 	 */
@@ -39,6 +40,7 @@ public class SystemUtils {
 	
 	/**
 	 * 获取cpu核数(可用于确定子线程数量以优化程序执行效率)
+	 * 
 	 * @return the maximum number of processors available to the virtual machine; never smaller than one
 	 */
 	public static int cpuCores() {
@@ -47,7 +49,10 @@ public class SystemUtils {
 
 	/**
 	 * 总内存
+	 * <p>
 	 * Returns the total amount of memory in the Java virtual machine. The value returned by this method may vary over time, depending on the host environment.
+	 * </p>
+	 * 
 	 * @return the total amount of memory currently available for current and future objects, measured in bytes.
 	 */
 	public static long totalMemory() {
@@ -56,7 +61,10 @@ public class SystemUtils {
 	
 	/**
 	 * 最大内存
+	 * <p>
 	 * Returns the maximum amount of memory that the Java virtual machine will attempt to use. If there is no inherent limit then the value java.lang.Long.MAX_VALUE will be returned.
+	 * </p>
+	 * 
 	 * @return Returns the maximum amount of memory that the Java virtual machine will attempt to use. If there is no inherent limit then the value java.lang.Long.MAX_VALUE will be returned.
 	 */
 	public static long maxMemory() {
@@ -65,7 +73,10 @@ public class SystemUtils {
 	
 	/**
 	 * 剩余内存
+	 * <p>
 	 * Returns the amount of free memory in the Java Virtual Machine. Calling the gc method may result in increasing the value returned by freeMemory
+	 * </p>
+	 * 
 	 * @return an approximation to the total amount of memory currently available for future allocated objects, measured in bytes.
 	 */
 	public static long freeMemory() {
@@ -74,6 +85,7 @@ public class SystemUtils {
 	
 	/**
 	 * 增加jvm关闭时的钩子
+	 * 
 	 * @param hook 在jvm关闭时会执行完这里的方法才会被关闭
 	 */
 	public static void addShutdownHook(Thread hook) {
@@ -82,6 +94,7 @@ public class SystemUtils {
 	
 	/**
 	 * 移除jvm关闭时的钩子
+	 * 
 	 * @param hook
 	 */
 	public static void removeShutdownHook(Thread hook) {
@@ -91,6 +104,7 @@ public class SystemUtils {
 	
 	/**
 	 * 文件换行符
+	 * 
 	 * @return
 	 */
 	public static String fileSeparator() {
@@ -99,8 +113,10 @@ public class SystemUtils {
 	
 	/**
 	 * 路径分隔符
-	 * 指的是分隔连续多个路径字符串的分隔符，例如: 
+	 * <p>
+	 * 		指的是分隔连续多个路径字符串的分隔符，例如: 
 			java   -cp   test.jar;abc.jar   HelloWorld 中的";",unix中这个值为":"
+		</p>
 	 * @return
 	 */
 	public static String pathSeparator() {
@@ -109,6 +125,7 @@ public class SystemUtils {
 	
 	/**
 	 * 换行符windows \r\n,linux \n
+	 * 
 	 * @return
 	 */
 	public static String lineSeparator() {
@@ -117,6 +134,7 @@ public class SystemUtils {
 	
 	/**
 	 * Java 运行时环境版本
+	 * 
 	 * @return
 	 */
 	public static String javaVersion() {
@@ -125,6 +143,7 @@ public class SystemUtils {
 	
 	/**
 	 * Java 安装目录
+	 * 
 	 * @return
 	 */
 	public static String javaHome() {
