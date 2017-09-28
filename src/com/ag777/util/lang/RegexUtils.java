@@ -13,7 +13,7 @@ import java.util.regex.PatternSyntaxException;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月06日,last modify at 2017年09月07日
+ * @version create on 2017年06月06日,last modify at 2017年09月28日
  */
 public class RegexUtils {
 
