@@ -299,7 +299,7 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static String find(String src, String regex, String replacement) {
-		return find(src, getPattern(regex));
+		return find(src, getPattern(regex), replacement);
 	}
 	
 	/**
@@ -415,7 +415,7 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<String> findAll(String src, String regex, String replacement) {
-		return findAll(src, getPattern(regex));
+		return findAll(src, getPattern(regex), replacement);
 	}
 	
 	/**
@@ -451,7 +451,7 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<Long> findAllLong(String src, String regex, String replacement) {
-		return findAllLong(src, getPattern(regex));
+		return findAllLong(src, getPattern(regex), replacement);
 	}
 	
 	/**
