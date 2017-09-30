@@ -1,8 +1,10 @@
 package com.ag777.util.lang;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
+import com.ag777.util.lang.reflection.ReflectionUtils;
 
 /**
  * 有关 <code>Object</code> 工具类
@@ -12,6 +14,17 @@ import java.util.Map;
  */
 public class ObjectUtils {
 
+	/**
+	 * 实例化class对象,支持内部类
+	 * <p>
+	 * 	详见ReflectionUtils.newInstace(Class<T> clazz)方法注释
+	 * </p>
+	 * 
+	 */
+	public static <T>T newInstace(Class<T> clazz) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
+		return ReflectionUtils.newInstace(clazz);
+	}
+	
 	//--转换
 	public static String toString(Object obj) {
 		if(obj != null) {
@@ -105,17 +118,19 @@ public class ObjectUtils {
 		return result!=null?result:defaultValue;
 	}
 	
+	//其它
 	/**
 	 * 判断对象是否为空
 	 * <p>
-	 * 	支持字符串，数组，列表，map
+	 * 	支持字符串，数组，列表，map;
+	 * 此外都返回false;
 	 * 	<p>
 	 * 	ObjectUtils.isEmpty(new int[]{}) = false
 	 * 	</p>
 	 * </p>
 	 * 
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes" })
 	public static boolean isEmpty(Object obj) {
         if (obj == null) {
             return true;
@@ -126,14 +141,47 @@ public class ObjectUtils {
         if (obj.getClass().isArray() && Array.getLength(obj) == 0) {	//数组
             return true;
         }
-        if (obj instanceof Collection && ((Collection) obj).isEmpty()) {	//列表
-            return true;
+        if (obj instanceof Collection) {	//列表
+            return ((Collection) obj).isEmpty();
         }
-        if (obj instanceof Map && ((Map) obj).isEmpty()) {	//map
-            return true;
+        if (obj instanceof Map) {	//map
+            return ((Map) obj).isEmpty();
         }
         return false;
     }
+	
+	
+	/**
+	 * 获取对象长度
+	 * <p>
+	 * 	支持字符串(一个汉字占两个字节)，数组，列表，map;
+	 * 此外都返回-1
+	 * 	<p>
+	 * 	ObjectUtils.isEmpty(new int[]{1,2,3}) = 3
+	 * 	</p>
+	 * </p>
+	 * 
+	 */
+	@SuppressWarnings("rawtypes")
+	public static int getLength(Object obj) {
+		if (obj == null) {
+            return 0;
+        }
+		 if (obj instanceof String) {	//字符串
+            return StringUtils.getLength((String) obj);
+        }
+        if (obj.getClass().isArray()) {	//数组
+            return Array.getLength(obj);
+        }
+        if (obj instanceof Collection) {	//列表
+            return ((Collection) obj).size();
+        }
+        if (obj instanceof Map) {	//map
+            return((Map) obj).size();
+        }
+        return -1;
+	}
+
 	
 	//--判断
 	/**

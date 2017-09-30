@@ -1,5 +1,6 @@
 package com.ag777.util.lang.collection;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,6 +21,22 @@ import java.util.Vector;
  */
 public class CollectionAndMapUtils {
 
+	/**
+	 * 创建数组
+	 * <p>
+	 * 	由于基本类型不能作为泛型，所以只好在外部自行强转了
+	 * 	<p>
+	 * 		CollectionAndMapUtils.newArray(int.class, 3) = [0,0,0];
+	 * 	</p>
+	 * </p>
+	 * @param clazz
+	 * @param length
+	 * @return
+	 */
+	public static Object newArray(Class<?> clazz, int length) {
+		return Array.newInstance(clazz, length);
+	}
+	
 	public static <T>List<T> newArrayList() {
 		return new ArrayList<>();
 	}

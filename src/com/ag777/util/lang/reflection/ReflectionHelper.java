@@ -1,9 +1,7 @@
 package com.ag777.util.lang.reflection;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -15,10 +13,10 @@ import java.util.Map;
 import com.ag777.util.lang.collection.ListUtils;
 
 /**
- * @Description 反射工具类
+ * 反射辅助类。
+ * 
  * @author ag777
- * Time: created at 2017/6/7. last modify at 2017/9/25.
- * Mark: 
+ * @version create on 2017年06月07日,last modify at 2017年09月30日
  */
 public class ReflectionHelper<T> {
 
@@ -37,118 +35,6 @@ public class ReflectionHelper<T> {
 	}
 	
 	/*=============外部调用=================*/
-	//--静态方法
-	/**
-	 * 判断一个类是否是数值类型,不能直接用Number.class.isAssignableFrom(clazz)判断
-	 * @param targetClazz
-	 * @return
-	 */
-	public static boolean isNumberType(Class<?> clazz) {
-	    // 判断包装类
-	    if (Number.class.isAssignableFrom(clazz)) {
-	        return true;
-	    }
-	    // 判断原始类,过滤掉特殊的基本类型
-	    if (clazz == boolean.class || clazz == char.class || clazz == void.class) {
-	        return false;
-	    }
-	    return clazz.isPrimitive();
-	}
-	/**
-	 * 通过注释获取变量列表
-	 * @param annotationClass
-	 * @return
-	 */
-	public static List<Field> getFieldListByAnnotation(Class<?> clazz,Class<? extends Annotation> annotationClass) {
-		List<Field> result = new ArrayList<>();
-		Field[] fields = clazz.getDeclaredFields();
-		for (Field field : fields) {
-			if(field.isAnnotationPresent(annotationClass)) {
-				result.add(field);
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * 通过注释获取方法列表
-	 * @param annotationClass
-	 * @return
-	 */
-	public static List<Method> getMethodListByAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
-		List<Method> result = new ArrayList<>();
-		Method[] methods = clazz.getDeclaredMethods();
-		for (Method method : methods) {
-			if(method.isAnnotationPresent(annotationClass)) {
-				result.add(method);
-			}
-		}
-		return result;
-	}
-	
-	/**
-	 * 获取成员变量对应的值
-	 * @param obj
-	 * @param fieldName
-	 * @return
-	 */
-	public static Object getFieldValue(Object obj, String fieldName) {
-		try {
-			return obj.getClass().getDeclaredField(fieldName).get(obj);
-		} catch (Exception e) {
-//			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	/**
-	 * 实例化class对象,支持内部类
-	 * @return
-	 * @throws InvocationTargetException 
-	 * @throws IllegalArgumentException 
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 * @throws ClassNotFoundException 
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T>T newInstace(Class<T> clazz) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
-		Class<?> outerClass = getOuterClass(clazz);
-		if(outerClass == null) {	//不是内部类
-			return clazz.newInstance();
-		}
-		
-		T obj = null;
-		
-		Constructor<?>[] c = clazz.getDeclaredConstructors();
-		int modifier_class = clazz.getModifiers();
-		boolean flag = c[0].isAccessible();	//记录原本的可访问性
-		c[0].setAccessible(true);
-		
-		if(Modifier.isStatic(modifier_class)) {	//带static的类直接实例化对象
-			obj =  (T) c[0].newInstance();
-		}  else {	//其余的都需要先实例化外部对象再实例化内部类
-			obj = (T) c[0].newInstance(newInstace(outerClass));
-		}
-		
-		c[0].setAccessible(flag);	//还原可访问性
-		return obj;
-	}
-	
-	/**
-	 * 获取内部类的外包类
-	 * @param clazz
-	 * @return
-	 * @throws ClassNotFoundException
-	 */
-	private static <T>Class<?> getOuterClass(Class<T> clazz) throws ClassNotFoundException {
-		String className = clazz.getName();
-		if(className.contains("$")) {
-			return Class.forName(className.split("\\$")[0]);
-		}
-		return null;
-	}
-	
-	//--非静态方法
 	/**
 	 * 获取类路径,如java.lang.String
 	 * @return
@@ -163,7 +49,7 @@ public class ReflectionHelper<T> {
 	 */
 	public T newInstance()  {
 		try {
-			return newInstace(mClazz);
+			return ReflectionUtils.newInstace(mClazz);
 		}catch(Exception ex) {
 			
 		}

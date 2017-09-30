@@ -20,7 +20,7 @@ import java.util.Map;
 
 import com.ag777.util.db.model.ColumnPojo;
 import com.ag777.util.lang.StringUtils;
-import com.ag777.util.lang.reflection.ReflectionHelper;
+import com.ag777.util.lang.reflection.ReflectionUtils;
 
 /**
  * 数据库操作辅助类
@@ -213,7 +213,7 @@ public class DbHelper {
 	 * @return
 	 */
 	public static Integer toSqlType(Class<?> clazz) {
-		if(ReflectionHelper.isNumberType(clazz)) {
+		if(ReflectionUtils.isNumberType(clazz)) {
 			if(Float.class == clazz || float.class == clazz) {
 				return Types.FLOAT;
 			} else if(Double.class == clazz || double.class == clazz) {
@@ -698,7 +698,7 @@ public class DbHelper {
 			
 			while (rs.next()) { // rowData = new HashMap(columnCount);
 				
-				T rowData = ReflectionHelper.newInstace(clazz);
+				T rowData = ReflectionUtils.newInstace(clazz);
 	
 				for (int i = 1; i < columnCount; i++) {
 					Object value = rs.getObject(1);
@@ -798,13 +798,6 @@ public class DbHelper {
 	 * @return
 	 */
 	private static boolean isBasicClass(Class<?> clazz) {
-		return clazz.isAssignableFrom(Integer.class) ||	//clazz是基本类型
-				clazz.isAssignableFrom(Byte.class) ||
-				clazz.isAssignableFrom(Short.class) ||
-				clazz.isAssignableFrom(Long.class) ||
-				clazz.isAssignableFrom(Float.class) ||
-				clazz.isAssignableFrom(Double.class) ||
-				clazz.isAssignableFrom(Boolean.class) ||
-				clazz.isAssignableFrom(Character.class);
+		return ReflectionUtils.isBasicClass(clazz);
 	}
 }
