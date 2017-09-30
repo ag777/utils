@@ -1,10 +1,11 @@
 package com.ag777.util.lang;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import com.ag777.util.lang.collection.CollectionAndMapUtils;
 
 /**
  * 正则表达式工具类
@@ -13,7 +14,7 @@ import java.util.regex.PatternSyntaxException;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月06日,last modify at 2017年09月28日
+ * @version create on 2017年06月06日,last modify at 2017年09月30日
  */
 public class RegexUtils {
 
@@ -80,6 +81,36 @@ public class RegexUtils {
 	}
 	
 	/**
+	 * 通过源字符串和正则获取Matcher,之后通过遍历就可以为所欲为(划掉)
+	 * <p>
+	 * 	例子
+	 * 	<p>
+	 * 		String a = "aacaa";
+			Matcher matcher = RegexUtils.getMatcher(a, "a([^a]+?)a");
+			while(matcher.find()) {
+				System.out.println(matcher.group(1));
+			}
+			结果为"c"
+	 * 	</p>
+	 * </p>
+	 */
+	public static Matcher getMatcher(String src, String regex) {
+		return getMatcher(src, getPattern(regex));
+	}
+	
+	/**
+	 * 通过源字符串和正则获取Matcher,之后通过遍历就可以为所欲为(划掉)
+	 * <p>
+	 * 		见getMatcher(String src, String regex)方法的说明
+	 * </p>
+	 */
+	public static Matcher getMatcher(String src, Pattern pattern) {
+		return pattern.matcher(src);
+	}
+	
+	
+	//查找单个不带替换式
+	/**
 	 * 从字符串中找到第一个匹配的字符串
 	 * 
 	 * @param src
@@ -126,14 +157,12 @@ public class RegexUtils {
 	public static Long findLong(String src, Pattern pattern) {
 		Matcher matcher = getMatcher(src, pattern);
 		if(matcher.find()) {
-			try {
-				return Long.parseLong(matcher.group());
-			}catch(Exception ex) {
-			}
+			return ObjectUtils.toLong(matcher.group());
 		}
 		return null;
 	}
 	
+	//查找所有不带替换式
 	/**
 	 * 从字符串中查找所有正则匹配的字符串列表
 	 * 
@@ -153,7 +182,7 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<String> findAll(String src, Pattern pattern) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = CollectionAndMapUtils.newArrayList();
 		Matcher matcher = getMatcher(src, pattern);
 		while(matcher.find()) {
 			list.add(matcher.group());
@@ -180,14 +209,12 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<Integer> findAllInt(String src, Pattern pattern) {
-		List<Integer> list = new ArrayList<Integer>();
+		List<Integer> list = CollectionAndMapUtils.newArrayList();
 		Matcher matcher = getMatcher(src, pattern);
 		while(matcher.find()) {
-			try{	//转为数字，非数字不计入结果
-				list.add(
-						Integer.parseInt(
-								matcher.group()));
-			}catch(Exception ex) {
+			Integer item = ObjectUtils.toInteger(matcher.group());	//转为数字，非数字不计入结果
+			if(item != null) {
+				list.add(item);
 			}
 		}
 		return list;
@@ -212,15 +239,14 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<Long> findAllLong(String src, Pattern pattern) {
-		List<Long> list = new ArrayList<Long>();
+		List<Long> list = CollectionAndMapUtils.newArrayList();
 		Matcher matcher = getMatcher(src, pattern);
 		while(matcher.find()) {
-			try{	//转为数字，非数字不计入结果
-				list.add(
-						Long.parseLong(
-								matcher.group()));
-			}catch(Exception ex) {
+			Long item = ObjectUtils.toLong(matcher.group());	//转为数字，非数字不计入结果
+			if(item != null) {
+				list.add(item);
 			}
+			
 		}
 		return list;
 	}
@@ -244,14 +270,12 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<Double> findAllDouble(String src, Pattern pattern) {
-		List<Double> list = new ArrayList<Double>();
+		List<Double> list = CollectionAndMapUtils.newArrayList();
 		Matcher matcher = getMatcher(src, pattern);
 		while(matcher.find()) {
-			try{	//转为数字，非数字不计入结果
-				list.add(
-						Double.parseDouble(
-								matcher.group()));
-			}catch(Exception ex) {
+			Double item = ObjectUtils.toDouble(matcher.group());	//转为数字，非数字不计入结果
+			if(item != null) {
+				list.add(item);
 			}
 		}
 		return list;
@@ -276,18 +300,19 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<Boolean> findAllBoolean(String src, Pattern pattern) {
-		List<Boolean> list = new ArrayList<Boolean>();
+		List<Boolean> list = CollectionAndMapUtils.newArrayList();
 		Matcher matcher = getMatcher(src, pattern);
 		while(matcher.find()) {
-			try{	//转为数字，非数字不计入结果
-				list.add(
-						Boolean.parseBoolean(
-								matcher.group()));
-			}catch(Exception ex) {
+			Boolean item = ObjectUtils.toBoolean(matcher.group());	//转为数字，非数字不计入结果
+			if(item != null) {
+				list.add(item);
 			}
+			
 		}
 		return list;
 	}
+	
+	
 	
 	//--查找单个带正则替换
 	/**
@@ -367,7 +392,43 @@ public class RegexUtils {
 	}
 	
 	/**
-	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(借鉴某爬虫app的github开源代码，这是真心好用)
+	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回
+	 * 
+	 * @param src 源字符串
+	 * @param regex	匹配用的正则表达式
+	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
+	 * @return
+	 */
+	public static Integer findInteger(String src, String regex, String replacement) {
+		return findInteger(src, getPattern(regex), replacement);
+	}
+	
+	/**
+	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回
+	 * 
+	 * @param src
+	 * @param pattern
+	 * @param replacement
+	 * @return
+	 */
+	public static Integer findInteger(String src, Pattern pattern, String replacement) {
+		if(src != null && pattern != null) {
+			Matcher matcher = getMatcher(src, pattern);
+
+			if (!matcher.find()) {	//没有匹配到则返回null
+
+			} else if (matcher.groupCount() >= 1) {
+				return ObjectUtils.toInteger(getReplacement(matcher, replacement));
+			}
+
+		} else {	//如果源字符串为null或者正则表达式为null，返回null
+			return null;
+		}
+		return null;
+	}
+	
+	/**
+	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回
 	 * 
 	 * @param src 源字符串
 	 * @param regex	匹配用的正则表达式
@@ -375,11 +436,11 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static Long findLong(String src, String regex, String replacement) {
-		return findLong(src, getPattern(regex));
+		return findLong(src, getPattern(regex), replacement);
 	}
 	
 	/**
-	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(借鉴某爬虫app的github开源代码，这是真心好用)
+	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回
 	 * 
 	 * @param src
 	 * @param pattern
@@ -393,10 +454,7 @@ public class RegexUtils {
 			if (!matcher.find()) {	//没有匹配到则返回null
 
 			} else if (matcher.groupCount() >= 1) {
-				try {
-					return Long.parseLong(getReplacement(matcher, replacement));
-				} catch(Exception ex) {
-				}
+				return ObjectUtils.toLong(getReplacement(matcher, replacement));
 			}
 
 		} else {	//如果源字符串为null或者正则表达式为null，返回null
@@ -404,6 +462,43 @@ public class RegexUtils {
 		}
 		return null;
 	}
+	
+	/**
+	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回
+	 * 
+	 * @param src 源字符串
+	 * @param regex	匹配用的正则表达式
+	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
+	 * @return
+	 */
+	public static Double findDouble(String src, String regex, String replacement) {
+		return findDouble(src, getPattern(regex), replacement);
+	}
+	
+	/**
+	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回
+	 * 
+	 * @param src
+	 * @param pattern
+	 * @param replacement
+	 * @return
+	 */
+	public static Double findDouble(String src, Pattern pattern, String replacement) {
+		if(src != null && pattern != null) {
+			Matcher matcher = getMatcher(src, pattern);
+
+			if (!matcher.find()) {	//没有匹配到则返回null
+
+			} else if (matcher.groupCount() >= 1) {
+				return ObjectUtils.toDouble(getReplacement(matcher, replacement));
+			}
+
+		} else {	//如果源字符串为null或者正则表达式为null，返回null
+			return null;
+		}
+		return null;
+	}
+	
 	
 	//--查找所有带正则替换
 	/**
@@ -427,7 +522,7 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<String> findAll(String src, Pattern pattern, String replacement) {
-		List<String> result = new ArrayList<>();
+		List<String> result = CollectionAndMapUtils.newArrayList();
 		if(src != null && pattern != null) {
 			Matcher matcher = getMatcher(src, pattern);
 
@@ -450,6 +545,46 @@ public class RegexUtils {
 	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
 	 * @return
 	 */
+	public static List<Integer> findAllInteger(String src, String regex, String replacement) {
+		return findAllInteger(src, getPattern(regex), replacement);
+	}
+	
+	/**
+	 * 查找字符串中所有匹配的内容，并转化为Integer型
+	 * 
+	 * @param src
+	 * @param pattern
+	 * @param replacement
+	 * @return
+	 */
+	public static List<Integer> findAllInteger(String src, Pattern pattern, String replacement) {
+		List<Integer> result = CollectionAndMapUtils.newArrayList();
+		if(src != null && pattern != null) {
+			Matcher matcher = getMatcher(src, pattern);
+
+			while(matcher.find()) {
+				Integer item = ObjectUtils.toInteger(getReplacement(matcher, replacement));
+				result.add(item);
+				if(item != null) {
+					result.add(item);
+				}
+			}
+
+		} else {	//如果元字符串为null或者正则表达式为null，返回空列表
+			return result;
+		}
+		return result;
+	}
+	
+	
+	/**
+	 * 查找字符串中所有匹配的内容，并转化为Long型
+	 * 
+	 * @param src 源字符串
+	 * @param regex	匹配用的正则表达式
+	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
+	 * @return
+	 */
 	public static List<Long> findAllLong(String src, String regex, String replacement) {
 		return findAllLong(src, getPattern(regex), replacement);
 	}
@@ -463,15 +598,15 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<Long> findAllLong(String src, Pattern pattern, String replacement) {
-		List<Long> result = new ArrayList<>();
+		List<Long> result = CollectionAndMapUtils.newArrayList();
 		if(src != null && pattern != null) {
 			Matcher matcher = getMatcher(src, pattern);
 
 			while(matcher.find()) {
-				try {
-					long temp = Long.parseLong(getReplacement(matcher, replacement));
-					result.add(temp);
-				} catch(Exception ex) {
+				Long item = ObjectUtils.toLong(getReplacement(matcher, replacement));
+				result.add(item);
+				if(item != null) {
+					result.add(item);
 				}
 			}
 
@@ -481,13 +616,46 @@ public class RegexUtils {
 		return result;
 	}
 	
+	/**
+	 * 查找字符串中所有匹配的内容，并转化为Double型
+	 * 
+	 * @param src
+	 * @param regex
+	 * @param replacement
+	 * @return
+	 */
+	public static List<Double> findAllDouble(String src, String regex, String replacement) {
+		return findAllDouble(src, getPattern(regex), replacement);
+	}
+	
+	/**
+	 * 查找字符串中所有匹配的内容，并转化为Double型
+	 * 
+	 * @param src
+	 * @param pattern
+	 * @param replacement
+	 * @return
+	 */
+	public static List<Double> findAllDouble(String src, Pattern pattern, String replacement) {
+		List<Double> result = CollectionAndMapUtils.newArrayList();
+		if(src != null && pattern != null) {
+			Matcher matcher = getMatcher(src, pattern);
+
+			while(matcher.find()) {
+				Double item = ObjectUtils.toDouble(getReplacement(matcher, replacement));
+				if(item != null) {
+					result.add(item);
+				}
+			}
+		} else {	//如果元字符串为null或者正则表达式为null，返回空列表
+			return result;
+		}
+		return result;
+	}
+	
 	/*--------------内部方法----------------*/
 	private static Pattern getPattern(String regex) {
 		return Pattern.compile(regex);
-	}
-	
-	private static Matcher getMatcher(String src, Pattern pattern) {
-		return pattern.matcher(src);
 	}
 	
 	private static String getReplacement(Matcher matcher, String replacement) {

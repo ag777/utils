@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2017年09月22日
+ * @version last modify at 2017年09月30日
  */
 public class StringUtils {
 
@@ -245,6 +245,20 @@ public class StringUtils {
 	public static Long toLong(String src) {
 		try {
 			return Long.parseLong(src);
+		} catch(Exception ex) {
+			//转换失败
+		}
+		return null;
+	}
+	
+	/**
+	 * 字符串转Boolean
+	 * @param src
+	 * @return
+	 */
+	public static Boolean toBoolean(String src) {
+		try {
+			return Boolean.parseBoolean(src);
 		} catch(Exception ex) {
 			//转换失败
 		}

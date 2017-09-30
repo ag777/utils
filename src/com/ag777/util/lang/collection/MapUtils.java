@@ -8,7 +8,7 @@ import com.ag777.util.lang.ObjectUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年09月22日
+ * @version create on 2017年09月22日,last modify at 2017年09月29日
  */
 public class MapUtils {
 
@@ -21,6 +21,74 @@ public class MapUtils {
 		return CollectionAndMapUtils.newHashTable();
 	}
 	
+	public static <K,V>Map<K,V> newMap() {
+		return newHashMap();
+	}
+	
+	/**
+	 * 构建map
+	 * <p>
+	 * 	含一对key-value
+	 * </p>
+	 * 
+	 */
+	public Map<String, Object> of(String key, Object value) {
+		Map<String, Object> map = newMap();
+		map.put(key, value);
+		return map;
+	}
+	
+	/**
+	 * 构建map
+	 * <p>
+	 * 	含两对key-value
+	 * </p>
+	 * 
+	 */
+	public Map<String, Object> of(String key1, Object value1, String key2, Object value2) {
+		Map<String, Object> map = of(key1, value1);
+		map.put(key2, value2);
+		return map;
+	}
+	
+	/**
+	 * 构建map
+	 * <p>
+	 * 	含三对key-value
+	 * </p>
+	 * 
+	 */
+	public Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3) {
+		Map<String, Object> map = of(key1, value1, key2, value2);
+		map.put(key3, value3);
+		return map;
+	}
+	
+	/**
+	 * 构建map
+	 * <p>
+	 * 	含四对key-value
+	 * </p>
+	 * 
+	 */
+	public Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4) {
+		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3);
+		map.put(key4, value4);
+		return map;
+	}
+	
+	/**
+	 * 构建map
+	 * <p>
+	 * 	含五对key-value
+	 * </p>
+	 * 
+	 */
+	public Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5) {
+		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3, key4, value4);
+		map.put(key5, value5);
+		return map;
+	}
 	
 	/**
      * 将List<Map> 中的键值从新组成map(不做类型转化判断，就是说结果类型要是对不上，强转报错请注意)
@@ -31,7 +99,7 @@ public class MapUtils {
      * 
      * <pre>
      * 		现有值为[{a:key1,b:2}{a:key2,b:3}]的list
-     *		MapUtils.toMap(list, "a", "b") = {key1:2, key2:3}
+     *		MapUtils.of(list, "a", "b") = {key1:2, key2:3}
      * </pre>
      * <p/>
      * </p>
@@ -41,11 +109,11 @@ public class MapUtils {
      * @param keyValue 作为新map的值的键
      * @return 
      */
-	public static Map<String, Object> toMap(List<Map<String, Object>> list, String keyTilte, String keyValue) {
+	public static Map<String, Object> of(List<Map<String, Object>> list, String keyTilte, String keyValue) {
 		if(list == null) {
-			return CollectionAndMapUtils.newHashMap();
+			return newMap();
 		}
-		Map<String, Object> map = CollectionAndMapUtils.newHashMap();
+		Map<String, Object> map = newMap();
 		for (Map<String, Object> item : list) {
 			if(item.containsKey(keyTilte) && item.get(keyTilte) != null && item.containsKey(keyValue)) {
 				try {

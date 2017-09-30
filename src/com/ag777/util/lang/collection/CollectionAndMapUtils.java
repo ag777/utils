@@ -16,7 +16,7 @@ import java.util.Vector;
  * 有关 <code>Collection和Map</code> 工具类。
  * 
  * @author ag777
- * @version create on 2017年06月15日,last modify at 2017年09月26日
+ * @version create on 2017年06月15日,last modify at 2017年09月29日
  */
 public class CollectionAndMapUtils {
 
@@ -50,6 +50,13 @@ public class CollectionAndMapUtils {
 	
 	public static <E>boolean isEmpty(Collection<E> collection) {
 		if(collection == null || collection.isEmpty()) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static <K,V>boolean isEmpty(Map<K, V> map) {
+		if(map== null || map.isEmpty()) {
 			return true;
 		}
 		return false;

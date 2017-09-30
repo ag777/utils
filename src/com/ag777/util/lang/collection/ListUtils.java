@@ -16,18 +16,22 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年09月26日
+ * @version create on 2017年09月22日,last modify at 2017年09月29日
  */
 public class ListUtils {
 
 	private ListUtils(){}
 	
 	public static <T>List<T> newArrayList() {
-		return CollectionAndMapUtils.newArrayList();
+		return newList();
 	}
 	
 	public static <T>List<T> newVector() {
 		return CollectionAndMapUtils.newVector();
+	}
+	
+	private static <T>List<T> newList() {
+		return newArrayList();
 	}
 	
 	 /**
@@ -37,15 +41,15 @@ public class ListUtils {
      * <p/>
      * 
      * <pre>
-     * 		List<String> list = ListUtils.toList("1,2,3", ",");
+     * 		List<String> list = ListUtils.of("1,2,3", ",");
      *		结果为包含"1","2"和"3"的列表
      *		值得注意的是由于调用的是String.split(String regex)方法所以参数separator为正则表达式,注意字符串转义
      * </pre>
      * <p/>
      * </p>
      */
-	public static List<String> toList(String src, String separator) {
-		List<String> result = CollectionAndMapUtils.newArrayList();
+	public static List<String> of(String src, String separator) {
+		List<String> result = newList();
 		if(src == null) {
 			return result;
 		}else {
@@ -70,8 +74,8 @@ public class ListUtils {
      * <p/>
      * </p>
      */
-	public static <T>List<T> toList(T[] items) {
-		List<T> result = CollectionAndMapUtils.newArrayList();
+	public static <T>List<T> of(T[] items) {
+		List<T> result = newList();
 		if(items != null && items.length > 0) {
 			for (T item : items) {
 				result.add(item);
@@ -97,6 +101,71 @@ public class ListUtils {
 		return Arrays.asList(items);
 	}
 	
+	/**
+	 * 构建list
+	 * <p>
+	 * 	含一项
+	 * </p>
+	 * 
+	 */
+	public static <T>List<T> of(T item) {
+		List<T> list = newList();
+		list.add(item);
+		return list;
+	}
+	
+	/**
+	 * 构建list
+	 * <p>
+	 * 	含两项
+	 * </p>
+	 * 
+	 */
+	public static <T>List<T> of(T item1, T item2) {
+		List<T> list = of(item1);
+		list.add(item2);
+		return list;
+	}
+	
+	/**
+	 * 构建list
+	 * <p>
+	 * 	含三项
+	 * </p>
+	 * 
+	 */
+	public static <T>List<T> of(T item1, T item2, T item3) {
+		List<T> list = of(item1, item2);
+		list.add(item3);
+		return list;
+	}
+	
+	/**
+	 * 构建list
+	 * <p>
+	 * 	含四项
+	 * </p>
+	 * 
+	 */
+	public static <T>List<T> of(T item1, T item2, T item3, T item4) {
+		List<T> list = of(item1, item2, item3);
+		list.add(item4);
+		return list;
+	}
+	
+	/**
+	 * 构建list
+	 * <p>
+	 * 	含五项
+	 * </p>
+	 * 
+	 */
+	public static <T>List<T> of(T item1, T item2, T item3, T item4, T item5) {
+		List<T> list = of(item1, item2, item3, item4);
+		list.add(item5);
+		return list;
+	}
+	
 	 /**
      * 数组转列表
      * <p>
@@ -105,14 +174,14 @@ public class ListUtils {
      * 
      * <pre>
      * 		现有key-value 为[{a:1,b:2},{a:2},{a:3}]的列表list
-     *		ListUtils.toList(list, "a");
+     *		ListUtils.of(list, "a");
      *		结果将是值[1,2,3] 的列表
      * </pre>
      * <p/>
      * </p>
      */
-	public static List<Object> toList(List<Map<String, Object>> list, String key) {
-		List<Object> resultList = CollectionAndMapUtils.newArrayList();
+	public static List<Object> of(List<Map<String, Object>> list, String key) {
+		List<Object> resultList = newList();
 		for (Map<String, Object> item : list) {
 			try {
 				Object obj = MapUtils.get(item, key);
@@ -135,14 +204,14 @@ public class ListUtils {
      * 
      * <pre>
      * 		现有key-value 为[{a:1},{a:2},{a:3}]的列表list
-     *		ListUtils.toList(list);
+     *		ListUtils.of(list);
      *		结果将是值[1,2,3] 的列表
      * </pre>
      * <p/>
      * </p>
      */
-	public static List<Object> toList(List<Map<String, Object>> list) {
-		List<Object> resultList = CollectionAndMapUtils.newArrayList();
+	public static List<Object> of(List<Map<String, Object>> list) {
+		List<Object> resultList = newList();
 		for (Map<String, Object> item : list) {
 			Iterator<String> itor = item.keySet().iterator();
 			if(itor.hasNext()) {
@@ -165,7 +234,7 @@ public class ListUtils {
      * <p/>
      * 
      * <pre>
-     * 		ListUtils.toList(new Integer[]{1,2,3});
+     * 		ListUtils.of(new Integer[]{1,2,3});
      *		ListUtils.toString(list,",");
      *		得到的结果是1,2,3
      * </pre>
@@ -229,7 +298,7 @@ public class ListUtils {
      * <p/>
      * 
      * <pre>
-     * List<Integer> list = CollectionAndMapUtils.newArrayList();
+     * List<Integer> list = newList();
 		list.add(1);
 		list.add(2);
 		list.add(3);
@@ -267,7 +336,7 @@ public class ListUtils {
 		if(limit <= 0) {
 			throw new RuntimeException("参数limit必须大于0");
 		} 
-		List<List<T>> result = CollectionAndMapUtils.newArrayList();
+		List<List<T>> result = newList();
 		int size = list.size()/limit+1;
 		for (int i = 0; i < size; i++) {
 			int min = limit*i;
@@ -324,10 +393,10 @@ public class ListUtils {
 			return null;
 		}
 		if(list == null) {
-			return CollectionAndMapUtils.newArrayList();
+			return newList();
 		}
 		
-		List<Map<String, Object>> newList =CollectionAndMapUtils.newArrayList();
+		List<Map<String, Object>> newList =newList();
 		for (T item : list) {
 			Map<String,	Object> map = CollectionAndMapUtils.newHashMap();
 			map.put(key, item);
@@ -409,7 +478,7 @@ public class ListUtils {
 		}else if(list instanceof LinkedList) {
 			newList = CollectionAndMapUtils.newLinkedList();
 		}else {
-			newList = CollectionAndMapUtils.newArrayList();
+			newList = newArrayList();
 		}
 		return newList;
 	}

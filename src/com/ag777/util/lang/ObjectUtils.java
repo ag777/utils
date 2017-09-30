@@ -1,12 +1,14 @@
 package com.ag777.util.lang;
 
-
+import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年09月22日
+ * @version create on 2017年09月22日,last modify at 2017年09月30日
  */
 public class ObjectUtils {
 
@@ -86,6 +88,52 @@ public class ObjectUtils {
 		Long result = toLong(obj);
 		return result!=null?result:defaultValue;
 	}
+	
+	public static Boolean toBoolean(Object obj) {
+		if(obj != null) {
+			if(obj instanceof Boolean) {
+				return (Boolean) obj;
+			} else {
+				return StringUtils.toBoolean(obj.toString());
+			}
+		}
+		return null;
+	}
+	
+	public static boolean toBoolean(Object obj, boolean defaultValue) {
+		Boolean result = toBoolean(obj);
+		return result!=null?result:defaultValue;
+	}
+	
+	/**
+	 * 判断对象是否为空
+	 * <p>
+	 * 	支持字符串，数组，列表，map
+	 * 	<p>
+	 * 	ObjectUtils.isEmpty(new int[]{}) = false
+	 * 	</p>
+	 * </p>
+	 * 
+	 */
+	@SuppressWarnings("rawtypes")
+	public static boolean isEmpty(Object obj) {
+        if (obj == null) {
+            return true;
+        }
+        if (obj instanceof String) {	//字符串
+            return StringUtils.isEmpty((String) obj);
+        }
+        if (obj.getClass().isArray() && Array.getLength(obj) == 0) {	//数组
+            return true;
+        }
+        if (obj instanceof Collection && ((Collection) obj).isEmpty()) {	//列表
+            return true;
+        }
+        if (obj instanceof Map && ((Map) obj).isEmpty()) {	//map
+            return true;
+        }
+        return false;
+    }
 	
 	//--判断
 	/**
