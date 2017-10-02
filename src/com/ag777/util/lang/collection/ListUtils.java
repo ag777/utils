@@ -16,14 +16,14 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年09月30日
+ * @version create on 2017年09月22日,last modify at 2017年10月02日
  */
 public class ListUtils {
 
 	private ListUtils(){}
 	
 	public static <T>List<T> newArrayList() {
-		return newList();
+		return CollectionAndMapUtils.newArrayList();
 	}
 	
 	public static <T>List<T> newVector() {

@@ -8,7 +8,7 @@ import com.ag777.util.lang.ObjectUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年09月29日
+ * @version create on 2017年09月22日,last modify at 2017年10月02日
  */
 public class MapUtils {
 
@@ -32,7 +32,7 @@ public class MapUtils {
 	 * </p>
 	 * 
 	 */
-	public Map<String, Object> of(String key, Object value) {
+	public static Map<String, Object> of(String key, Object value) {
 		Map<String, Object> map = newMap();
 		map.put(key, value);
 		return map;
@@ -45,7 +45,7 @@ public class MapUtils {
 	 * </p>
 	 * 
 	 */
-	public Map<String, Object> of(String key1, Object value1, String key2, Object value2) {
+	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2) {
 		Map<String, Object> map = of(key1, value1);
 		map.put(key2, value2);
 		return map;
@@ -58,7 +58,7 @@ public class MapUtils {
 	 * </p>
 	 * 
 	 */
-	public Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3) {
+	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3) {
 		Map<String, Object> map = of(key1, value1, key2, value2);
 		map.put(key3, value3);
 		return map;
@@ -71,7 +71,7 @@ public class MapUtils {
 	 * </p>
 	 * 
 	 */
-	public Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4) {
+	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4) {
 		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3);
 		map.put(key4, value4);
 		return map;
@@ -84,7 +84,7 @@ public class MapUtils {
 	 * </p>
 	 * 
 	 */
-	public Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5) {
+	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5) {
 		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3, key4, value4);
 		map.put(key5, value5);
 		return map;
