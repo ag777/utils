@@ -582,6 +582,9 @@ public class DbHelper {
 	 * @return
 	 */
 	public int[] batchUpdate(String sql, List<Object[]> paramsList) {
+		if(paramsList == null || paramsList.isEmpty()) {
+			return new int[]{};
+		}
     	try {
     		conn.setAutoCommit(false);
 	    	PreparedStatement pstmt = getBatchPreparedStatement(sql, paramsList);
@@ -630,7 +633,7 @@ public class DbHelper {
 	 * @throws SQLException
 	 */
 	public PreparedStatement getPreparedStatement(String sql, Object[] params) throws SQLException {
-		PreparedStatement pstmt = conn.prepareStatement(sql);
+		PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 		if(params != null) {
 	    	for (int i = 0; i < params.length; i++) {
 	    		Object item = params[i];
