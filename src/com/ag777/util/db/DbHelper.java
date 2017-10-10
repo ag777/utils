@@ -26,10 +26,11 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2017年09月20日
+ * @version create on 2017年07月28日,last modify at 2017年10月10日
  */
 public class DbHelper {
 
+	private static boolean MODE_DEBUG = true;
 	private static String DRIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
 	private static String URL_TAIL = "?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull";
 	
@@ -41,6 +42,10 @@ public class DbHelper {
 		DbHelper.DRIVER_CLASS_NAME = driverClassName;
 	}
 
+	public static void debugMode(boolean debugMode) {
+		DbHelper.MODE_DEBUG = debugMode;
+	}
+	
 	private Connection conn;
 	
 	public DbHelper(Connection conn) {
@@ -363,7 +368,7 @@ public class DbHelper {
 			}
 			return list;
 		} catch(Exception ex) {
-			ex.printStackTrace();
+			err(ex);
 		}
 		return null;
 	}
@@ -421,7 +426,7 @@ public class DbHelper {
 				}
 			}
 		} catch(Exception ex) {
-			ex.printStackTrace();
+			err(ex);
 		}
 		
 		return null;
@@ -450,7 +455,7 @@ public class DbHelper {
 				}
 			}
 		} catch(Exception ex) {
-			ex.printStackTrace();
+			err(ex);
 		}
 		return null;
 	}
@@ -480,7 +485,7 @@ public class DbHelper {
 				}
 			}
 		} catch(Exception ex) {
-			ex.printStackTrace();
+			err(ex);
 		}
 		return null;
 	}
@@ -507,7 +512,7 @@ public class DbHelper {
 				}
 			}
 		} catch(Exception ex) {
-			ex.printStackTrace();
+			err(ex);
 		}
 		return null;
 	}
@@ -720,7 +725,7 @@ public class DbHelper {
 			}
 			return list;
 		} catch(Exception ex) {
-			ex.printStackTrace();
+			err(ex);
 			throw new SQLException("转换结果为对象列表失败");
 		}
 	}
@@ -746,7 +751,7 @@ public class DbHelper {
 	        }
 	        return tableNameList;
 		} catch(Exception ex) {
-			ex.printStackTrace();
+			err(ex);
 		}
 		return null;
 	}
@@ -776,7 +781,7 @@ public class DbHelper {
 			
 			return columns;
 		} catch(Exception ex) {
-			ex.printStackTrace();
+			err(ex);
 		}
 		return null;
 	}
@@ -799,5 +804,12 @@ public class DbHelper {
 	 */
 	private static boolean isBasicClass(Class<?> clazz) {
 		return ReflectionUtils.isBasicClass(clazz);
+	}
+	
+	
+	private static void err(Exception ex) {
+		if(MODE_DEBUG) {
+			ex.printStackTrace();
+		}
 	}
 }

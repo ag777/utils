@@ -8,21 +8,24 @@ import com.ag777.util.lang.ObjectUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年10月02日
+ * @version create on 2017年09月22日,last modify at 2017年10月10日
  */
 public class MapUtils {
 
+	public static <K,V>Map<K,V> newMap() {
+		return newHashMap();
+	}
 	
 	public static <K,V>Map<K,V> newHashMap() {
 		return CollectionAndMapUtils.newHashMap();
 	}
 	
-	public static <K,V>Map<K,V> newHashTable() {
-		return CollectionAndMapUtils.newHashTable();
+	public static <K,V>Map<K,V> newLinkedHashMap() {
+		return CollectionAndMapUtils.newLinkedHashMap();
 	}
 	
-	public static <K,V>Map<K,V> newMap() {
-		return newHashMap();
+	public static <K,V>Map<K,V> newHashTable() {
+		return CollectionAndMapUtils.newHashTable();
 	}
 	
 	/**

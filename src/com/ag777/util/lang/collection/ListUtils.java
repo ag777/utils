@@ -16,11 +16,15 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年10月02日
+ * @version create on 2017年09月22日,last modify at 2017年10月10日
  */
 public class ListUtils {
 
 	private ListUtils(){}
+	
+	private static <T>List<T> newList() {
+		return newArrayList();
+	}
 	
 	public static <T>List<T> newArrayList() {
 		return CollectionAndMapUtils.newArrayList();
@@ -34,9 +38,7 @@ public class ListUtils {
 		return CollectionAndMapUtils.newArray(clazz, length);
 	}
 	
-	private static <T>List<T> newList() {
-		return newArrayList();
-	}
+	
 	
 	 /**
      * 拆分字符串组成列表
