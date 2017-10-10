@@ -556,6 +556,26 @@ public class DbHelper {
     }
 	
 	/**
+	 * 插入一条数据并获取对应的主键(自增长),如果失败，返回-1
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
+	public int insertAndGetKey(String sql, Object[] params) {
+    	try {
+	    	PreparedStatement pstmt = getPreparedStatement(sql, params);
+	    	pstmt.executeUpdate(); 
+	    	ResultSet rs = pstmt.getGeneratedKeys();
+	        rs.next();
+	        int key = rs.getInt(1);
+	        return key;
+    	} catch (SQLException ex) {
+    		err(ex);
+			return -1;
+		} 
+	}
+	
+	/**
 	 * 批量插入或更新
 	 * @param sql
 	 * @param paramsList

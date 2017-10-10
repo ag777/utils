@@ -511,12 +511,16 @@ public class Test {
 //		System.out.println(obj.getClass().equals(int[].class));
 //		System.out.println(obj.getClass().isArray());
 		
-		int[] array = (int[]) CollectionAndMapUtils.newArray(int.class, 3);//(int[]) Array.newInstance(int.class, 3);
-		Console.log(array);
-		System.out.println(array.getClass().getName());
-		System.out.println(array.getClass().isArray());
+//		int[] array = (int[]) CollectionAndMapUtils.newArray(int.class, 3);//(int[]) Array.newInstance(int.class, 3);
+//		Console.log(array);
+//		System.out.println(array.getClass().getName());
+//		System.out.println(array.getClass().isArray());
 		
 //		System.out.println(int.class.equals(Integer.class));
+//		List<Void> list = ListUtils.newArrayList();
+//		list.add(null);
+//		list.add(null);
+//		Console.log(list);
 	}
    
     

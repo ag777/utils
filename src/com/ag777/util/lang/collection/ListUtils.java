@@ -30,6 +30,10 @@ public class ListUtils {
 		return CollectionAndMapUtils.newArrayList();
 	}
 	
+	public static <T>List<T> newLinkedList() {
+		return CollectionAndMapUtils.newLinkedList();
+	}
+	
 	public static <T>List<T> newVector() {
 		return CollectionAndMapUtils.newVector();
 	}
