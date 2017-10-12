@@ -279,11 +279,11 @@ public class DbHelper {
 	 */
 	public void dispose() {
 		try {
-			if(conn != null && !conn.isClosed()) {
+			if(conn != null) {
 				conn.close();
 			}
 		} catch (SQLException e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 		}
 		conn = null;
 	}
@@ -337,9 +337,7 @@ public class DbHelper {
 	    	return convert2List(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}  finally {
-			closeAfterExecute();
-		}
+		} 
     	return null;
     }
 	
@@ -355,9 +353,7 @@ public class DbHelper {
 			return convert2List(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			closeAfterExecute();
-		}
+		} 
 		return null;
 	}
 	
@@ -384,9 +380,7 @@ public class DbHelper {
 			return list;
 		} catch(Exception ex) {
 			err(ex);
-		} finally {
-			closeAfterExecute();
-		}
+		} 
 		return null;
 	}
 	
@@ -444,9 +438,7 @@ public class DbHelper {
 			}
 		} catch(Exception ex) {
 			err(ex);
-		} finally {
-			closeAfterExecute();
-		}
+		} 
 		
 		return null;
 	}
@@ -475,9 +467,7 @@ public class DbHelper {
 			}
 		} catch(Exception ex) {
 			err(ex);
-		} finally {
-			closeAfterExecute();
-		}
+		} 
 		return null;
 	}
 	
@@ -507,9 +497,7 @@ public class DbHelper {
 			}
 		} catch(Exception ex) {
 			err(ex);
-		} finally {
-			closeAfterExecute();
-		}
+		} 
 		return null;
 	}
 	
@@ -536,9 +524,7 @@ public class DbHelper {
 			}
 		} catch(Exception ex) {
 			err(ex);
-		} finally {
-			closeAfterExecute();
-		}
+		} 
 		return null;
 	}
 	
