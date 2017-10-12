@@ -26,11 +26,14 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2017年10月11日
+ * @version create on 2017年07月28日,last modify at 2017年10月12日
  */
 public class DbHelper {
 
+	//控制控制台输出开关
 	private static boolean MODE_DEBUG = true;
+	//执行完sql后关闭数据库连接,一旦开启则该工具类不可重复使用(连接不存在了)
+	private static boolean MODE_CLOSE_AFTER_EXECUTE = false;
 	private static String DRIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
 	private static String URL_TAIL = "?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull";
 	
@@ -42,8 +45,12 @@ public class DbHelper {
 		DbHelper.DRIVER_CLASS_NAME = driverClassName;
 	}
 
-	public static void debugMode(boolean debugMode) {
+	public static void setModeDebug(boolean debugMode) {
 		DbHelper.MODE_DEBUG = debugMode;
+	}
+	
+	public static void setModeCloseAfterExecute(boolean closeAfterExecuteMode) {
+		DbHelper.MODE_CLOSE_AFTER_EXECUTE = closeAfterExecuteMode;
 	}
 	
 	private Connection conn;
@@ -292,7 +299,9 @@ public class DbHelper {
 	    	return stmt.executeQuery(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} 
+		} finally {
+			closeAfterExecute();
+		}
     	return null;
 	}
 	
@@ -311,6 +320,8 @@ public class DbHelper {
 			return ps.executeQuery();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			closeAfterExecute();
 		}
 		return null;
 	}
@@ -326,7 +337,9 @@ public class DbHelper {
 	    	return convert2List(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} 
+		}  finally {
+			closeAfterExecute();
+		}
     	return null;
     }
 	
@@ -342,6 +355,8 @@ public class DbHelper {
 			return convert2List(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			closeAfterExecute();
 		}
 		return null;
 	}
@@ -369,6 +384,8 @@ public class DbHelper {
 			return list;
 		} catch(Exception ex) {
 			err(ex);
+		} finally {
+			closeAfterExecute();
 		}
 		return null;
 	}
@@ -427,6 +444,8 @@ public class DbHelper {
 			}
 		} catch(Exception ex) {
 			err(ex);
+		} finally {
+			closeAfterExecute();
 		}
 		
 		return null;
@@ -456,6 +475,8 @@ public class DbHelper {
 			}
 		} catch(Exception ex) {
 			err(ex);
+		} finally {
+			closeAfterExecute();
 		}
 		return null;
 	}
@@ -486,6 +507,8 @@ public class DbHelper {
 			}
 		} catch(Exception ex) {
 			err(ex);
+		} finally {
+			closeAfterExecute();
 		}
 		return null;
 	}
@@ -513,6 +536,8 @@ public class DbHelper {
 			}
 		} catch(Exception ex) {
 			err(ex);
+		} finally {
+			closeAfterExecute();
 		}
 		return null;
 	}
@@ -531,6 +556,8 @@ public class DbHelper {
 			row = stmt.executeUpdate(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			closeAfterExecute();
 		} 
     	
     	return row;
@@ -552,7 +579,9 @@ public class DbHelper {
     	} catch (SQLException e) {
     		e.printStackTrace();
 			return -1;
-		} 
+		} finally {
+			closeAfterExecute();
+		}
     }
 	
 	/**
@@ -572,7 +601,9 @@ public class DbHelper {
     	} catch (SQLException ex) {
     		err(ex);
 			return -1;
-		} 
+		} finally {
+			closeAfterExecute();
+		}
 	}
 	
 	/**
@@ -600,9 +631,10 @@ public class DbHelper {
 		}  finally {
 			try {
 				conn.setAutoCommit(true);
-			} catch (SQLException e) {
-				e.printStackTrace();
+			} catch (SQLException ex) {
+				err(ex);
 			}
+			closeAfterExecute();
 		}
     	return null;
     }
@@ -682,6 +714,7 @@ public class DbHelper {
 				conn.setAutoCommit(true);
 			} catch (SQLException e) {
 			}
+			closeAfterExecute();
 		}
 		return false;
 	}
@@ -786,6 +819,8 @@ public class DbHelper {
 	        return tableNameList;
 		} catch(Exception ex) {
 			err(ex);
+		} finally {
+			closeAfterExecute();
 		}
 		return null;
 	}
@@ -816,6 +851,8 @@ public class DbHelper {
 			return columns;
 		} catch(Exception ex) {
 			err(ex);
+		} finally {
+			closeAfterExecute();
 		}
 		return null;
 	}
@@ -845,5 +882,15 @@ public class DbHelper {
 		if(MODE_DEBUG) {
 			ex.printStackTrace();
 		}
+	}
+	
+	/**
+	 * 执行完sql后关闭数据库连接
+	 */
+	private void closeAfterExecute() {
+		if(MODE_CLOSE_AFTER_EXECUTE) {
+			dispose();
+		}
+	
 	}
 }
