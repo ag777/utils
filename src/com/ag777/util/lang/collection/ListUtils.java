@@ -16,7 +16,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年10月10日
+ * @version create on 2017年09月22日,last modify at 2017年10月16日
  */
 public class ListUtils {
 
@@ -173,6 +173,32 @@ public class ListUtils {
 	public static <T>List<T> of(T item1, T item2, T item3, T item4, T item5) {
 		List<T> list = of(item1, item2, item3, item4);
 		list.add(item5);
+		return list;
+	}
+	
+	/**
+	 * 构建list
+	 * <p>
+	 * 	含六项
+	 * </p>
+	 * 
+	 */
+	public static <T>List<T> of(T item1, T item2, T item3, T item4, T item5, T item6) {
+		List<T> list = of(item1, item2, item3, item4, item5);
+		list.add(item6);
+		return list;
+	}
+	
+	/**
+	 * 构建list
+	 * <p>
+	 * 	含七项
+	 * </p>
+	 * 
+	 */
+	public static <T>List<T> of(T item1, T item2, T item3, T item4, T item5, T item6, T item7) {
+		List<T> list = of(item1, item2, item3, item4, item5, item6);
+		list.add(item7);
 		return list;
 	}
 	

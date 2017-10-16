@@ -8,7 +8,7 @@ import com.ag777.util.lang.ObjectUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年10月10日
+ * @version create on 2017年09月22日,last modify at 2017年10月16日
  */
 public class MapUtils {
 
@@ -90,6 +90,32 @@ public class MapUtils {
 	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5) {
 		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3, key4, value4);
 		map.put(key5, value5);
+		return map;
+	}
+	
+	/**
+	 * 构建map
+	 * <p>
+	 * 	含六对key-value
+	 * </p>
+	 * 
+	 */
+	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5, String key6, Object value6) {
+		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3, key4, value4, key5, value5);
+		map.put(key6, value6);
+		return map;
+	}
+	
+	/**
+	 * 构建map
+	 * <p>
+	 * 	含七对key-value
+	 * </p>
+	 * 
+	 */
+	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5, String key6, Object value6, String key7, Object value7) {
+		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6);
+		map.put(key7, value7);
 		return map;
 	}
 	

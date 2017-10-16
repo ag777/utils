@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.ag777.util.db.interf.DBTransactionInterf;
 import com.ag777.util.db.model.ColumnPojo;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.reflection.ReflectionUtils;
@@ -26,7 +27,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2017年10月12日
+ * @version create on 2017年07月28日,last modify at 2017年10月16日
  */
 public class DbHelper {
 
@@ -289,6 +290,25 @@ public class DbHelper {
 	}
 	
 	/**
+	 * 执行数据库事务
+	 * @param task
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean doTransaction(DBTransactionInterf task) throws Exception {
+		try {
+			conn.setAutoCommit(false);
+			boolean result = task.doTransaction(this);
+			conn.commit();
+			return result;
+		} catch(Exception ex) {
+			throw ex;
+		} finally {
+			conn.setAutoCommit(true);
+		}
+	}
+	
+	/**
 	 * 根据sql获取结果集
 	 * @param sql
 	 * @return
@@ -548,6 +568,16 @@ public class DbHelper {
     	
     	return row;
     }
+	
+	/**
+	 * 清空表数据
+	 * @param tableName
+	 * @return
+	 */
+	public boolean truncate(String tableName) {
+		String sql = "TRUNCATE TABLE "+tableName;
+		return update(sql) != -1;
+	}
 	
 	/**
 	 * 插入或更新
