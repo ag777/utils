@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import com.ag777.util.Utils;
 import com.ag777.util.file.FileUtils;
@@ -29,7 +30,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2017年06月22日
+ * @version last modify at 2017年10月17日
  */
 public class HttpUtils {
 
@@ -96,7 +97,7 @@ public class HttpUtils {
 	 * @param json
 	 * @return
 	 */
-	public static Map<String, Object> doPostJSON(String url, String json) {
+	public static Optional<Map<String, Object>> doPostJSON(String url, String json) {
 		//参数
 		RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
 		
@@ -114,14 +115,14 @@ public class HttpUtils {
 	 * @param params
 	 * @return
 	 */
-	public static <K,V>Map<String, Object> doPost(String url, Map<K, V> params) {
+	public static <K,V>Optional<String> doPost(String url, Map<K, V> params) {
 		
 		 Request request = new Request.Builder()
 	                .url(url)
 	                .post(getRequestBody(params))
 	                .build();
 		 
-		 return callForMap(request);
+		 return call(request);
 	}
 	
 	/**
@@ -130,7 +131,7 @@ public class HttpUtils {
 	 * @param params
 	 * @return
 	 */
-	public static <K,V>Map<String, Object> doPostForMap(String url, Map<K, V> params) {
+	public static <K,V>Optional<Map<String, Object>> doPostForMap(String url, Map<K, V> params) {
 		
 		 Request request = new Request.Builder()
 	                .url(url)
@@ -147,7 +148,7 @@ public class HttpUtils {
 	 * @param params
 	 * @return
 	 */
-	public static List<Map<String, Object>> doPostForListMap(String url, Map<String, Object> params) {
+	public static Optional<List<Map<String, Object>>> doPostForListMap(String url, Map<String, Object> params) {
 		 Request request = new Request.Builder()
 	                .url(url)
 	                .post(getRequestBody(params))
@@ -195,7 +196,7 @@ public class HttpUtils {
 	 * @param url
 	 * @return
 	 */
-	public static String doGet(String url) {
+	public static Optional<String> doGet(String url) {
 		Request.Builder requestBuilder = new Request.Builder().url(url);
 		return call(requestBuilder.build());
 	}
@@ -206,7 +207,7 @@ public class HttpUtils {
 	 * @param params
 	 * @return
 	 */
-	public static String doGet(String url, Map<String, Object> params) {
+	public static Optional<String> doGet(String url, Map<String, Object> params) {
 		return doGet(
 				getGetUrl(url, params));
 	}
@@ -216,7 +217,7 @@ public class HttpUtils {
 	 * @param url
 	 * @return
 	 */
-	public static Map<String, Object> doGetForMap(String url) {
+	public static Optional<Map<String, Object>> doGetForMap(String url) {
 		Request.Builder requestBuilder = new Request.Builder().url(url);
 		return callForMap(requestBuilder.build());
 	}
@@ -227,7 +228,7 @@ public class HttpUtils {
 	 * @param params
 	 * @return
 	 */
-	public static Map<String, Object> doGetForMap(String url, Map<String, Object> params) {
+	public static Optional<Map<String, Object>> doGetForMap(String url, Map<String, Object> params) {
 		return doGetForMap(
 				getGetUrl(url, params));
 	}
@@ -237,7 +238,7 @@ public class HttpUtils {
 	 * @param url
 	 * @return
 	 */
-	public static List<Map<String, Object>> doGetForListMap(String url) {
+	public static Optional<List<Map<String, Object>>> doGetForListMap(String url) {
 		Request.Builder requestBuilder = new Request.Builder().url(url);
 		return callForListMap(requestBuilder.build());
 	}
@@ -248,7 +249,7 @@ public class HttpUtils {
 	 * @param params
 	 * @return
 	 */
-	public static List<Map<String, Object>> doGetForListMap(String url, Map<String, Object> params) {
+	public static Optional<List<Map<String, Object>>> doGetForListMap(String url, Map<String, Object> params) {
 		return doGetForListMap(
 				getGetUrl(url, params));
 	}
@@ -310,17 +311,17 @@ public class HttpUtils {
 	 * @param request
 	 * @return
 	 */
-	private static String call(Request request) {
+	private static Optional<String> call(Request request) {
 		Call call = client().newCall(request); 
 		try {
 			Response response = call.execute();
 			if(response.isSuccessful()) {
-				return response.body().string();
+				return Optional.of(response.body().string());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return Optional.empty();
 	}
 	
 	/**
@@ -354,17 +355,18 @@ public class HttpUtils {
 	 * 请求并获取结果map(同步请求)
 	 * @param request
 	 * @return
+	 * @throws Exception 
 	 */
-	private static Map<String, Object> callForMap(Request request) {
+	private static Optional<Map<String, Object>> callForMap(Request request) {
 		try {
-			String result = call(request);
-			if(result != null) {
-				return Utils.jsonUtils().toMap(result);
+			Optional<String> result = call(request);
+			if(result.isPresent()) {
+				return Optional.ofNullable(Utils.jsonUtils().toMap(result.get()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return  null;
+		return Optional.empty();
 	}
 	
 	/**
@@ -372,16 +374,16 @@ public class HttpUtils {
 	 * @param request
 	 * @return
 	 */
-	private static List<Map<String, Object>> callForListMap(Request request) {
+	private static Optional<List<Map<String, Object>>> callForListMap(Request request) {
 		try {
-			String result = call(request);
-			if(result != null) {
-				return Utils.jsonUtils().toListMap(result);
+			Optional<String> result = call(request);
+			if(result.isPresent()) {
+				return Optional.ofNullable(Utils.jsonUtils().toListMap(result.get()));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return  null;
+		return  Optional.empty();
 	}
 	
 	/**
