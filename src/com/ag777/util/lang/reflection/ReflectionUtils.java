@@ -13,7 +13,7 @@ import java.util.List;
  * 反射工具类。
  * 
  * @author ag777
- * @version create on 2017年09月30日,last modify at 2017年09月30日
+ * @version create on 2017年09月30日,last modify at 2017年10月18日
  */
 public class ReflectionUtils {
 	
@@ -49,7 +49,8 @@ public class ReflectionUtils {
 				clazz.isAssignableFrom(Float.class) ||
 				clazz.isAssignableFrom(Double.class) ||
 				clazz.isAssignableFrom(Boolean.class) ||
-				clazz.isAssignableFrom(Character.class);
+				clazz.isAssignableFrom(Character.class) ||
+				clazz.isAssignableFrom(String.class);
 	}
 	
 	/**
