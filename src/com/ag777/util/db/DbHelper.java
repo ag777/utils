@@ -27,7 +27,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2017年10月18日
+ * @version create on 2017年07月28日,last modify at 2017年10月21日
  */
 public class DbHelper {
 
@@ -737,6 +737,10 @@ public class DbHelper {
 	
 	/**
 	 * 将resultset转化为List<Map<String, Object>>
+	 * <p>
+	 * 171021改获取字段名称的方法getColumnName(i)为
+	 * 获取别名getColumnLabel(i) 以免sql里写的别名不生效
+	 * </p>
 	 * @param rs
 	 * @return
 	 * @throws SQLException
@@ -754,7 +758,7 @@ public class DbHelper {
 			Map<String, Object> rowData = new HashMap<String, Object>();
 
 			for (int i = 1; i <= columnCount; i++) {
-				rowData.put(md.getColumnName(i), rs.getObject(i));
+				rowData.put(md.getColumnLabel(i), rs.getObject(i));
 			}
 
 			list.add(rowData);

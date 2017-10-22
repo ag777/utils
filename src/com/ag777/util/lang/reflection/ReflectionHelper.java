@@ -256,7 +256,7 @@ public class ReflectionHelper<T> {
 		Map<String, Map<List<Class<?>>, Method>> root = new HashMap<>();
 		for (Method method : methods) {
 			String name =method.getName();											//方法名
-			List<Class<?>> parameterTypes = ListUtils.of(method.getParameterTypes());	//参数类型列表
+			List<Class<?>> parameterTypes = ListUtils.ofList(method.getParameterTypes());	//参数类型列表
 			if(!root.containsKey(name)) {
 				root.put(name, new HashMap<List<Class<?>>, Method>());
 			}

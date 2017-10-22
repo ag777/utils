@@ -8,7 +8,7 @@ import com.ag777.util.lang.ObjectUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年10月20日
+ * @version create on 2017年09月22日,last modify at 2017年10月21日
  */
 public class MapUtils {
 
@@ -143,7 +143,7 @@ public class MapUtils {
      * @param keyValue 作为新map的值的键
      * @return 
      */
-	public static Map<String, Object> of(List<Map<String, Object>> list, String keyTilte, String keyValue) {
+	public static Map<String, Object> ofMap(List<Map<String, Object>> list, String keyTilte, String keyValue) {
 		if(list == null) {
 			return newMap();
 		}

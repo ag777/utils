@@ -7,7 +7,7 @@ import com.ag777.util.lang.DateUtils;
  * 计时工具类，用来查看代码执行耗时
  * 
  * @author ag777
- * @version create on 2017年10月10日,last modify at 2017年10月10日
+ * @version create on 2017年10月10日,last modify at 2017年10月21日
  */
 public class Timer {
 
@@ -40,6 +40,7 @@ public class Timer {
 		long nowMills = new DateTime().getMillis();
 		long totalBetween = nowMills - startMillis;
 		long lastBetween = lastMillis == null?totalBetween:nowMills - lastMillis;
+		lastMillis = nowMills;
 		StringBuilder sb = new StringBuilder();
 		if(operate != null) {
 			sb.append("操作[").append(operate).append("]");

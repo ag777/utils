@@ -1,15 +1,28 @@
 package com.ag777.util.lang;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 /**
  * 单位格式化
  * 
  * @author ag777
- * @version create on 2017年06月13日,last modify at 2017年06月16日
+ * @version create on 2017年06月13日,last modify at 2017年10月21日
  */
 public class Formatter {
 
+	/**
+	 * 保留decimalPlaces位小数
+	 * @param num
+	 * @param decimalPlaces
+	 * @return
+	 */
+	public static String toString(double num, int decimalPlaces) {
+		NumberFormat nf = NumberFormat.getNumberInstance();
+		nf.setMaximumFractionDigits(2);
+		return nf.format(num);
+	}
+	
 	/**
 	 * 存储单位格式化输出，初始单位Byte
 	 * 

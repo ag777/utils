@@ -17,7 +17,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年10月20日
+ * @version create on 2017年09月22日,last modify at 2017年10月21日
  */
 public class ListUtils {
 
@@ -61,7 +61,7 @@ public class ListUtils {
      * <p/>
      * </p>
      */
-	public static List<String> of(String src, String separator) {
+	public static List<String> ofList(String src, String separator) {
 		List<String> result = newList();
 		if(src == null) {
 			return result;
@@ -87,7 +87,7 @@ public class ListUtils {
      * <p/>
      * </p>
      */
-	public static <T>List<T> of(T[] items) {
+	public static <T>List<T> ofList(T[] items) {
 		List<T> result = newList();
 		if(items != null && items.length > 0) {
 			for (T item : items) {
@@ -110,7 +110,7 @@ public class ListUtils {
      * <p/>
      * </p>
      */
-	public static <T>List<T> toFinalList(T[] items) {
+	public static <T>List<T> ofFinalList(T[] items) {
 		return Arrays.asList(items);
 	}
 	
@@ -219,7 +219,7 @@ public class ListUtils {
      * <p/>
      * </p>
      */
-	public static List<Object> of(List<Map<String, Object>> list, String key) {
+	public static List<Object> ofList(List<Map<String, Object>> list, String key) {
 		List<Object> resultList = newList();
 		for (Map<String, Object> item : list) {
 			try {
@@ -249,7 +249,7 @@ public class ListUtils {
      * <p/>
      * </p>
      */
-	public static List<Object> of(List<Map<String, Object>> list) {
+	public static List<Object> ofList(List<Map<String, Object>> list) {
 		List<Object> resultList = newList();
 		for (Map<String, Object> item : list) {
 			Iterator<String> itor = item.keySet().iterator();
@@ -305,9 +305,10 @@ public class ListUtils {
 	 */
     public static <T>List<T> distinct(List<T> list) {
         Set<T> set = new HashSet<T>();
-        for (int i = list.size() - 1; i > 0; i--) {	//倒序遍历，为了能删除数据
+        for (int i = list.size() - 1; i >= 0; i--) {	//倒序遍历，为了能删除数据
         	T item = list.get(i);
-        	if (!set.add(item)) {	//如果set中不能加入数据，说明重复了，需要移除
+        	boolean a = set.add(item);
+        	if (!a) {	//如果set中不能加入数据，说明重复了，需要移除
             	list.remove(item);
             }
         }
