@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2017年09月30日
+ * @version last modify at 2017年10月29日
  */
 public class StringUtils {
 
@@ -264,5 +264,17 @@ public class StringUtils {
 		}
 		return null;
 	}
-	
+	//--emoji表情相关
+	/**
+	 * 过滤字符串中的emoji表情为目标字符串
+	 * <p>
+	 * 最直观的作用就是防止插入数据库时报错
+	 * </p>
+	 * @param src
+	 * @param replacement
+	 * @return
+	 */
+	public static String clearEmoji(String src) {
+		return EmojiUtils.clearEmoji(src);
+	}
 }

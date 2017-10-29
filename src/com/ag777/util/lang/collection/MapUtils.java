@@ -1,14 +1,16 @@
 package com.ag777.util.lang.collection;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import com.ag777.util.lang.ObjectUtils;
+import com.ag777.util.lang.StringUtils;
 
 /**
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年10月21日
+ * @version create on 2017年09月22日,last modify at 2017年10月29日
  */
 public class MapUtils {
 
@@ -160,6 +162,32 @@ public class MapUtils {
 	}
 	
 	/**
+	 * 根据分隔符拆分字符串得到map
+	 * <p>
+	 * 	注意分割服都是正则(注意转义问题)<br\>
+	 * key-value分割符无法拆分的项会被略过,不会报错
+	 * </P>
+	 * @param src
+	 * @param separatorItem 分割map每一项的分隔符
+	 * @param separatorKeyValue	分割每一项key-value的分隔符
+	 * @return
+	 */
+	public static Map<String, Object> ofMap(String src, String separatorItem, String separatorKeyValue) {
+		if(StringUtils.isBlank(src)) {
+			return newMap();
+		}
+		Map<String, Object> result = newMap();
+		String[] groups = src.split(separatorItem);
+		for (String item : groups) {
+			String[] itemGroup = item.split(separatorKeyValue);
+			if(itemGroup.length > 1) {
+				result.put(itemGroup[0], itemGroup[1]);
+			}
+		}
+		return result;
+	}
+	
+	/**
      * 获取map里key对应的值，不存在或null返回defaultValue
      * <p>
      * 例如：
@@ -181,7 +209,7 @@ public class MapUtils {
 	@SuppressWarnings("unchecked")
 	public static <K,V,T>T get(Map<K, V> map, K key, T defaultValue) {
 		try {
-			if(map.containsKey(key) && map.get(key) != null) {
+			if(map != null && map.containsKey(key) && map.get(key) != null) {
 				return (T) map.get(key);
 			}
 		}catch(Exception ex) {
@@ -327,4 +355,33 @@ public class MapUtils {
 				get(map, key), defaultValue);
 	}
 	
+	/**
+	 * 格式化map为字符串
+	 * @param map
+	 * @param separatorItem
+	 * @param separatorKeyValue
+	 * @return
+	 */
+	public static <K,V>String toString(Map<K,V> map, String separatorItem, String separatorKeyValue) {
+		if(isEmpty(map)) {
+			return "";
+		}
+		StringBuilder sb = null;
+		Iterator<K> itor = map.keySet().iterator();
+		while(itor.hasNext()) {
+			if(sb == null) {
+				sb = new StringBuilder();
+			} else if(separatorItem != null){
+				sb.append(separatorItem);
+			}
+			K key = itor.next();
+			V value = map.get(key);
+			sb.append(key);
+			if(separatorKeyValue != null) {
+				sb.append(separatorKeyValue);
+			}
+			sb.append(value);
+		}
+		return sb.toString();	//理论上不用考虑sb为null的情况，因为map不为空
+	}
 }

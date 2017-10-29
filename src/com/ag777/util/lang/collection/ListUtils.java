@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Vector;
 import com.ag777.util.lang.collection.interf.Comparator;
@@ -17,7 +18,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年10月21日
+ * @version create on 2017年09月22日,last modify at 2017年10月28日
  */
 public class ListUtils {
 
@@ -501,6 +502,27 @@ public class ListUtils {
 		return list;
 	}
 	
+	/**
+	 * 获取一个元素在数组中的位置
+	 * <p>
+	 * 	用equals实现比较<br/>
+	 * 	通过调用isPresent()方法直接获取是否在数组中,不需要判断值是否大于-1
+	 * </p>
+	 * @param array
+	 * @param item
+	 * @return
+	 */
+	public static <T>Optional<Integer> inArray(T[] array, Object item) {
+		if(array == null || item==null) {
+			return Optional.empty();
+		}
+		for(int i=0;i<array.length;i++) {
+			if(item.equals(array[i])) {
+				return Optional.of(i);
+			}
+		}
+		return Optional.empty();
+	}
 	
 	/*----内部方法----*/
 	/**
