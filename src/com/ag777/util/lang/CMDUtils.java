@@ -14,7 +14,7 @@ import java.util.List;
  * 		执行一个cmd命令会产生三个流（input/output/err），其中一个不处理就有可能产生程序挂起问题，永远不可能得到返回了
  * </p>
  * @author ag777
- * @version last modify at 2017年09月27日
+ * @version last modify at 2017年10月30日
  */
 public class CMDUtils {
 	
@@ -111,7 +111,12 @@ public class CMDUtils {
      */
 	public synchronized static boolean doCmd(String cmd, String basePath) {
 		try {
-			Process shellPro = Runtime.getRuntime().exec(cmd, null, new File(basePath));
+			Process shellPro = null;
+			if(basePath == null) {
+				shellPro = Runtime.getRuntime().exec(cmd);
+			} else {
+				shellPro = Runtime.getRuntime().exec(cmd, null, new File(basePath));// 执行删除默认路由命令
+			}
 			try {
 				InputStream fis = shellPro.getInputStream();
 				final BufferedReader brError = new BufferedReader(

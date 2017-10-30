@@ -341,14 +341,14 @@ public class RegexUtils {
 
 			if (!matcher.find()) {	//没有匹配到则返回null
 
-			} else if (matcher.groupCount() >= 1) {
+			} else {
 				return getReplacement(matcher, replacement);
 			}
 
 		} else {	//如果元字符串为null或者正则表达式为null，返回源字符串
 			return src;
 		}
-		return null;
+		return src;
 	}
 	
 	/**
@@ -667,7 +667,7 @@ public class RegexUtils {
 			}
 			return temp;
 		} else {
-			return matcher.group(1);
+			return matcher.group(0);
 		}
 	}
 }
