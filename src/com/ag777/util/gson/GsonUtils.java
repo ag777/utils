@@ -8,10 +8,13 @@ import java.util.Map;
 import com.ag777.util.lang.interf.JsonUtilsInterf;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
@@ -29,7 +32,7 @@ import java.lang.reflect.Type;
  * gson统一管理类，全局保持一个gson对象
  * 
  * @author ag777
- * @version create on 2017年05月27日,last modify at 2017年07月26日
+ * @version create on 2017年05月27日,last modify at 2017年11月03日
  */
 public class GsonUtils implements JsonUtilsInterf{
 	
@@ -162,6 +165,24 @@ public class GsonUtils implements JsonUtilsInterf{
 						new MapTypeAdapter()
 				)
 				.registerTypeAdapter(Class.class, new ClassTypeAdapter());
+	}
+	
+	/**
+	 * 转换json串为JsonObject
+	 * @param json
+	 * @return
+	 */
+	public static JsonObject toJsonObject(String json) {
+		return new JsonParser().parse(json).getAsJsonObject();
+	}
+	
+	/**
+	 * 转换json对象为JsonArray
+	 * @param json
+	 * @return
+	 */
+	public static JsonArray toJsonArray(String json) {
+		return new JsonParser().parse(json).getAsJsonArray();
 	}
 	
 	/**
