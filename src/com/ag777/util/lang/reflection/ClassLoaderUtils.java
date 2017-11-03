@@ -14,6 +14,7 @@ import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.exception.ServiceNotFoundException;
 import com.ag777.util.lang.exception.model.ClassInstantiationException;
+import com.ag777.util.lang.model.Charsets;
 
 /**
  * <p>
@@ -220,7 +221,7 @@ public class ClassLoaderUtils {
         String serviceClassName;
 
         try {
-            serviceClassName = StringUtils.emptyIfNull(IOUtils.readText(istream, null, "UTF-8")).trim();
+            serviceClassName = StringUtils.emptyIfNull(IOUtils.readText(istream, null, Charsets.UTF_8)).trim();
         } catch (IOException e) {
             throw new ServiceNotFoundException("Failed to load " + serviceId, e);
         }

@@ -15,6 +15,7 @@ import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 import com.ag777.util.lang.StringUtils;
+import com.ag777.util.lang.model.Charsets;
 
 /**
  * @author <a href="mailto:xuchen06@baidu.com">xuc</a>
@@ -48,7 +49,7 @@ public class PackageUtils {
         for (URL url : dirs) {
             String protocol = url.getProtocol();
             if ("file".equals(protocol)) {
-                findResourceInDirPackage(packagePath, URLDecoder.decode(url.getFile(), "UTF-8"), resources);
+                findResourceInDirPackage(packagePath, URLDecoder.decode(url.getFile(), Charsets.UTF_8), resources);
             } else if ("jar".equals(protocol)) {
                 findResourceInJarPackage(url, packageName, packageDirName, recursive, resources);
             }
@@ -92,7 +93,7 @@ public class PackageUtils {
         for (URL url : dirs) {
             String protocol = url.getProtocol();
             if ("file".equals(protocol)) {
-                findClassesInDirPackage(packagePath, included, excluded, URLDecoder.decode(url.getFile(), "UTF-8"),
+                findClassesInDirPackage(packagePath, included, excluded, URLDecoder.decode(url.getFile(), Charsets.UTF_8),
                         recursive, classes);
             } else if ("jar".equals(protocol)) {
                 findClassesInJarPackage(url, packageName, included, excluded, packageDirName, recursive, classes);
@@ -402,7 +403,7 @@ public class PackageUtils {
      * <p>
      * 例如：
      * </p>
-     * <p/>
+     * </p>
      * 
      * <pre>
      * ClassUtil.getResourceNameForObjectClass(&quot;This is a string&quot;) = &quot;java/lang/String.class&quot;
@@ -424,7 +425,7 @@ public class PackageUtils {
      * <p>
      * 例如：
      * </p>
-     * <p/>
+     * </p>
      * 
      * <pre>
      * ClassUtil.getResourceNameForClass(String.class) = &quot;java/lang/String.class&quot;
@@ -446,7 +447,7 @@ public class PackageUtils {
      * <p>
      * 例如：
      * </p>
-     * <p/>
+     * </p>
      * 
      * <pre>
      * ClassUtil.getResourceNameForClass(&quot;java.lang.String&quot;) = &quot;java/lang/String.class&quot;

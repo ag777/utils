@@ -7,8 +7,9 @@ import java.util.Vector;
 import java.util.concurrent.Callable;
 
 /**
+ * 多线程工具类(只辅助,外部靠内存共享数据实现结果处理)
+ * 
  * @author ag777
- * @Description 多线程工具类(只辅助,外部靠内存共享数据实现结果处理)
  * Time: created at 2017/3/21. last modify at 2017/4/17.
  */
 public class ThreadHelper<T> implements TaskHelperInterf<T>{

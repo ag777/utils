@@ -24,6 +24,7 @@ import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.SystemUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.filter.StringFilter;
+import com.ag777.util.lang.model.Charsets;
 
 /**
  * 文件操作工具类
@@ -32,8 +33,8 @@ import com.ag777.util.lang.filter.StringFilter;
  * @version create on 2017年04月25日,last modify at 2017年09月27日
  */
 public class FileUtils {
-    private static String FILE_WRITING_ENCODING = "UTF-8";
-    private static String FILE_READING_ENCODING = "UTF-8";
+    private static String FILE_WRITING_ENCODING = Charsets.UTF_8;
+    private static String FILE_READING_ENCODING = Charsets.UTF_8;
     private static int BUFFSIZE = 1024;	//一次性读取的字节
 
     public static String encodingRead() {

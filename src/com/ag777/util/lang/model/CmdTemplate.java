@@ -1,7 +1,8 @@
 package com.ag777.util.lang.model;
 
 /**
- * @Description 部分cmd命令存放类
+ * 部分cmd命令存放类
+ * 
  * @author ag777
  *	
  */

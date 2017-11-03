@@ -131,13 +131,13 @@ public class MapUtils {
      * <p>
      * 可以理解为纵表转横表
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		现有值为[{a:key1,b:2}{a:key2,b:3}]的list
      *		MapUtils.of(list, "a", "b") = {key1:2, key2:3}
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      * 
      * @param list 校验的类
@@ -191,14 +191,14 @@ public class MapUtils {
      * 获取map里key对应的值，不存在或null返回defaultValue
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		现有值为{a:1,b:2}的map
      *		MapUtils.get(map, a, 2) = 1
      *		MapUtils.get(map, c, 2) = 2
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      * 
      * @param map 校验的类
@@ -222,14 +222,14 @@ public class MapUtils {
      * 获取map里key对应的值，不存在或null返回null
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		现有值为{a:1,b:2}的map
      *		MapUtils.get(map, a) = 1
      *		MapUtils.get(map, c) = null
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      * 
      * @param map 校验的类

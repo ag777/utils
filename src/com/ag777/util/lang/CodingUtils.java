@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
+import com.ag777.util.lang.model.Charsets;
+
 
 /**
  * 编码转换辅助类
@@ -13,88 +15,69 @@ import java.net.URLEncoder;
  */
 public class CodingUtils {
 
-	/** 7位ASCII字符，也叫作ISO646-US、Unicode字符集的基本拉丁块 */
-	public static final String US_ASCII = "US-ASCII";
-
-	/** ISO 拉丁字母表 No.1，也叫作 ISO-LATIN-1 */
-	public static final String ISO_8859_1 = "ISO-8859-1";
-
-	/** 8 位 UCS 转换格式 */
-	public static final String UTF_8 = "UTF-8";
-
-	/** 16 位 UCS 转换格式，Big Endian（最低地址存放高位字节）字节顺序 */
-	public static final String UTF_16BE = "UTF-16BE";
-
-	/** 16 位 UCS 转换格式，Little-endian（最高地址存放低位字节）字节顺序 */
-	public static final String UTF_16LE = "UTF-16LE";
-
-	/** 16 位 UCS 转换格式，字节顺序由可选的字节顺序标记来标识 */
-	public static final String UTF_16 = "UTF-16";
-
-	/** 中文超大字符集 */
-	public static final String GBK = "GBK";
+	
 
 	/**
 	 * 将字符编码转换成US-ASCII码
 	 */
 	public static String toASCII(String str) throws UnsupportedEncodingException {
-		return CodingTest(str, US_ASCII);
+		return CodingTest(str, Charsets.US_ASCII);
 	}
 
 	/**
 	 * 将字符编码转换成ISO-8859-1码
 	 */
 	public static String toISO_8859_1(String str) throws UnsupportedEncodingException {
-		return CodingTest(str, ISO_8859_1);
+		return CodingTest(str, Charsets.ISO_8859_1);
 	}
 
 	/**
 	 * 将字符编码转换成UTF-8码
 	 */
 	public static String toUTF_8(String str) throws UnsupportedEncodingException {
-		return CodingTest(str, UTF_8);
+		return CodingTest(str, Charsets.UTF_8);
 	}
 
 	/**
 	 * 将字符编码转换成UTF-16BE码
 	 */
 	public static String toUTF_16BE(String str) throws UnsupportedEncodingException {
-		return CodingTest(str, UTF_16BE);
+		return CodingTest(str, Charsets.UTF_16BE);
 	}
 
 	/**
 	 * 将字符编码转换成UTF-16LE码
 	 */
 	public static String toUTF_16LE(String str) throws UnsupportedEncodingException {
-		return CodingTest(str, UTF_16LE);
+		return CodingTest(str, Charsets.UTF_16LE);
 	}
 
 	/**
 	 * 将字符编码转换成UTF-16码
 	 */
 	public static String toUTF_16(String str) throws UnsupportedEncodingException {
-		return CodingTest(str, UTF_16);
+		return CodingTest(str, Charsets.UTF_16);
 	}
 
 	/**
 	 * 将字符编码转换成GBK码
 	 */
 	public static String toGBK(String str) throws UnsupportedEncodingException {
-		return CodingTest(str, GBK);
+		return CodingTest(str, Charsets.GBK);
 	}
 
 	/**
 	 * 解决网页参数乱码
 	 */
 	public static String HtmlDecoder(String str) throws UnsupportedEncodingException {
-		return URLDecoder.decode(str,"utf-8");
+		return URLDecoder.decode(str, Charsets.UTF_8);
 	}
 	
 	/**
 	 * 转换网页参数为乱码
 	 */
 	public static String HtmlEncoder(String str) throws UnsupportedEncodingException {
-		return URLEncoder.encode(str,"utf-8");
+		return URLEncoder.encode(str, Charsets.UTF_8);
 	}
 	
 	/**
@@ -139,12 +122,5 @@ public class CodingUtils {
 			return new String(bs, newCharset);
 		}
 		return null;
-	}
-
-	public static void main(String[] args) throws UnsupportedEncodingException {
-		
-		String a = "%E4%B9%96%E7%A6%BB%E6%80%A7%E7%99%BE%E4%B8%87%E4%BA%9A%E7%91%9F%E7%8E%8B";
-		String strPtname = URLDecoder.decode(a,"utf-8");
-		System.out.println(strPtname);
 	}
 }

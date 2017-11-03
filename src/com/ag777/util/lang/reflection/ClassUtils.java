@@ -127,13 +127,13 @@ public class ClassUtils {
      * 取得primitive类。
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * ClassUtil.getPrimitiveType(&quot;int&quot;) = int.class;
      * ClassUtil.getPrimitiveType(&quot;long&quot;) = long.class;
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
     public static Class<?> getPrimitiveType(String name) {
@@ -150,13 +150,13 @@ public class ClassUtils {
      * 取得primitive类。
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * ClassUtil.getPrimitiveType(Integer.class) = int.class;
      * ClassUtil.getPrimitiveType(Long.class) = long.class;
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
     public static Class<?> getPrimitiveType(Class<?> type) {
@@ -169,7 +169,7 @@ public class ClassUtils {
      * 如果<code>clazz</code>为<code>null</code>，则返还 <code>null</code>
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * ClassUtil.getPrimitiveWrapperType(int.class) = Integer.class;
@@ -177,7 +177,7 @@ public class ClassUtils {
      * ClassUtil.getPrimitiveWrapperType(int[][].class) = int[][].class;
      * ClassUtil.getPrimitiveWrapperType(String[][].class) = String[][].class;
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
     @SuppressWarnings("unchecked")
@@ -199,14 +199,14 @@ public class ClassUtils {
      * 如果<code>clazz</code>为<code>null</code>，则返还 <code>null</code>
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * ClassUtil.getPrimitiveDefaultValue(int.class) = 0;
      * ClassUtil.getPrimitiveDefaultValue(boolean.class) = false;
      * ClassUtil.getPrimitiveDefaultValue(char.class) = '\0';
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
     public static <T> T getPrimitiveDefaultValue(Class<T> type) {
@@ -921,7 +921,7 @@ public class ClassUtils {
      * <p>
      * 类似<code>object.getClass().getName()</code>，但不同的是，该方法用更友好的方式显示数组类型。 例如：
      * </p>
-     * <p/>
+     * </p>
      * 
      * <pre>
      *  int[].class.getName() = "[I"
@@ -955,7 +955,7 @@ public class ClassUtils {
      * <p>
      * 类似<code>clazz.getName()</code>，但不同的是，该方法用更友好的方式显示数组类型。 例如：
      * </p>
-     * <p/>
+     * </p>
      * 
      * <pre>
      *  int[].class.getName() = "[I"
@@ -989,7 +989,7 @@ public class ClassUtils {
      * <p>
      * <code>className</code> 必须是从 <code>clazz.getName()</code> 所返回的合法类名。该方法用更友好的方式显示数组类型。 例如：
      * </p>
-     * <p/>
+     * </p>
      * 
      * <pre>
      *  int[].class.getName() = "[I"
@@ -1109,7 +1109,7 @@ public class ClassUtils {
      * 取得指定对象所属的类的简单类名，不包括package名。
      * <p>
      * 此方法可以正确显示数组和内联类的名称。 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      *  ClassUtil.getSimpleClassNameForObject(Boolean.TRUE) = "Boolean"
@@ -1135,7 +1135,7 @@ public class ClassUtils {
      * 取得指定对象所属的类的简单类名，不包括package名。
      * <p>
      * 此方法可以正确显示数组和内联类的名称。 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      *  ClassUtil.getSimpleClassNameForObject(Boolean.TRUE) = "Boolean"
@@ -1161,7 +1161,7 @@ public class ClassUtils {
      * 取得简单类名，不包括package名。
      * <p>
      * 此方法可以正确显示数组和内联类的名称。 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      *  ClassUtil.getSimpleClassName(Boolean.class) = "Boolean"
@@ -1188,7 +1188,7 @@ public class ClassUtils {
      * 取得简单类名，不包括package名。
      * <p>
      * 此方法可以正确显示数组和内联类的名称。 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      *  ClassUtil.getSimpleClassName(Boolean.class) = "Boolean"
@@ -1215,7 +1215,7 @@ public class ClassUtils {
      * 取得类名，不包括package名。
      * <p>
      * 此方法可以正确显示数组和内联类的名称。 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      *  ClassUtil.getSimpleClassName(Boolean.class.getName()) = "Boolean"
@@ -1238,7 +1238,7 @@ public class ClassUtils {
      * 取得类名，不包括package名。
      * <p>
      * 此方法可以正确显示数组和内联类的名称。 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      *  ClassUtil.getSimpleClassName(Boolean.class.getName()) = "Boolean"

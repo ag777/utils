@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import com.ag777.util.lang.model.Charsets;
+
 
 /**
  * cmd命令执行辅助类(针对linux)
@@ -18,7 +20,7 @@ import java.util.List;
  */
 public class CMDUtils {
 	
-	private static String DEFAULT_ENCODING = "utf-8";//"gb2312";
+	private static String DEFAULT_ENCODING = Charsets.UTF_8;//"gb2312";
 	
 	public static String getReadEncoding() {
 		return DEFAULT_ENCODING;
@@ -33,13 +35,13 @@ public class CMDUtils {
      * 压缩文件
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		CMDUtils.tar("a", "/dir", "/usr/temp/");
      * 		意思就是将/usr/temp/下的/dir目录压缩为a.tar.gz置于/usr/temp/下
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      * @param fileName 压缩后的文件名(不带后缀,自动添加.tar.gz)
 	 * @param regex	要压缩的路径或者文件名
@@ -65,13 +67,13 @@ public class CMDUtils {
      * 解压文件
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		CMDUtils.tarExtract("a.tar.gz", "/usr/temp/dir/", "/usr/temp/");
      * 		意思就是将/usr/temp/dir/下的a.tar.gz压缩包解压到/usr/temp/目录下
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      * @param fileName 压缩包的文件名/路径(要带后缀)
 	 * @param basePath	 命令执行目录,这个为空的哈fileName参数是要带路径的
@@ -86,13 +88,13 @@ public class CMDUtils {
      * 复制文件
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		CMDUtils.copy("/usr/temp/a.txt", "/usr/temp2/b.txt");
      * 		意思就是将/usr/temp/a.txt文件复制到/usr/temp2/目录下并重名为b.txt
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      * @param sourcePath 复制前的路径
 	 * @param targetPath	 复制后的路径

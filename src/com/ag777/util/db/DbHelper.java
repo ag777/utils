@@ -27,7 +27,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2017年10月21日
+ * @version create on 2017年07月28日,last modify at 2017年11月03日
  */
 public class DbHelper {
 
@@ -95,6 +95,9 @@ public class DbHelper {
 	
 	/**
 	 * 数据库类型转java类型(不全，只列出常用的，不在范围内返回null)
+	 * <p>
+	 * 	参考http://blog.csdn.net/haofeng82/article/details/34857991
+	 * </p>
 	 * @param sqlType
 	 * @param size
 	 * @return
@@ -108,7 +111,9 @@ public class DbHelper {
 			case Types.NVARCHAR:	//-9
 				clazz = String.class;
 				break;
-			case Types.BLOB:			//-4
+			case Types.BLOB:			//2004
+			case Types.VARBINARY:	//-3
+			case Types.LONGVARBINARY:	//-4
 				clazz = Byte[].class;
 				break;
 			case Types.INTEGER:	//4
@@ -126,15 +131,17 @@ public class DbHelper {
 				clazz = Boolean.class;
 				break;
 			case Types.BIGINT:		//-5
-				clazz = BigInteger.class;
+				clazz = Long.class;
 				break;
-			case Types.FLOAT:		//7
+			case Types.FLOAT:		//6
+			case Types.REAL:			//7
 				clazz = Float.class;
 				break;
 			case Types.DOUBLE:		//8
 				clazz = Double.class;
 				break;
 			case Types.DECIMAL:	//3
+			case Types.NUMERIC:	//2
 				clazz = BigDecimal.class;
 				break;
 			case Types.DATE:			//91
@@ -146,7 +153,12 @@ public class DbHelper {
 			case Types.TIMESTAMP:	//93
 				clazz = java.sql.Timestamp.class;
 				break;
+//			case Types.JAVA_OBJECT:	//2000
+//			case Types.OTHER:	//1111
+//				clazz = Object.class;
+//				break;
 			default:
+				clazz = Object.class;
 				break;
 		}
 		return clazz;
@@ -854,13 +866,20 @@ public class DbHelper {
 		List<ColumnPojo> columns = new ArrayList<>();
 		
 		try {
+			List<String> primaryKeyList = primaryKeyList(tableName);	//主键列表
+			
 			DatabaseMetaData dbmd = conn.getMetaData();
 			ResultSet columnSet = dbmd.getColumns(null, "%", tableName, "%");
 
 			while (columnSet.next()) {
 				ColumnPojo column = new ColumnPojo();
-				
-			    column.setName(columnSet.getString("COLUMN_NAME"));
+				String columnName = columnSet.getString("COLUMN_NAME");
+				if(primaryKeyList.contains(columnName)) {	//是否在主键列表里
+					column.setPK(true);
+				} else {
+					column.setPK(false);
+				}
+			    column.setName(columnName);
 			    column.setSqlType(columnSet.getInt("DATA_TYPE"));
 			    column.setSize(columnSet.getLong("COLUMN_SIZE"));
 			    column.setRemarks(columnSet.getString("REMARKS"));
@@ -875,6 +894,39 @@ public class DbHelper {
 			closeAfterExecute();
 		}
 		return null;
+	}
+	
+	/**
+	 * 通过表名获取所有主键
+	 * @param tableName
+	 * @return
+	 */
+	public List<String> primaryKeyList(String tableName) {
+		List<String> list = new ArrayList<>();
+		try {
+			ResultSet rs = conn.getMetaData().getPrimaryKeys(null, null, tableName);
+			while(rs.next()) {
+				list.add(rs.getString("COLUMN_NAME"));
+			}
+		} catch (SQLException ex) {
+			err(ex);
+		}
+		return list;
+	}
+	
+	/**
+	 * 判断数据库里是否存在某张表
+	 * @param tableName
+	 * @return
+	 * @throws SQLException	可能是连接数据库异常,所以不能确定是否存在表
+	 */
+	public boolean isTableExisted(String tableName) throws SQLException {
+		ResultSet rs = conn.getMetaData().getTables(null, null, tableName, null);  
+        if (rs.next()) {  
+              return true;  
+        }else {  
+              return false;  
+        }  
 	}
 	
 	/*----内部工具方法------*/

@@ -13,7 +13,7 @@ import java.util.List;
  * 反射工具类。
  * 
  * @author ag777
- * @version create on 2017年09月30日,last modify at 2017年10月18日
+ * @version create on 2017年09月30日,last modify at 2017年11月03日
  */
 public class ReflectionUtils {
 	
@@ -98,6 +98,25 @@ public class ReflectionUtils {
 //			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	/**
+	 * 判断类是否在包底下
+	 * <p>
+	 * 	通过String.startsWith()函数判断
+	 * </p>
+	 * @param clazz
+	 * @param packageName
+	 * @return
+	 */
+	public static boolean inPackage(Class<?> clazz, String packageName) {
+		if(clazz == null || packageName == null) {
+			return false;
+		}
+		if(clazz.getName().startsWith(packageName+".")) {
+			return true;
+		}
+		return false;
 	}
 	
 	/**

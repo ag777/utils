@@ -52,14 +52,14 @@ public class ListUtils {
      * 拆分字符串组成列表
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		List<String> list = ListUtils.of("1,2,3", ",");
      *		结果为包含"1","2"和"3"的列表
      *		值得注意的是由于调用的是String.split(String regex)方法所以参数separator为正则表达式,注意字符串转义
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
 	public static List<String> ofList(String src, String separator) {
@@ -79,13 +79,13 @@ public class ListUtils {
      * 数组转列表
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		List<Integer> list = ListUtils.toFinalList(new Integer[]{1,2,3});
      *		之后可以随意操作该列表
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
 	public static <T>List<T> ofList(T[] items) {
@@ -102,13 +102,13 @@ public class ListUtils {
      * 数组转定长列表(后续不可改变列表长度，否则报错)
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		List<Integer> list = ListUtils.toFinalList(new Integer[]{1,2,3});
      *		这时如果调用list.add(3)或者list.remove(2)就会报错
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
 	public static <T>List<T> ofFinalList(T[] items) {
@@ -210,14 +210,14 @@ public class ListUtils {
      * 数组转列表
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		现有key-value 为[{a:1,b:2},{a:2},{a:3}]的列表list
      *		ListUtils.of(list, "a");
      *		结果将是值[1,2,3] 的列表
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
 	public static List<Object> ofList(List<Map<String, Object>> list, String key) {
@@ -240,14 +240,14 @@ public class ListUtils {
      *  将list<Map>中每个map的第一个值(非空)整合成一个列表,适用于单列list
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		现有key-value 为[{a:1},{a:2},{a:3}]的列表list
      *		ListUtils.of(list);
      *		结果将是值[1,2,3] 的列表
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
 	public static List<Object> ofList(List<Map<String, Object>> list) {
@@ -271,14 +271,14 @@ public class ListUtils {
      * 拆分字符串获取list
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		ListUtils.of(new Integer[]{1,2,3});
      *		ListUtils.toString(list,",");
      *		得到的结果是1,2,3
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
 	public static <T>String toString(List<T> list, String separator) {
@@ -336,7 +336,7 @@ public class ListUtils {
      * 删除列表中某项元素，避免list<Integer> 的下标陷阱
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * List<Integer> list = newList();
@@ -348,7 +348,7 @@ public class ListUtils {
 		结果是1,2而不是预期的1,3
 		通常情况下,我们需要用list.remove((Object)2);来得到预期的结果
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
     public static <T>List<T> remove(List<T> list, Object item) {
@@ -362,7 +362,7 @@ public class ListUtils {
      * <p>
      * 	该方法原用于解决一次性批量插入数据到数据库时数据量太大导致插入失败的异常，将列表数据分次插入
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		现有值为[1,2,3]的列表list,执行
@@ -370,7 +370,7 @@ public class ListUtils {
      * 		将会得到值为[[1,2],[3]]的嵌套列表
      * 		值得注意的是如果传入的limit不为正数，则会抛出RuntimeException
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
 	public static <T>List<List<T>> splitList(List<T> list, int limit) {
@@ -399,7 +399,7 @@ public class ListUtils {
      * <pre>
      * 		filter返回true时则会删除该项
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
 	public static <T>List<T> removeByFilter(List<T> list, ListFilter<T> filter) {
@@ -418,7 +418,7 @@ public class ListUtils {
      * 列表转List<Map<String, Object>>
      * <p>
      * 例如：
-     * <p/>
+     * </p>
      * 
      * <pre>
      * 		现有值为[1,2,3]的列表list,执行
@@ -426,7 +426,7 @@ public class ListUtils {
      * 		将会得到值为[{a:1},{a:2},{a:3}]的列表
      * 		值得注意的是如果传入的key为null的话返回也会是null,传入的list为null返回的将是空列表
      * </pre>
-     * <p/>
+     * </p>
      * </p>
      */
 	public static <T>List<Map<String, Object>> toListMap(List<T> list, String key) {

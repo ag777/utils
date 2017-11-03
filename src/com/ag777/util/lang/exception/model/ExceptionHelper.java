@@ -8,7 +8,8 @@ import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.collection.interf.ListFilter;
 
 /**
- * @Description 异常辅助类
+ * 异常辅助类
+ * 
  * @author ag777
  * Time: created at 2017/06/06. last modify at 2017/09/26.
  * Mark: 

@@ -3,8 +3,10 @@ package com.ag777.util.lang.model;
 import java.util.regex.Pattern;
 
 /**
- * @author ag777
- * @Description 参数验证中介类
+ * 参数验证中介类
+ * 
+ * @author ag777 
+ * 
  * Time: created at 2017/6/15. last modify at 2017/9/13.
  */
 public class ValidatePojo {

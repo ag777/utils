@@ -230,7 +230,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/*=================辅助类============*/
 	/**
-	 * @Description 重载json转换类,主要目的是为了防止转为map时double型变量错误地转换为long型变量
+	 * 重载json转换类,主要目的是为了防止转为map时double型变量错误地转换为long型变量
 	 * @author ag777
 	 * Time: created at 2017/6/6. last modify at 2017/6/6.
 	 */
