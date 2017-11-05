@@ -3,6 +3,7 @@ package com.ag777.util.lang;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 import com.ag777.util.lang.reflection.ReflectionUtils;
 
@@ -10,7 +11,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年09月30日
+ * @version create on 2017年09月22日,last modify at 2017年11月04日
  */
 public class ObjectUtils {
 
@@ -115,6 +116,22 @@ public class ObjectUtils {
 	
 	public static boolean toBoolean(Object obj, boolean defaultValue) {
 		Boolean result = toBoolean(obj);
+		return result!=null?result:defaultValue;
+	}
+	
+	public static Date toDate(Object obj) {
+		if(obj != null) {
+			if(obj instanceof Date) {
+				return (Date) obj;
+			} else {
+				return StringUtils.toDate(obj.toString());
+			}
+		}
+		return null;
+	}
+	
+	public static Date toDate(Object obj, Date defaultValue) {
+		Date result = toDate(obj);
 		return result!=null?result:defaultValue;
 	}
 	

@@ -1,5 +1,6 @@
 package com.ag777.util.lang.collection;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +11,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年10月29日
+ * @version create on 2017年09月22日,last modify at 2017年11月04日
  */
 public class MapUtils {
 
@@ -344,7 +345,7 @@ public class MapUtils {
 	}
 	
 	/**
-	 * 或区域long
+	 * 获取Long
 	 * @param map
 	 * @param key
 	 * @param defaultValue
@@ -352,6 +353,79 @@ public class MapUtils {
 	 */
 	public static <K,V>long getLong(Map<K, V> map, K key, long defaultValue) {
 		return ObjectUtils.toLong(
+				get(map, key), defaultValue);
+	}
+	
+	/**
+	 * 获取Boolean
+	 * <p>
+	 * 	当字符串为"true"或者"1"时返回true
+	 * 	当字符串为"false"或者"0"时返回flase
+	 * 	其余情况返回null
+	 * </p>
+	 * 
+	 * @param map
+	 * @param key
+	 * @return
+	 */
+	public static <K,V>Boolean getBoolean(Map<K, V> map, K key) {
+		return ObjectUtils.toBoolean(
+				get(map, key));
+	}
+	
+	/**
+	 * 获取Boolean
+	 * <p>
+	 * 	当字符串为"true"或者"1"时返回true
+	 * 	当字符串为"false"或者"0"时返回flase
+	 * 	其余情况返回null
+	 * </p>
+	 * 
+	 * @param map
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	public static <K,V>boolean getBoolean(Map<K, V> map, K key, boolean defaultValue) {
+		return ObjectUtils.toBoolean(
+				get(map, key), defaultValue);
+	}
+	
+	/**
+	 * 获取Date
+	 * <p>
+	 * 	支持四种格式
+	 *	yyyy-MM-dd HH:mm:ss
+	 *	yyyy-MM-dd HH:mm
+	 * 	yyyy-MM-dd
+	 * 	HH:mm:ss
+	 * </p>
+	 * 
+	 * @param map
+	 * @param key
+	 * @return
+	 */
+	public static <K,V>Date getDate(Map<K, V> map, K key) {
+		return ObjectUtils.toDate(
+				get(map, key));
+	}
+	
+	/**
+	 * 获取Date
+	 * <p>
+	 * 支持三种格式
+	 *	 yyyy-MM-dd HH:mm:ss
+	 * 	yyyy-MM-dd
+	 * 	HH:mm:ss
+	 * </p>
+	 * 
+	 * @param map
+	 * @param key
+	 * @param defaultValue
+	 * @return
+	 */
+	public static <K,V>Date getDate(Map<K, V> map, K key, Date defaultValue) {
+		return ObjectUtils.toDate(
 				get(map, key), defaultValue);
 	}
 	

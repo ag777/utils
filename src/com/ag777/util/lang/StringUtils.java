@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2017年10月29日
+ * @version last modify at 2017年11月04日
  */
 public class StringUtils {
 
@@ -253,17 +253,53 @@ public class StringUtils {
 	
 	/**
 	 * 字符串转Boolean
+	 * <p>
+	 * 	当字符串为"true"或者"1"时返回true
+	 * 	当字符串为"false"或者"0"时返回flase
+	 * 	其余情况返回null
+	 * </p>
+	 * 
 	 * @param src
 	 * @return
 	 */
 	public static Boolean toBoolean(String src) {
-		try {
-			return Boolean.parseBoolean(src);
-		} catch(Exception ex) {
-			//转换失败
+		if(src != null) {
+			if("true".equals(src) || "1".equals(src)) {
+				return true;
+			} else if("false".equals(src) || "0".equals(src)) {
+				return false;
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * 字符串转java.util.Date
+	 * <p>
+	 * 	支持四种格式
+	 *	yyyy-MM-dd HH:mm:ss
+	 *	yyyy-MM-dd HH:mm
+	 * 	yyyy-MM-dd
+	 * 	HH:mm:ss
+	 * </p>
+	 * 
+	 * @param src
+	 * @return
+	 */
+	public static java.util.Date toDate(String src) {
+		if(src.matches("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}")) {
+			return DateUtils.toDate(src, "yyyy-MM-dd HH:mm:ss");
+		} else if(src.matches("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}")) {
+			return DateUtils.toDate(src, "yyyy-MM-dd HH:mm");
+		} else if(src.matches("\\d{4}-\\d{2}-\\d{2}")) {
+			return DateUtils.toDate(src, "yyyy-MM-dd");
+		} else if(src.matches("\\d{2}:\\d{2}:\\d{2}")) {
+			return DateUtils.toDate(src, "HH:mm:ss");
 		}
 		return null;
 	}
+	
 	//--emoji表情相关
 	/**
 	 * 过滤字符串中的emoji表情为目标字符串
@@ -277,4 +313,5 @@ public class StringUtils {
 	public static String clearEmoji(String src) {
 		return EmojiUtils.clearEmoji(src);
 	}
+
 }
