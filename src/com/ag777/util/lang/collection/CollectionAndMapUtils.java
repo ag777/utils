@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -17,7 +16,7 @@ import java.util.Vector;
  * 有关 <code>Collection和Map</code> 工具类。
  * 
  * @author ag777
- * @version create on 2017年06月15日,last modify at 2017年09月29日
+ * @version create on 2017年06月15日,last modify at 2017年11月07日
  */
 public class CollectionAndMapUtils {
 
@@ -37,27 +36,27 @@ public class CollectionAndMapUtils {
 		return Array.newInstance(clazz, length);
 	}
 	
-	public static <T>List<T> newArrayList() {
+	public static <T>ArrayList<T> newArrayList() {
 		return new ArrayList<>();
 	}
 	
-	public static <T>List<T> newLinkedList() {
+	public static <T>LinkedList<T> newLinkedList() {
 		return new LinkedList<>();
 	}
 	
-	public static <T>List<T> newVector() {
+	public static <T>Vector<T> newVector() {
 		return new Vector<>();
 	}
 	
-	public static <K,V>Map<K,V> newHashMap() {
+	public static <K,V>HashMap<K,V> newHashMap() {
 		return new HashMap<>();
 	}
 	
-	public static <K,V>Map<K,V> newHashTable() {
+	public static <K,V>Hashtable<K,V> newHashtable() {
 		return new Hashtable<>();
 	}
 	
-	public static <K,V>Map<K,V> newLinkedHashMap() {
+	public static <K,V>LinkedHashMap<K,V> newLinkedHashMap() {
 		return new LinkedHashMap<>();
 	}
 	

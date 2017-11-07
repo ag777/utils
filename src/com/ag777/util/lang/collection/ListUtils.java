@@ -1,5 +1,6 @@
 package com.ag777.util.lang.collection;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,7 +19,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年10月28日
+ * @version create on 2017年09月22日,last modify at 2017年11月07日
  */
 public class ListUtils {
 
@@ -28,15 +29,15 @@ public class ListUtils {
 		return newArrayList();
 	}
 	
-	public static <T>List<T> newArrayList() {
+	public static <T>ArrayList<T> newArrayList() {
 		return CollectionAndMapUtils.newArrayList();
 	}
 	
-	public static <T>List<T> newLinkedList() {
+	public static <T>LinkedList<T> newLinkedList() {
 		return CollectionAndMapUtils.newLinkedList();
 	}
 	
-	public static <T>List<T> newVector() {
+	public static <T>Vector<T> newVector() {
 		return CollectionAndMapUtils.newVector();
 	}
 	

@@ -1,7 +1,10 @@
 package com.ag777.util.lang.collection;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import com.ag777.util.lang.ObjectUtils;
@@ -11,7 +14,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年11月04日
+ * @version create on 2017年09月22日,last modify at 2017年11月07日
  */
 public class MapUtils {
 
@@ -19,16 +22,16 @@ public class MapUtils {
 		return newHashMap();
 	}
 	
-	public static <K,V>Map<K,V> newHashMap() {
+	public static <K,V>HashMap<K,V> newHashMap() {
 		return CollectionAndMapUtils.newHashMap();
 	}
 	
-	public static <K,V>Map<K,V> newLinkedHashMap() {
+	public static <K,V>LinkedHashMap<K,V> newLinkedHashMap() {
 		return CollectionAndMapUtils.newLinkedHashMap();
 	}
 	
-	public static <K,V>Map<K,V> newHashTable() {
-		return CollectionAndMapUtils.newHashTable();
+	public static <K,V>Hashtable<K,V> newHashTable() {
+		return CollectionAndMapUtils.newHashtable();
 	}
 	
 	

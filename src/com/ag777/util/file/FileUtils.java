@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2017年09月27日
+ * @version create on 2017年04月25日,last modify at 2017年11月07日
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = Charsets.UTF_8;
@@ -58,10 +59,24 @@ public class FileUtils {
      * @throws IOException
      */
     public static String readText(String filePath, String lineSparator) throws IOException {
+       return readText(filePath, lineSparator, Charset.forName(FILE_READING_ENCODING));
+    }
+    
+    /**
+     * 读取文件内容
+     * @param filePath 文件路径
+     * @param lineSparator 换行时插入的字符
+     * @return
+     * @throws IOException
+     */
+    public static String readText(String filePath, String lineSparator, Charset encoding) throws IOException {
 
         try {
+        	if(encoding == null) {
+        		encoding = Charset.forName(FILE_READING_ENCODING);
+        	}
         	FileInputStream fis = new FileInputStream(filePath);
-            return IOUtils.readText(fis, lineSparator, FILE_READING_ENCODING);
+            return IOUtils.readText(fis, lineSparator, encoding.toString());
         } catch (FileNotFoundException ex) {
             throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
         } catch (IOException ex) {
@@ -76,14 +91,28 @@ public class FileUtils {
      * @throws IOException
      */
     public static List<String> readLines(String filePath) throws IOException {
+    	return readLines(filePath, Charset.forName(FILE_READING_ENCODING));
+    }
+    
+    /**
+     * 读取文件中的所有行
+     * @param filePath
+     * @param encoding
+     * @return
+     * @throws IOException
+     */
+    public static List<String> readLines(String filePath, Charset encoding) throws IOException {
     	 try {
-         	FileInputStream fis = new FileInputStream(filePath);
-             return IOUtils.readLines(fis, FILE_READING_ENCODING);
-         } catch (FileNotFoundException ex) {
-             throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
-         } catch (IOException ex) {
-             throw new IOException(StringUtils.concat("读取文件[",filePath,"]时发生错误!"), ex);
-         }
+    		 if(encoding == null) {
+         		encoding = Charset.forName(FILE_READING_ENCODING);
+         	}
+    		 FileInputStream fis = new FileInputStream(filePath);
+    		 return IOUtils.readLines(fis, encoding.toString());
+          } catch (FileNotFoundException ex) {
+              throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
+          } catch (IOException ex) {
+              throw new IOException(StringUtils.concat("读取文件[",filePath,"]时发生错误!"), ex);
+          }
     }
     
     /**

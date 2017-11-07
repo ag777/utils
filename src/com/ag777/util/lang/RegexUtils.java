@@ -14,7 +14,7 @@ import com.ag777.util.lang.collection.CollectionAndMapUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月06日,last modify at 2017年09月30日
+ * @version create on 2017年06月06日,last modify at 2017年11月07日
  */
 public class RegexUtils {
 
@@ -340,7 +340,7 @@ public class RegexUtils {
 			Matcher matcher = getMatcher(src, pattern);
 
 			if (!matcher.find()) {	//没有匹配到则返回null
-
+				return null;
 			} else {
 				return getReplacement(matcher, replacement);
 			}
@@ -348,7 +348,6 @@ public class RegexUtils {
 		} else {	//如果元字符串为null或者正则表达式为null，返回源字符串
 			return src;
 		}
-		return src;
 	}
 	
 	/**

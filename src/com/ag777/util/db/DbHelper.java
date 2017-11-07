@@ -27,7 +27,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2017年11月03日
+ * @version create on 2017年07月28日,last modify at 2017年11月06日
  */
 public class DbHelper {
 
@@ -148,10 +148,10 @@ public class DbHelper {
 				clazz = java.util.Date.class;	//java.sql.Date
 				break;
 			case Types.TIME:			//92
-				clazz = java.sql.Time.class;
+				clazz = java.util.Date.class;//java.sql.Time.class;
 				break;
 			case Types.TIMESTAMP:	//93
-				clazz = java.sql.Timestamp.class;
+				clazz = java.util.Date.class;// java.sql.Timestamp.class;//java.util.Date是java.sql.Date/java.sql.Timestamp/java.sql.Time的父类
 				break;
 //			case Types.JAVA_OBJECT:	//2000
 //			case Types.OTHER:	//1111
