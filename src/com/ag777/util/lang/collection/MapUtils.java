@@ -14,7 +14,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年11月07日
+ * @version create on 2017年09月22日,last modify at 2017年11月08日
  */
 public class MapUtils {
 
@@ -430,6 +430,14 @@ public class MapUtils {
 	public static <K,V>Date getDate(Map<K, V> map, K key, Date defaultValue) {
 		return ObjectUtils.toDate(
 				get(map, key), defaultValue);
+	}
+	
+	public <K,V> Map<K,V>remove(Map<K, V> map, K key) {
+		if(map == null) {
+			return null;
+		}
+		map.remove(key);
+		return map;
 	}
 	
 	/**

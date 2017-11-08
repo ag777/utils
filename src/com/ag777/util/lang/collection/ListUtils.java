@@ -12,14 +12,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Vector;
-import com.ag777.util.lang.collection.interf.Comparator;
 import com.ag777.util.lang.collection.interf.ListFilter;
 
 /**
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年11月07日
+ * @version create on 2017年09月22日,last modify at 2017年11月08日
  */
 public class ListUtils {
 
@@ -253,6 +252,9 @@ public class ListUtils {
      */
 	public static List<Object> ofList(List<Map<String, Object>> list) {
 		List<Object> resultList = newList();
+		if(list == null) {
+			return resultList;
+		}
 		for (Map<String, Object> item : list) {
 			Iterator<String> itor = item.keySet().iterator();
 			if(itor.hasNext()) {
@@ -306,6 +308,9 @@ public class ListUtils {
 	 * 去重
 	 */
     public static <T>List<T> distinct(List<T> list) {
+    	if(list == null) {
+			return null;
+		}
         Set<T> set = new HashSet<T>();
         for (int i = list.size() - 1; i >= 0; i--) {	//倒序遍历，为了能删除数据
         	T item = list.get(i);
@@ -324,6 +329,9 @@ public class ListUtils {
      * </p>
      */
     public static <T>List<T> removeNull(List<T> list) {
+    	if(list == null) {
+    		return null;
+    	}
     	Iterator<T> itor = list.iterator();
     	while(itor.hasNext()) {
     		if(itor.next() == null) {
@@ -353,6 +361,9 @@ public class ListUtils {
      * </p>
      */
     public static <T>List<T> remove(List<T> list, Object item) {
+    	if(list == null) {
+    		return null;
+    	}
     	list.remove(item);
     	return list;
     }
@@ -375,6 +386,9 @@ public class ListUtils {
      * </p>
      */
 	public static <T>List<List<T>> splitList(List<T> list, int limit) {
+		if(list == null) {
+			return null;
+		}
 		if(limit <= 0) {
 			throw new RuntimeException("参数limit必须大于0");
 		} 
@@ -404,6 +418,9 @@ public class ListUtils {
      * </p>
      */
 	public static <T>List<T> removeByFilter(List<T> list, ListFilter<T> filter) {
+		if(list == null) {
+			return null;
+		}
 		Iterator<T> itor = list.iterator();
 		while(itor.hasNext()) {
 			T item = itor.next();
@@ -469,28 +486,14 @@ public class ListUtils {
 	}
 	
 	//--排序
-	/**
-	 * 列表排序
-	 * @param comparator	比较器 ,胜利的一方(isWinner)排名向上(排在前面)
-	 */
-	public static <T>List<T> sort(List<T> list, final Comparator<T> comparator) {
-		Collections.sort(list,new java.util.Comparator<T>() {
-
-			@Override
-			public int compare(T o1, T o2) {
-				if(comparator.isWinner(o1, o2)) {
-					return -1;	//排名往上升
-				}
-				return 1;
-			}
-		});
-		return list;
-	}
 	
 	/**
 	 * 列表倒序排列
 	 */
 	public static <T>List<T> sortReverse(List<T> list) {
+		if(list == null) {
+			return null;
+		}
 		Collections.reverse(list);
 		return list;
 	}
@@ -499,6 +502,9 @@ public class ListUtils {
 	 * 列表随机排序
 	 */
 	public static <T>List<T> sortShuffle(List<T> list) {
+		if(list == null) {
+			return list;
+		}
 		Collections.shuffle(list);
 		return list;
 	}
