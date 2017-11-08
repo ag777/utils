@@ -102,6 +102,21 @@ public class IniUtils {
 	}
 	
 	/**
+	 * 获取值
+	 * @param sectionKey
+	 * @param valueKey
+	 * @param defaultValue
+	 * @return
+	 */
+	public String getValue(String sectionKey, String valueKey, String defaultValue) {
+		Optional<String> value = getValue(sectionKey, valueKey);
+		if(value.isPresent()) {
+			return value.get();
+		}
+		return defaultValue;
+	}
+	
+	/**
 	 * 获取值并转换为Integer类型
 	 * @param sectionKey
 	 * @param valueKey
@@ -114,6 +129,21 @@ public class IniUtils {
 //			Console.err(ex.getMessage());
 		}
 		return Optional.empty();
+	}
+	
+	/**
+	 * 获取值并转换为Integer类型
+	 * @param sectionKey
+	 * @param valueKey
+	 * @param defaultValue
+	 * @return
+	 */
+	public Integer getIntValue(String sectionKey, String valueKey, Integer defaultValue) {
+		Optional<Integer> value = getIntValue(sectionKey, valueKey);
+		if(value.isPresent()) {
+			return value.get();
+		}
+		return defaultValue;
 	}
 	
 	/**
@@ -132,6 +162,21 @@ public class IniUtils {
 	}
 	
 	/**
+	 * 获取值并转化为Long类型
+	 * @param sectionKey
+	 * @param valueKey
+	 * @param defaultValue
+	 * @return
+	 */
+	public Long getLongValue(String sectionKey, String valueKey, Long defaultValue) {
+		Optional<Long> value = getLongValue(sectionKey, valueKey);
+		if(value.isPresent()) {
+			return value.get();
+		}
+		return defaultValue;
+	}
+	
+	/**
 	 * 获取值并转化为Float类型
 	 * @param sectionKey
 	 * @param valueKey
@@ -144,6 +189,21 @@ public class IniUtils {
 //			Console.err(ex.getMessage());
 		}
 		return Optional.empty();
+	}
+	
+	/**
+	 * 获取值并转化为Float类型
+	 * @param sectionKey
+	 * @param valueKey
+	 * @param defaultValue
+	 * @return
+	 */
+	public Float getFloatValue(String sectionKey, String valueKey, Float defaultValue) {
+		Optional<Float> value = getFloatValue(sectionKey, valueKey);
+		if(value.isPresent()) {
+			return value.get();
+		}
+		return defaultValue;
 	}
 	
 	/**
@@ -162,6 +222,21 @@ public class IniUtils {
 	}
 	
 	/**
+	 * 获取值并转化为Double类型
+	 * @param sectionKey
+	 * @param valueKey
+	 * @param defaultValue
+	 * @return
+	 */
+	public Double getDoubleValue(String sectionKey, String valueKey, Double defaultValue) {
+		Optional<Double> value = getDoubleValue(sectionKey, valueKey);
+		if(value.isPresent()) {
+			return value.get();
+		}
+		return defaultValue;
+	}
+	
+	/**
 	 * 获取值并转化为Boolean类型
 	 * @param sectionKey
 	 * @param valueKey
@@ -177,6 +252,21 @@ public class IniUtils {
 	}
 	
 	/**
+	 * 获取值并转化为Boolean类型
+	 * @param sectionKey
+	 * @param valueKey
+	 * @param defaultValue
+	 * @return
+	 */
+	public Boolean getBooleanValue(String sectionKey, String valueKey, Boolean defaultValue) {
+		Optional<Boolean> value = getBooleanValue(sectionKey, valueKey);
+		if(value.isPresent()) {
+			return value.get();
+		}
+		return defaultValue;
+	}
+	
+	/**
 	 * 获取值并转化为Date类型
 	 * @param sectionKey
 	 * @param valueKey
@@ -189,6 +279,21 @@ public class IniUtils {
 //			Console.err(ex.getMessage());
 		}
 		return Optional.empty();
+	}
+	
+	/**
+	 * 获取值并转化为Double类型
+	 * @param sectionKey
+	 * @param valueKey
+	 * @param defaultValue
+	 * @return
+	 */
+	public Date getDateValue(String sectionKey, String valueKey, Date defaultValue) {
+		Optional<Date> value = getDateValue(sectionKey, valueKey);
+		if(value.isPresent()) {
+			return value.get();
+		}
+		return defaultValue;
 	}
 	
 	/**
