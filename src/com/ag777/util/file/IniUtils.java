@@ -1,13 +1,16 @@
 package com.ag777.util.file;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.RegexUtils;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.collection.ListUtils;
@@ -15,10 +18,10 @@ import com.ag777.util.lang.collection.MapUtils;
 import com.ag777.util.lang.model.Charsets;
 
 /**
- * Ini 文件读取工具类
+ * Ini 文件读写工具类
  * 
  * @author ag777
- * @version create on 2017年11月03日,last modify at 2017年11月07日
+ * @version create on 2017年11月03日,last modify at 2017年11月08日
  */
 public class IniUtils {
 	/* 区块 */
@@ -40,6 +43,17 @@ public class IniUtils {
 		List<String> lines = FileUtils.readLines(filePath, charset);
 		initByLines(lines);
 	}
+	public IniUtils(InputStream inputStream) throws IOException{
+		this(inputStream, Charsets.utf8());
+	}
+	public IniUtils(InputStream inputStream, Charset charset) throws IOException {
+		this();
+		if(charset == null) {
+			charset = Charsets.utf8();
+		}
+		List<String> lines = IOUtils.readLines(inputStream, charset.toString());
+		initByLines(lines);
+	}
 	public IniUtils(List<String> lines) {
 		this();
 		initByLines(lines);
@@ -47,6 +61,31 @@ public class IniUtils {
 	
 	
 	//--取值
+	/**
+	 * 获取所有标签
+	 * @return
+	 */
+	public List<String> getSectionList() {
+		List<String> list = ListUtils.newArrayList();
+		Iterator<String> itor = sectionMap.keySet().iterator();
+		while(itor.hasNext()) {
+			list.add(itor.next());
+		}
+		return list;
+	}
+	/**
+	 * 获取某个标签下所有键
+	 * @param sectionKey
+	 * @return
+	 */
+	public List<String> getKeyList(String sectionKey) {
+		Section section = MapUtils.get(sectionMap, sectionKey);
+		if(section == null) {
+			return ListUtils.newArrayList();
+		} else {
+			return section.keyList();
+		}
+	}
 	/**
 	 * 获取值
 	 * @param sectionKey
@@ -57,7 +96,7 @@ public class IniUtils {
 		try {
 			return Optional.ofNullable(section(sectionKey).value(valueKey).get());
 		} catch(Exception ex) {
-			ex.printStackTrace();
+//			Console.err(ex.getMessage());
 		}
 		return Optional.empty();
 	}
@@ -72,7 +111,7 @@ public class IniUtils {
 		try {
 			return Optional.ofNullable(section(sectionKey).value(valueKey).intValue());
 		} catch(Exception ex) {
-			ex.printStackTrace();
+//			Console.err(ex.getMessage());
 		}
 		return Optional.empty();
 	}
@@ -87,7 +126,7 @@ public class IniUtils {
 		try {
 			return Optional.ofNullable(section(sectionKey).value(valueKey).longValue());
 		} catch(Exception ex) {
-			ex.printStackTrace();
+//			Console.err(ex.getMessage());
 		}
 		return Optional.empty();
 	}
@@ -102,7 +141,7 @@ public class IniUtils {
 		try {
 			return Optional.ofNullable(section(sectionKey).value(valueKey).floatValue());
 		} catch(Exception ex) {
-			ex.printStackTrace();
+//			Console.err(ex.getMessage());
 		}
 		return Optional.empty();
 	}
@@ -117,7 +156,7 @@ public class IniUtils {
 		try {
 			return Optional.ofNullable(section(sectionKey).value(valueKey).doubleValue());
 		} catch(Exception ex) {
-			ex.printStackTrace();
+//			Console.err(ex.getMessage());
 		}
 		return null;
 	}
@@ -132,7 +171,7 @@ public class IniUtils {
 		try {
 			return Optional.ofNullable(section(sectionKey).value(valueKey).booleanValue());
 		} catch(Exception ex) {
-			ex.printStackTrace();
+//			Console.err(ex.getMessage());
 		}
 		return Optional.empty();
 	}
@@ -147,7 +186,7 @@ public class IniUtils {
 		try {
 			return Optional.ofNullable(section(sectionKey).value(valueKey).dateValue());
 		} catch(Exception ex) {
-			ex.printStackTrace();
+//			Console.err(ex.getMessage());
 		}
 		return Optional.empty();
 	}
@@ -206,6 +245,32 @@ public class IniUtils {
 		return this;
 	}
 	
+	/**
+	 * 删除某个标签下的键
+	 * @param sectionKey
+	 * @param valueKey
+	 * @return
+	 */
+	public IniUtils removeKey(String sectionKey, String valueKey) {
+		Section section = MapUtils.get(sectionMap, sectionKey);
+		if(section != null) {
+			section.removeKey(valueKey);
+		}
+		return this;
+	}
+	
+	/**
+	 * 删除某个标签
+	 * @param sectionKey
+	 * @return
+	 */
+	public IniUtils removeSection(String sectionKey) {
+		if(sectionMap.containsKey(sectionKey)) {
+			sectionMap.remove(sectionKey);
+		}
+		return this;
+	}
+	
 	//--builder
 	/**
 	 * 创建section(内部类只能这么创建)
@@ -260,6 +325,40 @@ public class IniUtils {
 		return lines;
 	}
 	
+	/**
+	 * 转化为行列表
+	 * <p>
+	 * 会在每个键前面加上标签名做区分
+	 * </p>
+	 * @return
+	 */
+	public List<String> toPropertiesLines() {
+		List<String> lines = ListUtils.newArrayList();
+		if(sectionMap == null || sectionMap.isEmpty()) {
+			return lines;
+		}
+		sectionMap.forEach((secKey,section)->{	//标签名，标签具体内容
+			if(!ListUtils.isEmpty(section.noteList)) {
+				section.noteList.forEach(noteLine->{	//标签前的注释
+					lines.add("#"+noteLine);
+				});
+			}
+			
+			if(!MapUtils.isEmpty(section.valueMap)) {
+				section.valueMap.forEach((key, val)->{	//键值对
+					if(!ListUtils.isEmpty(val.noteList)) {
+						val.noteList.forEach(noteLine->{
+							lines.add("#"+noteLine);
+						});
+					}
+					lines.add(StringUtils.concat(secKey, ".", key, "=", val));
+				});
+			}
+			lines.add("");	//标签(模块之间隔出一行空行)
+		});
+		
+		return lines;
+	}
 	
 	/**
 	 * 保存到文件
@@ -281,6 +380,14 @@ public class IniUtils {
 		FileUtils.write(filePath, toLines(), Charsets.UTF_8, true);
 	}
 	
+	/**
+	 * 保存为properties文件
+	 * @param filePath
+	 * @throws IOException
+	 */
+	public void saveAsProperties(String filePath) throws IOException {
+		FileUtils.write(filePath, toPropertiesLines(), Charsets.UTF_8, true);
+	}
 	
 	//--内部方法
 	/**
@@ -354,6 +461,14 @@ public class IniUtils {
 			return noteList;
 		}
 		
+		public List<String> keyList() {
+			List<String> list = ListUtils.newArrayList();
+			Iterator<String> itor = valueMap.keySet().iterator();
+			while(itor.hasNext()) {
+				list.add(itor.next());
+			}
+			return list;
+		}
 		
 		public Section put(String key, Object value) {
 			if(value == null) {
@@ -364,6 +479,12 @@ public class IniUtils {
 		}
 		public Section put(String key, String value, List<String> noteList) {
 			valueMap.put(key, new Value(value, noteList));
+			return Section.this;
+		}
+		public Section removeKey(String key) {
+			if(valueMap.containsKey(key)) {
+				valueMap.remove(key);
+			}
 			return Section.this;
 		}
 		public Map<String, Value> valueMap() {
@@ -443,6 +564,7 @@ public class IniUtils {
 	public static void main(String[] args) throws IOException {
 		IniUtils iu = new IniUtils();
 		String path = "e:\\xx.ini";	//测试路径
+		String propertiesPath = "e:\\xx.properties";	//测试路径
 		iu.addSection(
 				iu.newSection("真理")
 					.noteList(null)
@@ -456,10 +578,15 @@ public class IniUtils {
 		Date date = iu2.getDateValue("第二块", "date").get();
 		System.out.println(date.getTime());
 		
-		iu2.update("真理", "dev", null).addOrUpadate("第二块", "pi", 3.14).save(path);
+		iu2.update("真理", "dev", null)
+			.addOrUpadate("第二块", "pi", 3.14)
+			.addOrUpadate("test", "path", "e:\\a")
+			.removeKey("第二块", "first").save(path);
 		IniUtils iu3 = new IniUtils(path);
 		System.out.println(iu3.getValue("真理", "dev").get());
+		System.out.println(iu3.getValue("test", "path").get());
 		System.out.println(iu3.getFloatValue("第二块", "pi").get());
+		iu3.saveAsProperties(propertiesPath);
 	}
 	
 }

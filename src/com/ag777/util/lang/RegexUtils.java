@@ -14,7 +14,7 @@ import com.ag777.util.lang.collection.CollectionAndMapUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月06日,last modify at 2017年11月07日
+ * @version create on 2017年06月06日,last modify at 2017年11月08日
  */
 public class RegexUtils {
 
@@ -662,7 +662,7 @@ public class RegexUtils {
 		if (replacement != null) {
 			for (int i = 1; i <= matcher.groupCount(); i++) {
 				String replace = matcher.group(i);
-				temp =  temp.replaceAll("\\$" + i, (replace != null) ? replace : "");
+				temp =  temp.replace("$" + i, (replace != null) ? replace : "");
 			}
 			return temp;
 		} else {
