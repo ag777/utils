@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
+
+import com.ag777.util.lang.Console;
 import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.RegexUtils;
 import com.ag777.util.lang.StringUtils;
@@ -18,24 +20,24 @@ import com.ag777.util.lang.collection.MapUtils;
 import com.ag777.util.lang.model.Charsets;
 
 /**
- * Ini 文件读写工具类
+ * Ini 文件读写辅助类
  * 
  * @author ag777
- * @version create on 2017年11月03日,last modify at 2017年11月08日
+ * @version create on 2017年11月03日,last modify at 2017年11月09日
  */
-public class IniUtils {
+public class IniHelper {
 	/* 区块 */
 	private LinkedHashMap<String, Section> sectionMap;
 	
 	//--构造函数
 	
-	public IniUtils() {
+	public IniHelper() {
 		sectionMap = MapUtils.newLinkedHashMap();
 	}
-	public IniUtils(String filePath) throws IOException {
+	public IniHelper(String filePath) throws IOException {
 		this(filePath, Charsets.utf8());
 	}
-	public IniUtils(String filePath, Charset charset) throws IOException {
+	public IniHelper(String filePath, Charset charset) throws IOException {
 		this();
 		if(charset == null) {
 			charset = Charsets.utf8();
@@ -43,10 +45,10 @@ public class IniUtils {
 		List<String> lines = FileUtils.readLines(filePath, charset);
 		initByLines(lines);
 	}
-	public IniUtils(InputStream inputStream) throws IOException{
+	public IniHelper(InputStream inputStream) throws IOException{
 		this(inputStream, Charsets.utf8());
 	}
-	public IniUtils(InputStream inputStream, Charset charset) throws IOException {
+	public IniHelper(InputStream inputStream, Charset charset) throws IOException {
 		this();
 		if(charset == null) {
 			charset = Charsets.utf8();
@@ -54,9 +56,24 @@ public class IniUtils {
 		List<String> lines = IOUtils.readLines(inputStream, charset.toString());
 		initByLines(lines);
 	}
-	public IniUtils(List<String> lines) {
+	public IniHelper(List<String> lines) {
 		this();
 		initByLines(lines);
+	}
+	
+	/**
+	 * 加载src路径下的配置文件，抛出RuntimeException异常
+	 * @param path
+	 * @param clazz
+	 * @return
+	 */
+	public static IniHelper loadBaseSrc(String path, Class<?> clazz) {
+		try {
+			return new IniHelper(PathUtils.srcPath(clazz)+path);
+		} catch(IOException ex) {
+			Console.err(ex);
+			throw new RuntimeException(ex);
+		}
 	}
 	
 	
@@ -316,7 +333,7 @@ public class IniUtils {
 	 * @param section
 	 * @return
 	 */
-	public IniUtils addSection(Section section) {
+	public IniHelper addSection(Section section) {
 		sectionMap.put(section.name, section);
 		return this;
 	}
@@ -328,7 +345,7 @@ public class IniUtils {
 	 * @param value
 	 * @return
 	 */
-	public IniUtils update(String sectionKey, String valueKey, Object value) {
+	public IniHelper update(String sectionKey, String valueKey, Object value) {
 		section(sectionKey).put(valueKey, value);
 		return this;
 	}
@@ -340,7 +357,7 @@ public class IniUtils {
 	 * @param value
 	 * @return
 	 */
-	public IniUtils addOrUpadate(String sectionKey, String valueKey, Object value) {
+	public IniHelper addOrUpadate(String sectionKey, String valueKey, Object value) {
 		Section section = MapUtils.get(sectionMap, sectionKey);
 		if(section == null) {
 			section = newSection(sectionKey);
@@ -356,7 +373,7 @@ public class IniUtils {
 	 * @param valueKey
 	 * @return
 	 */
-	public IniUtils removeKey(String sectionKey, String valueKey) {
+	public IniHelper removeKey(String sectionKey, String valueKey) {
 		Section section = MapUtils.get(sectionMap, sectionKey);
 		if(section != null) {
 			section.removeKey(valueKey);
@@ -369,7 +386,7 @@ public class IniUtils {
 	 * @param sectionKey
 	 * @return
 	 */
-	public IniUtils removeSection(String sectionKey) {
+	public IniHelper removeSection(String sectionKey) {
 		if(sectionMap.containsKey(sectionKey)) {
 			sectionMap.remove(sectionKey);
 		}
@@ -478,11 +495,20 @@ public class IniUtils {
 	/**
 	 * 保存到文件
 	 * @param filePath
-	 * @param charset
 	 * @throws IOException
 	 */
 	public void save(String filePath) throws IOException {
-		FileUtils.write(filePath, toLines(), Charsets.UTF_8, true);
+		save(filePath, Charsets.utf8());
+	}
+	
+	/**
+	 * 保存为properties文件
+	 * @param filePath
+	 * @param charset
+	 * @throws IOException
+	 */
+	public void saveAsProperties(String filePath, Charset charset) throws IOException {
+		FileUtils.write(filePath, toPropertiesLines(), charset.toString(), true);
 	}
 	
 	/**
@@ -491,7 +517,17 @@ public class IniUtils {
 	 * @throws IOException
 	 */
 	public void saveAsProperties(String filePath) throws IOException {
-		FileUtils.write(filePath, toPropertiesLines(), Charsets.UTF_8, true);
+		saveAsProperties(filePath, Charsets.utf8());
+	}
+	
+	/**
+	 * 保存到src路径下
+	 * @param path	相对于src路径
+	 * @param clazz
+	 * @throws IOException 
+	 */
+	public void saveBaseSrcPath(String path, Class<?> clazz) throws IOException {
+		FileUtils.write(PathUtils.srcPath(clazz)+path, toPropertiesLines(), Charsets.UTF_8, true);
 	}
 	
 	//--内部方法
@@ -637,9 +673,9 @@ public class IniUtils {
 			return value;
 		}
 		
-		public IniUtils set(String value) {
+		public IniHelper set(String value) {
 			this.value = value;
-			return IniUtils.this;
+			return IniHelper.this;
 		}
 		@Override
 		public String toString() {
@@ -667,7 +703,7 @@ public class IniUtils {
 	
 	
 	public static void main(String[] args) throws IOException {
-		IniUtils iu = new IniUtils();
+		IniHelper iu = new IniHelper();
 		String path = "e:\\xx.ini";	//测试路径
 		String propertiesPath = "e:\\xx.properties";	//测试路径
 		iu.addSection(
@@ -679,7 +715,7 @@ public class IniUtils {
 					.put("first", "ww", ListUtils.of("我是注释"))
 					.put("date", "2017-11-07", ListUtils.of("注释1","时间测试")))
 					.save(path);
-		IniUtils iu2 = new IniUtils(path);
+		IniHelper iu2 = new IniHelper(path);
 		Date date = iu2.getDateValue("第二块", "date").get();
 		System.out.println(date.getTime());
 		
@@ -687,7 +723,7 @@ public class IniUtils {
 			.addOrUpadate("第二块", "pi", 3.14)
 			.addOrUpadate("test", "path", "e:\\a")
 			.removeKey("第二块", "first").save(path);
-		IniUtils iu3 = new IniUtils(path);
+		IniHelper iu3 = new IniHelper(path);
 		System.out.println(iu3.getValue("真理", "dev").get());
 		System.out.println(iu3.getValue("test", "path").get());
 		System.out.println(iu3.getFloatValue("第二块", "pi").get());

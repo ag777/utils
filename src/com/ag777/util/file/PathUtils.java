@@ -3,22 +3,37 @@ package com.ag777.util.file;
 import java.io.File;
 import java.io.InputStream;
 
-import com.ag777.util.lang.SystemUtils;
-
 /**
  * 路径工具类
  * 
  * @author ag777
- * @version last modify at 2017年11月08日
+ * @version last modify at 2017年11月09日
  */
 public class PathUtils {
 	
-	public static InputStream getAsStream(String filePath) {
-		return PathUtils.class.getClassLoader().getResourceAsStream(filePath);
+	/**
+	 * 获取resource文件夹下资源文件的io流
+	 * @param clazz
+	 * @param filePath
+	 * @return
+	 */
+	public static InputStream getAsStream(String filePath, Class<?> clazz) {
+		if(clazz == null) {
+			clazz = PathUtils.class;
+		}
+		return clazz.getClassLoader().getResourceAsStream(filePath);
 	}
 	
-	public static String srcPath() {
-		java.net.URL url = PathUtils.class.getProtectionDomain().getCodeSource().getLocation();
+	/**
+	 * 获取src路径，必须传类，如果用这个类会得到lib包的路径
+	 * @param clazz
+	 * @return
+	 */
+	public static String srcPath(Class<?> clazz) {
+		if(clazz == null) {
+			clazz = PathUtils.class;
+		}
+		java.net.URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
 		String filePath = url.getPath();
 		try {
 			filePath = java.net.URLDecoder.decode(filePath, "utf-8");
@@ -31,8 +46,5 @@ public class PathUtils {
 		}
 		return filePath;
 	}
-	public static void main(String[] args) {
-		System.out.println(srcPath());
-		System.out.println(new File("/e:/ccc/").isDirectory());
-	}
+	
 }
