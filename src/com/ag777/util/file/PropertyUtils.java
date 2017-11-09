@@ -78,7 +78,7 @@ public class PropertyUtils extends java.util.Properties{
 	}
 	
 	public boolean containsKey(String key) {
-		return containsKey(key);
+		return super.containsKey(key);
 	}
 	
 	@Override
