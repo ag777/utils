@@ -1,14 +1,18 @@
 package com.ag777.util.lang;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import com.ag777.util.lang.collection.ListUtils;
 
 /**
  * IO操作工具类
@@ -16,10 +20,12 @@ import java.util.regex.Pattern;
  * 		有很多操作，比如文件，cmd命令，都是通过操作流来完成目的，为了避免重复及统一代码新建此类
  * </p>
  * @author ag777
- * @version create on 2017年06月16日,last modify at 2017年09月08日
+ * @version create on 2017年06月16日,last modify at 2017年11月10日
  */
 public class IOUtils {
 
+	public static int BUFFSIZE = 1024;	//一次性读取的字节
+	
 	private IOUtils() {}
 	
 	
@@ -58,9 +64,21 @@ public class IOUtils {
 	 * @param lineSparator
 	 * @param encoding
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static String readText(InputStream in, String lineSparator, String encoding) throws IOException {
+		return readText(in, lineSparator, Charset.forName(encoding));
+	}
+	
+	/**
+	 * 从流中读取文本
+	 * @param in
+	 * @param lineSparator
+	 * @param encoding
+	 * @return
+	 * @throws IOException 
+	 */
+	public static String readText(InputStream in, String lineSparator, Charset encoding) throws IOException {
 		
 		try{
 			StringBuilder sb = null;
@@ -88,9 +106,20 @@ public class IOUtils {
 	 * @param in
 	 * @param encoding
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public static List<String> readLines(InputStream in, String encoding) throws IOException {
+		return readLines(in,Charset.forName(encoding));
+	}
+	
+	/**
+	 * 读取所有行
+	 * @param in
+	 * @param encoding
+	 * @return
+	 * @throws IOException 
+	 */
+	public static List<String> readLines(InputStream in, Charset encoding) throws IOException {
 		
 		try{
 			List<String> lines = new ArrayList<>();
@@ -287,6 +316,31 @@ public class IOUtils {
 		} finally {
 			close(in,out);
 		}
+	}
+	
+	/**
+	 * 将内容转化为ByteArrayInputStream写出到输出流
+	 * @param content
+	 * @param out
+	 * @param charset
+	 * @param buffSize
+	 * @throws IOException
+	 */
+	public static void write(String content, OutputStream out, Charset charset, int buffSize) throws IOException {
+		write(
+				new ByteArrayInputStream(content.getBytes(charset)), out, buffSize);
+	}
+	
+	/**
+	 * 拼接每一行并转化为ByteArrayInputStream写出到输出流
+	 * @param lines
+	 * @param out
+	 * @param charset
+	 * @param buffSize
+	 * @throws IOException
+	 */
+	public static void write(List<String> lines, OutputStream out, Charset charset, int buffSize) throws IOException {
+		write(ListUtils.toString(lines, SystemUtils.lineSeparator()), out, charset, buffSize);
 	}
 	
 }

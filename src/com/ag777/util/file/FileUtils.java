@@ -31,7 +31,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2017年11月07日
+ * @version create on 2017年04月25日,last modify at 2017年11月10日
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = Charsets.UTF_8;
@@ -101,13 +101,24 @@ public class FileUtils {
      * @return
      * @throws IOException
      */
+    public static List<String> readLines(String filePath, String encoding) throws IOException {
+    	return readLines(filePath, Charset.forName(encoding));
+    }
+    
+    /**
+     * 读取文件中的所有行
+     * @param filePath
+     * @param encoding
+     * @return
+     * @throws IOException
+     */
     public static List<String> readLines(String filePath, Charset encoding) throws IOException {
     	 try {
     		 if(encoding == null) {
          		encoding = Charset.forName(FILE_READING_ENCODING);
          	}
     		 FileInputStream fis = new FileInputStream(filePath);
-    		 return IOUtils.readLines(fis, encoding.toString());
+    		 return IOUtils.readLines(fis, encoding);
           } catch (FileNotFoundException ex) {
               throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
           } catch (IOException ex) {

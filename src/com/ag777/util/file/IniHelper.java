@@ -2,6 +2,7 @@ package com.ag777.util.file;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.Iterator;
@@ -23,7 +24,7 @@ import com.ag777.util.lang.model.Charsets;
  * Ini 文件读写辅助类
  * 
  * @author ag777
- * @version create on 2017年11月03日,last modify at 2017年11月09日
+ * @version create on 2017年11月03日,last modify at 2017年11月10日
  */
 public class IniHelper {
 	/* 区块 */
@@ -53,7 +54,7 @@ public class IniHelper {
 		if(charset == null) {
 			charset = Charsets.utf8();
 		}
-		List<String> lines = IOUtils.readLines(inputStream, charset.toString());
+		List<String> lines = IOUtils.readLines(inputStream, charset);
 		initByLines(lines);
 	}
 	public IniHelper(List<String> lines) {
@@ -89,6 +90,14 @@ public class IniHelper {
 			list.add(itor.next());
 		}
 		return list;
+	}
+	/**
+	 * 判断标签是否存在
+	 * @param sectionKey
+	 * @return
+	 */
+	public boolean containSection(String sectionKey) {
+		return sectionMap.containsKey(sectionKey);
 	}
 	/**
 	 * 获取某个标签下所有键
@@ -339,14 +348,20 @@ public class IniHelper {
 	}
 	
 	/**
-	 * 替换原有的值,不存在会抛出异常
+	 * 替换原有的值,不存在则不作操作
 	 * @param sectionKey
 	 * @param valueKey
 	 * @param value
 	 * @return
 	 */
 	public IniHelper update(String sectionKey, String valueKey, Object value) {
-		section(sectionKey).put(valueKey, value);
+		Section section = MapUtils.get(sectionMap, sectionKey);
+		if(section != null) {
+			if(section.containKey(valueKey)) {
+				section.put(valueKey, value);
+			}
+		}
+		
 		return this;
 	}
 	
@@ -447,41 +462,77 @@ public class IniHelper {
 		return lines;
 	}
 	
-	/**
-	 * 转化为行列表
-	 * <p>
-	 * 会在每个键前面加上标签名做区分
-	 * </p>
-	 * @return
-	 */
-	public List<String> toPropertiesLines() {
-		List<String> lines = ListUtils.newArrayList();
-		if(sectionMap == null || sectionMap.isEmpty()) {
-			return lines;
+	public PropertyHelper toPropertyHelper() {
+		PropertyHelper ph = new PropertyHelper();
+		if(MapUtils.isEmpty(sectionMap)) {
+			return ph;
 		}
-		sectionMap.forEach((secKey,section)->{	//标签名，标签具体内容
+		sectionMap.forEach((sectionKey, section)-> {
+			List<String> noteList = ListUtils.newArrayList();
 			if(!ListUtils.isEmpty(section.noteList)) {
 				section.noteList.forEach(noteLine->{	//标签前的注释
-					lines.add("#"+noteLine);
+					noteList.add(noteLine);
 				});
 			}
 			
 			if(!MapUtils.isEmpty(section.valueMap)) {
 				section.valueMap.forEach((key, val)->{	//键值对
+					String phKey = StringUtils.concat(sectionKey, '.', key);
+					ph.addOrUpdate(
+							phKey, val.get());
+					//注释
+					List<String> noteListTmp = ListUtils.newArrayList();
+					noteListTmp.addAll(noteList);
 					if(!ListUtils.isEmpty(val.noteList)) {
 						val.noteList.forEach(noteLine->{
-							lines.add("#"+noteLine);
+							noteListTmp.add(noteLine);
 						});
+						ph.value(phKey).noteList(noteListTmp);	//添加注释
+						noteList.clear();//清空标签注释
 					}
-					lines.add(StringUtils.concat(secKey, ".", key, "=", val));
 				});
 			}
-			lines.add("");	//标签(模块之间隔出一行空行)
 		});
-		
-		return lines;
+		return ph;
 	}
 	
+//	/**
+//	 * 转化为行列表
+//	 * <p>
+//	 * 会在每个键前面加上标签名做区分
+//	 * </p>
+//	 * @return
+//	 */
+//	public List<String> toPropertiesLines() {
+//		List<String> lines = ListUtils.newArrayList();
+//		if(sectionMap == null || sectionMap.isEmpty()) {
+//			return lines;
+//		}
+//		sectionMap.forEach((secKey,section)->{	//标签名，标签具体内容
+//			if(!ListUtils.isEmpty(section.noteList)) {
+//				section.noteList.forEach(noteLine->{	//标签前的注释
+//					lines.add("#"+noteLine);
+//				});
+//			}
+//			
+//			if(!MapUtils.isEmpty(section.valueMap)) {
+//				section.valueMap.forEach((key, val)->{	//键值对
+//					if(!ListUtils.isEmpty(val.noteList)) {
+//						val.noteList.forEach(noteLine->{
+//							lines.add("#"+noteLine);
+//						});
+//					}
+//					lines.add(StringUtils.concat(secKey, ".", key, "=", val));
+//				});
+//			}
+//			lines.add("");	//标签(模块之间隔出一行空行)
+//		});
+//		
+//		return lines;
+//	}
+	
+	
+	//--输出
 	/**
 	 * 保存到文件
 	 * @param filePath
@@ -502,22 +553,21 @@ public class IniHelper {
 	}
 	
 	/**
-	 * 保存为properties文件
-	 * @param filePath
-	 * @param charset
+	 * 将内容写出到io流
+	 * @param os
 	 * @throws IOException
 	 */
-	public void saveAsProperties(String filePath, Charset charset) throws IOException {
-		FileUtils.write(filePath, toPropertiesLines(), charset.toString(), true);
+	public void save(OutputStream os) throws IOException {
+		save(os, Charsets.utf8());
 	}
 	
 	/**
-	 * 保存为properties文件
-	 * @param filePath
+	 * 将内容写出到io流
+	 * @param os
 	 * @throws IOException
 	 */
-	public void saveAsProperties(String filePath) throws IOException {
-		saveAsProperties(filePath, Charsets.utf8());
+	public void save(OutputStream os, Charset charset) throws IOException {
+		IOUtils.write(toLines(), os, charset, IOUtils.BUFFSIZE);
 	}
 	
 	/**
@@ -527,12 +577,13 @@ public class IniHelper {
 	 * @throws IOException 
 	 */
 	public void saveBaseSrcPath(String path, Class<?> clazz) throws IOException {
-		FileUtils.write(PathUtils.srcPath(clazz)+path, toPropertiesLines(), Charsets.UTF_8, true);
+		FileUtils.write(PathUtils.srcPath(clazz)+path, toLines(), Charsets.UTF_8, true);
 	}
 	
 	//--内部方法
 	/**
 	 * 通过内容行来初始化ini工具类对象
+	 * @param lines
 	 */
 	private void initByLines(List<String> lines) {
 		if(lines == null) {
@@ -593,7 +644,7 @@ public class IniHelper {
 			return name;
 		}
 		
-		private Section noteList(List<String> noteList) {
+		public Section noteList(List<String> noteList) {
 			this.noteList = noteList;
 			return Section.this;
 		}
@@ -621,6 +672,9 @@ public class IniHelper {
 		public Section put(String key, String value, List<String> noteList) {
 			valueMap.put(key, new Value(value, noteList));
 			return Section.this;
+		}
+		public boolean containKey(String key) {
+			return valueMap.containsKey(key);
 		}
 		public Section removeKey(String key) {
 			if(valueMap.containsKey(key)) {
@@ -667,6 +721,14 @@ public class IniHelper {
 		
 		public List<String> noteList() {
 			return noteList;
+		}
+		
+		public Value noteList(List<String> noteList) {
+			if(noteList == null) {
+				noteList = ListUtils.newArrayList();
+			}
+			this.noteList = noteList;
+			return Value.this;
 		}
 		
 		public String get() {
@@ -727,7 +789,7 @@ public class IniHelper {
 		System.out.println(iu3.getValue("真理", "dev").get());
 		System.out.println(iu3.getValue("test", "path").get());
 		System.out.println(iu3.getFloatValue("第二块", "pi").get());
-		iu3.saveAsProperties(propertiesPath);
+		iu3.toPropertyHelper().save(propertiesPath);
 	}
 	
 }
