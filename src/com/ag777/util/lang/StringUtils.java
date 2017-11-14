@@ -1,15 +1,18 @@
 package com.ag777.util.lang;
 
 import java.net.MalformedURLException;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.ag777.util.lang.collection.ListUtils;
 
 /**
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2017年11月04日
+ * @version last modify at 2017年11月14日
  */
 public class StringUtils {
 
@@ -298,6 +301,18 @@ public class StringUtils {
 			return DateUtils.toDate(src, "HH:mm:ss");
 		}
 		return null;
+	}
+	
+	/**
+	 * 源字符串换行转list
+	 * <p>
+	 * 	对应的拆分正则为(\r)?\n
+	 * </p>
+	 * @param src
+	 * @return
+	 */
+	public static List<String> toLineList(String src) {
+		return ListUtils.ofList(src, "(\r)?\n");
 	}
 	
 	//--emoji表情相关

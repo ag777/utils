@@ -1,6 +1,9 @@
 package com.ag777.util.lang;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+
+import com.ag777.util.lang.model.Pair;
 
 /**
  * 随机工具类。
@@ -59,6 +62,38 @@ public class RandomUtils {
 	}
 	
 	/**
+	 * 随机从列表里抽取一项
+	 * @param list
+	 * @return
+	 */
+	public static <T>T rList(List<T> list) {
+		int rInt = rInt(list.size());
+		return list.get(rInt);
+	}
+	
+	/**
+	 * 从列表中抽取一项，每项跟随一个概率
+	 * <p>
+	 * 	每项概率介于(0,1]之间，总和应为1，提前算好
+	 * </p>
+	 * @param list
+	 * @return
+	 * @throws Exception
+	 */
+	public static <T>T rListByProbability(List<Pair<T, Double>> list) throws Exception {
+		double rDouble = rDouble(1);
+		for (Pair<T, Double> pair : list) {
+			double probability = pair.second;
+			if(rDouble<probability) {
+				return pair.first;
+			} else {
+				rDouble -= probability;
+			}
+		}
+		throw new Exception("抽奖概率异常:"+rDouble);
+	}
+	
+	/**
 	 * 抽个奖吧
 	 * <p>
 	 * 传入的参数为中奖概率，值在(0,1)区间
@@ -68,7 +103,7 @@ public class RandomUtils {
 	 * 
 	 * @param probability
 	 * @return
-	 */
+	 */ 
 	public static boolean draw(double probability) {
 		if(probability <= 0) {
 			return false;
