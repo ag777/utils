@@ -10,7 +10,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +35,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2017年11月10日
+ * @version create on 2017年04月25日,last modify at 2017年11月17日
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = Charsets.UTF_8;
@@ -390,6 +394,36 @@ public class FileUtils {
     }
 
     /**
+     * 将内容追加到文件尾部
+     * <p>
+     * 	使用RandomAccessFile实现
+     * </p>
+     * @param fileName
+     * @param content
+     * @return 
+     */
+    public static boolean appendFileContent(String fileName, String content) {
+    	RandomAccessFile randomFile = null;
+        try {
+            // 打开一个随机访问文件流，按读写方式
+        	randomFile = new RandomAccessFile(fileName, "rw");
+            // 文件长度，字节数
+            long fileLength = randomFile.length();
+            //将写文件指针移到文件尾。
+            randomFile.seek(fileLength);
+            randomFile.writeBytes(content);
+            randomFile.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+        	IOUtils.close(randomFile);
+        }
+        return false;
+    }
+
+    
+    /**
      * 将流写文件
      * @param is
      * @param filePath
@@ -430,7 +464,7 @@ public class FileUtils {
     	return new FileOutputStream(file);
     }
 
-    public static InputStream getInputStream(String filePath) throws FileNotFoundException {
+    public static FileInputStream getInputStream(String filePath) throws FileNotFoundException {
     	File file = new File(filePath);
     	return new FileInputStream(file);
     }
@@ -659,5 +693,31 @@ public class FileUtils {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * 获取文件md5值
+	 * @param filePath
+	 * @return
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 */
+	public static String md5(String filePath) throws IOException, NoSuchAlgorithmException {
+        FileInputStream fis = null;
+        try {
+        	fis = getInputStream(filePath);
+        	MessageDigest md = MessageDigest.getInstance("MD5");
+	        byte[] buffer = new byte[1024];
+	        int length = -1;
+	        while ((length = fis.read(buffer, 0, 1024)) != -1) {
+	            md.update(buffer, 0, length);
+	        }
+	        BigInteger bigInt = new BigInteger(1, md.digest());
+	        return bigInt.toString(16);
+        }catch (IOException|NoSuchAlgorithmException ex) {
+        	throw ex;
+        } finally {
+        	IOUtils.close(fis);
+        }
 	}
 }
