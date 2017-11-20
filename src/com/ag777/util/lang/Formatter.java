@@ -7,17 +7,17 @@ import java.util.ArrayList;
  * 单位格式化
  * 
  * @author ag777
- * @version create on 2017年06月13日,last modify at 2017年10月21日
+ * @version create on 2017年06月13日,last modify at 2017年11月20日
  */
 public class Formatter {
 
 	/**
 	 * 保留decimalPlaces位小数
 	 * @param num
-	 * @param decimalPlaces
+	 * @param decimalPlaces 保留小数位数
 	 * @return
 	 */
-	public static String toString(double num, int decimalPlaces) {
+	public static String num(double num, int decimalPlaces) {
 		NumberFormat nf = NumberFormat.getNumberInstance();
 		nf.setMaximumFractionDigits(2);
 		return nf.format(num);
