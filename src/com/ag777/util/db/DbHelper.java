@@ -27,7 +27,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2017年11月06日
+ * @version create on 2017年07月28日,last modify at 2017年11月21日
  */
 public class DbHelper {
 
@@ -582,7 +582,7 @@ public class DbHelper {
     }
 	
 	/**
-	 * 清空表数据
+	 * 清空表数据(注意这个是ddl操作，不能回滚)
 	 * @param tableName
 	 * @return
 	 */

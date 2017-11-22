@@ -13,15 +13,43 @@ import com.ag777.util.lang.StringUtils;
  * 		java原有对于浮点型的计算结果不精确,例：试下用java直接计算0.06612d+0.00413d
  * </p>
  * @author ag777
- * @version create on 2017年11月14日,last modify at 2017年11月20日
+ * @version create on 2017年11月14日,last modify at 2017年11月21日
  */
 public class CalculateHelper {
 
 	private BigDecimal num;
 	
+	//--构造函数
 	public CalculateHelper(Object obj) {
 		num = valueOfWithException(obj);
 	}
+	
+	public CalculateHelper() {
+		num = new BigDecimal(0);
+	}
+	
+	public static CalculateHelper init() {
+		return new CalculateHelper(); 
+	}
+	
+	public static CalculateHelper init(int num) {
+		return new CalculateHelper(num); 
+	}
+	
+	public static CalculateHelper init(long num) {
+		return new CalculateHelper(num);
+	}
+	
+	public static CalculateHelper init(float num) {
+		return new CalculateHelper(num);
+	}
+	
+	public static CalculateHelper init(double num) {
+		return new CalculateHelper(num);
+	}
+	
+	//--外部工具方法
+	//--获取值
 	
 	public BigDecimal get() {
 		return num;
@@ -52,6 +80,7 @@ public class CalculateHelper {
 		return Formatter.num(num.doubleValue(), decimalPlaces);
 	}
 	
+	//--计算
 	/**
 	 * 加
 	 * 
@@ -117,6 +146,7 @@ public class CalculateHelper {
 	 * 
 	 * <p>
 	 * 	将参数转换为BigDecimal类型再进行计算转化失败抛出runtime异常
+	 * CalculateHelper.init("4").pow(2) = 16
 	 * </p>
 	 * 
 	 * @param n 指数
@@ -152,7 +182,10 @@ public class CalculateHelper {
 			return Optional.empty();
 		}
 		try {
-			if(obj instanceof Double) {
+			if(obj instanceof BigDecimal) {
+				return Optional.of(
+						(BigDecimal)obj);
+			}else if(obj instanceof Double) {
 				return Optional.of(
 						BigDecimal.valueOf((Double) obj));
 			} else if(obj instanceof Long) {

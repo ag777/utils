@@ -16,9 +16,9 @@ import com.ag777.util.lang.Console;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年09月06日,last modify at 2017年09月07日
+ * @version create on 2017年09月06日,last modify at 2017年11月21日
  */
-public abstract class UpdateDBHelper {
+public abstract class DBUpdateHelper {
 
 	private static boolean MODE_DEBUG = false;	//独立的debug模式，控制这块的输出
 	public static void debugMode(boolean isDebugMode) {
@@ -31,7 +31,7 @@ public abstract class UpdateDBHelper {
 	 * 执行更新数据库操作
 	 * @throws SQLException
 	 */
-	private UpdateDBHelper(List<VersionSqlPojo> VersionSqlPojoList) throws SQLException{
+	public DBUpdateHelper(List<VersionSqlPojo> VersionSqlPojoList) {
 		this.VersionSqlPojoList = VersionSqlPojoList;
 	}
 	
