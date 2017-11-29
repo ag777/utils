@@ -12,7 +12,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2017年11月14日
+ * @version last modify at 2017年11月23日
  */
 public class StringUtils {
 
@@ -313,6 +313,40 @@ public class StringUtils {
 	 */
 	public static List<String> toLineList(String src) {
 		return ListUtils.ofList(src, "(\r)?\n");
+	}
+	
+	//--转义相关
+	/**
+	 * 转义xml
+	 * 
+	 * <p>
+	 * 	外层嵌套CDATA法
+	 * </p>
+	 * 
+	 * @param src
+	 * @return
+	 */
+	public static String escapeXmlByCDATA(String src) {
+		return concat("<![CDATA[ ", src, " ]]>");
+	}
+	
+	/**
+	 * 转义xml
+	 * 
+	 * <p>
+	 * 	替换法:
+	 * &->&amp;
+	 * <->&lt;
+	 * >->&gt;
+	 * '->&apos;
+	 * "->&quot;
+	 * </p>
+	 * 
+	 * @param src
+	 * @return
+	 */
+	public static String escapeXmlByReplace(String src) {
+		return src.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&apos;").replace("\"", "&quot;");
 	}
 	
 	//--emoji表情相关

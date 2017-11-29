@@ -1,13 +1,12 @@
 package com.ag777.util.other;
 
 import org.joda.time.DateTime;
-import com.ag777.util.lang.DateUtils;
 
 /**
  * 计时工具类，用来查看代码执行耗时
  * 
  * @author ag777
- * @version create on 2017年10月10日,last modify at 2017年10月21日
+ * @version create on 2017年10月10日,last modify at 2017年11月29日
  */
 public class Timer {
 
@@ -46,10 +45,14 @@ public class Timer {
 			sb.append("操作[").append(operate).append("]");
 		}
 		sb.append("用时:")
-			.append(DateUtils.toString(lastBetween, formatOutput))
+			.append(mills2Str(lastBetween, formatOutput))
 			.append("||共用时:")
-			.append(DateUtils.toString(totalBetween, formatOutput));
+			.append(mills2Str(totalBetween, formatOutput));
 		System.out.println(sb);
+	}
+	
+	private static String mills2Str(long mills, String template) {
+		return new DateTime(mills).toString(template);
 	}
 	
 }

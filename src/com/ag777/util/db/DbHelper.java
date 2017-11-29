@@ -27,7 +27,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2017年11月21日
+ * @version create on 2017年07月28日,last modify at 2017年11月29日
  */
 public class DbHelper {
 
@@ -73,6 +73,17 @@ public class DbHelper {
 				DriverManager.getConnection(url, user, password));
 
     }
+	
+	public static DbHelper connectDB(String ip, int port, String dbName, String user, String password, String driverClassName) throws ClassNotFoundException, SQLException {
+		if(driverClassName == null) {
+			driverClassName = DRIVER_CLASS_NAME;
+		}
+		// 加载驱动程序
+		Class.forName(driverClassName);
+		// 连接数据库
+		return new DbHelper(
+				DriverManager.getConnection(getDbUrlString(ip, port, dbName), user, password));
+	}
 	
 	//--静态方法
 	/**
