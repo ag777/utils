@@ -216,6 +216,8 @@ public class DbHelper {
 				return "char";
 			case Types.VARCHAR:
 				return "varchar";
+			case Types.LONGVARCHAR:
+				return "text";
 			case Types.DATE:
 				return "date";
 			case Types.TIME:
@@ -264,6 +266,22 @@ public class DbHelper {
 			case Types.LONGNVARCHAR:
 			case Types.LONGVARCHAR:
 			case Types.NVARCHAR:
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	/**
+	 * 判断数据库类型是否为日期类型
+	 * @param sqlType
+	 * @return
+	 */
+	public static boolean isSqlTypeDate(int sqlType) {
+		switch(sqlType) {
+			case Types.DATE:
+			case Types.TIMESTAMP:
+			case Types.TIME:
 				return true;
 			default:
 				return false;
