@@ -27,16 +27,20 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2017年11月29日
+ * @version create on 2017年07月28日,last modify at 2017年12月01日
  */
 public class DbHelper {
 
+	public static final String DRIVER_CLASS_NAME_MYSQL = "com.mysql.jdbc.Driver";
+	public static final String DRIVER_CLASS_NAME_SQLITE = "org.sqlite.JDBC";
+	
 	//控制控制台输出开关
 	private static boolean MODE_DEBUG = true;
 	//执行完sql后关闭数据库连接,一旦开启则该工具类不可重复使用(连接不存在了)
 	private static boolean MODE_CLOSE_AFTER_EXECUTE = false;
-	private static String DRIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
+	private static String DRIVER_CLASS_NAME = DRIVER_CLASS_NAME_MYSQL;
 	private static String URL_TAIL = "?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull";
+	
 	
 	public static String driverClassName() {
 		return DRIVER_CLASS_NAME;
@@ -65,7 +69,6 @@ public class DbHelper {
 	}
 	
 	public static DbHelper connectDB(String url,String user, String password) throws ClassNotFoundException, SQLException {
-		
 		// 加载驱动程序
 		Class.forName(DRIVER_CLASS_NAME);
 		// 连接数据库
@@ -78,11 +81,17 @@ public class DbHelper {
 		if(driverClassName == null) {
 			driverClassName = DRIVER_CLASS_NAME;
 		}
-		// 加载驱动程序
-		Class.forName(driverClassName);
-		// 连接数据库
 		return new DbHelper(
-				DriverManager.getConnection(getDbUrlString(ip, port, dbName), user, password));
+				getConn(
+						getDbUrlString(ip, port, dbName),
+						driverClassName));
+	}
+	
+	public static DbHelper connectSqlite(String filePath) throws ClassNotFoundException, SQLException {
+		return new DbHelper(
+				getConn(
+						"jdbc:sqlite:"+filePath,
+						DRIVER_CLASS_NAME_SQLITE));
 	}
 	
 	//--静态方法
@@ -219,6 +228,24 @@ public class DbHelper {
 				return "binary";
 			case Types.VARBINARY:
 				return "varbinary";
+			default:
+				return null;
+		}
+	}
+	
+	
+	/**
+	 * 获取字段类型最大长度(不准确)
+	 * @param sqlType
+	 * @return
+	 */
+	@Deprecated
+	public static Long getMaxSize(int sqlType) {
+		switch(sqlType) {
+			case Types.INTEGER:
+				return 255l;
+			case Types.VARCHAR:
+				return 65535l;
 			default:
 				return null;
 		}
@@ -870,6 +897,11 @@ public class DbHelper {
 	
 	/**
 	 * 通过表名获取每一个字段的信息
+	 * 
+	 * <p>
+	 * 	参考:http://blog.sina.com.cn/s/blog_707a9f0601014y1y.html
+	 * </p>
+	 * 
 	 * @param tableName
 	 * @return
 	 */
@@ -886,15 +918,23 @@ public class DbHelper {
 				ColumnPojo column = new ColumnPojo();
 				String columnName = columnSet.getString("COLUMN_NAME");
 				if(primaryKeyList.contains(columnName)) {	//是否在主键列表里
-					column.setPK(true);
+					column.isPK(true);
 				} else {
-					column.setPK(false);
+					column.isPK(false);
 				}
 			    column.setName(columnName);
-			    column.setSqlType(columnSet.getInt("DATA_TYPE"));
-			    column.setSize(columnSet.getLong("COLUMN_SIZE"));
-			    column.setRemarks(columnSet.getString("REMARKS"));
-			     
+			    column.setSqlType(columnSet.getInt("DATA_TYPE"));		//来自 java.sql.Types 的 SQL 类型
+			    column.setSize(columnSet.getLong("COLUMN_SIZE"));			//长度
+			    column.setRemarks(columnSet.getString("REMARKS"));			//注释
+			    column.setDefalut(columnSet.getObject("COLUMN_DEF"));	//默认值，可以为null
+			    column.setCharOctetLength(columnSet.getLong("CHAR_OCTET_LENGTH"));	// 对于 char 类型，该长度是列中的最大字节数
+			    if(column.isPK()) {		//主键不允许为空
+			    	column.isNotNull(true);
+			    } else {
+			    	column.isNotNull(!columnSet.getBoolean("NULLABLE"));
+			    }
+			    column.isAutoIncrement(columnSet.getBoolean("IS_AUTOINCREMENT"));	//是否自增长
+			    
 			    columns.add(column);
 			}
 			
@@ -960,6 +1000,20 @@ public class DbHelper {
 		return ReflectionUtils.isBasicClass(clazz);
 	}
 	
+	/**
+	 * 通过url和驱动类获取数据库连接
+	 * @param url
+	 * @param driverClazzName
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	private static Connection getConn(String url, String driverClazzName) throws ClassNotFoundException, SQLException {
+		// 加载驱动程序
+		Class.forName(driverClazzName);
+		// 连接数据库
+		return DriverManager.getConnection(url);
+	}
 	
 	private static void err(Exception ex) {
 		if(MODE_DEBUG) {

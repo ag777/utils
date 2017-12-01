@@ -4,14 +4,18 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+
+import com.ag777.util.gson.GsonUtils;
+import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.reflection.ReflectionUtils;
 
 /**
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年11月04日
+ * @version create on 2017年09月22日,last modify at 2017年12月01日
  */
 public class ObjectUtils {
 
@@ -133,6 +137,24 @@ public class ObjectUtils {
 	public static Date toDate(Object obj, Date defaultValue) {
 		Date result = toDate(obj);
 		return result!=null?result:defaultValue;
+	}
+	
+	public static Map<String, Object> toMap(Object obj) {
+		if(obj == null) {
+			return null;
+		}
+		return GsonUtils.get().toMap(GsonUtils.get().toJson(obj));
+	}
+	
+	public static <T>List<Map<String, Object>> toListMap(List<T> list) {
+		if(list == null) {
+			return null;
+		}
+		if(list.isEmpty()) {
+			return ListUtils.newArrayList();
+		}
+		GsonUtils u = GsonUtils.get();
+		return u.toListMap(u.toJson(list));
 	}
 	
 	//其它

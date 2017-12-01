@@ -12,8 +12,12 @@ public class ColumnPojo {
 	private Integer sqlType;		//sql类型
 	private Long size;					//字段长度
 	private String remarks;			//注释说明
-	private boolean isNotNull;	//是否不能为空
-	private boolean isPK;			//是否是主键
+	private Object defalut;			//默认值
+	private Long charOctetLength;	//对于 char 类型，该长度是列中的最大字节数
+	private Boolean isNotNull;	//是否不能为空
+	private Boolean isAutoIncrement;	//是否自增
+	private Boolean isPK;			//是否是主键
+	
 	
 	public String getName() {
 		return name;
@@ -39,16 +43,35 @@ public class ColumnPojo {
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
 	}
-	public boolean isNotNull() {
+	public Object getDefalut() {
+		return defalut;
+	}
+	public void setDefalut(Object defalut) {
+		this.defalut = defalut;
+	}
+	public Long getCharOctetLength() {
+		return charOctetLength;
+	}
+	public void setCharOctetLength(Long charOctetLength) {
+		this.charOctetLength = charOctetLength;
+	}
+	public Boolean isNotNull() {
 		return isNotNull;
 	}
-	public void setNotNull(boolean isNotNull) {
+	public void isNotNull(Boolean isNotNull) {
 		this.isNotNull = isNotNull;
 	}
-	public boolean isPK() {
+	public Boolean isAutoIncrement() {
+		return isAutoIncrement;
+	}
+	public void isAutoIncrement(Boolean isAutoIncrement) {
+		this.isAutoIncrement = isAutoIncrement;
+	}
+	public Boolean isPK() {
 		return isPK;
 	}
-	public void setPK(boolean isPK) {
+	public void isPK(Boolean isPK) {
 		this.isPK = isPK;
 	}
+	
 }
