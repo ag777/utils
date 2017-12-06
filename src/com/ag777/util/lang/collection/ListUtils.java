@@ -18,7 +18,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年11月08日
+ * @version create on 2017年09月22日,last modify at 2017年12月06日
  */
 public class ListUtils {
 
@@ -407,6 +407,36 @@ public class ListUtils {
 		return result;
 	}
 	
+	/**
+	 * 拆分数组
+	 * @param array
+	 * @param limit
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T>T[][] splitArray(T[] array, int limit) {
+		if(array == null) {
+			return null;
+		}
+		if(limit <= 0) {
+			throw new RuntimeException("参数limit必须大于0");
+		}
+		
+		Class<T> clazz = getClass(array);
+		List<T[]> list = newArrayList();
+		List<T> itemList = newArrayList();
+		for(int i=0; i<array.length; i++) {
+			if(i != 0 && i%limit == 0) {
+				list.add(toArray(itemList, clazz));
+				itemList = newArrayList();
+			}
+			T item = array[i];
+			itemList.add(item);
+		}
+		list.add(toArray(itemList, clazz));
+		T[][] temp = (T[][]) newArray(getArrayClass(clazz), list.size());
+		return list.toArray(temp);
+	}
 	
 	/**
      * 删除符合条件的列表项
@@ -431,6 +461,21 @@ public class ListUtils {
 		return list;
 	}
 	
+	
+	/**
+	 * 将列表转化为数组
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T>T[] toArray(List<T> list, Class<T> clazz) {
+		if(list == null) {
+			return null;
+		}
+		if(list.isEmpty()) {
+			return (T[]) newArray(clazz, 0);
+		}
+		return list.toArray((T[]) newArray(clazz, list.size()));
+	}
 	
 	/**
      * 列表转List<Map<String, Object>>
@@ -465,14 +510,6 @@ public class ListUtils {
 	} 
 	
 	//--复制
-	/**
-	 * 将列表转化为数组
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T>T[] toArray(List<T> list) {
-		return (T[]) list.toArray(new Object[list.size()]);
-	}
 	
 	/**
 	 * 深度拷贝
@@ -480,8 +517,8 @@ public class ListUtils {
 	 */
 	public static <T>List<T> copy(List<T> list) {
 		List<T> newList = emptyToCopy(list);
-		Collections.addAll(newList,  toArray(list)); 
-		//Collections.copy(newList, list);	//深拷贝，不光拷贝的是src的元素（引用），src内每个元素的所指向的对象都进行一次拷贝。即是两个list的每个元素所指向的不是同一内存
+//		Collections.addAll(newList,  toArray(list)); 
+		Collections.copy(newList, list);	//深拷贝，不光拷贝的是src的元素（引用），src内每个元素的所指向的对象都进行一次拷贝。即是两个list的每个元素所指向的不是同一内存
 		return newList;
 	}
 	
@@ -531,6 +568,19 @@ public class ListUtils {
 		return Optional.empty();
 	}
 	
+	/**
+	 * 获取数组类型
+	 * @param array
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T>Class<T> getClass(T[] array) {
+		if(array == null) {
+			return null;
+		}
+		return (Class<T>) array.getClass().getComponentType();
+	}
+	
 	/*----内部方法----*/
 	/**
 	 * 获取镜像的空列表，支持arrayList,vector和linklist
@@ -550,5 +600,14 @@ public class ListUtils {
 			newList = newArrayList();
 		}
 		return newList;
+	}
+	
+	/**
+	 * 获取一个类型对应的数组类型
+	 * @param clazz
+	 * @return
+	 */
+	private static Class<?> getArrayClass(Class<?> clazz) {
+		return newArray(clazz, 0).getClass();
 	}
 }

@@ -14,7 +14,7 @@ import com.ag777.util.lang.exception.model.ExceptionHelper;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2017年09月15日
+ * @version last modify at 2017年12月06日
  */
 public class Console {
 
@@ -81,12 +81,14 @@ public class Console {
 	 * @param objs
 	 * @return
 	 */
-	public static String log(Object... objs) {
+	public static String log(Object obj, Object... objs) {
+		if(objs != null) {
+			return log(obj);
+		}
+		
 		String msg = getMethod();
 		if(isDevMode()) {
-			if(objs != null) {
-				msg += toJson(Arrays.asList(objs));
-			}
+			msg += toJson(Arrays.asList(obj,objs));
 		}
 		System.out.println(msg);
 		return msg;
