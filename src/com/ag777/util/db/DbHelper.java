@@ -17,9 +17,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import com.ag777.util.db.interf.DBTransactionInterf;
 import com.ag777.util.db.model.ColumnPojo;
+import com.ag777.util.db.model.DBIPojo;
+import com.ag777.util.db.model.DbPojo;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.reflection.ReflectionUtils;
 
@@ -27,7 +28,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2017年12月01日
+ * @version create on 2017年07月28日,last modify at 2017年12月11日
  */
 public class DbHelper {
 
@@ -122,7 +123,7 @@ public class DbHelper {
 	 * @param size
 	 * @return
 	 */
-	public static Class<?> toPojoType(int sqlType, long size) {
+	public static Class<?> toPojoType(int sqlType, int size) {
 		Class<?> clazz = null;
 		switch(sqlType) {
 			case Types.VARCHAR:	//12
@@ -185,12 +186,21 @@ public class DbHelper {
 	}
 	
 	/**
+	 * 数据库类型转名称
+	 * @param sqlType
+	 * @return
+	 */
+	private static String toString(int sqlType) {
+		return toString(sqlType, 0);
+	}
+	
+	/**
 	 * int型的type对应mysql数据库的类型名称(不全，只列出常用的，不在范围内返回null)
 	 * @param sqlType
 	 * @param size
 	 * @return
 	 */
-	public static String toString(int sqlType) {
+	public static String toString(int sqlType, int size) {
 		switch(sqlType) {
 			case Types.TINYINT:
 				return "tinyint";
@@ -217,6 +227,9 @@ public class DbHelper {
 			case Types.VARCHAR:
 				return "varchar";
 			case Types.LONGVARCHAR:
+				if(size > 65535) {
+					return "mediumtext";
+				}
 				return "text";
 			case Types.DATE:
 				return "date";
@@ -225,6 +238,7 @@ public class DbHelper {
 			case Types.TIMESTAMP:
 				return "timestamp";
 			case Types.BLOB:
+			case Types.LONGVARBINARY:
 				return "blob";
 			case Types.BINARY:
 				return "binary";
@@ -242,12 +256,12 @@ public class DbHelper {
 	 * @return
 	 */
 	@Deprecated
-	public static Long getMaxSize(int sqlType) {
+	public static Integer getMaxSize(int sqlType) {
 		switch(sqlType) {
 			case Types.INTEGER:
-				return 255l;
+				return 255;
 			case Types.VARCHAR:
-				return 65535l;
+				return 65535;
 			default:
 				return null;
 		}
@@ -887,13 +901,39 @@ public class DbHelper {
 	
 	/*-----数据库结构层面的工具方法-----*/
 	/**
-	 * 获取所有表的名称
+	 * 获取数据库信息
+	 * <p>
+	 * 参考:http://blog.csdn.net/anxinliu2011/article/details/7560511
+	 * </p>
+	 * 
 	 * @param tableName
 	 * @return
 	 */
-	public ArrayList<String> tableList() {
+	public DbPojo dbInfo() {
+		try {
+			DbPojo db = new DbPojo();
+			DatabaseMetaData dbmd = conn.getMetaData();	
+			db.setName(dbmd.getDatabaseProductName());		//MySQL
+			db.setVersion(dbmd.getDatabaseProductVersion());	//5.6.32
+			db.setDriverVersion(dbmd.getDriverVersion());			//mysql-connector-java-5.1.44 ( Revision: b3cda4f864902ffdde495b9df93937c3e20009be )
+			return db;
+		} catch(Exception ex) {
+			err(ex);
+		} finally {
+			closeAfterExecute();
+		}
+		return null;
+	}
+	
+	/**
+	 * 获取所有表的名称列表
+	 * @param tableName
+	 * @return
+	 */
+	public List<String> tableNameList() {
 		try {
 			DatabaseMetaData dbmd = conn.getMetaData();
+			
 			ArrayList<String> tableNameList = new ArrayList<>();
 	        ResultSet rs = null;
 	        String[] typeList = new String[] { "TABLE" };
@@ -901,8 +941,19 @@ public class DbHelper {
 	        for (boolean more = rs.next(); more; more = rs.next()) {
 	            String s = rs.getString("TABLE_NAME");
 	            String type = rs.getString("TABLE_TYPE");
-	            if (type.equalsIgnoreCase("table") && s.indexOf("$") == -1)
+	            if (type.equalsIgnoreCase("table") && s.indexOf("$") == -1) {
+//	            	System.out.println(rs.getString("TABLE_CAT"));
+//	            	System.out.println(rs.getString("TABLE_SCHEM"));
+//	            	System.out.println(rs.getString("TABLE_NAME"));
+//	            	System.out.println(rs.getString("TABLE_TYPE"));
+//	            	System.out.println(rs.getString("REMARKS"));
+//	            	System.out.println(rs.getString("TYPE_CAT"));
+//	            	System.out.println(rs.getString("TYPE_SCHEM"));
+//	            	System.out.println(rs.getString("TYPE_NAME"));
+//	            	System.out.println(rs.getString("SELF_REFERENCING_COL_NAME"));
+//	            	System.out.println(rs.getString("REF_GENERATION"));
 	            	tableNameList.add(s);
+	            }
 	        }
 	        return tableNameList;
 		} catch(Exception ex) {
@@ -942,10 +993,11 @@ public class DbHelper {
 				}
 			    column.setName(columnName);
 			    column.setSqlType(columnSet.getInt("DATA_TYPE"));		//来自 java.sql.Types 的 SQL 类型
-			    column.setSize(columnSet.getLong("COLUMN_SIZE"));			//长度
+			    column.setSize(columnSet.getInt("COLUMN_SIZE"));			//长度
+			    column.setDecimalDigits(columnSet.getInt("DECIMAL_DIGITS"));	//小数部分的位数。对于 DECIMAL_DIGITS 不适用的数据类型，则返回 Null
 			    column.setRemarks(columnSet.getString("REMARKS"));			//注释
 			    column.setDefalut(columnSet.getObject("COLUMN_DEF"));	//默认值，可以为null
-			    column.setCharOctetLength(columnSet.getLong("CHAR_OCTET_LENGTH"));	// 对于 char 类型，该长度是列中的最大字节数
+			    column.setCharOctetLength(columnSet.getInt("CHAR_OCTET_LENGTH"));	// 对于 char 类型，该长度是列中的最大字节数
 			    if(column.isPK()) {		//主键不允许为空
 			    	column.isNotNull(true);
 			    } else {
@@ -981,6 +1033,70 @@ public class DbHelper {
 			err(ex);
 		}
 		return list;
+	}
+	
+	/**
+	 * 获取表中的索引信息
+	 * <p>
+	 * 	包括主键索引,索引名为为PRIMARY
+	 * 	参考:http://blog.csdn.net/uikoo9/article/details/39926687
+	 * </p>
+	 * 
+	 * @param connection
+	 * @param tableName
+	 * @return
+	 */
+	public List<DBIPojo> dbiList(String tableName) {
+		List<DBIPojo> dbiList = new  ArrayList<>();
+		try {
+			ResultSet rs = conn.getMetaData().getIndexInfo(null, null, tableName, false, false);
+			Map<String, Integer> tempMap = new HashMap<>();
+			int index = -1;
+			while (rs.next()) {
+				// 获取索引名
+				String name = rs.getString("INDEX_NAME");				//索引名称
+				String colName = rs.getString("COLUMN_NAME");	//索引列名称
+//				if("PRIMARY".equals(name)) {	//过滤主键索引
+//					continue;
+//				}
+				
+				if (tempMap.containsKey(name)) {
+					dbiList.get(tempMap.get(name)).getColumnNameList().add(colName);
+					continue;
+				} else {
+					int type = rs.getInt("TYPE");
+					
+					DBIPojo dbi = new DBIPojo();
+					dbi.setName(name);
+					dbi.setType(type);	//索引类型
+					switch(type) {
+						case 2:
+							dbi.setTypeName("HASH");
+							break;
+						case 3:
+							dbi.setTypeName("BTREE");
+							break;
+						default:
+							break;
+					}
+					dbi.setUnique(!rs.getBoolean("NON_UNIQUE"));
+					
+					List<String> colNameList = new ArrayList<>();
+					colNameList.add(colName);
+					dbi.setColumnNameList(colNameList);
+					dbiList.add(dbi);
+					
+					index++;
+					tempMap.put(name, index);
+				}
+				
+			}
+			tempMap = null;
+			return dbiList;
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		}
+		return dbiList;
 	}
 	
 	/**

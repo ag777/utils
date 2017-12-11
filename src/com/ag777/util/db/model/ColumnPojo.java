@@ -10,10 +10,11 @@ public class ColumnPojo {
 
 	private String name;				//字段名
 	private Integer sqlType;		//sql类型
-	private Long size;					//字段长度
+	private Integer size;					//字段长度
+	private Integer decimalDigits;	//小数部分的位数。对于 DECIMAL_DIGITS 不适用的数据类型，则返回 Null
 	private String remarks;			//注释说明
 	private Object defalut;			//默认值
-	private Long charOctetLength;	//对于 char 类型，该长度是列中的最大字节数
+	private Integer charOctetLength;	//对于 char 类型，该长度是列中的最大字节数
 	private Boolean isNotNull;	//是否不能为空
 	private Boolean isAutoIncrement;	//是否自增
 	private Boolean isPK;			//是否是主键
@@ -31,11 +32,17 @@ public class ColumnPojo {
 	public void setSqlType(Integer sqlType) {
 		this.sqlType = sqlType;
 	}
-	public Long getSize() {
+	public Integer getSize() {
 		return size;
 	}
-	public void setSize(Long size) {
+	public void setSize(Integer size) {
 		this.size = size;
+	}
+	public Integer getDecimalDigits() {
+		return decimalDigits;
+	}
+	public void setDecimalDigits(Integer decimalDigits) {
+		this.decimalDigits = decimalDigits;
 	}
 	public String getRemarks() {
 		return remarks;
@@ -49,10 +56,10 @@ public class ColumnPojo {
 	public void setDefalut(Object defalut) {
 		this.defalut = defalut;
 	}
-	public Long getCharOctetLength() {
+	public Integer getCharOctetLength() {
 		return charOctetLength;
 	}
-	public void setCharOctetLength(Long charOctetLength) {
+	public void setCharOctetLength(Integer charOctetLength) {
 		this.charOctetLength = charOctetLength;
 	}
 	public Boolean isNotNull() {
