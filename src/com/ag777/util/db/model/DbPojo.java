@@ -8,6 +8,10 @@ package com.ag777.util.db.model;
  */
 public class DbPojo {
 
+	public final static String TYPE_MYSQL ="MySQL";
+	public final static String TYPE_ORACLE ="Oracle";
+	public final static String TYPE_SQLITE = "SQLite";
+	
 	public String name; 		//用以获得当前数据库是什么数据库。比如oracle，access等。
 	public String version; 	//获得数据库的版本。
 	public String driverVersion; 	//获得驱动程序的版本。

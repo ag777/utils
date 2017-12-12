@@ -14,7 +14,7 @@ import com.ag777.util.lang.collection.CollectionAndMapUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月06日,last modify at 2017年11月08日
+ * @version create on 2017年06月06日,last modify at 2017年12月12日
  */
 public class RegexUtils {
 
@@ -45,11 +45,29 @@ public class RegexUtils {
 	 * 替换
 	 * 
 	 * @param src
+	 * @param regex
+	 * @param replacement
+	 * @return
+	 */
+	public static String replaceAll(String src, String regex, String replacement) {
+		if(src == null) {
+			return src;
+		}
+		return replaceAll(src, Pattern.compile(regex), replacement);
+	}
+	
+	/**
+	 * 替换
+	 * 
+	 * @param src
 	 * @param pattern
 	 * @param replacement
 	 * @return
 	 */
 	public static String replaceAll(String src, Pattern pattern, String replacement) {
+		if(src == null) {
+			return src;
+		}
 		return pattern.matcher(src).replaceAll(replacement);
 	}
 	

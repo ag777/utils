@@ -21,6 +21,7 @@ import com.ag777.util.db.interf.DBTransactionInterf;
 import com.ag777.util.db.model.ColumnPojo;
 import com.ag777.util.db.model.DBIPojo;
 import com.ag777.util.db.model.DbPojo;
+import com.ag777.util.db.model.TypePojo;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.reflection.ReflectionUtils;
 
@@ -28,28 +29,19 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2017年12月11日
+ * @version create on 2017年07月28日,last modify at 2017年12月12日
  */
 public class DbHelper {
 
 	public static final String DRIVER_CLASS_NAME_MYSQL = "com.mysql.jdbc.Driver";
+	public static final String DRIVER_CLASS_NAME_ORACLE = "oracle.jdbc.driver.OracleDriver";
 	public static final String DRIVER_CLASS_NAME_SQLITE = "org.sqlite.JDBC";
 	
 	//控制控制台输出开关
 	private static boolean MODE_DEBUG = true;
 	//执行完sql后关闭数据库连接,一旦开启则该工具类不可重复使用(连接不存在了)
 	private static boolean MODE_CLOSE_AFTER_EXECUTE = false;
-	private static String DRIVER_CLASS_NAME = DRIVER_CLASS_NAME_MYSQL;
 	private static String URL_TAIL = "?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull";
-	
-	
-	public static String driverClassName() {
-		return DRIVER_CLASS_NAME;
-	}
-
-	public static void driverClassName(String driverClassName) {
-		DbHelper.DRIVER_CLASS_NAME = driverClassName;
-	}
 
 	public static void setModeDebug(boolean debugMode) {
 		DbHelper.MODE_DEBUG = debugMode;
@@ -60,39 +52,63 @@ public class DbHelper {
 	}
 	
 	private Connection conn;
+	private String dbType;	//数据库类型(mysql/oracle/sqlite等)
 	
 	public DbHelper(Connection conn) {
 		this.conn = conn;
+		dbType = dbInfo().getName();
 	}
 	
+	/**
+	 * 连接数据库
+	 * <p>
+	 * 	默认连接mysql
+	 * <p>
+	 * @param ip
+	 * @param port
+	 * @param dbName
+	 * @param user
+	 * @param password
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
 	public static DbHelper connectDB(String ip, int port, String dbName, String user, String password) throws ClassNotFoundException, SQLException {
-		return connectDB(getDbUrlString(ip, port, dbName), user, password);
+		return connectMysql(ip, port, dbName, user, password);
 	}
 	
-	public static DbHelper connectDB(String url,String user, String password) throws ClassNotFoundException, SQLException {
-		// 加载驱动程序
-		Class.forName(DRIVER_CLASS_NAME);
-		// 连接数据库
-		return new DbHelper(
-				DriverManager.getConnection(url, user, password));
-
+	//--mysql
+	public static DbHelper connectMysql(String ip, int port, String dbName, String user, String password) throws ClassNotFoundException, SQLException {
+		return connectMysql(getDbUrlString(ip, port, dbName, DRIVER_CLASS_NAME_MYSQL), user, password);
+	}
+	
+	public static DbHelper connectMysql(String url,String user, String password) throws ClassNotFoundException, SQLException {
+		return connectDB(url, user, password, DRIVER_CLASS_NAME_MYSQL);
     }
 	
-	public static DbHelper connectDB(String ip, int port, String dbName, String user, String password, String driverClassName) throws ClassNotFoundException, SQLException {
-		if(driverClassName == null) {
-			driverClassName = DRIVER_CLASS_NAME;
-		}
-		return new DbHelper(
-				getConn(
-						getDbUrlString(ip, port, dbName),
-						driverClassName));
+	//--oracle
+	public static DbHelper connectOracle(String ip, int port, String dbName, String user, String password) throws ClassNotFoundException, SQLException {
+		return connectOracle(getDbUrlString(ip, port, dbName, DRIVER_CLASS_NAME_ORACLE), user, password);
 	}
 	
+	public static DbHelper connectOracle(String url,String user, String password) throws ClassNotFoundException, SQLException {
+		return connectDB(url, user, password, DRIVER_CLASS_NAME_ORACLE);
+    }
+	
+	//--sqlite
 	public static DbHelper connectSqlite(String filePath) throws ClassNotFoundException, SQLException {
 		return new DbHelper(
 				getConn(
 						"jdbc:sqlite:"+filePath,
 						DRIVER_CLASS_NAME_SQLITE));
+	}
+	
+	public static DbHelper connectDB(String url,String user, String password, String driverClassName) throws ClassNotFoundException, SQLException {
+		// 加载驱动程序
+		Class.forName(driverClassName);
+		// 连接数据库
+		return new DbHelper(
+				DriverManager.getConnection(url, user, password));
 	}
 	
 	//--静态方法
@@ -103,10 +119,19 @@ public class DbHelper {
 	 * @param dbName
 	 * @return
 	 */
-	public static String getDbUrlString(String ip, int port, String dbName){
-		return new StringBuilder()
-						.append("jdbc:mysql://")
-						.append(ip)
+	public static String getDbUrlString(String ip, int port, String dbName, String driverClassName){
+		StringBuilder sb = new StringBuilder();
+		switch(driverClassName) {
+			case DRIVER_CLASS_NAME_MYSQL:
+				sb.append("jdbc:mysql://");
+				break;
+			case DRIVER_CLASS_NAME_ORACLE:
+				sb.append("jdbc:oracle:thin:@//");
+				break;
+			default:
+				return null;
+		}
+		return sb.append(ip)
 						.append(':')
 						.append(port)
 						.append('/')
@@ -389,6 +414,31 @@ public class DbHelper {
 			conn.setAutoCommit(true);
 		}
 	}
+	
+	/**
+	 * 是否为mysql数据库连接
+	 * @return
+	 */
+	public boolean isMysql() {
+		return DbPojo.TYPE_MYSQL.equals(dbType);
+	}
+	
+	/**
+	 * 判断是否为sqlite数据库连接
+	 * @return
+	 */
+	public boolean isSqlite() {
+		return DbPojo.TYPE_SQLITE.equals(dbType);
+	}
+	
+	/**
+	 * 判断是否为oracle数据库连接
+	 * @return
+	 */
+	public boolean isOracle() {
+		return DbPojo.TYPE_ORACLE.equals(dbType);
+	}
+	
 	
 	/**
 	 * 根据sql获取结果集
@@ -979,7 +1029,7 @@ public class DbHelper {
 		
 		try {
 			List<String> primaryKeyList = primaryKeyList(tableName);	//主键列表
-			
+			Map<String, TypePojo> typeMap = typeMap(tableName);
 			DatabaseMetaData dbmd = conn.getMetaData();
 			ResultSet columnSet = dbmd.getColumns(null, "%", tableName, "%");
 
@@ -993,10 +1043,11 @@ public class DbHelper {
 				}
 			    column.setName(columnName);
 			    column.setSqlType(columnSet.getInt("DATA_TYPE"));		//来自 java.sql.Types 的 SQL 类型
+			    column.setTypeName(columnSet.getString("TYPE_NAME"));	//数据源依赖的类型名称，对于 UDT，该类型名称是完全限定的
 			    column.setSize(columnSet.getInt("COLUMN_SIZE"));			//长度
 			    column.setDecimalDigits(columnSet.getInt("DECIMAL_DIGITS"));	//小数部分的位数。对于 DECIMAL_DIGITS 不适用的数据类型，则返回 Null
 			    column.setRemarks(columnSet.getString("REMARKS"));			//注释
-			    column.setDefalut(columnSet.getObject("COLUMN_DEF"));	//默认值，可以为null
+			    column.setDef(columnSet.getObject("COLUMN_DEF"));	//默认值，可以为null
 			    column.setCharOctetLength(columnSet.getInt("CHAR_OCTET_LENGTH"));	// 对于 char 类型，该长度是列中的最大字节数
 			    if(column.isPK()) {		//主键不允许为空
 			    	column.isNotNull(true);
@@ -1004,6 +1055,11 @@ public class DbHelper {
 			    	column.isNotNull(!columnSet.getBoolean("NULLABLE"));
 			    }
 			    column.isAutoIncrement(columnSet.getBoolean("IS_AUTOINCREMENT"));	//是否自增长
+			    column.setOrdinalPosition(columnSet.getInt("ORDINAL_POSITION"));		//表中的列的索引（从 1 开始）
+			    /*其他信息*/
+			    if(typeMap.containsKey(columnName)) {
+			    	column.setTypePojo(typeMap.get(columnName));
+			    }
 			    
 			    columns.add(column);
 			}
@@ -1033,6 +1089,54 @@ public class DbHelper {
 			err(ex);
 		}
 		return list;
+	}
+	
+	/**
+	 * 获取类型列表
+	 * <p>
+	 * 	包含类型/自增/主键等信息
+	 * </p>
+	 * @param tableName
+	 * @return
+	 */
+	public Map<String, TypePojo> typeMap(String tableName) {
+		switch(dbType) {
+			case DbPojo.TYPE_MYSQL:
+				return typeMap_Mysql(tableName);
+			case DbPojo.TYPE_SQLITE:
+				return typeMap_Sqlite(tableName);
+			case DbPojo.TYPE_ORACLE:
+			default:
+				return new HashMap<>();
+		}
+	}
+	
+	private Map<String, TypePojo> typeMap_Mysql(String tableName) {
+		Map<String, TypePojo> typeMap = new HashMap<>();
+		List<Map<String, Object>> typeList = queryList("SHOW COLUMNS FROM "+tableName);
+		for (Map<String, Object> map : typeList) {
+			String field = (String) map.get("Field");
+			String type = (String) map.get("Type");
+			Boolean nullAble = "YES".equals(map.get("Null"));
+			String extra = (String) map.get("Extra");
+			String key = (String) map.get("Key");
+			typeMap.put(field, new TypePojo().setField(field).setType(type).setNullAble(nullAble).setExtra(extra).setKey(key));
+		}
+		return typeMap;
+	}
+	
+	private Map<String, TypePojo> typeMap_Sqlite(String tableName) {
+		Map<String, TypePojo> typeMap = new HashMap<>();
+		List<Map<String, Object>> typeList = queryList("pragma table_info( "+tableName+");");
+		for (Map<String, Object> map : typeList) {
+			String field = (String) map.get("name");
+			String type = (String) map.get("type");
+			Boolean nullAble = map.get("notnull").equals(0);
+//			String extra = (String) map.get("Extra");
+//			String key = (String) map.get("Key");
+			typeMap.put(field, new TypePojo().setField(field).setType(type).setNullAble(nullAble));
+		}
+		return typeMap;
 	}
 	
 	/**
