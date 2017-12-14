@@ -18,7 +18,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年12月06日
+ * @version create on 2017年09月22日,last modify at 2017年12月14日
  */
 public class ListUtils {
 
@@ -46,6 +46,10 @@ public class ListUtils {
 	
 	public static <E>boolean isEmpty(Collection<E> collection) {
 		return CollectionAndMapUtils.isEmpty(collection);
+	}
+	
+	public static <T>boolean isEmpty(T[] array) {
+		return CollectionAndMapUtils.isEmpty(array);
 	}
 	
 	 /**
@@ -271,7 +275,7 @@ public class ListUtils {
 	}
 	
 	 /**
-     * 拆分字符串获取list
+     * 根据分隔符拆分列表获取字符串
      * <p>
      * 例如：
      * </p>
@@ -290,6 +294,32 @@ public class ListUtils {
 		}
 		StringBuilder sb = null;
 		for (T item : list) {
+			if(sb == null) {
+				sb = new StringBuilder();
+			} else if(separator != null) {
+				sb.append(separator);
+			}
+			if(item != null) {
+				sb.append(item.toString());
+			} else {
+				sb.append("null");
+			}
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * 根据分隔符拆分数组获取字符串
+	 * @param array
+	 * @param separator
+	 * @return
+	 */
+	public static <T>String toString(T[] array, String separator) {
+		if(CollectionAndMapUtils.isEmpty(array)) {	//列表为空则返回空字符串
+			return "";
+		}
+		StringBuilder sb = null;
+		for (T item : array) {
 			if(sb == null) {
 				sb = new StringBuilder();
 			} else if(separator != null) {

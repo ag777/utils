@@ -14,7 +14,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年11月08日
+ * @version create on 2017年09月22日,last modify at 2017年12月14日
  */
 public class MapUtils {
 
@@ -189,6 +189,37 @@ public class MapUtils {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * 空指针安全put
+	 * @param map
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	public static <K,V>Map<K, V> put(Map<K, V> map, K key, V value) {
+		if(map == null) {
+			map = newHashMap();
+		}
+		map.put(key, value);
+		return map;
+	}
+	
+	/**
+	 * 空指针安全putAll
+	 * @param map
+	 * @param extendMap
+	 * @return
+	 */
+	public static <K,V>Map<K, V> putAll(Map<K, V> map, Map<K, V> extendMap) {
+		if(map == null) {
+			map = newHashMap();
+		}
+		if(extendMap != null) {
+			map.putAll(extendMap);
+		}
+		return map;
 	}
 	
 	/**
