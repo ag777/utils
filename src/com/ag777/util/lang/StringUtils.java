@@ -213,7 +213,7 @@ public class StringUtils {
 			} else if(i>=length_new) {	//旧版本还有下文，新版本到底了，说明旧版本更新(存在这种情况一版说明版本控制有问题)
 				return false;
 			} else {	//每级版本进行不同的pk，胜者说明对应的是新版本
-				int shouldUpdate = Integer.parseInt(codesNew[i]) - Integer.parseInt(codesOld[i]);
+				long shouldUpdate = Long.parseLong(codesNew[i]) - Long.parseLong(codesOld[i]);
 				if(shouldUpdate > 0) {
 					return true;
 				} else if(shouldUpdate < 0) {	//旧版本号比新版本号还大，出现这种情况说明版本控制没操作好
