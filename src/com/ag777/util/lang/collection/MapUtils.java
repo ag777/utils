@@ -14,7 +14,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年12月14日
+ * @version create on 2017年09月22日,last modify at 2017年12月18日
  */
 public class MapUtils {
 
@@ -469,6 +469,45 @@ public class MapUtils {
 		}
 		map.remove(key);
 		return map;
+	}
+	
+	/**
+	 * 转换map中的key
+	 * 
+	 * @param src
+	 * @param convertMap 源key和转换的目标key的对应map
+	 * @return
+	 */
+	public static <K,V>Map<K,V> convertKeys(Map<K,V> src, Map<K,K> convertMap) {
+		Iterator<K> itor = convertMap.keySet().iterator();
+		while(itor.hasNext()) {
+			K key1 = itor.next();
+			K key2 = convertMap.get(key1);
+			convertKey(src, key1, key2);
+		}
+		return src;
+	}
+	
+	/**
+	 * 转换map中的key
+	 * <p>
+	 * 	流程:判断源map中是否有键key1,保存key2及key1对应的值，删除键key1，返回源map
+	 * </p>
+	 * 
+	 * @param src
+	 * @param key1
+	 * @param key2
+	 * @return
+	 */
+	public static <K,V>Map<K,V> convertKey(Map<K,V> src, K key1, K key2) {
+		if(isEmpty(src)) {
+			return src;
+		}
+		if(src.containsKey(key1)) {
+			src.put(key2, src.get(key1));
+			src.remove(key2);
+		}
+		return src;
 	}
 	
 	/**
