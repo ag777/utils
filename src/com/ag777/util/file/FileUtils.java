@@ -35,7 +35,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2017年11月17日
+ * @version create on 2017年04月25日,last modify at 2017年12月26日
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = Charsets.UTF_8;
@@ -202,29 +202,38 @@ public class FileUtils {
     }
 
     /**
-     * 逐行(倒序)替换文件中的内容
+     * 逐行替换文件中的内容
      * @param filePath 文件路径
      * @param stringFilter 参数为当前行内容,结果返回null则删除该行，其余则替换掉源内容
      * @throws IOException
      */
     public static void replaceAllByLines(String filePath, StringFilter stringFilter) throws IOException {
-    	if(StringUtils.isBlank(filePath)) {
+    	replaceAllByLines(filePath, filePath, stringFilter);
+    }
+    
+    /**
+     * 逐行替换文件中的内容,另存
+     * @param filePath 文件路径
+     * @param stringFilter 参数为当前行内容,结果返回null则删除该行，其余则替换掉源内容
+     * @throws IOException
+     */
+    public static void replaceAllByLines(String srcPath, String targetPath, StringFilter stringFilter) throws IOException {
+    	List<String> newLines = ListUtils.newArrayList();
+    	if(StringUtils.isBlank(srcPath)) {
     		throw new IOException("文件名为空");
     	}
     	if(stringFilter == null) {
     		return;
     	}
-    	List<String> lines = readLines(filePath);
-    	for(int i=lines.size()-1; i>=0; i--) {
-    		String line = lines.get(i);
+    	List<String> lines = readLines(srcPath);
+    	for (String line : lines) {
     		String temp = stringFilter.doFilter(line);
     		if(temp != null) {
-    			lines.set(i, temp);
-    		} else {
-    			lines.remove(i);
+    			newLines.add(temp);
     		}
-    	}
-    	write(filePath, lines, null, true);
+		}
+    	
+    	write(targetPath, newLines, null, true);
     }
     
     /**
