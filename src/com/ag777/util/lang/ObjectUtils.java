@@ -15,7 +15,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年12月01日
+ * @version create on 2017年09月22日,last modify at 2017年12月28日
  */
 public class ObjectUtils {
 
@@ -234,6 +234,18 @@ public class ObjectUtils {
 			throw new RuntimeException("对象为空,不能判断是否为数组");
 		}
 		return obj.getClass().isArray();
+	}
+	
+	/**
+	 * 判断Boolean变量是否为true，防止控指针异常
+	 * @param bool
+	 * @return
+	 */
+	public static boolean isBooleanTrue(Boolean bool) {
+		if(bool != null && bool) {
+			return true;
+		}
+		return false;
 	}
 	
 }
