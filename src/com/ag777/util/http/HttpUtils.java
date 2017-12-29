@@ -1,6 +1,7 @@
 package com.ag777.util.http;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -11,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import com.ag777.util.Utils;
 import com.ag777.util.file.FileUtils;
 import com.ag777.util.http.model.SSLSocketClient;
+import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.collection.MapUtils;
 import okhttp3.Call;
@@ -283,8 +285,9 @@ public class HttpUtils {
 	 * @param files
 	 * @param params
 	 * @return
+	 * @throws FileNotFoundException 
 	 */
-	public static <K, V>Optional<String> uploadMultiFiles(String url, File[] files, Map<K, V> params) {
+	public static <K, V>Optional<String> uploadMultiFiles(String url, File[] files, Map<K, V> params) throws FileNotFoundException {
 		
 		Request request = new Request.Builder().url(url)
 										.post(getRequestBody(files, params)).build();
@@ -298,8 +301,9 @@ public class HttpUtils {
 	 * @param files
 	 * @param params
 	 * @return
+	 * @throws FileNotFoundException 
 	 */
-	public static <K, V>Optional<Map<String, Object>> uploadMultiFilesForMap(String url, File[] files, Map<K, V> params) {
+	public static <K, V>Optional<Map<String, Object>> uploadMultiFilesForMap(String url, File[] files, Map<K, V> params) throws FileNotFoundException {
 		Optional<String> result = uploadMultiFiles(url, files, params);
 		if(result.isPresent()) {
 			try {
@@ -440,14 +444,32 @@ public class HttpUtils {
 	
 	/**
 	 * 通过参数构建请求体
+	 * 
+	 * <p>
+	 * 	请事先对附件的存在性进行验证
+	 * </p>
+	 * 
 	 * @param params
 	 * @return
+	 * @throws FileNotFoundException 
 	 */
-	private static <K,V> RequestBody getRequestBody(File[] files, Map<K, V> params) {
+	private static <K,V> RequestBody getRequestBody(File[] files, Map<K, V> params) throws FileNotFoundException {
 		okhttp3.MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 		/*附件部分*/
 		if(!ListUtils.isEmpty(files)) {
 			for (File file : files) {
+				if(file == null) {
+					throw new FileNotFoundException(
+							StringUtils.concat("文件上传失败:","文件不能为空"));
+				}
+				if(!file.exists()) {
+					throw new FileNotFoundException(
+							StringUtils.concat("文件上传失败:","文件[",file.getPath(),"]未找到"));
+				}
+				if(!file.isFile()) {
+					throw new FileNotFoundException(
+							StringUtils.concat("文件上传失败:","文件[",file.getPath(),"]不是个文件"));
+				}
 				RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), file);
 				builder = builder.addFormDataPart("file", file.getName(), fileBody);									
 			}
