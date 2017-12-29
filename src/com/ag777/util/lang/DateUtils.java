@@ -27,7 +27,7 @@ import java.util.Map;
  * </p>
  * 
  * @author ag777
- * @version create on 2016年07月07日,last modify at 2017年09月13日
+ * @version create on 2016年07月07日,last modify at 2017年12月29日
  */
 public class DateUtils {
 
@@ -50,8 +50,16 @@ public class DateUtils {
 	 * @return
 	 */
 	public static DateTime toDateTime(String date, String template){
-		DateTimeFormatter format = DateTimeFormat.forPattern(template);
-		return DateTime.parse(date, format);
+		if(StringUtils.isBlank(date)) {
+			return null;
+		}
+		try {
+			DateTimeFormatter format = DateTimeFormat.forPattern(template);
+			return DateTime.parse(date, format);
+		} catch(Exception ex) {
+//			ex.printStackTrace();
+		}
+		return null;
 	}
 	//重载
 	public static DateTime toDateTime(String date){
@@ -64,6 +72,9 @@ public class DateUtils {
 	 * @return
 	 */
 	public static DateTime toDateTime(LocalDate ld){
+		if(ld == null) {
+			return null;
+		}
 		return ld.toDateTimeAtStartOfDay();
 	}
 	
@@ -74,8 +85,16 @@ public class DateUtils {
 	 * @return
 	 */
 	public static LocalDate toLocalDate(String date, String template){
-		DateTimeFormatter format = DateTimeFormat.forPattern(template);
-		return LocalDate.parse(date, format);
+		if(StringUtils.isBlank(date)) {
+			return null;
+		}
+		try {
+			DateTimeFormatter format = DateTimeFormat.forPattern(template);
+			return LocalDate.parse(date, format);
+		} catch(Exception ex) {
+//			ex.printStackTrace();
+		}
+		return null;
 	}
 	//重载
 	public static LocalDate toLocalDate(String date){
@@ -88,6 +107,9 @@ public class DateUtils {
 	 * @return
 	 */
 	public static LocalDate toLocalDate(DateTime dt){
+		if(dt == null) {
+			return null;
+		}
 		return dt.toLocalDate();
 	}
 	
@@ -119,6 +141,9 @@ public class DateUtils {
 	 * @return
 	 */
 	public static String toString(Calendar cld,String template) {
+		if(cld == null) {
+			return null;
+		}
 		return new DateTime(cld).toString(template);
 	}
 	//重载
@@ -131,11 +156,29 @@ public class DateUtils {
 	}
 	
 	/**
+	 * 转化时间格式
+	 * @param date
+	 * @param template_src
+	 * @param template_target
+	 * @return
+	 */
+	public static String toString(String date, String template_src, String template_target) {
+		DateTime dt = toDateTime(date, template_src);
+		if(dt == null) {
+			return null;
+		}
+		return dt.toString(template_target);
+	}
+	
+	/**
 	 * 等同于dt.toString(DEFAULT_TEMPLATE_TIME);
 	 * @param dt
 	 * @return
 	 */
 	public static String toString(DateTime dt) {
+		if(dt == null) {
+			return null;
+		}
 		return dt.toString(DEFAULT_TEMPLATE_TIME);
 	}
 	
@@ -145,17 +188,23 @@ public class DateUtils {
 	 * @return
 	 */
 	public static String toString(LocalDate ld) {
+		if(ld == null) {
+			return null;
+		}
 		return ld.toString(DEFAULT_TEMPLATE);
 	}
 	
 	/**
 	 * 转换字符串型时间为Calendar
-	 * @param str
+	 * @param date
 	 * @param template
 	 * @return  失败返回null
 	 */
-	public static Calendar toCalendar(String str,String template) {
-		DateTime dt = toDateTime(str, template);
+	public static Calendar toCalendar(String date,String template) {
+		if(StringUtils.isBlank(date)) {
+			return null;
+		}
+		DateTime dt = toDateTime(date, template);
 		if(dt!=null){
 			return dt.toCalendar(null);
 		}
@@ -167,8 +216,11 @@ public class DateUtils {
 	 * @param template
 	 * @return
 	 */
-	public static java.util.Date toDate(String str,String template) {
-		DateTime dt = toDateTime(str, template);
+	public static java.util.Date toDate(String date,String template) {
+		if(StringUtils.isBlank(date)) {
+			return null;
+		}
+		DateTime dt = toDateTime(date, template);
 		if(dt!=null){
 			return dt.toDate();
 		}
@@ -180,8 +232,11 @@ public class DateUtils {
 	 * @param template
 	 * @return
 	 */
-	public static Timestamp toTimeStamp(String str, String template) {
-		DateTime dt = toDateTime(str, template);
+	public static Timestamp toTimeStamp(String date, String template) {
+		if(StringUtils.isBlank(date)) {
+			return null;
+		}
+		DateTime dt = toDateTime(date, template);
 		if(dt!=null){
 			return new Timestamp(dt.getMillis());
 		}

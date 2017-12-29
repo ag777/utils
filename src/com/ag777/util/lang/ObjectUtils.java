@@ -164,8 +164,9 @@ public class ObjectUtils {
 	 * 	支持字符串，数组，列表，map;
 	 * 此外都返回false;
 	 * 	<p>
-	 * 	ObjectUtils.isEmpty(new int[]{}) = false
+	 * 		ObjectUtils.isEmpty(new int[]{}) = false
 	 * 	</p>
+	 * 
 	 * </p>
 	 * 
 	 */
@@ -246,6 +247,23 @@ public class ObjectUtils {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * 空指针安全equals
+	 * <p>
+	 * 	参数中其中一个为null则返回false
+	 * </p>
+	 * 
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static boolean equals(Object a, Object b) {
+		if(a==null || b==null) {
+			return false;
+		}
+		return a.equals(b);
 	}
 	
 }

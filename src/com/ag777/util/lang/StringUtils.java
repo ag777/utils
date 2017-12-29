@@ -1,6 +1,7 @@
 package com.ag777.util.lang;
 
 import java.net.MalformedURLException;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -12,10 +13,12 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2017年12月14日
+ * @version last modify at 2017年12月29日
  */
 public class StringUtils {
 
+	private static final Pattern PATTERN_EMPTY = Pattern.compile("^[\\s　]*$");	//空值验证
+	
 	/**
 	 * 获得字符串长度（一个汉字算两个字节）
 	 * 
@@ -48,7 +51,7 @@ public class StringUtils {
 	 * @return
 	 */
 	public static boolean isBlank(String src) {
-		if(src == null || src.matches("^[\\s　]*$")) {
+		if(src == null || PATTERN_EMPTY.matcher(src).matches()) {
 			return true;
 		}
 		return false;
@@ -324,25 +327,39 @@ public class StringUtils {
 	/**
 	 * 字符串转java.util.Date
 	 * <p>
-	 * 	支持四种格式
+	 * 	支持六种格式
 	 *	yyyy-MM-dd HH:mm:ss
 	 *	yyyy-MM-dd HH:mm
 	 * 	yyyy-MM-dd
 	 * 	HH:mm:ss
+	 * 13位数字
+	 * 10位数字(不包含毫秒数，很多api都这么存，为了不超过Integer类型的最大值2147483647)
+	 * 
+	 * 值得注意的是:
+	 * 	根据函数System.out.println(
+				DateUtils.toString(Integer.MAX_VALUE*1000l, DateUtils.DEFAULT_TEMPLATE_TIME));
+				计算得出所有用int类型接收10位时间戳的程序都将在2038-01-19 11:14:07后报错,尽量用long型接收
 	 * </p>
 	 * 
 	 * @param src
 	 * @return
 	 */
 	public static java.util.Date toDate(String src) {
-		if(src.matches("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}")) {
+		if(src == null) {
+			return null;
+		}
+		if(src.matches("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}")) {	//yyyy-MM-dd HH:mm:ss
 			return DateUtils.toDate(src, "yyyy-MM-dd HH:mm:ss");
-		} else if(src.matches("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}")) {
-			return DateUtils.toDate(src, "yyyy-MM-dd HH:mm");
-		} else if(src.matches("\\d{4}-\\d{2}-\\d{2}")) {
+		} else if(src.matches("\\d{4}-\\d{2}-\\d{2}")) {		//yyyy-MM-dd
 			return DateUtils.toDate(src, "yyyy-MM-dd");
-		} else if(src.matches("\\d{2}:\\d{2}:\\d{2}")) {
+		} else if(src.matches("\\d{13}")) {		//13位标准时间戳
+			return new Date(toLong(src));
+		} else if(src.matches("\\d{10}")) {		//10位标准时间戳
+			return new Date(toLong(src)*1000);
+		} else if(src.matches("\\d{2}:\\d{2}:\\d{2}")) {	//HH:mm:ss
 			return DateUtils.toDate(src, "HH:mm:ss");
+		} else if(src.matches("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}")) {	//yyyy-MM-dd HH:mm
+			return DateUtils.toDate(src, "yyyy-MM-dd HH:mm");
 		}
 		return null;
 	}

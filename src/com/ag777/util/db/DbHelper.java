@@ -403,16 +403,19 @@ public class DbHelper {
 	 * @throws Exception
 	 */
 	public boolean doTransaction(DBTransactionInterf task) throws Exception {
-		try {
-			conn.setAutoCommit(false);
-			boolean result = task.doTransaction(this);
-			conn.commit();
-			return result;
-		} catch(Exception ex) {
-			throw ex;
-		} finally {
-			conn.setAutoCommit(true);
+		synchronized (this) {		//加锁
+			try {
+				conn.setAutoCommit(false);
+				boolean result = task.doTransaction(this);
+				conn.commit();
+				return result;
+			} catch(Exception ex) {
+				throw ex;
+			} finally {
+				conn.setAutoCommit(true);
+			}
 		}
+		
 	}
 	
 	/**

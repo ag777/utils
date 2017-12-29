@@ -11,11 +11,13 @@ import java.util.concurrent.TimeUnit;
 import com.ag777.util.Utils;
 import com.ag777.util.file.FileUtils;
 import com.ag777.util.http.model.SSLSocketClient;
-
+import com.ag777.util.lang.collection.ListUtils;
+import com.ag777.util.lang.collection.MapUtils;
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.FormBody.Builder;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -30,7 +32,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2017年10月17日
+ * @version last modify at 2017年12月29日
  */
 public class HttpUtils {
 
@@ -275,6 +277,40 @@ public class HttpUtils {
 		call(requestBuilder.build(), callback);
 	}
 	
+	/**
+	 * post上传附件和表单
+	 * @param url
+	 * @param files
+	 * @param params
+	 * @return
+	 */
+	public static <K, V>Optional<String> uploadMultiFiles(String url, File[] files, Map<K, V> params) {
+		
+		Request request = new Request.Builder().url(url)
+										.post(getRequestBody(files, params)).build();
+
+		return call(request);
+	}
+
+	/**
+	 * post上传附件和表单
+	 * @param url
+	 * @param files
+	 * @param params
+	 * @return
+	 */
+	public static <K, V>Optional<Map<String, Object>> uploadMultiFilesForMap(String url, File[] files, Map<K, V> params) {
+		Optional<String> result = uploadMultiFiles(url, files, params);
+		if(result.isPresent()) {
+			try {
+				return Optional.ofNullable(Utils.jsonUtils().toMap(result.get()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return Optional.empty();
+	}
+	
 	/**==============内部方法======================*/
 	/**
 	 * 拼接get请求的url及参数
@@ -400,6 +436,41 @@ public class HttpUtils {
 			 builder.add(key.toString(), value==null?null:value.toString());
 		 }
 		 return  builder.build();
+	}
+	
+	/**
+	 * 通过参数构建请求体
+	 * @param params
+	 * @return
+	 */
+	private static <K,V> RequestBody getRequestBody(File[] files, Map<K, V> params) {
+		okhttp3.MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+		/*附件部分*/
+		if(!ListUtils.isEmpty(files)) {
+			for (File file : files) {
+				RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), file);
+				builder = builder.addFormDataPart("file", file.getName(), fileBody);									
+			}
+		}
+		/*表单部分*/
+		if(!MapUtils.isEmpty(params)) {
+			Iterator<K> itor = params.keySet().iterator();
+			while(itor.hasNext()) {
+				 K key = itor.next();
+				 V value = params.get(key);
+				 builder.addFormDataPart(key.toString(), value==null?null:value.toString());
+			}
+			
+			/*不能这么写，这样写jfinal只能通过getPara("params")获得到参数，还得自己解析
+			 * if(!MapUtils.isEmpty(params)) {
+				builder.addPart(Headers.of(
+			            "Content-Disposition",
+			            "form-data; name=\"params\""),
+						getRequestBody(params));
+			}*/
+		}
+		
+		return  builder.build();
 	}
 	
 	
