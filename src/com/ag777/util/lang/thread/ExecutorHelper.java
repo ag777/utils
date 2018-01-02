@@ -6,6 +6,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import com.ag777.util.lang.Console;
+
+
 /**
  * 线程池ExecutorHelper辅助类
  * <p>
@@ -13,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * </p>
  * 
  * @author ag777
- * @version  create on 2017年10月10日,last modify at 2017年10月10日
+ * @version  create on 2017年10月10日,last modify at 2018年01月02日
  */
 public class ExecutorHelper {
 
@@ -38,7 +41,7 @@ public class ExecutorHelper {
 	 * </p>
 	 * @throws InterruptedException
 	 */
-	public void waitFor() throws InterruptedException {
+	public void waitFor() {
 		waitFor(100, TimeUnit.MILLISECONDS);
 	}
 	
@@ -51,9 +54,15 @@ public class ExecutorHelper {
 	 * @param unit
 	 * @throws InterruptedException
 	 */
-	public void waitFor(long timeout, TimeUnit unit) throws InterruptedException {
+	public void waitFor(long timeout, TimeUnit unit) {
 		pool.shutdown();
-		while(!pool.awaitTermination(timeout, unit)) {	//如果结束则关闭线程池
+		try {
+			while(!pool.awaitTermination(timeout, unit)) {	//如果结束则关闭线程池
+			}
+		} catch (InterruptedException e) {
+//			e.printStackTrace();
+			Console.err("等待线程池关闭失败");
+			throw new RuntimeException(e);
 		}
 	}
 			
