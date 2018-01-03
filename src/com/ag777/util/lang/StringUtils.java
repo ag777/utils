@@ -13,11 +13,11 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2017年12月29日
+ * @version last modify at 2017年01月03日
  */
 public class StringUtils {
 
-	private static final Pattern PATTERN_EMPTY = Pattern.compile("^[\\s　]*$");	//空值验证
+	private static final Pattern PATTERN_EMPTY = Pattern.compile("^[\\u00A0\\s　]*$");	//空值验证(\\u00A0为ASCII值为160的空格)
 	
 	/**
 	 * 获得字符串长度（一个汉字算两个字节）
@@ -25,9 +25,12 @@ public class StringUtils {
 	 * @param s
 	 * @return
 	 */
-	public static int getLength(String s) {
-		s = s.replaceAll("[^\\x00-\\xff]", "**");
-		int length = s.length();
+	public static int getLength(String src) {
+		if(isEmpty(src)) {
+			return 0;
+		}
+		src = src.replaceAll("[^\\x00-\\xff]", "**");
+		int length = src.length();
 		return length;
 	}
 	
@@ -98,6 +101,9 @@ public class StringUtils {
 	 * @return
 	 */
 	public static String replace(String src, int start, int end, String newStr) {
+		if(isEmpty(src)) {
+			return src;
+		}
 		StringBuilder sb = new StringBuilder(src);
 		return sb.replace(start, end, newStr).toString();
 	}
@@ -128,6 +134,9 @@ public class StringUtils {
 	 * @return
 	 */
 	public static String reverse(String src) {
+		if(isEmpty(src)) {
+			return src;
+		}
 		return new StringBuilder(src).reverse().toString();
 	}
 	
@@ -139,7 +148,7 @@ public class StringUtils {
      * @return 转换后的字符串
      */
 	public static String underline2Camel(String line, boolean smallCamel) {
-		if (line == null || "".equals(line)) {
+		if (isEmpty(line)) {
 			return "";
 		}
 		StringBuffer sb = new StringBuffer();
@@ -166,8 +175,11 @@ public class StringUtils {
 	 * @param str
 	 * @return
 	 */
-	public static String upperCaseFirst(String str) {  
-	    char[] ch = str.toCharArray();  
+	public static String upperCaseFirst(String src) {  
+		if(isEmpty(src)) {
+			return src;
+		}
+	    char[] ch = src.toCharArray();  
 	    if (ch[0] >= 'a' && ch[0] <= 'z') {  
 	        ch[0] = (char) (ch[0] - 32);  
 	    }  
@@ -235,6 +247,9 @@ public class StringUtils {
 	 * @throws MalformedURLException
 	 */
 	public static java.net.URL toURL(String urlStr) throws MalformedURLException {
+		if(urlStr == null) {
+			return null;
+		}
 		if(urlStr.startsWith("http")) {
 			urlStr = "http://"+urlStr;
 		}
@@ -345,7 +360,7 @@ public class StringUtils {
 	 * @return
 	 */
 	public static java.util.Date toDate(String src) {
-		if(src == null) {
+		if(isEmpty(src)) {
 			return null;
 		}
 		if(src.matches("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2}")) {	//yyyy-MM-dd HH:mm:ss
@@ -373,6 +388,9 @@ public class StringUtils {
 	 * @return
 	 */
 	public static List<String> toLineList(String src) {
+		if(isEmpty(src)) {
+			return ListUtils.newArrayList();
+		}
 		return ListUtils.ofList(src, "(\r)?\n");
 	}
 	
@@ -388,6 +406,7 @@ public class StringUtils {
 	 * @return
 	 */
 	public static String escapeXmlByCDATA(String src) {
+		src = emptyIfNull(src);
 		return concat("<![CDATA[ ", src, " ]]>");
 	}
 	
@@ -407,6 +426,9 @@ public class StringUtils {
 	 * @return
 	 */
 	public static String escapeXmlByReplace(String src) {
+		if(isEmpty(src)) {
+			return src;
+		}
 		return src.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("'", "&apos;").replace("\"", "&quot;");
 	}
 	
@@ -421,6 +443,9 @@ public class StringUtils {
 	 * @return
 	 */
 	public static String clearEmoji(String src) {
+		if(isEmpty(src)) {
+			return src;
+		}
 		return EmojiUtils.clearEmoji(src);
 	}
 
