@@ -1,9 +1,13 @@
 package com.ag777.util.db;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.regex.Pattern;
+
 import com.ag777.util.db.model.VersionSqlPojo;
 import com.ag777.util.db.model.VersionSqlPojo.DdlListBean;
 import com.ag777.util.lang.Console;
@@ -17,7 +21,7 @@ import com.ag777.util.lang.StringUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年09月06日,last modify at 2017年12月14日
+ * @version create on 2017年09月06日,last modify at 2018年01月04日
  */
 public abstract class DBUpdateHelper {
 
@@ -26,14 +30,16 @@ public abstract class DBUpdateHelper {
 		MODE_DEBUG = isDebugMode;
 	}
 	
-	private List<VersionSqlPojo> VersionSqlPojoList;	//版本号及对应sql列表
+	private Pattern p_classPath = Pattern.compile("^([\\w\\d_]+\\.)+[\\w\\d_]+$");
+	
+	private List<VersionSqlPojo> versionSqlPojoList;	//版本号及对应sql列表
 	
 	/**
 	 * 执行更新数据库操作
 	 * @throws SQLException
 	 */
-	public DBUpdateHelper(List<VersionSqlPojo> VersionSqlPojoList) {
-		this.VersionSqlPojoList = VersionSqlPojoList;
+	public DBUpdateHelper(List<VersionSqlPojo> versionSqlPojoList) {
+		this.versionSqlPojoList = versionSqlPojoList;
 	}
 	
 	/**
@@ -44,8 +50,8 @@ public abstract class DBUpdateHelper {
 	 */
 	public void update(String versionCodeOld, Connection conn) throws SQLException {
 		
-		for (int i = 0; i < VersionSqlPojoList.size(); i++) {
-			VersionSqlPojo verionSql = VersionSqlPojoList.get(i);
+		for (int i = 0; i < versionSqlPojoList.size(); i++) {
+			VersionSqlPojo verionSql = versionSqlPojoList.get(i);
 			String versionCodeNew = verionSql.getCode();
 			if(isBefore(versionCodeOld, versionCodeNew)) {
 				Console.log(
@@ -57,6 +63,13 @@ public abstract class DBUpdateHelper {
 							.toString());
 				List<DdlListBean> ddlList = verionSql.getDdlList();
 				List<String> dmlList = verionSql.getDmlList();
+				
+				for (DdlListBean ddl : ddlList) {
+					ddl.setSql(toSql(ddl.getSql(), conn));
+				}
+				for(int j=0;j<dmlList.size();j++) {
+					dmlList.set(j, toSql(dmlList.get(j), conn));
+				}
 				
 				additionalSql(i, versionCodeNew, dmlList);
 				
@@ -101,6 +114,54 @@ public abstract class DBUpdateHelper {
 		if(sql != null) {
 			dmlList.add(sql);
 		}
+	}
+	
+	/**
+	 * 如果当前sql是执行方法获得，执行方法取得sql
+	 * @param src
+	 * @param conn
+	 * @return
+	 * @throws SQLException
+	 */
+	private String toSql(String src, Connection conn) throws SQLException {
+		if(src.startsWith("[method]")) {
+			src = src.replace("[method]","");	//先去除标识
+			if(!p_classPath.matcher(src).matches()) {
+				throw new SQLException("数据库升级异常:方法路径配置不正确:["+src+"]请正确配置获取sql的方法(格式为类路径.方法名,例:com.test.A.dosth)");
+			}
+			String classPath = null;
+			String methodName = null;
+			try {
+				/*开始拆分字符串获取类路径及方法名*/
+				int lastIndexOfDot = src.lastIndexOf('.');
+				methodName = src.substring(lastIndexOfDot+1, src.length());
+				classPath = src.substring(0, lastIndexOfDot);
+				/*根据类路径和方法名执行方法*/
+				Class<?> clazz = Class.forName(classPath);
+				Method mothod = clazz.getMethod(methodName, Connection.class);
+				Object sql = mothod.invoke(clazz.newInstance(), conn);
+				if(sql != null) {
+					return sql.toString();
+				} else {
+					throw new SQLException("数据库升级异常:方法["+src+"]的返回为空");
+				}
+			} catch (ClassNotFoundException|NoClassDefFoundError e) {
+				throw new SQLException("数据库升级异常:未找到类["+classPath+"]", e);
+			} catch (NoSuchMethodException e) {
+				throw new SQLException("数据库升级异常:未找到方法["+src+"]", e);
+			} catch (SecurityException e) {
+				throw new SQLException("数据库升级异常:无权执行方法["+src+"]", e);
+			} catch (IllegalAccessException e) {
+				throw new SQLException("数据库升级异常:获取sql失败["+src+"]", e);
+			} catch (IllegalArgumentException e) {
+				throw new SQLException("数据库升级异常:获取sql失败["+src+"]", e);
+			} catch (InvocationTargetException e) {
+				throw new SQLException("数据库升级异常:获取sql失败["+src+"]", e);
+			} catch (InstantiationException e) {
+				throw new SQLException("数据库升级异常:获取sql失败["+src+"]", e);
+			}
+		}
+		return src;
 	}
 	
 	/**

@@ -105,24 +105,27 @@ public class VersionSqlPojo {
             return sql;
         }
 
-        public void setSql(String sql) {
+        public DdlListBean setSql(String sql) {
             this.sql = sql;
+            return this;
         }
 
         public String getRollback() {
             return rollback;
         }
 
-        public void setRollback(String rollback) {
+        public DdlListBean setRollback(String rollback) {
             this.rollback = rollback;
+            return this;
         }
 
 		public Boolean getIsForce() {
 			return isForce;
 		}
 
-		public void setIsForce(Boolean isForce) {
+		public DdlListBean setIsForce(Boolean isForce) {
 			this.isForce = isForce;
+			return this;
 		}
     }
 }

@@ -3,6 +3,8 @@ package com.ag777.util.lang;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * 系统常量获取工具类
@@ -11,7 +13,7 @@ import java.io.PrintStream;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月12日,last modify at 2017年09月21日
+ * @version create on 2017年06月12日,last modify at 2018年01月04日
  */
 public class SystemUtils {
 
@@ -146,8 +148,43 @@ public class SystemUtils {
 	 * 
 	 * @return
 	 */
-	public static String javaHome() {
+	public static String pathJavaHome() {
 		return System.getProperty("java.home");
 	}
 	
+	/**
+	 * 用户文件夹路径
+	 * <p>
+	 * 	如:C:\Users\ag777
+	 * </p>
+	 * 
+	 * @return
+	 */
+	public static String pathUserHome() {
+		return System.getProperty("user.home");
+	}
+	
+	/**
+	 * 系统临时文件的存放路径
+	 * <p>
+	 * 	如:C:\Users\ag777\AppData\Local\Temp\
+	 * </p>
+	 * 
+	 * @return
+	 */
+	public static String pathTempDir() {
+		return System.getProperty("java.io.tmpdir");
+	}
+	
+	/**
+	 * 控制台打印所有System.getProperties()中的属性
+	 */
+	public static void logAllProperties() {
+		Properties sysProperty = System.getProperties(); // 系统属性
+		Set<Object> keySet = sysProperty.keySet();
+		for (Object object : keySet) {
+			String property = sysProperty.getProperty(object.toString());
+			System.out.println(object.toString() + " : " + property);
+		}
+	}
 }
