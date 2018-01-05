@@ -3,6 +3,7 @@ package com.ag777.util.gson;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import com.ag777.util.lang.interf.JsonUtilsInterf;
@@ -32,7 +33,7 @@ import java.lang.reflect.Type;
  * gson统一管理类，全局保持一个gson对象
  * 
  * @author ag777
- * @version create on 2017年05月27日,last modify at 2017年11月03日
+ * @version create on 2017年05月27日,last modify at 2018年01月05日
  */
 public class GsonUtils implements JsonUtilsInterf{
 	
@@ -219,7 +220,42 @@ public class GsonUtils implements JsonUtilsInterf{
 	}
 	
 	/**
-	 * 转化json串为javaBean
+	 * 转化json为对象列表
+	 * @param json
+	 * @param classOfT
+	 * @return
+	 */
+	public <T>List<T> toList(String json, Class<T> classOfT) {
+		try {
+			return toListWithException(json, classOfT);
+		} catch (Exception e) {
+		}
+		return null;
+	}
+	
+	/**
+	 * 转化json为对象列表,效率低
+	 * @param json
+	 * @param classOfT
+	 * @return
+	 * @throws Exception
+	 */
+	public <T>List<T> toListWithException(String json, Class<T> classOfT) throws Exception {
+		List<T> result = new ArrayList<>();
+		JsonArray ja = toJsonArray(json);
+		Iterator<JsonElement> itor = ja.iterator();
+		while(itor.hasNext()) {
+			JsonElement element = itor.next();
+			T item = gson().fromJson(element.toString(), classOfT);
+			result.add(item);
+		}
+		return result;
+	}
+	
+	
+	
+	/**
+	 * 转化json串为javaBean,效率低
 	 * @param json
 	 * @param classOfT
 	 * @return 返回null则表示json转换失败

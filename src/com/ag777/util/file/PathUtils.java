@@ -3,11 +3,13 @@ package com.ag777.util.file;
 import java.io.File;
 import java.io.InputStream;
 
+import com.ag777.util.lang.StringUtils;
+
 /**
  * 路径工具类
  * 
  * @author ag777
- * @version last modify at 2017年11月09日
+ * @version last modify at 2018年01月05日
  */
 public class PathUtils {
 	
@@ -26,6 +28,10 @@ public class PathUtils {
 	
 	/**
 	 * 获取src路径，必须传类，如果用这个类会得到lib包的路径
+	 * <p>
+	 * 	返回结果如:/D:/tools/programming/eclipse_neon/Utils-Java/bin/
+	 * </p>
+	 * 
 	 * @param clazz
 	 * @return
 	 */
@@ -47,4 +53,17 @@ public class PathUtils {
 		return filePath;
 	}
 	
+	/**
+	 * 获取src路径中的子路径
+	 * <p>
+	 * 	srcPath(PathUtils.class, "config/") 得到xxx/src/config/
+	 * </p>
+	 * 
+	 * @param clazz
+	 * @param subPath
+	 * @return
+	 */
+	public static String srcPath(Class<?> clazz, String subPath) {
+		return StringUtils.concatFilePath(srcPath(clazz), subPath);
+	}
 }

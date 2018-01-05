@@ -1,5 +1,6 @@
 package com.ag777.util.lang;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.List;
@@ -13,7 +14,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2017年01月03日
+ * @version last modify at 2017年01月05日
  */
 public class StringUtils {
 
@@ -109,23 +110,16 @@ public class StringUtils {
 	}
 	
 	/**
-	 * StringBuilder拼接字符串
-	 * 
-	 * @param objs
+	 * 拼接文件路径(避免重复的分隔符)
+	 * @param filePath
+	 * @param extraPaths
 	 * @return
 	 */
-	public static StringBuilder combine(Object... objs) {
-		StringBuilder sb = new StringBuilder();
-		if(objs != null) {
-			for (Object obj : objs) {
-				if(obj != null) {
-					sb.append(obj);
-				}
-				
-			}
-		}
-		return sb;
+	public static String concatFilePath(String filePath, Object... extraPaths) {
+		String path = concat(filePath, extraPaths);
+		return path.replaceAll("[\\\\/]+", "\\"+File.separator);
 	}
+	
 	
 	/**
 	 * 利用StringBuilder倒置字符串
@@ -213,7 +207,7 @@ public class StringUtils {
 			return false;
 		}
 		
-		//线比较日期，日期相同再比较时间
+		//逐级比较
 		String[] codesOld = versionCodeOld.split("\\.");
 		String[] codesNew = versionCodeNew.split("\\.");
 		int length_old = codesOld.length;

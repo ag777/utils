@@ -29,7 +29,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2017年12月12日
+ * @version create on 2017年07月28日,last modify at 2018年01月05日
  */
 public class DbHelper {
 
@@ -452,8 +452,8 @@ public class DbHelper {
     	try {
     		Statement stmt = conn.createStatement();
 	    	return stmt.executeQuery(sql);
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (SQLException ex) {
+			err(ex);
 		} finally {
 			closeAfterExecute();
 		}
