@@ -21,7 +21,7 @@ import com.ag777.util.lang.StringUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年09月06日,last modify at 2018年01月04日
+ * @version create on 2017年09月06日,last modify at 2018年01月09日
  */
 public abstract class DBUpdateHelper {
 
@@ -30,7 +30,7 @@ public abstract class DBUpdateHelper {
 		MODE_DEBUG = isDebugMode;
 	}
 	
-	private Pattern p_classPath = Pattern.compile("^([\\w\\d_]+\\.)+[\\w\\d_]+$");
+	private static Pattern p_classPath = Pattern.compile("^([\\w\\d_]+\\.)+[\\w\\d_]+$");
 	
 	private List<VersionSqlPojo> versionSqlPojoList;	//版本号及对应sql列表
 	
@@ -63,13 +63,6 @@ public abstract class DBUpdateHelper {
 							.toString());
 				List<DdlListBean> ddlList = verionSql.getDdlList();
 				List<String> dmlList = verionSql.getDmlList();
-				
-				for (DdlListBean ddl : ddlList) {
-					ddl.setSql(toSql(ddl.getSql(), conn));
-				}
-				for(int j=0;j<dmlList.size();j++) {
-					dmlList.set(j, toSql(dmlList.get(j), conn));
-				}
 				
 				additionalSql(i, versionCodeNew, dmlList);
 				
@@ -123,7 +116,7 @@ public abstract class DBUpdateHelper {
 	 * @return
 	 * @throws SQLException
 	 */
-	private String toSql(String src, Connection conn) throws SQLException {
+	private static String toSql(String src, Connection conn) throws SQLException {
 		if(src.startsWith("[method]")) {
 			src = src.replace("[method]","");	//先去除标识
 			if(!p_classPath.matcher(src).matches()) {
@@ -143,7 +136,7 @@ public abstract class DBUpdateHelper {
 				if(sql != null) {
 					return sql.toString();
 				} else {
-					throw new SQLException("数据库升级异常:方法["+src+"]的返回为空");
+					return null;
 				}
 			} catch (ClassNotFoundException|NoClassDefFoundError e) {
 				throw new SQLException("数据库升级异常:未找到类["+classPath+"]", e);
@@ -174,8 +167,12 @@ public abstract class DBUpdateHelper {
 		conn.setAutoCommit(true);
 		Statement stmt = conn.createStatement();
 		for (DdlListBean ddl : ddlList) {
+			log("执行ddl:"+ddl.getSql());
+			String sql = toSql(ddl.getSql(), conn);
+			if(sql == null) {
+				continue;
+			}
 			try {
-				log("执行ddl:"+ddl.getSql());
 				stmt.executeUpdate(ddl.getSql());
 			} catch(SQLException ex) {
 				
@@ -200,8 +197,12 @@ public abstract class DBUpdateHelper {
 			conn.setAutoCommit(false);
 			Statement stmt = conn.createStatement();
 			for (String sql : dmlList) {
+				log("执行dml:"+sql);
+				sql = toSql(sql, conn);
+				if(sql == null) {
+					continue;
+				}
 				try {
-					log("执行dml:"+sql);
 					stmt.executeUpdate(sql);
 				} catch(SQLException ex) {
 					throw new SQLException(getErrMsg(sql, ex));

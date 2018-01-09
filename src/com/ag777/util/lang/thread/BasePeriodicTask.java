@@ -9,7 +9,7 @@ import com.ag777.util.lang.model.ThreadStatus;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年01月08日,last modify at 2017年01月08日
+ * @version create on 2018年01月08日,last modify at 2017年01月09日
  */
 public abstract class BasePeriodicTask {
 
@@ -17,6 +17,8 @@ public abstract class BasePeriodicTask {
 	private ThreadStatus status;
 	
 	private Thread thread;
+	
+	private long intervalSleep = 100; //睡眠间隔,这个值影响状态改变的效率,在不需要改变状态的线程设置0
 	
 	/**
 	 * 构造函数
@@ -78,6 +80,12 @@ public abstract class BasePeriodicTask {
 		return true;
 	}
 	
+	
+	public BasePeriodicTask setIntervalSleep(long interval) {
+		this.intervalSleep = interval;
+		return this;
+	}
+	
 	public boolean isPreparing() {
 		return status == ThreadStatus.prepare;
 	}
@@ -98,6 +106,10 @@ public abstract class BasePeriodicTask {
 		return thread.isAlive();
 	}
 	
+	/**
+	 * 状态是否为正在暂停中
+	 * @return
+	 */
 	public boolean isToPause() {
 		return status == ThreadStatus.toPause;
 	}
@@ -322,13 +334,17 @@ public abstract class BasePeriodicTask {
 				return;
 			}
 			
-			if(time > 100l) {
-				Thread.sleep(100);
-				time -= 100l;
+			if(intervalSleep <= 0) {
+				Thread.sleep(intervalSleep);
 			} else {
-				Thread.sleep(time);
-				time = 0l;
-				return;
+				if(time > intervalSleep) {
+					Thread.sleep(intervalSleep);
+					time -= intervalSleep;
+				} else {	//睡眠剩余时间
+					Thread.sleep(time);
+					time = 0l;
+					return;
+				}
 			}
 				
 		}	//sleep1 for end

@@ -4,7 +4,7 @@ package com.ag777.util.lang.thread;
  * 线程安全计数器
  * 
  * @author ag777
- * @version  create on 2017年11月1日,last modify at 2017年11月1日
+ * @version  create on 2017年11月1日,last modify at 2018年01月09日
  */
 public class Counter {
 	private long i;
@@ -19,7 +19,8 @@ public class Counter {
 	public long add(int b) {
 		synchronized (Counter.class) {
 			i = i+b;
-			return i;
+			long n = i;
+			return n;
 		}
 	}
 	
@@ -30,7 +31,8 @@ public class Counter {
 	public long subtract(int b) {
 		synchronized (Counter.class) {
 			i = i-b;
-			return i;
+			long n = i;
+			return n;
 		}
 	}
 	
