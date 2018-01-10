@@ -34,7 +34,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2017年12月29日
+ * @version last modify at 2018年01月10日
  */
 public class HttpUtils {
 
@@ -315,6 +315,86 @@ public class HttpUtils {
 		return Optional.empty();
 	}
 	
+	/**
+	 * 请求并获取结果字符串(同步请求)
+	 * @param request
+	 * @return
+	 */
+	public static Optional<String> call(Request request) {
+		Call call = client().newCall(request); 
+		try {
+			Response response = call.execute();
+			if(response.isSuccessful()) {
+				return Optional.of(response.body().string());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Optional.empty();
+	}
+	
+	/**
+	 * 请求并获取结果字符串(异步请求)
+	 * @param request
+	 * @return
+	 */
+	public static void call(Request request, final Callback callback) {
+		Call call = client().newCall(request); 
+		try {
+			call.enqueue(new okhttp3.Callback() {
+
+				@Override
+				public void onResponse(Call call, Response response) throws IOException {
+					callback.onSuccess(response.body().string());
+				}
+				
+				@Override
+				public void onFailure(Call call, IOException ioException) {
+					callback.onFailure(ioException);
+				}
+				
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * 请求并获取结果map(同步请求)
+	 * @param request
+	 * @return
+	 * @throws Exception 
+	 */
+	public static Optional<Map<String, Object>> callForMap(Request request) {
+		try {
+			Optional<String> result = call(request);
+			if(result.isPresent()) {
+				return Optional.ofNullable(Utils.jsonUtils().toMap(result.get()));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Optional.empty();
+	}
+	
+	/**
+	 * 请求并获取结果List<Map<String, Object>>(同步请求)
+	 * @param request
+	 * @return
+	 */
+	public static Optional<List<Map<String, Object>>> callForListMap(Request request) {
+		try {
+			Optional<String> result = call(request);
+			if(result.isPresent()) {
+				return Optional.ofNullable(Utils.jsonUtils().toListMap(result.get()));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return  Optional.empty();
+	}
+	
 	/**==============内部方法======================*/
 	/**
 	 * 拼接get请求的url及参数
@@ -344,86 +424,6 @@ public class HttpUtils {
 			 return url+"?"+tail.toString();
 		}
 		return url;
-	}
-	
-	/**
-	 * 请求并获取结果字符串(同步请求)
-	 * @param request
-	 * @return
-	 */
-	private static Optional<String> call(Request request) {
-		Call call = client().newCall(request); 
-		try {
-			Response response = call.execute();
-			if(response.isSuccessful()) {
-				return Optional.of(response.body().string());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Optional.empty();
-	}
-	
-	/**
-	 * 请求并获取结果字符串(异步请求)
-	 * @param request
-	 * @return
-	 */
-	private static void call(Request request, final Callback callback) {
-		Call call = client().newCall(request); 
-		try {
-			call.enqueue(new okhttp3.Callback() {
-
-				@Override
-				public void onResponse(Call call, Response response) throws IOException {
-					callback.onSuccess(response.body().string());
-				}
-				
-				@Override
-				public void onFailure(Call call, IOException ioException) {
-					callback.onFailure(ioException);
-				}
-				
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	/**
-	 * 请求并获取结果map(同步请求)
-	 * @param request
-	 * @return
-	 * @throws Exception 
-	 */
-	private static Optional<Map<String, Object>> callForMap(Request request) {
-		try {
-			Optional<String> result = call(request);
-			if(result.isPresent()) {
-				return Optional.ofNullable(Utils.jsonUtils().toMap(result.get()));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Optional.empty();
-	}
-	
-	/**
-	 * 请求并获取结果List<Map<String, Object>>(同步请求)
-	 * @param request
-	 * @return
-	 */
-	private static Optional<List<Map<String, Object>>> callForListMap(Request request) {
-		try {
-			Optional<String> result = call(request);
-			if(result.isPresent()) {
-				return Optional.ofNullable(Utils.jsonUtils().toListMap(result.get()));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return  Optional.empty();
 	}
 	
 	/**

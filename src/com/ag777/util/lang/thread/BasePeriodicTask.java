@@ -9,13 +9,14 @@ import com.ag777.util.lang.model.ThreadStatus;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年01月08日,last modify at 2017年01月09日
+ * @version create on 2018年01月08日,last modify at 2017年01月10日
  */
 public abstract class BasePeriodicTask {
 
 	public Object key_status_change = new Object();	//状态锁
 	private ThreadStatus status;
 	
+	private Runnable runnable;
 	private Thread thread;
 	
 	private long intervalSleep = 100; //睡眠间隔,这个值影响状态改变的效率,在不需要改变状态的线程设置0
@@ -26,42 +27,47 @@ public abstract class BasePeriodicTask {
 	 */
 	public BasePeriodicTask(long interval) {
 		status = ThreadStatus.prepare;
-		
-		thread = new Thread(()->{
-			while(true) {
-				try {
-					if(isPause()) {	//如果状态为已暂停则进入下一轮循环,期间会睡眠一段时间
-						continue;
-					} else if(isStop()){	//状态为已停止则跳出循环结束这个线程
-						break;
-					}
-					task();
-					
-				} catch(InterruptedException ex) {
-					if(onInterrupt(ex)) {	//如果线程被打断则不继续执行(返回true)
-						return;
-					}
-				} catch(Exception ex) {
-					try{
-						if(onError(ex)) {	//线程发生错误则不继续执行(返回true)
-							return;
-						}
-					} catch(InterruptedException e) {
-						if(onInterrupt(e)) {	//如果线程被打断则不继续执行(返回true)
-							return;
-						}
-					}
-				} finally {
+		runnable = new Runnable() {
+			
+			@Override
+			public void run() {
+				while(true) {
 					try {
-						sleep(interval);
-					} catch (InterruptedException ex) {
+						if(isPause()) {	//如果状态为已暂停则进入下一轮循环,期间会睡眠一段时间
+							continue;
+						} else if(isStop()){	//状态为已停止则跳出循环结束这个线程
+							break;
+						}
+						task();
+						
+					} catch(InterruptedException ex) {
 						if(onInterrupt(ex)) {	//如果线程被打断则不继续执行(返回true)
 							return;
 						}
+					} catch(Exception ex) {
+						try{
+							if(onError(ex)) {	//线程发生错误则不继续执行(返回true)
+								return;
+							}
+						} catch(InterruptedException e) {
+							if(onInterrupt(e)) {	//如果线程被打断则不继续执行(返回true)
+								return;
+							}
+						}
+					} finally {
+						try {
+							sleep(interval);
+						} catch (InterruptedException ex) {
+							if(onInterrupt(ex)) {	//如果线程被打断则不继续执行(返回true)
+								return;
+							}
+						}
 					}
-				}
-			}
-		});
+				}	//while end
+				
+			}	//run end
+		};	//初始化runnable end
+		
 	}
 	
 	/**
@@ -80,7 +86,19 @@ public abstract class BasePeriodicTask {
 		return true;
 	}
 	
+	/**
+	 * 获取runnbale对象
+	 * @return
+	 */
+	public Runnable getRunnable() {
+		return runnable;
+	}
 	
+	/**
+	 * 配置最长单次睡眠间隔(如果睡眠大于该时间会被拆分)
+	 * @param interval
+	 * @return
+	 */
 	public BasePeriodicTask setIntervalSleep(long interval) {
 		this.intervalSleep = interval;
 		return this;
@@ -148,11 +166,17 @@ public abstract class BasePeriodicTask {
 	
 	/**
 	 * 开始执行任务
+	 * <p>
+	 *  1.初始化线程
+	 *  2.设置状态为已开始
+	 *  3.调用线程的start()方法
+	 * </p>
 	 */
 	public BasePeriodicTask start() {
 		if(!isPreparing()) {	//无视二次调用
 			return this;
 		}
+		thread = new Thread(runnable);
 		status = ThreadStatus.resume;
 		thread.start();
 		return this;
@@ -333,9 +357,13 @@ public abstract class BasePeriodicTask {
 				toStop();
 				return;
 			}
+			if(isStop()) {
+				return;
+			}
 			
-			if(intervalSleep <= 0) {
+			if(intervalSleep <= 0) {	//完整地睡眠一次
 				Thread.sleep(intervalSleep);
+				return;
 			} else {
 				if(time > intervalSleep) {
 					Thread.sleep(intervalSleep);
@@ -354,6 +382,7 @@ public abstract class BasePeriodicTask {
 	/**
 	 * 该线程的具体业务
 	 * @throws Exception
+	 * @throws InterruptedException
 	 */
 	public abstract void task() throws Exception, InterruptedException;
 	
@@ -361,6 +390,7 @@ public abstract class BasePeriodicTask {
 	 * 程序发生错误时执行。如果这个方法返回true则直接终止该线程
 	 * @param ex
 	 * @return
+	 * @throws InterruptedException
 	 */
 	public abstract boolean onError(Exception ex) throws InterruptedException;
 }
