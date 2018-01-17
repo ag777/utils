@@ -21,13 +21,13 @@ import com.ag777.util.lang.StringUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年09月06日,last modify at 2018年01月09日
+ * @version create on 2017年09月06日,last modify at 2018年01月11日
  */
 public abstract class DBUpdateHelper {
 
-	private static boolean MODE_DEBUG = false;	//独立的debug模式，控制这块的输出
-	public static void debugMode(boolean isDebugMode) {
-		MODE_DEBUG = isDebugMode;
+	private boolean mode_debug = false;	//独立的debug模式，控制这块的输出
+	public void debugMode(boolean isDebugMode) {
+		mode_debug = isDebugMode;
 	}
 	
 	private static Pattern p_classPath = Pattern.compile("^([\\w\\d_]+\\.)+[\\w\\d_]+$");
@@ -163,7 +163,7 @@ public abstract class DBUpdateHelper {
 	 * @param conn
 	 * @throws SQLException
 	 */
-	private static void executeDdlList(List<DdlListBean> ddlList, Connection conn) throws SQLException {
+	private void executeDdlList(List<DdlListBean> ddlList, Connection conn) throws SQLException {
 		conn.setAutoCommit(true);
 		Statement stmt = conn.createStatement();
 		for (DdlListBean ddl : ddlList) {
@@ -192,7 +192,7 @@ public abstract class DBUpdateHelper {
 	 * @param conn
 	 * @throws SQLException
 	 */
-	private static void executeDmlList(List<String> dmlList, Connection conn) throws SQLException {
+	private void executeDmlList(List<String> dmlList, Connection conn) throws SQLException {
 		try {
 			conn.setAutoCommit(false);
 			Statement stmt = conn.createStatement();
@@ -244,8 +244,8 @@ public abstract class DBUpdateHelper {
 	 * 统一打印出口
 	 * @param msg
 	 */
-	private static void log(String msg) {
-		if(MODE_DEBUG) {
+	private void log(String msg) {
+		if(mode_debug) {
 			Console.log(msg);
 		}
 	}
