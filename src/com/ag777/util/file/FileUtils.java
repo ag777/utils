@@ -7,10 +7,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -35,7 +35,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2017年12月26日
+ * @version create on 2017年04月25日,last modify at 2017年01月19日
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = Charsets.UTF_8;
@@ -411,24 +411,33 @@ public class FileUtils {
      * @param content
      * @return 
      */
-    public static boolean appendFileContent(String fileName, String content) {
-    	RandomAccessFile randomFile = null;
+    public static boolean appendFileContent(String filePath, String content) {
+        FileWriter writer = null;  
         try {
-            // 打开一个随机访问文件流，按读写方式
-        	randomFile = new RandomAccessFile(fileName, "rw");
-            // 文件长度，字节数
-            long fileLength = randomFile.length();
-            //将写文件指针移到文件尾。
-            randomFile.seek(fileLength);
-            randomFile.writeBytes(content);
-            randomFile.close();
+        	new File(filePath).getParentFile().mkdirs();
+            // 打开一个写文件器，构造函数中的第二个参数true表示以追加形式写文件     
+            writer = new FileWriter(filePath, true);     
+            writer.write(content);
             return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-        	IOUtils.close(randomFile);
-        }
+        } catch (IOException e) {     
+            e.printStackTrace();     
+        } finally {     
+        	IOUtils.close(writer);
+        }   
         return false;
+    }
+    
+    /**
+     * 将内容追加到文件尾部
+     * <p>
+     * 	使用RandomAccessFile实现
+     * </p>
+     * @param fileName
+     * @param content
+     * @return 
+     */
+    public static boolean appendFileContent(String filePath, List<String> lines) {
+    	return appendFileContent(filePath, ListUtils.toString(lines, "\r\n"));
     }
 
     

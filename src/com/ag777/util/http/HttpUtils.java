@@ -18,6 +18,7 @@ import com.ag777.util.lang.collection.MapUtils;
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.FormBody.Builder;
+import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -34,7 +35,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年01月10日
+ * @version last modify at 2018年01月18日
  */
 public class HttpUtils {
 
@@ -114,6 +115,25 @@ public class HttpUtils {
 	}
 	
 	/**
+	 * post发送json串，返回map
+	 * @param url
+	 * @param json
+	 * @param headerMap
+	 * @return
+	 */
+	public static Optional<Map<String, Object>> doPostJSON(String url, String json, Map<String, Object> headerMap) {
+		//参数
+		RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
+		Request request = new Request.Builder()
+	        .url(url)
+	        .headers(getHeaders(headerMap))
+	        .post(requestBody)
+	        .build();
+
+		return callForMap(request);
+	}
+	
+	/**
 	 * post请求获取结果
 	 * @param url
 	 * @param params
@@ -123,6 +143,24 @@ public class HttpUtils {
 		
 		 Request request = new Request.Builder()
 	                .url(url)
+	                .post(getRequestBody(params))
+	                .build();
+		 
+		 return call(request);
+	}
+	
+	/**
+	 * post请求获取结果
+	 * @param url
+	 * @param params
+	 * @param headerMap
+	 * @return
+	 */
+	public static <K,V>Optional<String> doPost(String url, Map<K, V> params, Map<String, Object> headerMap) {
+		
+		 Request request = new Request.Builder()
+	                .url(url)
+	                .headers(getHeaders(headerMap))
 	                .post(getRequestBody(params))
 	                .build();
 		 
@@ -145,6 +183,24 @@ public class HttpUtils {
 		 return callForMap(request);
 	}
 	
+	/**
+	 * post请求获取map
+	 * @param url
+	 * @param params
+	 * @param headerMap
+	 * @return
+	 */
+	public static <K,V>Optional<Map<String, Object>> doPostForMap(String url, Map<K, V> params, Map<String, Object> headerMap) {
+		
+		 Request request = new Request.Builder()
+	                .url(url)
+	                .headers(getHeaders(headerMap))
+	                .post(getRequestBody(params))
+	                .build();
+		 
+		 return callForMap(request);
+	}
+	
 	
 	/**
 	 * post请求获取List<Map>
@@ -161,11 +217,29 @@ public class HttpUtils {
 		return callForListMap(request);
 	}
 	
+	/**
+	 * post请求获取List<Map>
+	 * @param url
+	 * @param params
+	 * @param headerMap
+	 * @return
+	 */
+	public static Optional<List<Map<String, Object>>> doPostForListMap(String url, Map<String, Object> params, Map<String, Object> headerMap) {
+		 Request request = new Request.Builder()
+	                .url(url)
+	                .headers(getHeaders(headerMap))
+	                .post(getRequestBody(params))
+	                .build();
+		 
+		return callForListMap(request);
+	}
+	
 	//--异步
 	/**
 	 * get请求获取结果
 	 * @param url
-	 * @return
+	 * @param params
+	 * @param callback
 	 */
 	public static <K, V>void doPost(String url, Map<K, V> params, Callback callback) {
 		 Request request = new Request.Builder()
@@ -176,7 +250,24 @@ public class HttpUtils {
 	}
 	
 	/**
-	 * post发送json串，返回map
+	 * get请求获取结果
+	 * @param url
+	 * @param params
+	 * @param headerMap
+	 * @param callback
+	 */
+	public static <K, V>void doPost(String url, Map<K, V> params, Map<String, Object> headerMap, Callback callback) {
+		 Request request = new Request.Builder()
+	                .url(url)
+	                .headers(getHeaders(headerMap))
+	                .post(getRequestBody(params))
+	                .build();
+		call(request, callback);
+	}
+	
+	
+	/**
+	 * post发送json串
 	 * @param url
 	 * @param json
 	 * @return
@@ -187,6 +278,26 @@ public class HttpUtils {
 		
 		Request request = new Request.Builder()
 	        .url(url)
+	        .post(requestBody)
+	        .build();
+
+		call(request, callback);
+	}
+	
+	/**
+	 * post发送json串
+	 * @param url
+	 * @param json
+	 * @param headerMap
+	 * @param callback
+	 */
+	public static void doPostJSON(String url, String json, Map<String, Object> headerMap, Callback callback) {
+		//参数
+		RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
+		
+		Request request = new Request.Builder()
+	        .url(url)
+	        .headers(getHeaders(headerMap))
 	        .post(requestBody)
 	        .build();
 
@@ -206,6 +317,17 @@ public class HttpUtils {
 	}
 	
 	/**
+	 * get请求获取结果
+	 * @param url
+	 * @param headers 请求头
+	 * @return
+	 */
+	public static Optional<String> doGet(String url, Headers headers) {
+		Request.Builder requestBuilder = new Request.Builder().url(url);
+		return call(requestBuilder.headers(headers).build());
+	}
+	
+	/**
 	 * get请求(带参数)
 	 * @param url
 	 * @param params
@@ -217,6 +339,18 @@ public class HttpUtils {
 	}
 	
 	/**
+	 * get请求(带参数和请求头)
+	 * @param url
+	 * @param params
+	 * @param headerMap
+	 * @return
+	 */
+	public static Optional<String> doGet(String url, Map<String, Object> params, Map<String, Object> headerMap) {
+		return doGet(
+				getGetUrl(url, params), getHeaders(headerMap));
+	}
+	
+	/**
 	 * get请求获取map
 	 * @param url
 	 * @return
@@ -224,6 +358,17 @@ public class HttpUtils {
 	public static Optional<Map<String, Object>> doGetForMap(String url) {
 		Request.Builder requestBuilder = new Request.Builder().url(url);
 		return callForMap(requestBuilder.build());
+	}
+	
+	/**
+	 * get请求获取map
+	 * @param url
+	 * @param headers
+	 * @return
+	 */
+	public static Optional<Map<String, Object>> doGetForMap(String url, Headers headers) {
+		Request.Builder requestBuilder = new Request.Builder().url(url);
+		return callForMap(requestBuilder.headers(headers).build());
 	}
 	
 	/**
@@ -238,11 +383,34 @@ public class HttpUtils {
 	}
 	
 	/**
+	 * get请求(带参数和请求头)获取map
+	 * @param url
+	 * @param params
+	 * @param headerMap
+	 * @return
+	 */
+	public static Optional<Map<String, Object>> doGetForMap(String url, Map<String, Object> params, Map<String, Object> headerMap) {
+		return doGetForMap(
+				getGetUrl(url, params),getHeaders(headerMap));
+	}
+	
+	/**
 	 * get请求获取List<Map>
 	 * @param url
 	 * @return
 	 */
 	public static Optional<List<Map<String, Object>>> doGetForListMap(String url) {
+		Request.Builder requestBuilder = new Request.Builder().url(url);
+		return callForListMap(requestBuilder.build());
+	}
+	
+	/**
+	 * get请求获取List<Map>
+	 * @param url
+	 * @param headers
+	 * @return
+	 */
+	public static Optional<List<Map<String, Object>>> doGetForListMap(String url, Headers headers) {
 		Request.Builder requestBuilder = new Request.Builder().url(url);
 		return callForListMap(requestBuilder.build());
 	}
@@ -258,6 +426,18 @@ public class HttpUtils {
 				getGetUrl(url, params));
 	}
 	
+	/**
+	 * get请求(带参数和请求头)获取List<Map>
+	 * @param url
+	 * @param params
+	 * @param headerMap
+	 * @return
+	 */
+	public static Optional<List<Map<String, Object>>> doGetForListMap(String url, Map<String, Object> params, Map<String, Object> headerMap) {
+		return doGetForListMap(
+				getGetUrl(url, params), getHeaders(headerMap));
+	}
+	
 	//--异步
 	/**
 	 * get请求获取结果
@@ -270,13 +450,36 @@ public class HttpUtils {
 	}
 	
 	/**
-	 * 
+	 * get请求获取结果
+	 * @param url
+	 * @param params
+	 * @param headerMap
+	 * @param callback
+	 */
+	public static void doGet(String url, Map<String, Object> params, Map<String, Object> headerMap, Callback callback) {
+		doGet(
+				getGetUrl(url, params), getHeaders(headerMap), callback);
+	}
+	
+	/**
+	 * get请求获取结果
 	 * @param url
 	 * @param callback
 	 */
 	public static void doGet(String url, Callback callback) {
 		Request.Builder requestBuilder = new Request.Builder().url(url);
 		call(requestBuilder.build(), callback);
+	}
+	
+	/**
+	 * get请求获取结果
+	 * @param url
+	 * @param headers
+	 * @param callback
+	 */
+	public static void doGet(String url, Headers headers, Callback callback) {
+		Request.Builder requestBuilder = new Request.Builder().url(url);
+		call(requestBuilder.headers(headers).build(), callback);
 	}
 	
 	/**
@@ -294,6 +497,24 @@ public class HttpUtils {
 
 		return call(request);
 	}
+	
+	/**
+	 * post上传附件和表单
+	 * @param url
+	 * @param files
+	 * @param params
+	 * @param headerMap
+	 * @return
+	 * @throws FileNotFoundException
+	 */
+	public static <K, V>Optional<String> uploadMultiFiles(String url, File[] files, Map<K, V> params, Map<K, V> headerMap) throws FileNotFoundException {
+		
+		Request request = new Request.Builder().url(url)
+				.headers(getHeaders(headerMap))
+				.post(getRequestBody(files, params)).build();
+
+		return call(request);
+	}
 
 	/**
 	 * post上传附件和表单
@@ -303,6 +524,18 @@ public class HttpUtils {
 	 * @return
 	 * @throws FileNotFoundException 
 	 */
+	public static <K, V>Optional<Map<String, Object>> uploadMultiFilesForMap(String url, File[] files, Map<K, V> params, Map<K, V> headerMap) throws FileNotFoundException {
+		Optional<String> result = uploadMultiFiles(url, files, params, headerMap);
+		if(result.isPresent()) {
+			try {
+				return Optional.ofNullable(Utils.jsonUtils().toMap(result.get()));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return Optional.empty();
+	}
+	
 	public static <K, V>Optional<Map<String, Object>> uploadMultiFilesForMap(String url, File[] files, Map<K, V> params) throws FileNotFoundException {
 		Optional<String> result = uploadMultiFiles(url, files, params);
 		if(result.isPresent()) {
@@ -313,6 +546,25 @@ public class HttpUtils {
 			}
 		}
 		return Optional.empty();
+	}
+	
+	/**
+	 * 构造请求头
+	 * @param headerMap
+	 * @return
+	 */
+	public static <K,V>Headers getHeaders(Map<K, V> headerMap) {
+		if(headerMap == null || headerMap.isEmpty()) {
+			return null;
+		}
+		okhttp3.Headers.Builder builder = new Headers.Builder();
+		Iterator<K> itor = headerMap.keySet().iterator();
+		while(itor.hasNext()) {
+			K key = itor.next();
+			V value = headerMap.get(key);
+			builder.add(key.toString(), value!=null?value.toString():"");
+		}
+		return builder.build();
 	}
 	
 	/**

@@ -14,7 +14,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2017年01月05日
+ * @version last modify at 2017年01月19日
  */
 public class StringUtils {
 
@@ -244,7 +244,7 @@ public class StringUtils {
 		if(urlStr == null) {
 			return null;
 		}
-		if(urlStr.startsWith("http")) {
+		if(!urlStr.startsWith("http")) {
 			urlStr = "http://"+urlStr;
 		}
 		java.net.URL url = new java.net.URL(urlStr);

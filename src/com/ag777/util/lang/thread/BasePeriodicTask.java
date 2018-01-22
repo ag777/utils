@@ -1,5 +1,7 @@
 package com.ag777.util.lang.thread;
 
+import java.util.Optional;
+
 import com.ag777.util.lang.model.ThreadStatus;
 
 /**
@@ -190,10 +192,25 @@ public abstract class BasePeriodicTask {
 	 * 
 	 */
 	public void interrupt() {
-		if(isPreparing()) {	//任务并未开始实行不做处理
+		if(isPreparing() || isStop()) {	//任务并未开始实行或已停止不做处理
 			return;
 		}
 		thread.interrupt();
+	}
+	
+	public Optional<Thread> interruptThread() {
+		if(isPreparing() || isStop()) {	//任务并未开始实行或已停止不做处理
+			return Optional.empty();
+		}
+		thread.interrupt();
+		return Optional.of(new Thread(()->{
+			try {
+				while(!isStop()) {
+					Thread.sleep(50);
+				}
+			} catch (InterruptedException e) {
+			}
+		}));
 	}
 
 	/**
@@ -203,7 +220,7 @@ public abstract class BasePeriodicTask {
 	 * </p>
 	 */
 	public void interruptWaitForStop() {
-		if(isPreparing()) {	//任务并未开始实行不做处理
+		if(isPreparing() || isStop()) {	//任务并未开始实行或已停止不做处理
 			return;
 		}
 		interrupt();

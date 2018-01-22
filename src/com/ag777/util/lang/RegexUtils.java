@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import com.ag777.util.lang.collection.CollectionAndMapUtils;
+import com.ag777.util.lang.collection.ListUtils;
 
 /**
  * 正则表达式工具类
@@ -14,7 +15,7 @@ import com.ag777.util.lang.collection.CollectionAndMapUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月06日,last modify at 2017年12月12日
+ * @version create on 2017年06月06日,last modify at 2017年01月22日
  */
 public class RegexUtils {
 
@@ -152,6 +153,68 @@ public class RegexUtils {
 			return matcher.group();
 		}
 		return null;
+	}
+	
+	/**
+	 * 查询符合条件的第一组数据
+	 * @param src
+	 * @param regex
+	 * @return
+	 */
+	public static List<String> findGroups(String src, String regex) {
+		return findGroups(src, getPattern(regex));
+	}
+	
+	/**
+	 * 查询符合条件的第一组数据
+	 * @param src
+	 * @param pattern
+	 * @return
+	 */
+	public static List<String> findGroups(String src, Pattern pattern) {
+		List<String> list = ListUtils.newArrayList();
+		Matcher matcher = getMatcher(src, pattern);
+		
+		while(matcher.find()) {
+			for (int i = 1; i <= matcher.groupCount(); i++) {
+				String item = matcher.group(i);
+				list.add(item);
+			}	
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * 查询符合条件的所有数据
+	 * @param src
+	 * @param regex
+	 * @return
+	 */
+	public static List<List<String>> findAllGroups(String src, String regex) {
+		return findAllGroups(src, getPattern(regex));
+	}
+	
+	/**
+	 * 查询符合条件的所有数据
+	 * @param src
+	 * @param pattern
+	 * @return
+	 */
+	public static List<List<String>> findAllGroups(String src, Pattern pattern) {
+		List<List<String>> list = ListUtils.newArrayList();
+		Matcher matcher = getMatcher(src, pattern);
+		
+		while(matcher.find()) {
+			List<String> itemList = ListUtils.newArrayList();
+			for (int i = 1; i <= matcher.groupCount(); i++) {
+				String item = matcher.group(i);
+				itemList.add(item);
+			}	
+			list.add(itemList);
+		}
+		
+		return list;
 	}
 	
 	/**

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Optional;
 
 import com.ag777.util.lang.model.Charsets;
 
@@ -16,7 +17,7 @@ import com.ag777.util.lang.model.Charsets;
  * 		执行一个cmd命令会产生三个流（input/output/err），其中一个不处理就有可能产生程序挂起问题，永远不可能得到返回了
  * </p>
  * @author ag777
- * @version last modify at 2017年10月30日
+ * @version last modify at 2018年01月20日
  */
 public class CMDUtils {
 	
@@ -32,7 +33,7 @@ public class CMDUtils {
 	private CMDUtils() {}
 	
 	/**
-     * 压缩文件
+	 * 压缩文件
      * <p>
      * 例如：
      * </p>
@@ -43,13 +44,26 @@ public class CMDUtils {
      * </pre>
      * </p>
      * </p>
-     * @param fileName 压缩后的文件名(不带后缀,自动添加.tar.gz)
+     * 
+	 * @param fileName 压缩后的文件名(不带后缀,自动添加.tar.gz)
 	 * @param regex	要压缩的路径或者文件名
 	 * @param basePath	执行命令的路径名,如果传空，则参数regex要带上完整的路径
-     */
-	public static boolean tar(String fileName, String regex, String basePath) {
-		return doCmd(StringUtils.concat("tar zcf ",  fileName, ".tar.gz ", regex), basePath);
-
+	 * @return 压缩失败或文件不存在返回<code>Optional.empty()</code>
+	 */
+	public static Optional<File> tar(String fileName, String regex, String basePath) {
+		if(!fileName.endsWith(".tar.gz")) {
+			fileName += ".tar.gz";
+		}
+		if(!basePath.endsWith("/") || !basePath.endsWith("\\")) {
+			basePath += SystemUtils.fileSeparator();
+		}
+		if(doCmd(StringUtils.concat("tar zcf ",  fileName, ' ', regex), basePath)) {
+			File f = new File(basePath + fileName);
+			if(f.exists() && f.isFile()) {
+				return Optional.of(f);
+			}
+		}
+		return Optional.empty();
 	}
 
 	/**
