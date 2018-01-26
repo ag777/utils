@@ -11,7 +11,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 异常辅助类
  * 
  * @author ag777
- * Time: created at 2017/06/06. last modify at 2017/09/26.
+ * Time: created at 2017/06/06. last modify at 2018/01/25.
  * Mark: 
  */
 public class ExceptionHelper {
@@ -52,7 +52,42 @@ public class ExceptionHelper {
 	/*====================外部方法==================*/
 
 	/**
+	 * 从抛出异常中提取对应类抛出的异常信息
+	 * <p>
+	 * 	遍历堆栈如果错误信息由clazz抛出，则拼接错误信息并返回
+	 * </p>
+	 * 
+	 * @param throwable
+	 * @param clazz
+	 * @return
+	 */
+	public static String getErrMsg(Throwable throwable, Class<?> clazz) {
+		if(throwable == null) {
+			return null;
+		}
+		
+		String errMsg = throwable.getMessage() != null?throwable.getMessage():throwable.toString();
+		try {
+			StackTraceElement[] s = throwable.getStackTrace();
+			for (StackTraceElement stackTraceElement : s) {
+				String clazzName = stackTraceElement.getClassName();	//类路径
+				if(clazz == null || clazz.getName().equals(clazzName)) {
+					errMsg = getErrMsg(errMsg, stackTraceElement);
+					break;
+				}
+			}
+		} catch(Exception e) {
+			//不处理
+		}
+		return errMsg;
+	}
+	
+	/**
 	 * 从捕获的异常中提取错误信息
+	 * <p>
+	 * 	遍历堆栈如果错误信息由workPackageName抛出，且不再排除目录内,则拼接错误信息并返回
+	 * </p>
+	 * 
 	 * @param throwable				异常
 	 * @param workPackageName		该方法会从错误栈中查找第一条该包下找到的异常信息作为异常源
 	 * @param excludePackageList	排除包
@@ -71,33 +106,13 @@ public class ExceptionHelper {
 //			if(throwable instanceof java.lang.NullPointerException) {	//空指针异常
 				StackTraceElement[] s = throwable.getStackTrace();
 				for (StackTraceElement stackTraceElement : s) {
-//					String name = stackTraceElement.getFileName();			//异常发生的java文件名XXX.java
-					int line = stackTraceElement.getLineNumber();			//异常相对于类所在行数
-					String method = stackTraceElement.getMethodName();		//异常所属方法名
 					String clazzName = stackTraceElement.getClassName();	//类路径
 					
 					if(clazzName.contains(workPackageName)) {	//在工作路径下
 						if(isUnderPackage(clazzName, excludePackageList)) {	//在排除路径下则算是错误源
 							 continue;
 						} else {
-							errMsg = errMsg.replaceAll("\"", "\\\\\"");	//转义双引号，为了外面的方法能转为map
-							
-							StringBuilder sb = new StringBuilder();
-							sb.append('{')
-								.append(" \"异常信息\": ")
-								.append('"').append(errMsg).append('"')
-								.append(',')
-								.append(" \"异常发生位置\": ")
-								.append('"').append(clazzName).append('"')
-								.append(',')
-								.append(" \"方法\": ")
-								.append('"').append(method).append('"')
-								.append(',')
-								.append(" \"行数\": ")
-								.append(line)
-								.append(' ')
-								.append('}');
-							errMsg = sb.toString();
+							errMsg = getErrMsg(errMsg, stackTraceElement);
 							break;	//一定得记得，一般第一处就是错误源，没必要接着拼接下去了
 						}
 					}
@@ -173,6 +188,49 @@ public class ExceptionHelper {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * 从错误栈中提取需要的信息
+	 * @param errMsg
+	 * @param stackTraceElement
+	 * @return
+	 */
+	private static String getErrMsg(String errMsg, StackTraceElement stackTraceElement) {
+//		String name = stackTraceElement.getFileName();			//异常发生的java文件名XXX.java
+		int line = stackTraceElement.getLineNumber();			//异常相对于类所在行数
+		String method = stackTraceElement.getMethodName();		//异常所属方法名
+		String clazzName = stackTraceElement.getClassName();	//类路径
+		return getErrMsg(errMsg, clazzName, method, line);
+	}
+	
+	/**
+	 * 拼接需要的信息
+	 * @param errMsg
+	 * @param clazzName
+	 * @param method
+	 * @param line
+	 * @return
+	 */
+	private static String getErrMsg(String errMsg, String clazzName, String method, int line) {
+		errMsg = errMsg.replaceAll("\"", "\\\\\"");	//转义双引号，为了外面的方法能转为map
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append('{')
+			.append(" \"异常信息\": ")
+			.append('"').append(errMsg).append('"')
+			.append(',')
+			.append(" \"异常发生位置\": ")
+			.append('"').append(clazzName).append('"')
+			.append(',')
+			.append(" \"方法\": ")
+			.append('"').append(method).append('"')
+			.append(',')
+			.append(" \"行数\": ")
+			.append(line)
+			.append(' ')
+			.append('}');
+		return sb.toString();
 	}
 	
 }

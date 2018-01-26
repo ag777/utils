@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Optional;
-
 import com.ag777.util.lang.model.Charsets;
 
 
@@ -17,7 +16,7 @@ import com.ag777.util.lang.model.Charsets;
  * 		执行一个cmd命令会产生三个流（input/output/err），其中一个不处理就有可能产生程序挂起问题，永远不可能得到返回了
  * </p>
  * @author ag777
- * @version last modify at 2018年01月20日
+ * @version last modify at 2018年01月24日
  */
 public class CMDUtils {
 	
@@ -98,6 +97,28 @@ public class CMDUtils {
 				StringUtils.concat("tar zxvf ", fileName, " -C ", targetPath), basePath);
 	}
 
+	/**
+	 * 将filePath底下的所有文件打成war包
+	 * @param filePath
+	 * @param warPath
+	 * @return
+	 */
+	public static boolean war(String filePath, String warPath) {
+		return CMDUtils.doCmd(
+    			StringUtils.concat("jar -cvf ", warPath, " *"), filePath);
+	}
+	
+	/**
+	 * 将warPath对应的war包解压到targetPath下
+	 * @param warPath 需要解压的war包路径
+	 * @param targetPath	解压到的目标路径
+	 * @param bathPath 执行命令的基础路径;若传该值前面两个参数都为相对路径，否则为绝对路径
+	 * @return
+	 */
+	public static boolean unWar(String warPath, String targetPath, String bathPath) {
+    	return doCmd(StringUtils.concat("unzip ", warPath, " -d ", targetPath), bathPath);
+    }
+	
 	/**
      * 复制文件
      * <p>
