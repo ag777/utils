@@ -29,7 +29,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2018年01月05日
+ * @version create on 2017年07月28日,last modify at 2018年01月29日
  */
 public class DbHelper {
 
@@ -442,6 +442,26 @@ public class DbHelper {
 		return DbPojo.TYPE_ORACLE.equals(dbType);
 	}
 	
+	/**
+	 * 重命名数据库表
+	 * <p>
+	 *  暂时只支持Mysql和Oracle数据库,
+	 *  对其他数据库执行该方法会抛出Runtime异常
+	 * </p>
+	 * 
+	 * @param src
+	 * @param to
+	 */
+	public void reNameTable(String src, String to) {
+		if(isMysql()) {
+			update("RENAME TABLE "+src+" TO "+to+";");
+		} else if(isOracle()) {
+			update("ALTER TABLE "+src+" RENAME TO "+to+";");
+		} else {
+			throw new RuntimeException("暂只支持mysql和oracle数据库的表重命名操作");
+		}
+		
+	}
 	
 	/**
 	 * 根据sql获取结果集

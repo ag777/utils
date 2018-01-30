@@ -21,7 +21,7 @@ import com.ag777.util.lang.StringUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年09月06日,last modify at 2018年01月11日
+ * @version create on 2017年09月06日,last modify at 2018年01月29日
  */
 public abstract class DBUpdateHelper {
 
@@ -145,13 +145,15 @@ public abstract class DBUpdateHelper {
 			} catch (SecurityException e) {
 				throw new SQLException("数据库升级异常:无权执行方法["+src+"]", e);
 			} catch (IllegalAccessException e) {
-				throw new SQLException("数据库升级异常:获取sql失败["+src+"]", e);
+				throw new SQLException("数据库升级异常:执行方法获取sql失败["+src+"]", e);
 			} catch (IllegalArgumentException e) {
-				throw new SQLException("数据库升级异常:获取sql失败["+src+"]", e);
+				throw new SQLException("数据库升级异常:执行方法获取sql失败["+src+"]", e);
 			} catch (InvocationTargetException e) {
-				throw new SQLException("数据库升级异常:获取sql失败["+src+"]", e);
+				//方法本身抛出的异常
+//				System.out.println(e.getCause().getClass().getName());	//真正的抛出的异常
+				throw new SQLException("数据库升级异常:执行方法["+src+"]抛出异常", e);
 			} catch (InstantiationException e) {
-				throw new SQLException("数据库升级异常:获取sql失败["+src+"]", e);
+				throw new SQLException("数据库升级异常:执行方法获取sql失败["+src+"]", e);
 			}
 		}
 		return src;
