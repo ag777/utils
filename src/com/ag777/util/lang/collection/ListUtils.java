@@ -18,7 +18,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年12月14日
+ * @version create on 2017年09月22日,last modify at 2018年02月01日
  */
 public class ListUtils {
 
@@ -116,6 +116,9 @@ public class ListUtils {
      * </p>
      */
 	public static <T>List<T> ofFinalList(T[] items) {
+		if(items == null) {
+			return newList();
+		}
 		return Arrays.asList(items);
 	}
 	
