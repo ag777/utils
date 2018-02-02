@@ -14,7 +14,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2017年01月19日
+ * @version last modify at 2017年02月02日
  */
 public class StringUtils {
 
@@ -86,7 +86,9 @@ public class StringUtils {
 		sb.append(obj);
 		if(objs != null) {
 			for (Object item : objs) {
-				sb.append(item);
+				if(item !=null) {
+					sb.append(item);
+				}
 			}
 		}
 		return sb.toString();
@@ -111,15 +113,39 @@ public class StringUtils {
 	
 	/**
 	 * 拼接文件路径(避免重复的分隔符)
-	 * @param filePath
-	 * @param extraPaths
+	 * @param filePath		基础路径
+	 * @param extraPaths	额外路径
 	 * @return
 	 */
 	public static String concatFilePath(String filePath, Object... extraPaths) {
-		String path = concat(filePath, extraPaths);
-		return path.replaceAll("[\\\\/]+", "\\"+File.separator);
+		return concatFilePathBySeparator(File.separator, filePath, extraPaths);
 	}
 	
+	/**
+	 * 拼接文件路径(该方法会在每两个路径中插入fileSeparator, 替换原有的路径分隔符, 并避免重复的分隔符)
+	 * @param fileSeparator	系统的路径分隔符,win传"\\",linux传"/"
+	 * @param filePath			基础路径
+	 * @param extraPaths		额外路径
+	 * @return
+	 */
+	public static String concatFilePathBySeparator(String fileSeparator, String filePath, Object... extraPaths) {
+		StringBuilder sb = new StringBuilder(filePath).append(fileSeparator);
+
+		if(extraPaths != null) {
+			for (Object item : extraPaths) {
+				sb.append(fileSeparator);
+				if(item != null) {
+					
+					sb.append(item);
+				}
+			}
+			
+		}
+		if("\\".equals(fileSeparator)) {	//需要转义符
+			return sb.toString().replaceAll("[\\\\/]+", "\\\\");
+		}
+		return sb.toString().replaceAll("[\\\\/]+", fileSeparator);
+	}
 	
 	/**
 	 * 利用StringBuilder倒置字符串
