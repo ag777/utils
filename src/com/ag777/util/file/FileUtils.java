@@ -35,7 +35,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2017年01月19日
+ * @version create on 2017年04月25日,last modify at 2017年02月05日
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = Charsets.UTF_8;
@@ -99,6 +99,21 @@ public class FileUtils {
     }
     
     /**
+     * 从io流中读取行,去除bom头,防止影响外部解析文件内容
+     * @param in
+     * @param encoding
+     * @return
+     * @throws IOException
+     */
+    public static List<String> readLines(InputStream in,  Charset encoding) throws IOException {
+    	List<String> lines = IOUtils.readLines(in, encoding);
+    	if(!ListUtils.isEmpty(lines)) {
+    		lines.set(0, removeBomHeaderIfExists(lines.get(0)));
+    	}
+    	return lines;
+    }
+    
+    /**
      * 读取文件中的所有行
      * @param filePath
      * @param encoding
@@ -122,7 +137,7 @@ public class FileUtils {
          		encoding = Charset.forName(FILE_READING_ENCODING);
          	}
     		 FileInputStream fis = new FileInputStream(filePath);
-    		 return IOUtils.readLines(fis, encoding);
+    		 return readLines(fis, encoding);
           } catch (FileNotFoundException ex) {
               throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
           } catch (IOException ex) {
@@ -450,24 +465,21 @@ public class FileUtils {
      * @throws IOException
      */
     public static File write(InputStream in, String filePath, boolean isOverride) throws IOException {
-        String sPath = extractFilePath(filePath);
-        if (!pathExists(sPath)) {
-            makeDir(sPath, true);
-        }
-        
+    	OutputStream out = null;
         if (!isOverride && fileExists(filePath)) {
             return new File(filePath);
         }
         
         try {
-            File file = new File(filePath);
-            FileOutputStream out = new FileOutputStream(file);
+            out = getOutputStream(filePath);
             IOUtils.write(in, out, BUFFSIZE);
-            return file;
+            return new File(filePath);
         } catch (IOException e) {
             e.printStackTrace();
             throw new IOException(StringUtils.concat("写入文件[",filePath,"]时发生错误!"), e);
-        } 
+        } finally {
+        	IOUtils.close(out);
+        }
     }
 
     /**
@@ -479,6 +491,7 @@ public class FileUtils {
      */
     public static OutputStream getOutputStream(String filePath) throws FileNotFoundException {
     	File file = new File(filePath);
+    	makeDir(file.getParent(), true);	//创建父路径
     	return new FileOutputStream(file);
     }
 
@@ -738,4 +751,5 @@ public class FileUtils {
         	IOUtils.close(fis);
         }
 	}
+	
 }
