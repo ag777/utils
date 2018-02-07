@@ -18,7 +18,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年02月01日
+ * @version create on 2017年09月22日,last modify at 2018年02月07日
  */
 public class ListUtils {
 
@@ -68,7 +68,7 @@ public class ListUtils {
      */
 	public static List<String> ofList(String src, String separator) {
 		List<String> result = newList();
-		if(src == null) {
+		if(src == null || src.isEmpty()) {
 			return result;
 		}else {
 			String[] group = src.split(separator);
@@ -77,6 +77,20 @@ public class ListUtils {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * 拆分字符串组成数组
+	 * @param src
+	 * @param separator
+	 * @return
+	 */
+	public static String[] ofArray(String src, String separator) {
+		if(src == null || src.isEmpty()) {
+			return new String[]{};
+		} else {
+			return src.split(separator);
+		}
 	}
 	
 	 /**
