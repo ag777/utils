@@ -18,7 +18,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年03月05日
+ * @version create on 2017年09月22日,last modify at 2018年03月19日
  */
 public class ListUtils {
 
@@ -241,9 +241,9 @@ public class ListUtils {
      * </p>
      * </p>
      */
-	public static List<Object> ofList(List<Map<String, Object>> list, String key) {
+	public static <K,V>List<Object> ofList(List<Map<K, V>> list, K key) {
 		List<Object> resultList = newList();
-		for (Map<String, Object> item : list) {
+		for (Map<K, V> item : list) {
 			try {
 				Object obj = MapUtils.get(item, key);
 				if(obj != null) {
@@ -271,15 +271,15 @@ public class ListUtils {
      * </p>
      * </p>
      */
-	public static List<Object> ofList(List<Map<String, Object>> list) {
+	public static <K,V>List<Object> ofList(List<Map<K,V>> list) {
 		List<Object> resultList = newList();
 		if(list == null) {
 			return resultList;
 		}
-		for (Map<String, Object> item : list) {
-			Iterator<String> itor = item.keySet().iterator();
+		for (Map<K,V> item : list) {
+			Iterator<K> itor = item.keySet().iterator();
 			if(itor.hasNext()) {
-				String key = itor.next();
+				K key = itor.next();
 				try {
 					Object obj = item.get(key);
 					resultList.add(obj);
