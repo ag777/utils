@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import com.ag777.util.Utils;
 import com.ag777.util.file.FileUtils;
+import com.ag777.util.http.model.ProgressResponseBody;
 import com.ag777.util.http.model.SSLSocketClient;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.collection.ListUtils;
@@ -19,6 +20,7 @@ import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.FormBody.Builder;
 import okhttp3.Headers;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -35,7 +37,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年01月18日
+ * @version last modify at 2018年03月16日
  */
 public class HttpUtils {
 
@@ -67,18 +69,60 @@ public class HttpUtils {
 	
 	/**
 	 * 下载文件 同步请求，占用主线程，OkHttp一般在安卓上用异步请求做事情的
+	 * <p>
+	 * 	用默认client的下载
+	 * </p>
 	 * @param url
 	 * @param targetPath
 	 * @return 失败返回null
 	 */
 	public static File downLoad(String url, String targetPath) {
+		return downLoad(url, targetPath, client());
+	}
+	
+	/**
+	 * 下载文件 同步请求，占用主线程，OkHttp一般在安卓上用异步请求做事情的
+	 * <p>
+	 *  listener用于监听进度
+	 * </p>
+	 * @param url
+	 * @param targetPath
+	 * @param listener
+	 * @return
+	 */
+	public static File downLoad(String url, String targetPath, ProgressResponseBody.ProgressListener listener) {
+		OkHttpClient client = client().newBuilder()
+	        .addNetworkInterceptor(new Interceptor() {
+	            @Override
+	            public Response intercept(Chain chain) throws IOException {
+	                Response response = chain.proceed(chain.request());
+	                //这里将ResponseBody包装成我们的ProgressResponseBody
+	                return response.newBuilder()
+	                        .body(new ProgressResponseBody(response.body(),listener))
+	                        .build();
+	            }
+	        })
+	        .build();
+		return downLoad(url, targetPath, client);
+	}
+
+	/**
+	 * 下载文件 同步请求，占用主线程，OkHttp一般在安卓上用异步请求做事情的
+	 * <p>
+	 * 用自定义的client下载
+	 * </p>
+	 * @param url
+	 * @param targetPath
+	 * @return 失败返回null
+	 */
+	public static File downLoad(String url, String targetPath, OkHttpClient client) {
 		//创建一个Request
 		final Request request = new Request.Builder()
 	        .url(url)
 	        .build();
 		
 		//new call
-		Call call = client().newCall(request); 
+		Call call = client.newCall(request); 
 		
 		try {
 			Response response = call.execute();
@@ -93,7 +137,7 @@ public class HttpUtils {
 			return null;
 		}
 	}
-
+	
 	/**===================POST请求===========================*/
 	
 	/**

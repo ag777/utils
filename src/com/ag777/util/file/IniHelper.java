@@ -24,7 +24,7 @@ import com.ag777.util.lang.model.Charsets;
  * Ini 文件读写辅助类
  * 
  * @author ag777
- * @version create on 2017年11月03日,last modify at 2017年11月10日
+ * @version create on 2017年11月03日,last modify at 2018年03月15日
  */
 public class IniHelper {
 	/* 区块 */
@@ -744,7 +744,7 @@ public class IniHelper {
 			return value;
 		}
 		public Integer intValue() {
-			return StringUtils.toInteger(value);
+			return StringUtils.toInt(value);
 		}
 		public Long longValue() {
 			return StringUtils.toLong(value);

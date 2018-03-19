@@ -1,9 +1,9 @@
 package com.ag777.util.lang;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.ag777.util.Utils;
+import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.exception.model.ExceptionHelper;
 
 
@@ -14,7 +14,7 @@ import com.ag777.util.lang.exception.model.ExceptionHelper;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2017年12月06日
+ * @version last modify at 2018年01月19日
  */
 public class Console {
 
@@ -82,16 +82,20 @@ public class Console {
 	 * @return
 	 */
 	public static String log(Object obj, Object... objs) {
-		if(objs != null) {
-			return log(obj);
-		}
-		
-		String msg = getMethod();
 		if(isDevMode()) {
-			msg += toJson(Arrays.asList(obj,objs));
+			if(objs == null) {
+				return log(obj);
+			}
+			String msg = getMethod();
+			List<Object> list = ListUtils.of(obj);
+			for (Object item : objs) {
+				list.add(item);
+			}
+			msg += toJson(list);
+			System.out.println(msg);
+			return msg;
 		}
-		System.out.println(msg);
-		return msg;
+		return null;
 	}
 	
 	public static void err(String msg) {
@@ -160,4 +164,5 @@ public class Console {
 		}
 		return result;
 	}
+	
 }

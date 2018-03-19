@@ -15,7 +15,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月06日,last modify at 2017年01月22日
+ * @version create on 2017年06月06日,last modify at 2018年03月19日
  */
 public class RegexUtils {
 
@@ -293,7 +293,7 @@ public class RegexUtils {
 		List<Integer> list = CollectionAndMapUtils.newArrayList();
 		Matcher matcher = getMatcher(src, pattern);
 		while(matcher.find()) {
-			Integer item = ObjectUtils.toInteger(matcher.group());	//转为数字，非数字不计入结果
+			Integer item = ObjectUtils.toInt(matcher.group());	//转为数字，非数字不计入结果
 			if(item != null) {
 				list.add(item);
 			}
@@ -479,8 +479,8 @@ public class RegexUtils {
 	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
 	 * @return
 	 */
-	public static Integer findInteger(String src, String regex, String replacement) {
-		return findInteger(src, getPattern(regex), replacement);
+	public static Integer findInt(String src, String regex, String replacement) {
+		return findInt(src, getPattern(regex), replacement);
 	}
 	
 	/**
@@ -491,14 +491,14 @@ public class RegexUtils {
 	 * @param replacement
 	 * @return
 	 */
-	public static Integer findInteger(String src, Pattern pattern, String replacement) {
+	public static Integer findInt(String src, Pattern pattern, String replacement) {
 		if(src != null && pattern != null) {
 			Matcher matcher = getMatcher(src, pattern);
 
 			if (!matcher.find()) {	//没有匹配到则返回null
 
 			} else if (matcher.groupCount() >= 1) {
-				return ObjectUtils.toInteger(getReplacement(matcher, replacement));
+				return ObjectUtils.toInt(getReplacement(matcher, replacement));
 			}
 
 		} else {	//如果源字符串为null或者正则表达式为null，返回null
@@ -643,7 +643,7 @@ public class RegexUtils {
 			Matcher matcher = getMatcher(src, pattern);
 
 			while(matcher.find()) {
-				Integer item = ObjectUtils.toInteger(getReplacement(matcher, replacement));
+				Integer item = ObjectUtils.toInt(getReplacement(matcher, replacement));
 				result.add(item);
 				if(item != null) {
 					result.add(item);

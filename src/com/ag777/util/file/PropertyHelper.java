@@ -20,7 +20,7 @@ import com.ag777.util.lang.model.Charsets;
  * 针对属性文件的读写操作工具类
  * 
  * @author ag777
- * @version create on 2017年11月10日,last modify at 2017年11月10日
+ * @version create on 2017年11月10日,last modify at 2018年03月15日
  */
 public class PropertyHelper{
 
@@ -472,7 +472,7 @@ public class PropertyHelper{
 		}
 		
 		public Integer getInt() {
-			return StringUtils.toInteger(value);
+			return StringUtils.toInt(value);
 		}
 		
 		public Float getFloat() {

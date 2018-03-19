@@ -14,7 +14,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年12月18日
+ * @version create on 2017年09月22日,last modify at 2018年03月15日
  */
 public class MapUtils {
 
@@ -281,8 +281,8 @@ public class MapUtils {
 	 * @param key
 	 * @return
 	 */
-	public static <K,V>String getString(Map<K, V> map, K key) {
-		return ObjectUtils.toString(
+	public static <K,V>String getStr(Map<K, V> map, K key) {
+		return ObjectUtils.toStr(
 				get(map, key));
 	}
 	
@@ -293,8 +293,8 @@ public class MapUtils {
 	 * @param defaultValue
 	 * @return
 	 */
-	public static <K,V>String getString(Map<K, V> map, K key, String defaultValue) {
-		return ObjectUtils.toString(
+	public static <K,V>String getStr(Map<K, V> map, K key, String defaultValue) {
+		return ObjectUtils.toStr(
 				get(map, key), defaultValue);
 	}
 	
@@ -350,8 +350,8 @@ public class MapUtils {
 	 * @param key
 	 * @return
 	 */
-	public static <K,V>Integer getInteger(Map<K, V> map, K key) {
-		return ObjectUtils.toInteger(
+	public static <K,V>Integer getInt(Map<K, V> map, K key) {
+		return ObjectUtils.toInt(
 				get(map, key));
 	}
 	
@@ -362,8 +362,8 @@ public class MapUtils {
 	 * @param defaultValue
 	 * @return
 	 */
-	public static <K,V>int getInteger(Map<K, V> map, K key, int defaultValue) {
-		return ObjectUtils.toInteger(
+	public static <K,V>int getInt(Map<K, V> map, K key, int defaultValue) {
+		return ObjectUtils.toInt(
 				get(map, key), defaultValue);
 	}
 	

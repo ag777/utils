@@ -15,7 +15,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2017年12月28日
+ * @version create on 2017年09月22日,last modify at 2018年03月15日
  */
 public class ObjectUtils {
 
@@ -31,15 +31,15 @@ public class ObjectUtils {
 	}
 	
 	//--转换
-	public static String toString(Object obj) {
+	public static String toStr(Object obj) {
 		if(obj != null) {
 			return obj.toString();
 		}
 		return null;
 	}
 	
-	public static String toString(Object obj, String defaultValue) {
-		String result = toString(obj);
+	public static String toStr(Object obj, String defaultValue) {
+		String result = toStr(obj);
 		return result!=null?result:defaultValue;
 	}
 	
@@ -75,19 +75,19 @@ public class ObjectUtils {
 		return result!=null?result:defaultValue;
 	}
 	
-	public static Integer toInteger(Object obj) {
+	public static Integer toInt(Object obj) {
 		if(obj != null) {
 			if(obj instanceof Integer) {
 				return (Integer) obj;
 			} else {
-				return StringUtils.toInteger(obj.toString());
+				return StringUtils.toInt(obj.toString());
 			}
 		}
 		return null;
 	}
 	
-	public static int toInteger(Object obj, int defaultValue) {
-		Integer result = toInteger(obj);
+	public static int toInt(Object obj, int defaultValue) {
+		Integer result = toInt(obj);
 		return result!=null?result:defaultValue;
 	}
 	

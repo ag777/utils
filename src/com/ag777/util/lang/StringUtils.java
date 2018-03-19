@@ -14,7 +14,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2017年02月02日
+ * @version last modify at 2018年03月15日
  */
 public class StringUtils {
 
@@ -313,7 +313,7 @@ public class StringUtils {
 	 * @param src
 	 * @return
 	 */
-	public static Integer toInteger(String src) {
+	public static Integer toInt(String src) {
 		try {
 			return Integer.parseInt(src);
 		} catch(Exception ex) {
