@@ -14,11 +14,13 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2018年03月15日
+ * @version last modify at 2018年03月20日
  */
 public class StringUtils {
 
 	private static final Pattern PATTERN_EMPTY = Pattern.compile("^[\\u00A0\\s　]*$");	//空值验证(\\u00A0为ASCII值为160的空格)
+	private static final Pattern PATTERN_EMPTY_LEFT = Pattern.compile("^[\\u00A0\\s　]+");	//空值验证(\\u00A0为ASCII值为160的空格)
+	private static final Pattern PATTERN_EMPTY_RIGHT = Pattern.compile("[\\u00A0\\s　]+$");	//空值验证(\\u00A0为ASCII值为160的空格)
 	
 	/**
 	 * 获得字符串长度（一个汉字算两个字节）
@@ -72,6 +74,23 @@ public class StringUtils {
 			return "";
 		}
 		return src;
+	}
+	
+	/**
+	 * 去除首尾空格
+	 * <p>
+	 * java原生的trim有不完善的地方,无法去除特定的空格
+	 * 该实现为正则"[\\u00A0\\s　]+"首尾匹配出的空格替换为空字符串
+	 * </p>
+	 * @param src
+	 * @return
+	 */
+	public static String trim(String src) {
+		if(src == null) {
+			return null;
+		}
+		src = PATTERN_EMPTY_LEFT.matcher(src).replaceFirst("");
+		return PATTERN_EMPTY_RIGHT.matcher(src).replaceAll("");
 	}
 	
 	/**
