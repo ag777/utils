@@ -11,7 +11,7 @@ import com.ag777.util.lang.model.ThreadStatus;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年01月08日,last modify at 2017年01月10日
+ * @version create on 2018年01月08日,last modify at 2017年03月21日
  */
 public abstract class BasePeriodicTask {
 
@@ -323,8 +323,6 @@ public abstract class BasePeriodicTask {
 					return true;
 				} else if(isStop() || isToStop()){
 					return false;
-				} else {
-					return false;
 				}
 			}
 		} catch (InterruptedException e) {
@@ -357,8 +355,15 @@ public abstract class BasePeriodicTask {
 	
 	/**
 	 * 改变状态为暂停或停止时不睡眠直接进入下一轮循环,每轮循环的头部会对状态做处理
+	 * <p>
+	 * 请注意!!!:
+	 * 	由于线程暂停/停止实际生效是在一次轮询之后，所以在外部调用这个方法会直接导致与预期不符的问题<br/>
+	 *  比如本来调用pause()方法希望线程暂停，然而等带完状态改变后线程并没有真正暂停,<br/>
+	 *  所以该方法改为除非在周期任务末尾调用，外部依然调用Thread.sleep()方法进行睡眠,需要单纯改变状态请调用toPause()
+	 * </p>
 	 * @param time
 	 */
+	@Deprecated
 	public void sleep(long time) throws InterruptedException{
 		/*
 		 * ①每100毫秒sleep一次(剩余时间不足该时间则sleep剩余时间)

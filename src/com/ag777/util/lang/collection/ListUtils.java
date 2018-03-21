@@ -18,7 +18,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年03月19日
+ * @version create on 2017年09月22日,last modify at 2018年03月21日
  */
 public class ListUtils {
 
@@ -609,6 +609,28 @@ public class ListUtils {
 		}
 		for(int i=0;i<array.length;i++) {
 			if(item.equals(array[i])) {
+				return Optional.of(i);
+			}
+		}
+		return Optional.empty();
+	}
+	
+	/**
+	 * 获取一个元素在数据堆中的位置
+	 * <p>
+	 * 	用equals实现比较<br/>
+	 * 	通过调用isPresent()方法直接获取是否在数组中,不需要判断值是否大于-1
+	 * </p>
+	 * @param target	目标元素
+	 * @param objs 数据堆
+	 * @return
+	 */
+	public static <T>Optional<Integer> in(Object target, Object... objs) {
+		if(objs == null || objs==null) {
+			return Optional.empty();
+		}
+		for(int i=0;i<objs.length;i++) {
+			if(target.equals(objs[i])) {
 				return Optional.of(i);
 			}
 		}
