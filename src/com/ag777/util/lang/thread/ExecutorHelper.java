@@ -16,7 +16,7 @@ import com.ag777.util.lang.Console;
  * </p>
  * 
  * @author ag777
- * @version  create on 2017年10月10日,last modify at 2018年01月09日
+ * @version  create on 2017年10月10日,last modify at 2018年03月23日
  */
 public class ExecutorHelper {
 
@@ -41,7 +41,7 @@ public class ExecutorHelper {
 	 * </p>
 	 * @throws InterruptedException
 	 */
-	public void waitFor() {
+	public void waitFor() throws InterruptedException {
 		waitFor(100, TimeUnit.MILLISECONDS);
 	}
 	
@@ -54,7 +54,7 @@ public class ExecutorHelper {
 	 * @param unit
 	 * @throws InterruptedException
 	 */
-	public void waitFor(long timeout, TimeUnit unit) {
+	public void waitFor(long timeout, TimeUnit unit) throws InterruptedException {
 		pool.shutdown();
 		try {
 			while(!pool.awaitTermination(timeout, unit)) {	//如果结束则关闭线程池
@@ -62,7 +62,7 @@ public class ExecutorHelper {
 		} catch (InterruptedException e) {
 //			e.printStackTrace();
 			Console.err("等待线程池关闭失败");
-			throw new RuntimeException(e);
+			throw e;
 		}
 	}
 	
@@ -140,8 +140,31 @@ public class ExecutorHelper {
 		if(pool == null) {
 			return;
 		}
-		waitFor();
-		dispose();
+		try {
+			waitFor();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dispose();
+		}
+	}
+	
+	/**
+	 * 等待任务执行结束并且关闭线程池
+	 */
+	public void waitForDisposeWithException() {
+		if(pool == null) {
+			return;
+		}
+		try {
+			waitFor();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		} finally {
+			dispose();
+		}
 	}
 	
 	/**
