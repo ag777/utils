@@ -11,7 +11,7 @@ import com.ag777.util.lang.model.ThreadStatus;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年01月08日,last modify at 2017年03月21日
+ * @version create on 2018年01月08日,last modify at 2017年03月26日
  */
 public abstract class BasePeriodicTask {
 
@@ -33,6 +33,13 @@ public abstract class BasePeriodicTask {
 			
 			@Override
 			public void run() {
+				
+				try {	//开始时执行
+					onStart();
+				} catch(Exception ex) {
+					ex.printStackTrace();
+				}
+				
 				while(true) {
 					try {
 						if(isPause()) {	//如果状态为已暂停则进入下一轮循环,期间会睡眠一段时间
@@ -49,6 +56,10 @@ public abstract class BasePeriodicTask {
 					} catch(Exception ex) {
 						try{
 							if(onError(ex)) {	//线程发生错误则不继续执行(返回true)
+								//置状态为已停止,并结束该线程
+								synchronized (key_status_change) {
+									status = ThreadStatus.stop;
+								}
 								return;
 							}
 						} catch(InterruptedException e) {
@@ -67,6 +78,12 @@ public abstract class BasePeriodicTask {
 					}
 				}	//while end
 				
+				try {	//结束时执行
+					onFinish();
+				} catch(Exception ex) {
+					ex.printStackTrace();
+				}
+				
 			}	//run end
 		};	//初始化runnable end
 		
@@ -75,7 +92,7 @@ public abstract class BasePeriodicTask {
 	/**
 	 * 这个方法处理线程被interrupt()的情况,返回值false的话代表线程无视打断继续执行
 	 * <p>
-	 * 	将任务状态置为【已停止】并立即终止周期任务的执行
+	 * 	返回true:将任务状态置为【已停止】并立即终止周期任务的执行
 	 * </p>
 	 * 
 	 * @param ex
@@ -86,6 +103,24 @@ public abstract class BasePeriodicTask {
 			status = ThreadStatus.stop;
 		}
 		return true;
+	}
+	
+	/**
+	 * 这个方法在任务开始轮询前调用(在线程start时)
+	 * <p>
+	 * 	请尽量在方法内处理完异常,外部只会捕获异常并进行打印
+	 * </p>
+	 */
+	protected void onStart() {
+	}
+	
+	/**
+	 * 这个方法在任务结束轮询后调用(在线程即将结束前)
+	 * <p>
+	 * 	请尽量在方法内处理完异常,外部只会捕获异常并进行打印
+	 * </p>
+	 */
+	protected void onFinish() {
 	}
 	
 	/**
@@ -360,6 +395,7 @@ public abstract class BasePeriodicTask {
 	 * 	由于线程暂停/停止实际生效是在一次轮询之后，所以在外部调用这个方法会直接导致与预期不符的问题<br/>
 	 *  比如本来调用pause()方法希望线程暂停，然而等带完状态改变后线程并没有真正暂停,<br/>
 	 *  所以该方法改为除非在周期任务末尾调用，外部依然调用Thread.sleep()方法进行睡眠,需要单纯改变状态请调用toPause()
+	 *  加一句,只有调用这句才能保证在sleep时改变状态实时生效,所以请务必在轮询末尾或者在onErr中使用该方法睡眠线程
 	 * </p>
 	 * @param time
 	 */
