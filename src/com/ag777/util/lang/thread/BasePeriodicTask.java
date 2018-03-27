@@ -11,7 +11,7 @@ import com.ag777.util.lang.model.ThreadStatus;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年01月08日,last modify at 2017年03月26日
+ * @version create on 2018年01月08日,last modify at 2017年03月27日
  */
 public abstract class BasePeriodicTask {
 
@@ -369,7 +369,7 @@ public abstract class BasePeriodicTask {
 	/**
 	 * 将状态由正在暂停中置为已暂停
 	 */
-	private void toPause() {
+	protected void toPause() {
 		synchronized (key_status_change) {
 			if(status == ThreadStatus.toPause) {
 				status = ThreadStatus.pause;
@@ -380,7 +380,7 @@ public abstract class BasePeriodicTask {
 	/**
 	 * 将状态为正在停止中置为已停止
 	 */
-	private void toStop() {
+	protected void toStop() {
 		synchronized (key_status_change) {
 			if(status == ThreadStatus.toStop) {
 				status = ThreadStatus.stop;
