@@ -4,11 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
 import com.ag777.util.Utils;
 import com.ag777.util.file.FileUtils;
 import com.ag777.util.http.model.ProgressResponseBody;
@@ -18,7 +19,6 @@ import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.collection.MapUtils;
 import okhttp3.Call;
 import okhttp3.FormBody;
-import okhttp3.FormBody.Builder;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -27,20 +27,22 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.FormBody.Builder;
 
 /**
- * 工具包用的通用方法类(二次封装okhttp3)
+ * 有关http请求的方法类(二次封装okhttp3)
  * <p>
- * 		6/8:尝试通过反射机制参数callback<T>来转换结果为类达成优雅代码的目的,没成功,原因如下:
+ * 		2017/6/8:尝试通过反射机制参数callback<T>来转换结果为类达成优雅代码的目的,没成功,原因如下:
  * 		1.直接用反射从参数中取泛型的类型只实现了一个递归获取的方法（已删）
  * 		2.通过gson的typetoken类来获取T的类型失败，原因应该是java在编译时擦除泛型类型导致的
+ * 		2018/03/30重写
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年03月16日
+ * @version last modify at 2018年03月30日
  */
 public class HttpUtils {
-
+	
 	private static OkHttpClient mOkHttpClient;
 	
 	private HttpUtils() {}
@@ -68,482 +70,145 @@ public class HttpUtils {
 	}
 	
 	/**
-	 * 下载文件 同步请求，占用主线程，OkHttp一般在安卓上用异步请求做事情的
-	 * <p>
-	 * 	用默认client的下载
-	 * </p>
-	 * @param url
-	 * @param targetPath
-	 * @return 失败返回null
-	 */
-	public static File downLoad(String url, String targetPath) {
-		return downLoad(url, targetPath, client());
-	}
-	
-	/**
-	 * 下载文件 同步请求，占用主线程，OkHttp一般在安卓上用异步请求做事情的
-	 * <p>
-	 *  listener用于监听进度
-	 * </p>
-	 * @param url
-	 * @param targetPath
+	 * 构建带进度监听的okhttpClient
+	 * @param builder
 	 * @param listener
 	 * @return
 	 */
-	public static File downLoad(String url, String targetPath, ProgressResponseBody.ProgressListener listener) {
-		OkHttpClient client = client().newBuilder()
-	        .addNetworkInterceptor(new Interceptor() {
-	            @Override
-	            public Response intercept(Chain chain) throws IOException {
-	                Response response = chain.proceed(chain.request());
-	                //这里将ResponseBody包装成我们的ProgressResponseBody
-	                return response.newBuilder()
-	                        .body(new ProgressResponseBody(response.body(),listener))
-	                        .build();
-	            }
-	        })
-	        .build();
-		return downLoad(url, targetPath, client);
+	public static OkHttpClient clientWithProgress(OkHttpClient.Builder builder, ProgressResponseBody.ProgressListener listener) {
+		if(listener != null) {		
+			if(builder == null) {
+				builder = client().newBuilder();
+			}
+			return builder
+		        .addNetworkInterceptor(new Interceptor() {
+		            @Override
+		            public Response intercept(Chain chain) throws IOException {
+		                Response response = chain.proceed(chain.request());
+		                //这里将ResponseBody包装成我们的ProgressResponseBody
+		                return response.newBuilder()
+		                        .body(new ProgressResponseBody(response.body(),listener))
+		                        .build();
+		            }
+		        })
+		        .build();
+		}
+		//监听事件和builder都为null则不重构client
+		return client();
+	}
+	
+	/**===================GET请求===========================*/
+	
+	/**
+	 * get请求
+	 * @param client
+	 * @param url
+	 * @return
+	 */
+	public static Call getByClient(OkHttpClient client, String url) {
+		return getByClient(client, url, null, null);
 	}
 
 	/**
-	 * 下载文件 同步请求，占用主线程，OkHttp一般在安卓上用异步请求做事情的
-	 * <p>
-	 * 用自定义的client下载
-	 * </p>
+	 * get请求
+	 * @param client
 	 * @param url
-	 * @param targetPath
-	 * @return 失败返回null
+	 * @param paramMap
+	 * @return
 	 */
-	public static File downLoad(String url, String targetPath, OkHttpClient client) {
-		//创建一个Request
-		final Request request = new Request.Builder()
-	        .url(url)
-	        .build();
-		
-		//new call
-		Call call = client.newCall(request); 
-		
-		try {
-			Response response = call.execute();
-			if(response.isSuccessful()) {
-				InputStream stream = response.body().byteStream();
-				FileUtils.write(stream, targetPath, true);
-				return new File(targetPath);
-			}
-			throw new Exception(response.code()+"||"+response.message());
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+	public static <K, V>Call getByClient(OkHttpClient client, String url, Map<K, V> paramMap) {
+		return getByClient(client, url, paramMap, null);
+	}
+	
+	/**
+	 * get请求
+	 * @param client
+	 * @param url
+	 * @param paramMap
+	 * @param headerMap
+	 * @return
+	 */
+	public static <K,V>Call getByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap) {
+		return getByClient(client, getGetUrl(url, paramMap), getHeaders(headerMap));
+	}
+	
+	/**
+	 * get请求
+	 * @param client
+	 * @param url
+	 * @param headers
+	 * @return
+	 */
+	public static <K,V>Call getByClient(OkHttpClient client, String url, Headers headers) {
+		Request.Builder builder = new Request.Builder()
+															.url(url);
+		if(headers != null) {
+			builder.headers(headers);
 		}
+		return call(builder.build(), client);
 	}
 	
 	/**===================POST请求===========================*/
 	
 	/**
-	 * post发送json串，返回map
+	 * post请求
+	 * @param client
 	 * @param url
 	 * @param json
 	 * @return
 	 */
-	public static Optional<Map<String, Object>> doPostJSON(String url, String json) {
-		//参数
-		RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-		
-		Request request = new Request.Builder()
-	        .url(url)
-	        .post(requestBody)
-	        .build();
-
-		return callForMap(request);
+	public static Call postJsonByClient(OkHttpClient client, String url, String json) {
+		return postJsonByClient(client, url, json, null);
 	}
 	
 	/**
-	 * post发送json串，返回map
+	 * post请求
+	 * @param client
 	 * @param url
 	 * @param json
 	 * @param headerMap
 	 * @return
 	 */
-	public static Optional<Map<String, Object>> doPostJSON(String url, String json, Map<String, Object> headerMap) {
-		//参数
+	public static <K,V>Call postJsonByClient(OkHttpClient client, String url, String json, Map<K,V> headerMap) {
 		RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-		Request request = new Request.Builder()
-	        .url(url)
-	        .headers(getHeaders(headerMap))
-	        .post(requestBody)
-	        .build();
-
-		return callForMap(request);
+		return postByClient(client, url, requestBody, getHeaders(headerMap));
 	}
 	
 	/**
-	 * post请求获取结果
+	 * post请求
+	 * @param client
 	 * @param url
-	 * @param params
-	 * @return
-	 */
-	public static <K,V>Optional<String> doPost(String url, Map<K, V> params) {
-		
-		 Request request = new Request.Builder()
-	                .url(url)
-	                .post(getRequestBody(params))
-	                .build();
-		 
-		 return call(request);
-	}
-	
-	/**
-	 * post请求获取结果
-	 * @param url
-	 * @param params
+	 * @param paramMap
 	 * @param headerMap
 	 * @return
 	 */
-	public static <K,V>Optional<String> doPost(String url, Map<K, V> params, Map<String, Object> headerMap) {
-		
-		 Request request = new Request.Builder()
-	                .url(url)
-	                .headers(getHeaders(headerMap))
-	                .post(getRequestBody(params))
-	                .build();
-		 
-		 return call(request);
+	public static <K,V>Call postByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap) {
+		return postByClient(client, url, getRequestBody(paramMap), getHeaders(headerMap));
 	}
 	
 	/**
-	 * post请求获取map
+	 * post请求
+	 * @param client
 	 * @param url
-	 * @param params
-	 * @return
-	 */
-	public static <K,V>Optional<Map<String, Object>> doPostForMap(String url, Map<K, V> params) {
-		
-		 Request request = new Request.Builder()
-	                .url(url)
-	                .post(getRequestBody(params))
-	                .build();
-		 
-		 return callForMap(request);
-	}
-	
-	/**
-	 * post请求获取map
-	 * @param url
-	 * @param params
-	 * @param headerMap
-	 * @return
-	 */
-	public static <K,V>Optional<Map<String, Object>> doPostForMap(String url, Map<K, V> params, Map<String, Object> headerMap) {
-		
-		 Request request = new Request.Builder()
-	                .url(url)
-	                .headers(getHeaders(headerMap))
-	                .post(getRequestBody(params))
-	                .build();
-		 
-		 return callForMap(request);
-	}
-	
-	
-	/**
-	 * post请求获取List<Map>
-	 * @param url
-	 * @param params
-	 * @return
-	 */
-	public static Optional<List<Map<String, Object>>> doPostForListMap(String url, Map<String, Object> params) {
-		 Request request = new Request.Builder()
-	                .url(url)
-	                .post(getRequestBody(params))
-	                .build();
-		 
-		return callForListMap(request);
-	}
-	
-	/**
-	 * post请求获取List<Map>
-	 * @param url
-	 * @param params
-	 * @param headerMap
-	 * @return
-	 */
-	public static Optional<List<Map<String, Object>>> doPostForListMap(String url, Map<String, Object> params, Map<String, Object> headerMap) {
-		 Request request = new Request.Builder()
-	                .url(url)
-	                .headers(getHeaders(headerMap))
-	                .post(getRequestBody(params))
-	                .build();
-		 
-		return callForListMap(request);
-	}
-	
-	//--异步
-	/**
-	 * get请求获取结果
-	 * @param url
-	 * @param params
-	 * @param callback
-	 */
-	public static <K, V>void doPost(String url, Map<K, V> params, Callback callback) {
-		 Request request = new Request.Builder()
-	                .url(url)
-	                .post(getRequestBody(params))
-	                .build();
-		call(request, callback);
-	}
-	
-	/**
-	 * get请求获取结果
-	 * @param url
-	 * @param params
-	 * @param headerMap
-	 * @param callback
-	 */
-	public static <K, V>void doPost(String url, Map<K, V> params, Map<String, Object> headerMap, Callback callback) {
-		 Request request = new Request.Builder()
-	                .url(url)
-	                .headers(getHeaders(headerMap))
-	                .post(getRequestBody(params))
-	                .build();
-		call(request, callback);
-	}
-	
-	
-	/**
-	 * post发送json串
-	 * @param url
-	 * @param json
-	 * @return
-	 */
-	public static void doPostJSON(String url, String json, Callback callback) {
-		//参数
-		RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-		
-		Request request = new Request.Builder()
-	        .url(url)
-	        .post(requestBody)
-	        .build();
-
-		call(request, callback);
-	}
-	
-	/**
-	 * post发送json串
-	 * @param url
-	 * @param json
-	 * @param headerMap
-	 * @param callback
-	 */
-	public static void doPostJSON(String url, String json, Map<String, Object> headerMap, Callback callback) {
-		//参数
-		RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-		
-		Request request = new Request.Builder()
-	        .url(url)
-	        .headers(getHeaders(headerMap))
-	        .post(requestBody)
-	        .build();
-
-		call(request, callback);
-	}
-	
-	/**==============GET请求======================*/
-	//--同步
-	/**
-	 * get请求获取结果
-	 * @param url
-	 * @return
-	 */
-	public static Optional<String> doGet(String url) {
-		Request.Builder requestBuilder = new Request.Builder().url(url);
-		return call(requestBuilder.build());
-	}
-	
-	/**
-	 * get请求获取结果
-	 * @param url
-	 * @param headers 请求头
-	 * @return
-	 */
-	public static Optional<String> doGet(String url, Headers headers) {
-		Request.Builder requestBuilder = new Request.Builder().url(url);
-		return call(requestBuilder.headers(headers).build());
-	}
-	
-	/**
-	 * get请求(带参数)
-	 * @param url
-	 * @param params
-	 * @return
-	 */
-	public static Optional<String> doGet(String url, Map<String, Object> params) {
-		return doGet(
-				getGetUrl(url, params));
-	}
-	
-	/**
-	 * get请求(带参数和请求头)
-	 * @param url
-	 * @param params
-	 * @param headerMap
-	 * @return
-	 */
-	public static Optional<String> doGet(String url, Map<String, Object> params, Map<String, Object> headerMap) {
-		return doGet(
-				getGetUrl(url, params), getHeaders(headerMap));
-	}
-	
-	/**
-	 * get请求获取map
-	 * @param url
-	 * @return
-	 */
-	public static Optional<Map<String, Object>> doGetForMap(String url) {
-		Request.Builder requestBuilder = new Request.Builder().url(url);
-		return callForMap(requestBuilder.build());
-	}
-	
-	/**
-	 * get请求获取map
-	 * @param url
+	 * @param body
 	 * @param headers
 	 * @return
 	 */
-	public static Optional<Map<String, Object>> doGetForMap(String url, Headers headers) {
-		Request.Builder requestBuilder = new Request.Builder().url(url);
-		return callForMap(requestBuilder.headers(headers).build());
+	public static Call postByClient(OkHttpClient client, String url, RequestBody body, Headers headers) {
+		Request.Builder builder = new Request.Builder()
+														.url(url)
+														.post(body);
+		if(headers != null) {
+			builder.headers(headers);
+		}
+		return call(builder.build(), client);
 	}
 	
-	/**
-	 * get请求(带参数)获取map
-	 * @param url
-	 * @param params
-	 * @return
-	 */
-	public static Optional<Map<String, Object>> doGetForMap(String url, Map<String, Object> params) {
-		return doGetForMap(
-				getGetUrl(url, params));
-	}
+	/**===================文件上传/下载===========================*/
 	
 	/**
-	 * get请求(带参数和请求头)获取map
-	 * @param url
-	 * @param params
-	 * @param headerMap
-	 * @return
-	 */
-	public static Optional<Map<String, Object>> doGetForMap(String url, Map<String, Object> params, Map<String, Object> headerMap) {
-		return doGetForMap(
-				getGetUrl(url, params),getHeaders(headerMap));
-	}
-	
-	/**
-	 * get请求获取List<Map>
-	 * @param url
-	 * @return
-	 */
-	public static Optional<List<Map<String, Object>>> doGetForListMap(String url) {
-		Request.Builder requestBuilder = new Request.Builder().url(url);
-		return callForListMap(requestBuilder.build());
-	}
-	
-	/**
-	 * get请求获取List<Map>
-	 * @param url
-	 * @param headers
-	 * @return
-	 */
-	public static Optional<List<Map<String, Object>>> doGetForListMap(String url, Headers headers) {
-		Request.Builder requestBuilder = new Request.Builder().url(url);
-		return callForListMap(requestBuilder.build());
-	}
-	
-	/**
-	 * get请求(带参数)获取List<Map>
-	 * @param url
-	 * @param params
-	 * @return
-	 */
-	public static Optional<List<Map<String, Object>>> doGetForListMap(String url, Map<String, Object> params) {
-		return doGetForListMap(
-				getGetUrl(url, params));
-	}
-	
-	/**
-	 * get请求(带参数和请求头)获取List<Map>
-	 * @param url
-	 * @param params
-	 * @param headerMap
-	 * @return
-	 */
-	public static Optional<List<Map<String, Object>>> doGetForListMap(String url, Map<String, Object> params, Map<String, Object> headerMap) {
-		return doGetForListMap(
-				getGetUrl(url, params), getHeaders(headerMap));
-	}
-	
-	//--异步
-	/**
-	 * get请求获取结果
-	 * @param url
-	 * @return
-	 */
-	public static void doGet(String url, Map<String, Object> params, Callback callback) {
-		doGet(
-				getGetUrl(url, params), callback);
-	}
-	
-	/**
-	 * get请求获取结果
-	 * @param url
-	 * @param params
-	 * @param headerMap
-	 * @param callback
-	 */
-	public static void doGet(String url, Map<String, Object> params, Map<String, Object> headerMap, Callback callback) {
-		doGet(
-				getGetUrl(url, params), getHeaders(headerMap), callback);
-	}
-	
-	/**
-	 * get请求获取结果
-	 * @param url
-	 * @param callback
-	 */
-	public static void doGet(String url, Callback callback) {
-		Request.Builder requestBuilder = new Request.Builder().url(url);
-		call(requestBuilder.build(), callback);
-	}
-	
-	/**
-	 * get请求获取结果
-	 * @param url
-	 * @param headers
-	 * @param callback
-	 */
-	public static void doGet(String url, Headers headers, Callback callback) {
-		Request.Builder requestBuilder = new Request.Builder().url(url);
-		call(requestBuilder.headers(headers).build(), callback);
-	}
-	
-	/**
-	 * post上传附件和表单
-	 * @param url
-	 * @param files
-	 * @param params
-	 * @return
-	 * @throws FileNotFoundException 
-	 */
-	public static <K, V>Optional<String> uploadMultiFiles(String url, File[] files, Map<K, V> params) throws FileNotFoundException {
-		
-		Request request = new Request.Builder().url(url)
-										.post(getRequestBody(files, params)).build();
-
-		return call(request);
-	}
-	
-	/**
-	 * post上传附件和表单
+	 * post请求带附件
+	 * @param client
 	 * @param url
 	 * @param files
 	 * @param params
@@ -551,49 +216,213 @@ public class HttpUtils {
 	 * @return
 	 * @throws FileNotFoundException
 	 */
-	public static <K, V>Optional<String> uploadMultiFiles(String url, File[] files, Map<K, V> params, Map<K, V> headerMap) throws FileNotFoundException {
-		
-		Request request = new Request.Builder().url(url)
-				.headers(getHeaders(headerMap))
-				.post(getRequestBody(files, params)).build();
-
-		return call(request);
+	public static <K, V>Call postMultiFilesByClient(OkHttpClient client, String url, File[] files, Map<K, V> paramMap, Map<K, V> headerMap) throws FileNotFoundException {
+		return postByClient(client, url, getRequestBody(files, paramMap), getHeaders(headerMap));
 	}
-
+	
+	/**===================其他方法===========================*/
+	
 	/**
-	 * post上传附件和表单
-	 * @param url
-	 * @param files
-	 * @param params
+	 * 发送请求并得到返回
+	 * @param call
 	 * @return
-	 * @throws FileNotFoundException 
+	 * @throws IOException 
 	 */
-	public static <K, V>Optional<Map<String, Object>> uploadMultiFilesForMap(String url, File[] files, Map<K, V> params, Map<K, V> headerMap) throws FileNotFoundException {
-		Optional<String> result = uploadMultiFiles(url, files, params, headerMap);
-		if(result.isPresent()) {
-			try {
-				return Optional.ofNullable(Utils.jsonUtils().toMap(result.get()));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+	public static Response execute(Call call) throws IOException {
+		return call.execute();
+	}
+	
+	/**
+	 * 从结果中获取字符串
+	 * <p>
+	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
+	 * </p>
+	 * 
+	 * @param response
+	 * @return
+	 * @throws IOException 
+	 */
+	public static Optional<String> responseStr(Response response) throws IOException{
+		if(response.isSuccessful()) {
+			return responseStrForce(response);
+		}
+		throw new IOException(response.code()+"||"+response.message());
+	}
+	
+	/**
+	 * 发送请求并得到返回字符串
+	 * <p>
+	 *  不论返回什么强制获取字符串
+	 * </p>
+	 * 
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
+	public static Optional<String> responseStrForce(Response response) throws IOException{
+		return Optional.ofNullable(response.body().string());
+	}
+	
+	/**
+	 * 发送请求并得到返回字符串
+	 * <p>
+	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
+	 * </p>
+	 * 
+	 * @param response
+	 * @return
+	 * @throws Exception 
+	 */
+	public static Optional<Map<String, Object>> responseMap(Response response) throws IOException {
+		Optional<String> str = responseStr(response);
+		if(str.isPresent()) {
+			return Optional.ofNullable(Utils.jsonUtils().toMap(str.get()));
 		}
 		return Optional.empty();
 	}
 	
-	public static <K, V>Optional<Map<String, Object>> uploadMultiFilesForMap(String url, File[] files, Map<K, V> params) throws FileNotFoundException {
-		Optional<String> result = uploadMultiFiles(url, files, params);
-		if(result.isPresent()) {
-			try {
-				return Optional.ofNullable(Utils.jsonUtils().toMap(result.get()));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+	/**
+	 * 发送请求并得到返回字符串
+	 * <p>
+	 *  不论返回什么强制转化为map
+	 * </p>
+	 * 
+	 * @param response
+	 * @return
+	 * @throws IOException
+	 */
+	public static Optional<Map<String, Object>> responseMapForce(Response response) throws IOException{
+		Optional<String> str = responseStrForce(response);
+		if(str.isPresent()) {
+			return Optional.ofNullable(Utils.jsonUtils().toMap(str.get()));
+		}
+		return Optional.empty();
+	}
+	
+	/**
+	 * 发送请求并转为为javaBean
+	 * <p>
+	 * 只有response.isSuccessful()时才有返回,否则抛出异常
+	 * 	转化失败会也会抛出异常
+	 * </p>
+	 * 
+	 * @param response
+	 * @param clazz
+	 * @return
+	 * @throws Exception
+	 */
+	public static <T>Optional<T> responseObj(Response response, Class<T> clazz) throws Exception {
+		Optional<String> str = responseStr(response);
+		if(str.isPresent()) {
+			return Optional.ofNullable(Utils.jsonUtils().fromJsonWithException(str.get(), clazz));
+		}
+		return Optional.empty();
+	}
+	
+	/**
+	 * 发送请求并转为为javaBean
+	 * <p>
+	 * 不论返回什么强制转化为对象
+	 * 	转化失败会也会抛出异常
+	 * </p>
+	 * 
+	 * @param response
+	 * @param clazz
+	 * @return
+	 * @throws Exception
+	 */
+	public static <T>Optional<T> responseObjForce(Response response, Class<T> clazz) throws Exception {
+		Optional<String> str = responseStrForce(response);
+		if(str.isPresent()) {
+			return Optional.ofNullable(Utils.jsonUtils().fromJsonWithException(str.get(), clazz));
+		}
+		return Optional.empty();
+	}
+	
+	/**
+	 * 发送请求并转为为javaBean
+	 * <p>
+	 * 只有response.isSuccessful()时才有返回,否则抛出异常
+	 * 	转化失败会也会抛出异常
+	 * </p>
+	 * 
+	 * @param response
+	 * @param type
+	 * @return
+	 * @throws Exception
+	 */
+	public static <T>Optional<T> responseObj(Response response, Type type) throws Exception {
+		Optional<String> str = responseStr(response);
+		if(str.isPresent()) {
+			return Optional.ofNullable(Utils.jsonUtils().fromJsonWithException(str.get(), type));
+		}
+		return Optional.empty();
+	}
+	
+	/**
+	 * 发送请求并转为为javaBean
+	 * <p>
+	 * 不论返回什么强制转化为对象
+	 * 	转化失败会也会抛出异常
+	 * </p>
+	 * 
+	 * @param response
+	 * @param type
+	 * @return
+	 * @throws Exception
+	 */
+	public static <T>Optional<T> responseObjForce(Response response, Type type) throws Exception {
+		Optional<String> str = responseStrForce(response);
+		if(str.isPresent()) {
+			return Optional.ofNullable(Utils.jsonUtils().fromJsonWithException(str.get(), type));
+		}
+		return Optional.empty();
+	}
+	
+	/**
+	 * 发送请求并得到返回流
+	 * <p>
+	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
+	 * </p>
+	 * 
+	 * @param response
+	 * @return
+	 * @throws Exception 
+	 */
+	public static InputStream responseInputStream(Response response) throws IOException {
+		if(response.isSuccessful()) {
+			return response.body().byteStream();
+		}
+		throw new IOException(response.code()+"||"+response.message());
+	}
+	
+	/**
+	 * 发送请求，并将请求流保存成本地文件
+	 * <p>
+	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
+	 * </p>
+	 * 
+	 * @param response
+	 * @param targetPath
+	 * @return
+	 * @throws IOException 
+	 * @throws Exception 
+	 */
+	public static Optional<File> responseFile(Response response, String targetPath) throws IOException {
+		InputStream in = responseInputStream(response);
+		File file = FileUtils.write(in, targetPath, true);
+		if(file.exists() && file.isFile()) {
+			return Optional.ofNullable(file);
 		}
 		return Optional.empty();
 	}
 	
 	/**
 	 * 构造请求头
+	 * <p>
+	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
+	 * </p>
+	 * 
 	 * @param headerMap
 	 * @return
 	 */
@@ -611,106 +440,42 @@ public class HttpUtils {
 		return builder.build();
 	}
 	
+	
 	/**
 	 * 请求并获取结果字符串(同步请求)
 	 * @param request
+	 * @param client
 	 * @return
 	 */
-	public static Optional<String> call(Request request) {
-		Call call = client().newCall(request); 
-		try {
-			Response response = call.execute();
-			if(response.isSuccessful()) {
-				return Optional.of(response.body().string());
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	public static Call call(Request request, OkHttpClient client) {
+		if(client == null) {
+			client = client();
 		}
-		return Optional.empty();
+		return client.newCall(request); 
 	}
 	
-	/**
-	 * 请求并获取结果字符串(异步请求)
-	 * @param request
-	 * @return
-	 */
-	public static void call(Request request, final Callback callback) {
-		Call call = client().newCall(request); 
-		try {
-			call.enqueue(new okhttp3.Callback() {
-
-				@Override
-				public void onResponse(Call call, Response response) throws IOException {
-					callback.onSuccess(response.body().string());
-				}
-				
-				@Override
-				public void onFailure(Call call, IOException ioException) {
-					callback.onFailure(ioException);
-				}
-				
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
 	
-	/**
-	 * 请求并获取结果map(同步请求)
-	 * @param request
-	 * @return
-	 * @throws Exception 
-	 */
-	public static Optional<Map<String, Object>> callForMap(Request request) {
-		try {
-			Optional<String> result = call(request);
-			if(result.isPresent()) {
-				return Optional.ofNullable(Utils.jsonUtils().toMap(result.get()));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return Optional.empty();
-	}
+	/**===================内部方法===========================*/
 	
-	/**
-	 * 请求并获取结果List<Map<String, Object>>(同步请求)
-	 * @param request
-	 * @return
-	 */
-	public static Optional<List<Map<String, Object>>> callForListMap(Request request) {
-		try {
-			Optional<String> result = call(request);
-			if(result.isPresent()) {
-				return Optional.ofNullable(Utils.jsonUtils().toListMap(result.get()));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return  Optional.empty();
-	}
-	
-	/**==============内部方法======================*/
 	/**
 	 * 拼接get请求的url及参数
 	 * @param url
 	 * @param params
 	 * @return
 	 */
-	private static String getGetUrl(String url, Map<String, Object> params) {
-		if(params == null || url.isEmpty()) {
+	private static <K, V>String getGetUrl(String url, Map<K, V> params) {
+		if(params == null || StringUtils.isBlank(url)) {
 			return url;
 		}
 		StringBuilder tail = null;;
-		Iterator<String> itor = params.keySet().iterator();
+		Iterator<K> itor = params.keySet().iterator();
 		while(itor.hasNext()) {
 			if(tail == null) {
 				tail = new StringBuilder();
 			} else {
 				tail.append('&');
 			}
-			String key = itor.next();
+			K key = itor.next();
 			String value = params.get(key)==null?"":params.get(key).toString();
 			tail.append(key)
 				.append("=")
@@ -789,13 +554,6 @@ public class HttpUtils {
 		}
 		
 		return  builder.build();
-	}
-	
-	
-	/**==============辅助类======================*/
-	public interface Callback {
-		void onSuccess(String result) throws IOException;
-		void onFailure(Exception exception);
 	}
 	
 }

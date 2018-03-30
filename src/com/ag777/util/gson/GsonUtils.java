@@ -33,7 +33,7 @@ import java.lang.reflect.Type;
  * gson统一管理类，全局保持一个gson对象
  * 
  * @author ag777
- * @version create on 2017年05月27日,last modify at 2018年03月27日
+ * @version create on 2017年05月27日,last modify at 2018年03月30日
  */
 public class GsonUtils implements JsonUtilsInterf{
 	
@@ -203,12 +203,30 @@ public class GsonUtils implements JsonUtilsInterf{
 	 */
 	@Override
 	public Map<String, Object> toMap(String json) {
-		return fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
+		try {
+			return toMapWithException(json);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	@Override
+	public Map<String, Object> toMapWithException(String json) throws Exception {
+		return fromJsonWithException(json, new TypeToken<Map<String, Object>>() {}.getType());
 	}
 	
 	@Override
 	public List<Map<String, Object>> toListMap(String json) {
-		return fromJson(json, new TypeToken<List<Map<String, Object>>>() {}.getType());
+		try {
+			return toListMapWithException(json);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	@Override
+	public List<Map<String, Object>> toListMapWithException(String json)  throws Exception {
+		return fromJsonWithException(json, new TypeToken<List<Map<String, Object>>>() {}.getType());
 	}
 	
 	/**
@@ -261,6 +279,7 @@ public class GsonUtils implements JsonUtilsInterf{
 		}
 	}
 	
+	@Override
 	public <T> T fromJsonWithException(String json,Class<T> classOfT) throws Exception{
 		return gson().fromJson(json, (Type) classOfT);
 	}
@@ -280,6 +299,7 @@ public class GsonUtils implements JsonUtilsInterf{
 		}
 	}
 	
+	@Override
 	public <T> T fromJsonWithException(String json, Type type) throws Exception{
 		return gson().fromJson(json ,type);
 	}
