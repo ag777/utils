@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.net.ConnectException;
 import java.util.Map;
 import java.util.Optional;
 
 import com.ag777.util.http.HttpUtils;
+import com.ag777.util.lang.exception.JsonSyntaxException;
 
 import okhttp3.Call;
 import okhttp3.Response;
@@ -20,7 +22,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2018年03月30日
+ * @version create on 2018年03月30日,last modify at 2018年04月03日
  */
 public class MyCall {
 	
@@ -35,6 +37,10 @@ public class MyCall {
 		return call;
 	}
 	
+	public Response getResponse() {
+		return response;
+	}
+	
 	/**
 	 * 取消请求
 	 */
@@ -44,21 +50,40 @@ public class MyCall {
 		}
 	}
 	
-	public Response executeForResponse() throws IOException {
+	/**
+	 * 获取返回码
+	 * @return
+	 */
+	public Integer code() {
+		if(response == null) {
+			return null;
+		}
+		return response.code();
+	}
+	
+	/**
+	 * 发送请求并获取返回的封装
+	 * @return
+	 * @throws ConnectException
+	 * @throws IOException
+	 */
+	public Response executeForResponse() throws ConnectException, IOException {
 		response = HttpUtils.execute(call);
 		return response;
 	}
 	
+	public Integer executeForCode() throws ConnectException, IOException {
+		executeForResponse();
+		return HttpUtils.responseCode(response);
+	}
+	
 	/**
 	 * 发送请求并得到返回字符串
-	 * <p>
-	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
-	 * </p>
-	 * 
 	 * @return
-	 * @throws IOException 
+	 * @throws ConnectException
+	 * @throws IOException
 	 */
-	public Optional<String> executeForStr() throws IOException{
+	public Optional<String> executeForStr() throws ConnectException, IOException{
 		executeForResponse();
 		return HttpUtils.responseStr(response);
 	}
@@ -70,9 +95,10 @@ public class MyCall {
 	 * </p>
 	 * 
 	 * @return
-	 * @throws IOException
+	 * @throws ConnectException 一般为连不上接口
+	 * @throws IOException 其他异常
 	 */
-	public Optional<String> executeForStrForce() throws IOException {
+	public Optional<String> executeForStrForce() throws ConnectException, IOException {
 		executeForResponse();
 		return HttpUtils.responseStrForce(response);
 	}
@@ -84,9 +110,10 @@ public class MyCall {
 	 * </p>
 	 * 
 	 * @return
-	 * @throws Exception 
+	 * @throws ConnectException 一般为连不上接口
+	 * @throws IOException 其他异常
 	 */
-	public Optional<Map<String, Object>> executeForMap() throws IOException {
+	public Optional<Map<String, Object>> executeForMap() throws ConnectException, IOException {
 		executeForResponse();
 		return HttpUtils.responseMap(response);
 	}
@@ -98,9 +125,10 @@ public class MyCall {
 	 * </p>
 	 * 
 	 * @return
-	 * @throws IOException
+	 * @throws ConnectException 一般为连不上接口
+	 * @throws IOException 其他异常
 	 */
-	public Optional<Map<String, Object>> executeForMapForce() throws IOException{
+	public Optional<Map<String, Object>> executeForMapForce() throws ConnectException, IOException{
 		executeForResponse();
 		return HttpUtils.responseMapForce(response);
 	}
@@ -114,9 +142,11 @@ public class MyCall {
 	 * 
 	 * @param clazz
 	 * @return
-	 * @throws Exception
+	 * @throws ConnectException 
+	 * @throws IOException 
+	 * @throws JsonSyntaxException json转化异常
 	 */
-	public <T>Optional<T> executeForObj(Class<T> clazz) throws Exception {
+	public <T>Optional<T> executeForObj(Class<T> clazz) throws ConnectException, IOException, JsonSyntaxException  {
 		executeForResponse();
 		return HttpUtils.responseObj(response, clazz);
 	}
@@ -130,9 +160,11 @@ public class MyCall {
 	 * 
 	 * @param clazz
 	 * @return
-	 * @throws Exception
+	 * @throws ConnectException 
+	 * @throws IOException 
+	 * @throws JsonSyntaxException json转化异常
 	 */
-	public <T>Optional<T> executeForObjForce(Class<T> clazz) throws Exception {
+	public <T>Optional<T> executeForObjForce(Class<T> clazz) throws ConnectException, IOException, JsonSyntaxException  {
 		executeForResponse();
 		return HttpUtils.responseObjForce(response, clazz);
 	}
@@ -146,9 +178,11 @@ public class MyCall {
 	 * 
 	 * @param type
 	 * @return
-	 * @throws Exception
+	 * @throws ConnectException 
+	 * @throws IOException 
+	 * @throws JsonSyntaxException json转化异常
 	 */
-	public <T>Optional<T> executeForObj(Type type) throws Exception {
+	public <T>Optional<T> executeForObj(Type type) throws ConnectException, IOException, JsonSyntaxException {
 		executeForResponse();
 		return HttpUtils.responseObj(response, type);
 	}
@@ -162,9 +196,11 @@ public class MyCall {
 	 * 
 	 * @param type
 	 * @return
-	 * @throws Exception
+	 * @throws ConnectException 
+	 * @throws IOException 
+	 * @throws JsonSyntaxException json转化异常
 	 */
-	public <T>Optional<T> executeForObjForce(Type type) throws Exception {
+	public <T>Optional<T> executeForObjForce(Type type) throws ConnectException, IOException, JsonSyntaxException  {
 		executeForResponse();
 		return HttpUtils.responseObjForce(response, type);
 	}
@@ -176,9 +212,10 @@ public class MyCall {
 	 * </p>
 	 * 
 	 * @return
-	 * @throws Exception 
+	 * @throws ConnectException 一般为连不上接口
+	 * @throws IOException 其他异常
 	 */
-	public InputStream executeForInputStream() throws IOException {
+	public Optional<InputStream> executeForInputStream() throws ConnectException, IOException {
 		executeForResponse();
 		return HttpUtils.responseInputStream(response);
 	}
@@ -191,9 +228,10 @@ public class MyCall {
 	 * 
 	 * @param targetPath
 	 * @return
-	 * @throws Exception 
+	 * @throws ConnectException 一般为连不上接口
+	 * @throws IOException 其他异常
 	 */
-	public  Optional<File> executeForFile(String targetPath) throws IOException {
+	public  Optional<File> executeForFile(String targetPath) throws ConnectException, IOException {
 		executeForResponse();
 		return HttpUtils.responseFile(response, targetPath);
 	}

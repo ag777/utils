@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.net.ConnectException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -17,7 +18,10 @@ import com.ag777.util.http.model.SSLSocketClient;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.collection.MapUtils;
+import com.ag777.util.lang.exception.JsonSyntaxException;
+
 import okhttp3.Call;
+import okhttp3.Dispatcher;
 import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
@@ -27,7 +31,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.FormBody.Builder;
 
 /**
  * 有关http请求的方法类(二次封装okhttp3)
@@ -39,11 +42,14 @@ import okhttp3.FormBody.Builder;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年03月30日
+ * @version last modify at 2018年04月03日
  */
 public class HttpUtils {
 	
 	private static OkHttpClient mOkHttpClient;
+	
+	public static final MediaType FORM_CONTENT_TYPE
+    									= MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
 	
 	private HttpUtils() {}
 	
@@ -98,15 +104,55 @@ public class HttpUtils {
 	}
 	
 	/**===================GET请求===========================*/
+	/**
+	 * 取消所有请求
+	 * @param client
+	 */
+	public static void cancelAll(OkHttpClient client) {
+		if(client != null) {
+			client.dispatcher().cancelAll();
+		}
+	}
+	
+	/**
+	 * <p>
+	 * 来源:https://www.zhihu.com/question/46147227
+	 * </p>
+	 * 
+	 * @param client
+	 * @param tag
+	 */
+	public static void cancelAll(OkHttpClient client, Object tag) {
+		if(tag == null) {
+			cancelAll(client);
+		}
+		if(client != null) {
+			Dispatcher dispatcher = client.dispatcher();
+		    synchronized (dispatcher){
+		        for (Call call : dispatcher.queuedCalls()) {
+		            if (tag.equals(call.request().tag())) {
+		                call.cancel();
+		            }
+		        }
+		        for (Call call : dispatcher.runningCalls()) {
+		            if (tag.equals(call.request().tag())) {
+		                call.cancel();
+		            }
+		        }
+		    }
+		}
+	}
 	
 	/**
 	 * get请求
 	 * @param client
 	 * @param url
+	 * @param tag
 	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static Call getByClient(OkHttpClient client, String url) {
-		return getByClient(client, url, null, null);
+	public static Call getByClient(OkHttpClient client, String url, Object tag) throws IllegalArgumentException {
+		return getByClient(client, url, null, null, tag);
 	}
 
 	/**
@@ -114,10 +160,12 @@ public class HttpUtils {
 	 * @param client
 	 * @param url
 	 * @param paramMap
+	 * @param tag
 	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static <K, V>Call getByClient(OkHttpClient client, String url, Map<K, V> paramMap) {
-		return getByClient(client, url, paramMap, null);
+	public static <K, V>Call getByClient(OkHttpClient client, String url, Map<K, V> paramMap, Object tag) throws IllegalArgumentException {
+		return getByClient(client, url, paramMap, null, tag);
 	}
 	
 	/**
@@ -126,10 +174,12 @@ public class HttpUtils {
 	 * @param url
 	 * @param paramMap
 	 * @param headerMap
+	 * @param tag
 	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static <K,V>Call getByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap) {
-		return getByClient(client, getGetUrl(url, paramMap), getHeaders(headerMap));
+	public static <K,V>Call getByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
+		return getByClient(client, getGetUrl(url, paramMap), getHeaders(headerMap), tag);
 	}
 	
 	/**
@@ -137,15 +187,14 @@ public class HttpUtils {
 	 * @param client
 	 * @param url
 	 * @param headers
+	 * @param tag
 	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static <K,V>Call getByClient(OkHttpClient client, String url, Headers headers) {
-		Request.Builder builder = new Request.Builder()
-															.url(url);
-		if(headers != null) {
-			builder.headers(headers);
-		}
-		return call(builder.build(), client);
+	public static <K,V>Call getByClient(OkHttpClient client, String url, Headers headers, Object tag) throws IllegalArgumentException {
+		return call(
+				getRequest(url, null, headers, tag),
+				client);
 	}
 	
 	/**===================POST请求===========================*/
@@ -156,9 +205,10 @@ public class HttpUtils {
 	 * @param url
 	 * @param json
 	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static Call postJsonByClient(OkHttpClient client, String url, String json) {
-		return postJsonByClient(client, url, json, null);
+	public static Call postJsonByClient(OkHttpClient client, String url, String json, Object tag) throws IllegalArgumentException {
+		return postJsonByClient(client, url, json, null, tag);
 	}
 	
 	/**
@@ -168,10 +218,11 @@ public class HttpUtils {
 	 * @param json
 	 * @param headerMap
 	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static <K,V>Call postJsonByClient(OkHttpClient client, String url, String json, Map<K,V> headerMap) {
+	public static <K,V>Call postJsonByClient(OkHttpClient client, String url, String json, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
 		RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-		return postByClient(client, url, requestBody, getHeaders(headerMap));
+		return postByClient(client, url, requestBody, getHeaders(headerMap), tag);
 	}
 	
 	/**
@@ -181,9 +232,10 @@ public class HttpUtils {
 	 * @param paramMap
 	 * @param headerMap
 	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static <K,V>Call postByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap) {
-		return postByClient(client, url, getRequestBody(paramMap), getHeaders(headerMap));
+	public static <K,V>Call postByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
+		return postByClient(client, url, getRequestBody(paramMap), getHeaders(headerMap), tag);
 	}
 	
 	/**
@@ -192,16 +244,12 @@ public class HttpUtils {
 	 * @param url
 	 * @param body
 	 * @param headers
+	 * @param tag
 	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static Call postByClient(OkHttpClient client, String url, RequestBody body, Headers headers) {
-		Request.Builder builder = new Request.Builder()
-														.url(url)
-														.post(body);
-		if(headers != null) {
-			builder.headers(headers);
-		}
-		return call(builder.build(), client);
+	public static Call postByClient(OkHttpClient client, String url, RequestBody body, Headers headers, Object tag) throws IllegalArgumentException {
+		return call(getRequest(url, body, headers, tag), client);
 	}
 	
 	/**===================文件上传/下载===========================*/
@@ -214,10 +262,11 @@ public class HttpUtils {
 	 * @param params
 	 * @param headerMap
 	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 * @throws FileNotFoundException
 	 */
-	public static <K, V>Call postMultiFilesByClient(OkHttpClient client, String url, File[] files, Map<K, V> paramMap, Map<K, V> headerMap) throws FileNotFoundException {
-		return postByClient(client, url, getRequestBody(files, paramMap), getHeaders(headerMap));
+	public static <K, V>Call postMultiFilesByClient(OkHttpClient client, String url, File[] files, Map<K, V> paramMap, Map<K, V> headerMap, Object tag) throws IllegalArgumentException, FileNotFoundException {
+		return postByClient(client, url, getRequestBody(files, paramMap), getHeaders(headerMap), tag);
 	}
 	
 	/**===================其他方法===========================*/
@@ -226,10 +275,23 @@ public class HttpUtils {
 	 * 发送请求并得到返回
 	 * @param call
 	 * @return
-	 * @throws IOException 
+	 * @throws ConnectException 一般为连不上接口
+	 * @throws IOException 其他异常
 	 */
-	public static Response execute(Call call) throws IOException {
+	public static Response execute(Call call) throws ConnectException, IOException {
 		return call.execute();
+	}
+	
+	/**
+	 * 从返回体重获取返回码
+	 * @param response
+	 * @return
+	 */
+	public static Integer responseCode(Response response) {
+		if(response == null) {
+			return null;
+		}
+		return response.code();
 	}
 	
 	/**
@@ -243,6 +305,9 @@ public class HttpUtils {
 	 * @throws IOException 
 	 */
 	public static Optional<String> responseStr(Response response) throws IOException{
+		if(response == null) {
+			return Optional.empty();
+		}
 		if(response.isSuccessful()) {
 			return responseStrForce(response);
 		}
@@ -260,6 +325,9 @@ public class HttpUtils {
 	 * @throws IOException
 	 */
 	public static Optional<String> responseStrForce(Response response) throws IOException{
+		if(response == null) {
+			return Optional.empty();
+		}
 		return Optional.ofNullable(response.body().string());
 	}
 	
@@ -274,6 +342,9 @@ public class HttpUtils {
 	 * @throws Exception 
 	 */
 	public static Optional<Map<String, Object>> responseMap(Response response) throws IOException {
+		if(response == null) {
+			return Optional.empty();
+		}
 		Optional<String> str = responseStr(response);
 		if(str.isPresent()) {
 			return Optional.ofNullable(Utils.jsonUtils().toMap(str.get()));
@@ -292,6 +363,9 @@ public class HttpUtils {
 	 * @throws IOException
 	 */
 	public static Optional<Map<String, Object>> responseMapForce(Response response) throws IOException{
+		if(response == null) {
+			return Optional.empty();
+		}
 		Optional<String> str = responseStrForce(response);
 		if(str.isPresent()) {
 			return Optional.ofNullable(Utils.jsonUtils().toMap(str.get()));
@@ -309,9 +383,13 @@ public class HttpUtils {
 	 * @param response
 	 * @param clazz
 	 * @return
-	 * @throws Exception
+	 * @throws IOException 
+	 * @throws JsonSyntaxException json转化异常
 	 */
-	public static <T>Optional<T> responseObj(Response response, Class<T> clazz) throws Exception {
+	public static <T>Optional<T> responseObj(Response response, Class<T> clazz) throws IOException, JsonSyntaxException {
+		if(response == null) {
+			return Optional.empty();
+		}
 		Optional<String> str = responseStr(response);
 		if(str.isPresent()) {
 			return Optional.ofNullable(Utils.jsonUtils().fromJsonWithException(str.get(), clazz));
@@ -329,9 +407,13 @@ public class HttpUtils {
 	 * @param response
 	 * @param clazz
 	 * @return
-	 * @throws Exception
+	 * @throws IOException 
+	 * @throws JsonSyntaxException json转化异常
 	 */
-	public static <T>Optional<T> responseObjForce(Response response, Class<T> clazz) throws Exception {
+	public static <T>Optional<T> responseObjForce(Response response, Class<T> clazz) throws IOException, JsonSyntaxException {
+		if(response == null) {
+			return Optional.empty();
+		}
 		Optional<String> str = responseStrForce(response);
 		if(str.isPresent()) {
 			return Optional.ofNullable(Utils.jsonUtils().fromJsonWithException(str.get(), clazz));
@@ -349,9 +431,13 @@ public class HttpUtils {
 	 * @param response
 	 * @param type
 	 * @return
-	 * @throws Exception
+	 * @throws IOException 
+	 * @throws JsonSyntaxException json转化异常
 	 */
-	public static <T>Optional<T> responseObj(Response response, Type type) throws Exception {
+	public static <T>Optional<T> responseObj(Response response, Type type) throws IOException, JsonSyntaxException {
+		if(response == null) {
+			return Optional.empty();
+		}
 		Optional<String> str = responseStr(response);
 		if(str.isPresent()) {
 			return Optional.ofNullable(Utils.jsonUtils().fromJsonWithException(str.get(), type));
@@ -369,9 +455,13 @@ public class HttpUtils {
 	 * @param response
 	 * @param type
 	 * @return
-	 * @throws Exception
+	 * @throws IOException 
+	 * @throws JsonSyntaxException json转化异常
 	 */
-	public static <T>Optional<T> responseObjForce(Response response, Type type) throws Exception {
+	public static <T>Optional<T> responseObjForce(Response response, Type type) throws IOException, JsonSyntaxException {
+		if(response == null) {
+			return Optional.empty();
+		}
 		Optional<String> str = responseStrForce(response);
 		if(str.isPresent()) {
 			return Optional.ofNullable(Utils.jsonUtils().fromJsonWithException(str.get(), type));
@@ -387,11 +477,14 @@ public class HttpUtils {
 	 * 
 	 * @param response
 	 * @return
-	 * @throws Exception 
+	 * @throws IOException 
 	 */
-	public static InputStream responseInputStream(Response response) throws IOException {
+	public static Optional<InputStream> responseInputStream(Response response) throws IOException  {
+		if(response == null) {
+			return Optional.empty();
+		}
 		if(response.isSuccessful()) {
-			return response.body().byteStream();
+			return Optional.ofNullable(response.body().byteStream());
 		}
 		throw new IOException(response.code()+"||"+response.message());
 	}
@@ -406,13 +499,17 @@ public class HttpUtils {
 	 * @param targetPath
 	 * @return
 	 * @throws IOException 
-	 * @throws Exception 
 	 */
 	public static Optional<File> responseFile(Response response, String targetPath) throws IOException {
-		InputStream in = responseInputStream(response);
-		File file = FileUtils.write(in, targetPath, true);
-		if(file.exists() && file.isFile()) {
-			return Optional.ofNullable(file);
+		if(response == null) {
+			return Optional.empty();
+		}
+		Optional<InputStream> in = responseInputStream(response);
+		if(in.isPresent()) {
+			File file = FileUtils.write(in.get(), targetPath, true);
+			if(file.exists() && file.isFile()) {
+				return Optional.ofNullable(file);
+			}
 		}
 		return Optional.empty();
 	}
@@ -488,19 +585,65 @@ public class HttpUtils {
 	}
 	
 	/**
+	 * 根据参数,请求头等数据构造request
+	 * @param url
+	 * @param body
+	 * @param headers
+	 * @param tag
+	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	private static Request getRequest(String url, RequestBody body, Headers headers, Object tag) throws IllegalArgumentException {
+		Request.Builder builder = new Request.Builder()
+															.url(url);
+		if(body != null) {
+			builder.post(body);
+		}
+		
+		if(headers != null) {
+			builder.headers(headers);
+		}
+		
+		if(tag != null) {
+			builder.tag(tag);
+		}
+		return builder.build();
+	}
+	
+	/**
 	 * 通过参数构建请求体
+	 * <p>
+	 * 注意:值为null的键值对不传输
+	 * 不能用add方法，不然会中文乱码，目前只发现这种写法能解决
+	 * </p>
+	 * 
 	 * @param params
 	 * @return
 	 */
 	private static <K,V> RequestBody getRequestBody(Map<K, V> params) {
-		 Builder builder = new FormBody.Builder();
-		 Iterator<K> itor = params.keySet().iterator();
-		 while(itor.hasNext()) {
-			 K key = itor.next();
-			 V value = params.get(key);
-			 builder.add(key.toString(), value==null?null:value.toString());
+		
+		 if(params != null && !params.isEmpty()) {
+			 StringBuilder sb = null;
+			 Iterator<K> itor = params.keySet().iterator();
+			 while(itor.hasNext()) {
+				 K key = itor.next();
+				 V value = params.get(key);
+				 if(value != null) {
+					 if(sb == null) {
+						 sb = new StringBuilder();
+					 } else {
+						 sb.append("&");
+					 }
+					 sb.append(key.toString()).append("=").append(value.toString());
+				 }
+				 
+			 }
+			 
+			 if(sb != null) {
+				 return RequestBody.create(FORM_CONTENT_TYPE, sb.toString());
+			 }
 		 }
-		 return  builder.build();
+		 return  new FormBody.Builder().build();
 	}
 	
 	/**

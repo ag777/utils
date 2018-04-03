@@ -1,11 +1,11 @@
 package com.ag777.util.gson;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import com.ag777.util.lang.exception.JsonSyntaxException;
 import com.ag777.util.lang.interf.JsonUtilsInterf;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -211,8 +211,12 @@ public class GsonUtils implements JsonUtilsInterf{
 	}
 	
 	@Override
-	public Map<String, Object> toMapWithException(String json) throws Exception {
-		return fromJsonWithException(json, new TypeToken<Map<String, Object>>() {}.getType());
+	public Map<String, Object> toMapWithException(String json) throws JsonSyntaxException {
+		try {
+			return fromJsonWithException(json, new TypeToken<Map<String, Object>>() {}.getType());
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
 	}
 	
 	@Override
@@ -225,8 +229,12 @@ public class GsonUtils implements JsonUtilsInterf{
 	}
 	
 	@Override
-	public List<Map<String, Object>> toListMapWithException(String json)  throws Exception {
-		return fromJsonWithException(json, new TypeToken<List<Map<String, Object>>>() {}.getType());
+	public List<Map<String, Object>> toListMapWithException(String json)  throws JsonSyntaxException {
+		try {
+			return fromJsonWithException(json, new TypeToken<List<Map<String, Object>>>() {}.getType());
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
 	}
 	
 	/**
@@ -280,8 +288,13 @@ public class GsonUtils implements JsonUtilsInterf{
 	}
 	
 	@Override
-	public <T> T fromJsonWithException(String json,Class<T> classOfT) throws Exception{
-		return gson().fromJson(json, (Type) classOfT);
+	public <T> T fromJsonWithException(String json,Class<T> classOfT) throws JsonSyntaxException{
+		try {
+			return gson().fromJson(json, (Type) classOfT);
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
+		
 	}
 	
 	/**
@@ -300,8 +313,12 @@ public class GsonUtils implements JsonUtilsInterf{
 	}
 	
 	@Override
-	public <T> T fromJsonWithException(String json, Type type) throws Exception{
-		return gson().fromJson(json ,type);
+	public <T> T fromJsonWithException(String json, Type type) throws JsonSyntaxException{
+		try {
+			return gson().fromJson(json ,type);
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
 	}
 	
 	/*=================辅助类============*/
@@ -402,7 +419,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	}
 	
 	/*=================测试(示例)方法============*/
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 //		String json = "{\"success\":true, \"a\":20, \"b\":20.0, \"c\":20.1}";
 //		Map<String, Object> map = GsonUtils.get().fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
 //		System.out.println(
@@ -411,20 +428,20 @@ public class GsonUtils implements JsonUtilsInterf{
 //				map.get("c").getClass().getName());
 //		System.out.println(GsonUtils.get().toJson(map));
 		
-		Map<String, Object> map = new HashMap<>();
-		map.put("a", new Date());
-		map.put("b", null);
-		System.out.println(GsonUtils.get().toJson(map));
-		System.out.println(GsonUtils.get()
-				.dateFormat("yyyyMMdd")
-				.serializeNulls()
-				.toJson(map));	//会产生没用的中间产物
-		
-		System.out.println(GsonUtils.custom(
-				GsonUtils.getDefaultBuilder()
-					.setDateFormat("yyyy_MM")
-				).toJson(map));
-		
+//		Map<String, Object> map = new HashMap<>();
+//		map.put("a", new Date());
+//		map.put("b", null);
+//		System.out.println(GsonUtils.get().toJson(map));
+//		System.out.println(GsonUtils.get()
+//				.dateFormat("yyyyMMdd")
+//				.serializeNulls()
+//				.toJson(map));	//会产生没用的中间产物
+//		
+//		System.out.println(GsonUtils.custom(
+//				GsonUtils.getDefaultBuilder()
+//					.setDateFormat("yyyy_MM")
+//				).toJson(map));
+		System.out.println(GsonUtils.get().toMapWithException(null));
 	}
 	
 }

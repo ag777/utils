@@ -42,7 +42,7 @@ public class SSLSocketClient {
                     }  
   
                     @Override  
-                    public X509Certificate[] getAcceptedIssuers() {  
+                    public X509Certificate[] getAcceptedIssuers() {  	//okhttp3.0之前返回的是null,参考资料:https://blog.csdn.net/u014752325/article/details/73185351
                         return new X509Certificate[]{};  
                     }  
                     
