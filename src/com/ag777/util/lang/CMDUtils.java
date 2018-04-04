@@ -16,7 +16,7 @@ import com.ag777.util.lang.model.Charsets;
  * 		执行一个cmd命令会产生三个流（input/output/err），其中一个不处理就有可能产生程序挂起问题，永远不可能得到返回了
  * </p>
  * @author ag777
- * @version last modify at 2018年01月24日
+ * @version last modify at 2018年04月04日
  */
 public class CMDUtils {
 	
@@ -146,7 +146,7 @@ public class CMDUtils {
      * @param cmd 命令内容
 	 * @param basePath	 执行命令的路径
      */
-	public synchronized static boolean doCmd(String cmd, String basePath) {
+	public static boolean doCmd(String cmd, String basePath) {
 		try {
 			Process shellPro = null;
 			if(basePath == null) {

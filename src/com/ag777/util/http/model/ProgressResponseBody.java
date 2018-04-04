@@ -10,16 +10,23 @@ import okio.ForwardingSource;
 import okio.Okio;
 import okio.Source;
 
+/**
+ * okhttp下载文件进度监听辅助类
+ * 
+ * @author ag777
+ * @version last modify at 2018年04月04日
+ */
 public class ProgressResponseBody extends ResponseBody {
 
     //回调接口
     public interface ProgressListener{
         /**
-         * @param bytesRead 已经读取的字节数
+         * @param curRead 已经读取的字节数
          * @param contentLength 响应总长度
+         * @param bytesRead 当前读取字节数
          * @param done 是否读取完毕
          */
-        void update(long bytesRead,long contentLength, float progress, boolean done);
+        void update(long curRead,long contentLength, long bytesRead, boolean done);
     }
 
     private final ResponseBody responseBody;
@@ -57,13 +64,9 @@ public class ProgressResponseBody extends ResponseBody {
                 long bytesRead = super.read(sink,byteCount);
                 totalBytesRead += bytesRead != -1 ? bytesRead : 0;   //不断统计当前下载好的数据
                 long contentLength = responseBody.contentLength();
-                //计算百分比并更新ProgressBar
-                float percent = 0;	//百分比 float类型
-                if(contentLength > 0) {
-                	percent = 100f * bytesRead / contentLength;
-                }
+                
                 //接口回调
-                progressListener.update(totalBytesRead, contentLength, percent, bytesRead == -1);
+                progressListener.update(totalBytesRead, contentLength, bytesRead != -1?bytesRead:0, bytesRead == -1);
                 return bytesRead;
             }
         };
