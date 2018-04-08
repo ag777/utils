@@ -14,7 +14,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2018年03月29日
+ * @version last modify at 2018年04月08日
  */
 public class StringUtils {
 
@@ -247,6 +247,9 @@ public class StringUtils {
 	public static boolean isVersionBefore(String versionCodeOld, String versionCodeNew) {
 		if(versionCodeOld == null || versionCodeOld.trim().isEmpty()) {	//不存在旧版本号肯定是要更新的
 			return true;
+		}
+		if(versionCodeNew == null) {	//不存在新版本肯定也升级不了
+			return false;
 		}
 		if(versionCodeOld.equals(versionCodeNew)) {	//两个版本字符串一致,则说明完全不用升级
 			return false;

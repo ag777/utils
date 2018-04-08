@@ -77,6 +77,9 @@ public class IniHelper {
 		}
 	}
 	
+	public void dispose() {
+		sectionMap = null;
+	}
 	
 	//--取值
 	/**
