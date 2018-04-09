@@ -292,8 +292,8 @@ public class DateUtils {
 	public static void ergodiceDateList(String start_date,String end_date,String template,TimeUnit unit,Viewer<DateTime> viewer) {
 		DateTime start = toDateTime(start_date, template);
 		DateTime end = toDateTime(end_date, template);
-		Assert.illegalArgument(start, "开始时间转换失败:"+start_date);
-		Assert.illegalArgument(end, "结束时间转换失败:"+end_date);
+		Assert.illegalArgument(start, "开始时间参数转换失败:"+start_date);
+		Assert.illegalArgument(end, "结束时间参数转换失败:"+end_date);
 		
 		while(!start.isAfter(end)){
 			if(viewer != null) {
@@ -319,8 +319,8 @@ public class DateUtils {
 		List<String> list = new ArrayList<>();
 		DateTime start = toDateTime(start_date, template_src);
 		DateTime end = toDateTime(end_date, template_src);
-		Assert.illegalArgument(start, "开始时间转换失败:"+start_date);
-		Assert.illegalArgument(end, "结束时间转换失败:"+end_date);
+		Assert.illegalArgument(start, "开始时间参数转换失败:"+start_date);
+		Assert.illegalArgument(end, "结束时间参数转换失败:"+end_date);
 		while(!start.isAfter(end)){
 				
 			if(filter == null || filter.doFilter(new DateTime(start))) {		//过滤 || 建立副本以防影响遍历结果
@@ -348,8 +348,8 @@ public class DateUtils {
 		List<String> list = new ArrayList<>();
 		DateTime start = toDateTime(start_date, template_src);
 		DateTime end = toDateTime(end_date, template_src);
-		Assert.illegalArgument(start, "开始时间转换失败:"+start_date);
-		Assert.illegalArgument(end, "结束时间转换失败:"+end_date);
+		Assert.illegalArgument(start, "开始时间参数转换失败:"+start_date);
+		Assert.illegalArgument(end, "结束时间参数转换失败:"+end_date);
 		while(!start.isAfter(end)){
 			DateTime temp = new DateTime(start);	//建立副本以防影响遍历结果
 			DateTime result = editor.doEdit(temp);
@@ -381,8 +381,8 @@ public class DateUtils {
 		DateTime start = toDateTime(start_date, template_src);
 		DateTime end = toDateTime(end_date, template_src);
 		
-		Assert.illegalArgument(start, "开始时间转换失败:"+start_date);
-		Assert.illegalArgument(end, "结束时间转换失败:"+end_date);
+		Assert.illegalArgument(start, "开始时间参数转换失败:"+start_date);
+		Assert.illegalArgument(end, "结束时间参数转换失败:"+end_date);
 		
 		while(!start.isAfter(end)){
 			DateTime temp = new DateTime(start);	//建立副本以防影响遍历结果
@@ -429,8 +429,8 @@ public class DateUtils {
 		LocalDate start = toLocalDate(startDate, template_src);
 		LocalDate end = toLocalDate(endDate, template_src);
 
-		Assert.illegalArgument(start, "开始时间转换失败:"+startDate);
-		Assert.illegalArgument(end, "结束时间转换失败:"+endDate);
+		Assert.illegalArgument(start, "开始时间参数转换失败:"+startDate);
+		Assert.illegalArgument(end, "结束时间参数转换失败:"+endDate);
 		
 		while(!start.isAfter(end)){
 			
@@ -465,8 +465,8 @@ public class DateUtils {
 		LocalDate start = toLocalDate(startDate, template_src);
 		LocalDate end = toLocalDate(endDate, template_src);
 		
-		Assert.illegalArgument(start, "开始时间转换失败:"+startDate);
-		Assert.illegalArgument(end, "结束时间转换失败:"+endDate);
+		Assert.illegalArgument(start, "开始时间参数转换失败:"+startDate);
+		Assert.illegalArgument(end, "结束时间参数转换失败:"+endDate);
 		
 		while(!start.isAfter(end)){
 			if(isWeeken(start)){	//周末
@@ -500,8 +500,8 @@ public class DateUtils {
 		LocalDate start = toLocalDate(startDate, template_src).dayOfMonth().withMinimumValue();
 		LocalDate end = toLocalDate(endDate, template_src).dayOfMonth().withMinimumValue();
 
-		Assert.illegalArgument(start, "开始时间转换失败:"+startDate);
-		Assert.illegalArgument(end, "结束时间转换失败:"+endDate);
+		Assert.illegalArgument(start, "开始时间参数转换失败:"+startDate);
+		Assert.illegalArgument(end, "结束时间参数转换失败:"+endDate);
 		
 		while(!start.isAfter(end)){
 			list.add(start.toString(template_dest));
@@ -648,8 +648,8 @@ public class DateUtils {
 		LocalDate ldTarget = toLocalDate(target);
 		LocalDate ldCompare = toLocalDate(compare);
 		
-		Assert.illegalArgument(ldTarget, "原始时间转换失败:"+target);
-		Assert.illegalArgument(ldTarget, "对比时间转换失败:"+compare);
+		Assert.illegalArgument(ldTarget, "原始时间参数转换失败:"+target);
+		Assert.illegalArgument(ldTarget, "对比时间参数转换失败:"+compare);
 		
 		return ldTarget.isBefore(ldCompare);
 	}
@@ -664,8 +664,8 @@ public class DateUtils {
 		LocalDate ldTarget = toLocalDate(target);
 		LocalDate ldCompare = toLocalDate(compare);
 
-		Assert.illegalArgument(ldTarget, "原始时间转换失败:"+target);
-		Assert.illegalArgument(ldTarget, "对比时间转换失败:"+compare);
+		Assert.illegalArgument(ldTarget, "原始时间参数转换失败:"+target);
+		Assert.illegalArgument(ldTarget, "对比时间参数转换失败:"+compare);
 		
 		return ldTarget.isAfter(ldCompare);
 	}
@@ -681,8 +681,8 @@ public class DateUtils {
 		DateTime dt1 = toDateTime(target, template);
 		DateTime dt2 = toDateTime(compare, template);
 		
-		Assert.illegalArgument(dt1, "原始时间转换失败:"+target);
-		Assert.illegalArgument(dt2, "对比时间转换失败:"+compare);
+		Assert.illegalArgument(dt1, "原始时间参数转换失败:"+target);
+		Assert.illegalArgument(dt2, "对比时间参数转换失败:"+compare);
 		
 		return isBefore(dt1, dt2);
 	}
@@ -698,8 +698,8 @@ public class DateUtils {
 		DateTime dt1 = toDateTime(target, template);
 		DateTime dt2 = toDateTime(compare, template);
 
-		Assert.illegalArgument(dt1, "原始时间转换失败:"+target);
-		Assert.illegalArgument(dt2, "对比时间转换失败:"+compare);
+		Assert.illegalArgument(dt1, "原始时间参数转换失败:"+target);
+		Assert.illegalArgument(dt2, "对比时间参数转换失败:"+compare);
 		
 		return isNotBefore(dt1, dt2);
 	}
@@ -715,8 +715,8 @@ public class DateUtils {
 		DateTime dt1 = toDateTime(target, template);
 		DateTime dt2 = toDateTime(compare, template);
 		
-		Assert.illegalArgument(dt1, "原始时间转换失败:"+target);
-		Assert.illegalArgument(dt2, "对比时间转换失败:"+compare);
+		Assert.illegalArgument(dt1, "原始时间参数转换失败:"+target);
+		Assert.illegalArgument(dt2, "对比时间参数转换失败:"+compare);
 		
 		return isNotAfter(dt1, dt2);
 	}
@@ -732,8 +732,8 @@ public class DateUtils {
 		DateTime dt1 = toDateTime(target, template);
 		DateTime dt2 = toDateTime(compare, template);
 
-		Assert.illegalArgument(dt1, "原始时间转换失败:"+target);
-		Assert.illegalArgument(dt2, "对比时间转换失败:"+compare);
+		Assert.illegalArgument(dt1, "原始时间参数转换失败:"+target);
+		Assert.illegalArgument(dt2, "对比时间参数转换失败:"+compare);
 		
 		return isAfter(dt1, dt2);
 	}
@@ -745,8 +745,8 @@ public class DateUtils {
 	 * @return
 	 */
 	public static boolean isBefore(DateTime target,DateTime compare) {
-		Assert.illegalArgument(target, "原始时间不能为空");
-		Assert.illegalArgument(compare, "对比时间不能为空");
+		Assert.illegalArgument(target, "原始时间参数不能为空");
+		Assert.illegalArgument(compare, "对比时间参数不能为空");
 		
 		if(target.compareTo(compare) == -1) {	//1 大于 0 等于 -1 小于
 			return true;
@@ -761,8 +761,8 @@ public class DateUtils {
 	 * @return
 	 */
 	public static boolean isAfter(DateTime target,DateTime compare) {
-		Assert.illegalArgument(target, "原始时间不能为空");
-		Assert.illegalArgument(compare, "对比时间不能为空");
+		Assert.illegalArgument(target, "原始时间参数不能为空");
+		Assert.illegalArgument(compare, "对比时间参数不能为空");
 		
 		if(target.compareTo(compare) == 1) {	//1 大于 0 等于 -1 小于
 			return true;
@@ -777,8 +777,8 @@ public class DateUtils {
 	 * @return
 	 */
 	public static boolean isNotBefore(DateTime target,DateTime compare) {
-		Assert.illegalArgument(target, "原始时间不能为空");
-		Assert.illegalArgument(compare, "对比时间不能为空");
+		Assert.illegalArgument(target, "原始时间参数不能为空");
+		Assert.illegalArgument(compare, "对比时间参数不能为空");
 		
 		if(target.compareTo(compare) == -1) {	//1 大于 0 等于 -1 小于
 			return false;
@@ -793,8 +793,8 @@ public class DateUtils {
 	 * @return
 	 */
 	public static boolean isNotAfter(DateTime target,DateTime compare) {
-		Assert.illegalArgument(target, "原始时间不能为空");
-		Assert.illegalArgument(compare, "对比时间不能为空");
+		Assert.illegalArgument(target, "原始时间参数不能为空");
+		Assert.illegalArgument(compare, "对比时间参数不能为空");
 		
 		if(target.compareTo(compare) == 1) {	//1 大于 0 等于 -1 小于
 			return false;
@@ -811,8 +811,8 @@ public class DateUtils {
 	 * @return
 	 */
 	public static int between(DateTime start, DateTime end, TimeUnit unit) {
-		Assert.illegalArgument(start, "开始时间不能为空");
-		Assert.illegalArgument(end, "结束时间不能为空");
+		Assert.illegalArgument(start, "开始时间参数不能为空");
+		Assert.illegalArgument(end, "结束时间参数不能为空");
 		
 		if(unit == TimeUnit.SECOND) {
 			return Seconds.secondsBetween(getMinimumToCopy(start, unit),
@@ -847,8 +847,8 @@ public class DateUtils {
 	 * @return
 	 */
 	public static int between(LocalDate start, LocalDate end, TimeUnit unit) {
-		Assert.illegalArgument(start, "开始时间不能为空");
-		Assert.illegalArgument(end, "结束时间不能为空");
+		Assert.illegalArgument(start, "开始时间参数不能为空");
+		Assert.illegalArgument(end, "结束时间参数不能为空");
 		
 		if(unit == TimeUnit.DAY) {
 			return Days.daysBetween(start,
@@ -881,16 +881,16 @@ public class DateUtils {
 			LocalDate start = toLocalDate(startTime, template);
 			LocalDate end = toLocalDate(endTime, template);
 			
-			Assert.illegalArgument(startTime, "开始时间转换失败:"+startTime);
-			Assert.illegalArgument(endTime, "结束时间转换失败:"+endTime);
+			Assert.illegalArgument(startTime, "开始时间参数转换失败:"+startTime);
+			Assert.illegalArgument(endTime, "结束时间参数转换失败:"+endTime);
 			
 			return between(start, end, unit);
 		}else {
 			DateTime start = toDateTime(startTime, template);	
 			DateTime end = toDateTime(endTime, template);
 			
-			Assert.illegalArgument(startTime, "开始时间转换失败:"+startTime);
-			Assert.illegalArgument(endTime, "结束时间转换失败:"+endTime);
+			Assert.illegalArgument(startTime, "开始时间参数转换失败:"+startTime);
+			Assert.illegalArgument(endTime, "结束时间参数转换失败:"+endTime);
 			
 			return between(start, end, unit);
 		}
@@ -1009,8 +1009,8 @@ public class DateUtils {
 		LocalDate startDate = toLocalDate(startDateStr);
 		LocalDate endDate = toLocalDate(endDateStr);
 		
-		Assert.illegalArgument(startDate, "开始时间转换失败:"+startDateStr);
-		Assert.illegalArgument(endDateStr, "结束时间转换失败:"+endDateStr);
+		Assert.illegalArgument(startDate, "开始时间参数转换失败:"+startDateStr);
+		Assert.illegalArgument(endDateStr, "结束时间参数转换失败:"+endDateStr);
 		
 		long interval = between(startDate, endDate, TimeUnit.DAY);	//首尾日期差
 		long num = 1<<interval;
@@ -1043,8 +1043,8 @@ public class DateUtils {
 		LocalDate startDate = toLocalDate(startDateStr);
 		LocalDate endDate = toLocalDate(endDateStr);
 		
-		Assert.illegalArgument(startDate, "开始时间转换失败:"+startDateStr);
-		Assert.illegalArgument(endDateStr, "结束时间转换失败:"+endDateStr);
+		Assert.illegalArgument(startDate, "开始时间参数转换失败:"+startDateStr);
+		Assert.illegalArgument(endDateStr, "结束时间参数转换失败:"+endDateStr);
 		
 		long interval = between(startDate, endDate, TimeUnit.DAY);	//首尾日期差
 		long num = 1<<(interval*3);
