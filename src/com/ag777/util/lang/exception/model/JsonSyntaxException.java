@@ -1,4 +1,4 @@
-package com.ag777.util.lang.exception;
+package com.ag777.util.lang.exception.model;
 
 /**
  * json语法异常，一般在json转换中使用

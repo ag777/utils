@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.ag777.util.lang.exception.JsonSyntaxException;
+import com.ag777.util.lang.exception.model.JsonSyntaxException;
 import com.ag777.util.lang.interf.JsonUtilsInterf;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

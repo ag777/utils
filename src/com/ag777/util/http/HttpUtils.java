@@ -18,7 +18,7 @@ import com.ag777.util.http.model.SSLSocketClient;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.collection.MapUtils;
-import com.ag777.util.lang.exception.JsonSyntaxException;
+import com.ag777.util.lang.exception.model.JsonSyntaxException;
 
 import okhttp3.Call;
 import okhttp3.Dispatcher;

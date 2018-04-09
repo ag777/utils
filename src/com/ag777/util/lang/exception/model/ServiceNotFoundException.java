@@ -1,4 +1,4 @@
-package com.ag777.util.lang.exception;
+package com.ag777.util.lang.exception.model;
 
 
 /**

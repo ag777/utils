@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.ag777.util.http.HttpUtils;
-import com.ag777.util.lang.exception.JsonSyntaxException;
+import com.ag777.util.lang.exception.model.JsonSyntaxException;
 
 import okhttp3.Call;
 import okhttp3.Response;

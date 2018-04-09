@@ -4,7 +4,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import com.ag777.util.lang.exception.JsonSyntaxException;
+import com.ag777.util.lang.exception.model.JsonSyntaxException;
 
 /**
  * json转化接口
