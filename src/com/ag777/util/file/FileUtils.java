@@ -35,7 +35,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2017年02月05日
+ * @version create on 2017年04月25日,last modify at 2018年04月10日
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = Charsets.UTF_8;
@@ -484,6 +484,9 @@ public class FileUtils {
 
     /**
      * 通过文件路径获取输出流
+     * <p>
+     * 	该方法会帮忙创建文件父路径
+     * </p>
      * 
      * @param filePath
      * @return
@@ -625,7 +628,15 @@ public class FileUtils {
         return fileExists(sPath);
     }
 
+    /**
+     * 判断文件是否存在
+     * @param filePath
+     * @return
+     */
     public static boolean fileExists(String filePath) {
+    	if(filePath == null || filePath.isEmpty()) {
+    		return false;
+    	}
         File file = new File(filePath);
         return file.exists();
     }

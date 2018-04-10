@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.util.Properties;
 import java.util.Set;
 
+
 /**
  * 系统常量获取工具类
  * <p>
@@ -13,10 +14,17 @@ import java.util.Set;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月12日,last modify at 2018年01月04日
+ * @version create on 2017年06月12日,last modify at 2018年04月10日
  */
 public class SystemUtils {
-
+	private static OsType osType;
+	
+	public enum OsType  {
+		UNKOWN,
+		WINDOWS,	
+		LINUX
+	}
+	
 	/**
 	 * 将控制台输出重定向到文件
 	 * 
@@ -186,5 +194,54 @@ public class SystemUtils {
 			String property = sysProperty.getProperty(object.toString());
 			System.out.println(object.toString() + " : " + property);
 		}
+	}
+	
+	
+/*--------------------操作系统相关-------------- */
+	
+	/**
+	 * 获取操作系统的版本
+	 * @return
+	 */
+	public static String osVersion() {
+		return System.getProperty("os.version");
+	}
+	
+	/**
+	 * 获取操作系统名
+	 * @return
+	 */
+	public static String osName() {
+		return System.getProperty("os.name");
+	}
+	
+	/**
+	 * 获取操作系统类型
+	 * @return 
+	 * @return
+	 */
+	public static OsType osType() {
+		if(osType == null) {
+			synchronized (SystemUtils.class) {
+				if(osType == null) {
+					String osName = osName();
+					if(osName.toLowerCase().startsWith("windows")) {
+						osType = OsType.WINDOWS;
+					}else if(osName.toLowerCase().startsWith("linux")) {
+						osType = OsType.LINUX;	//先设置为linux系统
+					} else {	//未知系统
+						osType = OsType.UNKOWN;
+					}
+				}
+			}
+		}
+		return osType;
+	}
+	
+	public static boolean isWindows() {
+		return osType() == OsType.WINDOWS;
+	}
+	public static boolean isLinux() {
+		return osType() == OsType.LINUX;
 	}
 }
