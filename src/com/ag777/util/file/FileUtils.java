@@ -35,7 +35,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2018年04月10日
+ * @version create on 2017年04月25日,last modify at 2018年04月11日
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = Charsets.UTF_8;
@@ -648,16 +648,15 @@ public class FileUtils {
      * @param needCreateParentDir 如果父目录不存在，是否创建父目录
      * @return
      */
-    public static boolean makeDir(String dirPath, boolean needCreateParentDir) {
-        boolean zResult = false;
+    public static void makeDir(String dirPath, boolean needCreateParentDir) {
+    	if(dirPath == null) {
+    		return;
+    	}
         File file = new File(dirPath);
         if (needCreateParentDir)
-            zResult = file.mkdirs(); // 如果父目录不存在，则创建所有必需的父目录
+           file.mkdirs(); // 如果父目录不存在，则创建所有必需的父目录
         else
-            zResult = file.mkdir(); // 如果父目录不存在，不做处理
-        if (!zResult)
-            zResult = file.exists();
-        return zResult;
+           file.mkdir(); // 如果父目录不存在，不做处理
     }
    
     /*----------内部工具-----------*/
