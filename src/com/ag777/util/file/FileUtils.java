@@ -35,7 +35,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2018年04月11日
+ * @version create on 2017年04月25日,last modify at 2018年04月12日
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = Charsets.UTF_8;
@@ -457,7 +457,7 @@ public class FileUtils {
 
     
     /**
-     * 将流写文件
+     * 将流写文件(写)
      * @param is
      * @param filePath
      * @param isOverride
@@ -481,9 +481,10 @@ public class FileUtils {
         	IOUtils.close(out);
         }
     }
-
+    
+    //--输入/输出流
     /**
-     * 通过文件路径获取输出流
+     * 通过文件路径获取输出流(写)
      * <p>
      * 	该方法会帮忙创建文件父路径
      * </p>
@@ -492,17 +493,99 @@ public class FileUtils {
      * @return
      * @throws FileNotFoundException
      */
-    public static OutputStream getOutputStream(String filePath) throws FileNotFoundException {
-    	File file = new File(filePath);
+    public static BufferedOutputStream getBufferedOutputStream(String filePath) throws FileNotFoundException {
+    	return new BufferedOutputStream(getOutputStream(filePath));
+    }
+    
+    /**
+     * 通过文件路径获取输出流(写)
+     * <p>
+     * 	该方法会帮忙创建文件父路径
+     * </p>
+     * 
+     * @param file
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static BufferedOutputStream getBufferedOutputStream(File file) throws FileNotFoundException {
+    	return new BufferedOutputStream(getOutputStream(file));
+    }
+    
+    /**
+     * 通过文件路径获取输出流(写)
+     * <p>
+     * 	该方法会帮忙创建文件父路径
+     * </p>
+     * 
+     * @param filePath
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static FileOutputStream getOutputStream(String filePath) throws FileNotFoundException {
+    	return getOutputStream(new File(filePath));
+    }
+    
+    /**
+     * 通过文件路径获取输出流
+     * <p>
+     * 	该方法会帮忙创建文件父路径
+     * </p>
+     * 
+     * @param file
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static FileOutputStream getOutputStream(File file) throws FileNotFoundException {
     	makeDir(file.getParent(), true);	//创建父路径
     	return new FileOutputStream(file);
     }
 
+    /**
+     * 获取文件输入流(读)
+     * 
+     * @param filePath
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static BufferedInputStream getBufferedInputStream(String filePath) throws FileNotFoundException {
+    	return new BufferedInputStream(getInputStream(filePath));
+    }
+    
+    /**
+     * 获取文件输入流(读)
+     * 
+     * @param file
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static BufferedInputStream getBufferedInputStream(File file) throws FileNotFoundException {
+    	return new BufferedInputStream(getInputStream(file));
+    }
+    
+    /**
+     * 获取文件输入流(读)
+     * 
+     * @param filePath
+     * @return
+     * @throws FileNotFoundException
+     */
     public static FileInputStream getInputStream(String filePath) throws FileNotFoundException {
-    	File file = new File(filePath);
+    	return getInputStream(new File(filePath));
+    }
+    
+    /**
+     * 获取文件输入流(读)
+     * 
+     * @param file
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static FileInputStream getInputStream(File file) throws FileNotFoundException {
     	return new FileInputStream(file);
     }
     
+    
+    //--文件操作
 	/**
 	 * 移动文件或者文件夹,如从e:/aa.txt到e:/tmp/aa.txt, 从e:/aa到e:/bb/aa
 	 * @param source	源文件路径
@@ -744,7 +827,7 @@ public class FileUtils {
 	 * @throws NoSuchAlgorithmException
 	 */
 	public static String md5(String filePath) throws IOException, NoSuchAlgorithmException {
-        FileInputStream fis = null;
+        InputStream fis = null;
         try {
         	fis = getInputStream(filePath);
         	MessageDigest md = MessageDigest.getInstance("MD5");
