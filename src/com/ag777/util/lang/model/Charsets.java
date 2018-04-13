@@ -6,7 +6,7 @@ import java.nio.charset.Charset;
  * 存放编码的类
  * 
  * @author 
- * @version create on 2017年11月03日,last modify at 2017年11月03日
+ * @version create on 2017年11月03日,last modify at 2018年04月13日
  */
 public class Charsets {
 
@@ -32,6 +32,10 @@ public class Charsets {
 
 	/** 中文超大字符集 */
 	public static final String GBK = "GBK";
+	
+	public static Charset of(String encoding) {
+		return Charset.forName(encoding);
+	}
 	
 	public static Charset utf8() {
 		return Charset.forName(UTF_8);
