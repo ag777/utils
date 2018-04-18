@@ -35,7 +35,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2018年04月12日
+ * @version create on 2017年04月25日,last modify at 2018年04月18日
  */
 public class FileUtils {
     private static String FILE_WRITING_ENCODING = Charsets.UTF_8;
@@ -587,18 +587,26 @@ public class FileUtils {
     
     //--文件操作
 	/**
-	 * 移动文件或者文件夹,如从e:/aa.txt到e:/tmp/aa.txt, 从e:/aa到e:/bb/aa
+	 * 移动文件或者文件夹,如从e:/aa/到f:/bb/aa/
+	 * <p>
+	 * 复制文件到目标路径,再删除原文件(覆盖式)
+	 * </p>
+	 * 
 	 * @param source	源文件路径
 	 * @param target	目标路径
+	 * @return 
 	 */
-	public static void move(String source, String target) {
-		File sourceFile = new File(source);
-		File targetFile = new File(target);
-		try {
-			sourceFile.renameTo(targetFile);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+	public static boolean move(String source, String target) {
+		File srcFile = new File(source);
+		if(srcFile.exists()) {
+			if(srcFile.isFile()) {
+				return moveFile(source, target);
+			} else if(srcFile.isDirectory()) {
+				return moveFolder(source, target);
+			}
+		} 
+		Console.err("文件不存在");
+		return false;
 	}
     
 	/**
@@ -743,7 +751,64 @@ public class FileUtils {
     }
    
     /*----------内部工具-----------*/
-    
+    /**
+	 * 移动单个文件
+	 * <p>
+	 * 复制完后删除源文件
+	 * </p>
+	 * 
+	 * @param source	源文件路径
+	 * @param target	目标路径
+	 * @throws IOException
+	 */
+	private static boolean moveFile(String source, String target) {
+		if(copyFile(source, target)) {
+			new File(source).delete();
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 移动文件夹及其子文件夹
+	 * <p>
+	 * 复制完后删除源文件夹
+	 * </p>
+	 * 
+	 * @param source 源文件夹,如: d:/tmp
+	 * @param target 目标文件夹,如: e:/tmp
+	 * @throws IOException
+	 */
+	private static boolean moveFolder(String source, String target) {
+		File f1 = new File(source);
+		File f2 = new File(target);
+		if (!f1.exists()) {
+			Console.err(StringUtils.concat("源文件夹[", source,"]不存在"));
+			return false;
+		}
+		if ((!f2.exists()) && (f1.isDirectory())) {
+			f2.mkdirs();
+		}
+		String[] fileList = f1.list();
+		if (!ListUtils.isEmpty(fileList)) {
+			for (String file : fileList) {
+				String newSource = f1.getAbsolutePath() + File.separator + file;
+				String newTarget = f2.getAbsolutePath() + File.separator + file;
+				if (new File(newSource).isDirectory()) {
+					if(!moveFolder(newSource, newTarget)) {
+						return false;
+					}
+				} else {
+					if(!moveFile(newSource, newTarget)) {
+						Console.err(StringUtils.concat("移动文件[", newSource,"]失败"));
+						return false;
+					}
+				}
+			}
+		}
+		f1.delete();	//删除源文件夹
+		return true;
+	}
 	/**
 	 * 复制单个文件
 	 * 
@@ -799,7 +864,7 @@ public class FileUtils {
 			f2.mkdirs();
 		}
 		String[] fileList = f1.list();
-		if (fileList == null) {
+		if (ListUtils.isEmpty(fileList)) {
 			return true;
 		}
 		for (String file : fileList) {
