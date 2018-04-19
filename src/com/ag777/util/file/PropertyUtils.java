@@ -1,15 +1,19 @@
 package com.ag777.util.file;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+
+import com.ag777.util.lang.IOUtils;
 
 /**
  * 针对属性文件的读写操作工具类
  * 
  * @author ag777
- * @version create on 2015年04月04日,last modify at 2017年08月03日
+ * @version create on 2015年04月04日,last modify at 20218年04月19日
  */
 public class PropertyUtils extends java.util.Properties{
 
@@ -17,13 +21,37 @@ public class PropertyUtils extends java.util.Properties{
 
 	/**
 	 * 加载文件
+	 * <p>
+	 *  默认utf-8编码
+	 * </p>
+	 * 
 	 * @param filePath
 	 * @return
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
 	public PropertyUtils load(String filePath) throws FileNotFoundException, IOException {
-		load(new FileInputStream(new File(filePath)));
+		return load(filePath, StandardCharsets.UTF_8);
+	}
+	
+	/**
+	 * 加载文件
+	 * @param filePath
+	 * @param charset
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public PropertyUtils load(String filePath, Charset charset) throws FileNotFoundException, IOException {
+		BufferedReader reader = null;
+		try {
+			reader = FileNioUtils.getBufferedReader(Paths.get(filePath), charset);
+			load(reader);
+		} catch(IOException ex) {
+			throw ex;
+		} finally {
+			IOUtils.close(reader);
+		}
 		return this;
 	}
 	
