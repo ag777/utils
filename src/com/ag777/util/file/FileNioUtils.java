@@ -30,7 +30,7 @@ import com.ag777.util.lang.IOUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年04月18日,last modify at 2018年04月18日
+ * @version create on 2018年04月18日,last modify at 2018年04月20日
  */
 public class FileNioUtils {
 
@@ -44,7 +44,7 @@ public class FileNioUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public Stream<String> lines(String filePath, Charset charset) throws IOException {
+	public static Stream<String> lines(String filePath, Charset charset) throws IOException {
 		Path path = getPath(filePath);
 		return Files.lines(path, charset);
 	}
@@ -57,7 +57,7 @@ public class FileNioUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public List<String> readLines(String filePath, Charset charset) throws IOException {
+	public static List<String> readLines(String filePath, Charset charset) throws IOException {
 		Path path = getPath(filePath);
 		return Files.readAllLines(path, charset);
 	}
