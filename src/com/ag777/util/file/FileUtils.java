@@ -35,24 +35,24 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2018年04月18日
+ * @version create on 2017年04月25日,last modify at 2018年04月24日
  */
 public class FileUtils {
-    private static String FILE_WRITING_ENCODING = Charsets.UTF_8;
-    private static String FILE_READING_ENCODING = Charsets.UTF_8;
+    private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
+    private static Charset FILE_READING_CHARSET = Charsets.UTF_8;
     private static int BUFFSIZE = 1024;	//一次性读取的字节
 
-    public static String encodingRead() {
-    	return FILE_READING_ENCODING;
+    public static Charset encodingRead() {
+    	return FILE_READING_CHARSET;
     }
-    public static void encodingRead(String encoding) {
-    	FILE_READING_ENCODING = encoding;
+    public static void encodingRead(Charset charset) {
+    	FILE_READING_CHARSET = charset;
     }
-    public static String encodingWrite() {
-    	return FILE_WRITING_ENCODING;
+    public static Charset encodingWrite() {
+    	return FILE_WRITING_CHARSET;
     }
-    public static void encodingWrite(String encoding) {
-    	FILE_WRITING_ENCODING = encoding;
+    public static void encodingWrite(Charset charset) {
+    	FILE_WRITING_CHARSET = charset;
     }
     
     /**
@@ -63,24 +63,25 @@ public class FileUtils {
      * @throws IOException
      */
     public static String readText(String filePath, String lineSparator) throws IOException {
-       return readText(filePath, lineSparator, Charset.forName(FILE_READING_ENCODING));
+       return readText(filePath, lineSparator, FILE_READING_CHARSET);
     }
     
     /**
      * 读取文件内容
      * @param filePath 文件路径
      * @param lineSparator 换行时插入的字符
+     * @param charset
      * @return
      * @throws IOException
      */
-    public static String readText(String filePath, String lineSparator, Charset encoding) throws IOException {
+    public static String readText(String filePath, String lineSparator, Charset charset) throws IOException {
 
         try {
-        	if(encoding == null) {
-        		encoding = Charset.forName(FILE_READING_ENCODING);
+        	if(charset == null) {
+        		charset = FILE_READING_CHARSET;
         	}
         	FileInputStream fis = new FileInputStream(filePath);
-            return IOUtils.readText(fis, lineSparator, encoding.toString());
+            return IOUtils.readText(fis, lineSparator, charset);
         } catch (FileNotFoundException ex) {
             throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
         } catch (IOException ex) {
@@ -95,7 +96,7 @@ public class FileUtils {
      * @throws IOException
      */
     public static List<String> readLines(String filePath) throws IOException {
-    	return readLines(filePath, Charset.forName(FILE_READING_ENCODING));
+    	return readLines(filePath, FILE_READING_CHARSET);
     }
     
     /**
@@ -127,17 +128,17 @@ public class FileUtils {
     /**
      * 读取文件中的所有行
      * @param filePath
-     * @param encoding
+     * @param charset
      * @return
      * @throws IOException
      */
-    public static List<String> readLines(String filePath, Charset encoding) throws IOException {
+    public static List<String> readLines(String filePath, Charset charset) throws IOException {
     	 try {
-    		 if(encoding == null) {
-         		encoding = Charset.forName(FILE_READING_ENCODING);
+    		 if(charset == null) {
+    			 charset = FILE_READING_CHARSET;
          	}
     		 FileInputStream fis = new FileInputStream(filePath);
-    		 return readLines(fis, encoding);
+    		 return readLines(fis, charset);
           } catch (FileNotFoundException ex) {
               throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
           } catch (IOException ex) {
@@ -358,7 +359,7 @@ public class FileUtils {
     	
 		try {
             FileInputStream fis = new FileInputStream(filePath);
-            return IOUtils.find(fis, regex, replacement, FILE_READING_ENCODING);	//关闭流的操作里面都做了
+            return IOUtils.find(fis, regex, replacement, FILE_READING_CHARSET);	//关闭流的操作里面都做了
         } catch (FileNotFoundException ex) {
             throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
         } catch (IOException ex) {
@@ -378,7 +379,7 @@ public class FileUtils {
     	
 		try {
             FileInputStream fis = new FileInputStream(filePath);
-            return IOUtils.findAll(fis, regex, replacement, FILE_READING_ENCODING);
+            return IOUtils.findAll(fis, regex, replacement, FILE_READING_CHARSET);
         } catch (FileNotFoundException ex) {
             throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
         } catch (IOException ex) {
@@ -390,16 +391,16 @@ public class FileUtils {
      * 将内容写入文件
      * @param filePath
      * @param content
-     * @param encoding
+     * @param charset
      * @param isOverride
      * @return
      * @throws IOException
      */
-    public static File write(String filePath, String content, String encoding, boolean isOverride) throws IOException {
-        if (StringUtils.isEmpty(encoding)) {
-            encoding = FILE_WRITING_ENCODING;
+    public static File write(String filePath, String content, Charset charset, boolean isOverride) throws IOException {
+        if (charset == null) {
+        	charset = FILE_WRITING_CHARSET;
         }
-        InputStream is = new ByteArrayInputStream(content.getBytes(encoding));
+        InputStream is = new ByteArrayInputStream(content.getBytes(charset));
         return write(is, filePath, isOverride);
     }
     
@@ -412,9 +413,9 @@ public class FileUtils {
      * @return
      * @throws IOException
      */
-    public static File write(String filePath, List<String> lines, String encoding, boolean isOverride) throws IOException {
+    public static File write(String filePath, List<String> lines, Charset charset, boolean isOverride) throws IOException {
     	String content = ListUtils.toString(lines, SystemUtils.lineSeparator());
-    	return write(filePath, content, encoding, isOverride);
+    	return write(filePath, content, charset, isOverride);
     }
 
     /**

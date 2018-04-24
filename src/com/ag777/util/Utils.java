@@ -1,5 +1,6 @@
 package com.ag777.util;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import com.ag777.util.file.FileUtils;
@@ -15,7 +16,7 @@ import com.ag777.util.lang.interf.JsonUtilsInterf;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月06日,last modify at 2017年09月15日
+ * @version create on 2017年06月06日,last modify at 2018年04月24日
  */
 public class Utils {
 
@@ -44,9 +45,9 @@ public class Utils {
 	 * 定制文件读写编码
 	 * @param encoding
 	 */
-	public static void FileEncoding(String encoding) {
-		FileUtils.encodingRead(encoding);
-		FileUtils.encodingWrite(encoding);
+	public static void FileEncoding(Charset charset) {
+		FileUtils.encodingRead(charset);
+		FileUtils.encodingWrite(charset);
 	}
 	
 	public static JsonUtilsInterf jsonUtils() {

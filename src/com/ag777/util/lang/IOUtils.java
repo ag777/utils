@@ -20,7 +20,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 		有很多操作，比如文件，cmd命令，都是通过操作流来完成目的，为了避免重复及统一代码新建此类
  * </p>
  * @author ag777
- * @version create on 2017年06月16日,last modify at 2017年11月10日
+ * @version create on 2017年06月16日,last modify at 2018年04月24日
  */
 public class IOUtils {
 
@@ -119,11 +119,11 @@ public class IOUtils {
 	 * @return
 	 * @throws IOException 
 	 */
-	public static List<String> readLines(InputStream in, Charset encoding) throws IOException {
+	public static List<String> readLines(InputStream in, Charset charset) throws IOException {
 		
 		try{
 			List<String> lines = new ArrayList<>();
-			BufferedReader procin = new BufferedReader(new InputStreamReader(in, encoding));
+			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
 			String s = null;
 			while((s  = procin.readLine()) !=null){
 				lines.add(s);
@@ -141,12 +141,12 @@ public class IOUtils {
 	 * @param in
 	 * @param regex
 	 * @param replacement
-	 * @param encoding
+	 * @param charset
 	 * @return
 	 * @throws IOException 
 	 */
-	public static List<String> findAll(InputStream in, String regex, String replacement, String encoding) throws IOException {
-		return findAll(in, Pattern.compile(regex), replacement, encoding);
+	public static List<String> findAll(InputStream in, String regex, String replacement, Charset charset) throws IOException {
+		return findAll(in, Pattern.compile(regex), replacement, charset);
 	}
 	
 	/**
@@ -154,14 +154,14 @@ public class IOUtils {
 	 * @param in
 	 * @param pattern
 	 * @param replacement
-	 * @param encoding
+	 * @param charset
 	 * @return
 	 * @throws IOException
 	 */
-	public static List<String> findAll(InputStream in, Pattern pattern, String replacement, String encoding) throws IOException {
+	public static List<String> findAll(InputStream in, Pattern pattern, String replacement, Charset charset) throws IOException {
 		try{
 			List<String> result = new ArrayList<>();
-			BufferedReader procin = new BufferedReader(new InputStreamReader(in, encoding));
+			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
 			String s = null;
 			while((s  = procin.readLine()) !=null){
 				result.addAll(RegexUtils.findAll(s, pattern, replacement));
@@ -179,12 +179,12 @@ public class IOUtils {
 	 * @param in
 	 * @param regex
 	 * @param replacement
-	 * @param encoding
+	 * @param charset
 	 * @return
 	 * @throws IOException 
 	 */
-	public static List<Long> findAllLong(InputStream in, String regex, String replacement, String encoding) throws IOException {
-		return findAllLong(in, Pattern.compile(regex), replacement, encoding);
+	public static List<Long> findAllLong(InputStream in, String regex, String replacement, Charset charset) throws IOException {
+		return findAllLong(in, Pattern.compile(regex), replacement, charset);
 	}
 	
 	/**
@@ -192,14 +192,14 @@ public class IOUtils {
 	 * @param in
 	 * @param pattern
 	 * @param replacement
-	 * @param encoding
+	 * @param charset
 	 * @return
 	 * @throws IOException
 	 */
-	public static List<Long> findAllLong(InputStream in, Pattern pattern, String replacement, String encoding) throws IOException {
+	public static List<Long> findAllLong(InputStream in, Pattern pattern, String replacement, Charset charset) throws IOException {
 		try{
 			List<Long> result = new ArrayList<>();
-			BufferedReader procin = new BufferedReader(new InputStreamReader(in, encoding));
+			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
 			String s = null;
 			while((s  = procin.readLine()) !=null){
 				result.addAll(RegexUtils.findAllLong(s, pattern, replacement));
@@ -217,12 +217,12 @@ public class IOUtils {
 	 * @param in
 	 * @param regex
 	 * @param replacement
-	 * @param encoding
+	 * @param charset
 	 * @return
 	 * @throws IOException 
 	 */
-	public static String find(InputStream in, String regex, String replacement, String encoding) throws IOException {	
-		return find(in, Pattern.compile(regex), replacement, encoding);
+	public static String find(InputStream in, String regex, String replacement, Charset charset) throws IOException {	
+		return find(in, Pattern.compile(regex), replacement, charset);
 	}
 	
 	/**
@@ -230,14 +230,14 @@ public class IOUtils {
 	 * @param in
 	 * @param pattern
 	 * @param replacement
-	 * @param encoding
+	 * @param charset
 	 * @return
 	 * @throws IOException
 	 */
-	public static String find(InputStream in, Pattern pattern, String replacement, String encoding) throws IOException {
+	public static String find(InputStream in, Pattern pattern, String replacement, Charset charset) throws IOException {
 		try{
 			String result = null;
-			BufferedReader procin = new BufferedReader(new InputStreamReader(in, encoding));
+			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
 			String s = null;
 			while((s  = procin.readLine()) !=null){
 				result = RegexUtils.find(s, pattern, replacement);
@@ -258,12 +258,12 @@ public class IOUtils {
 	 * @param in
 	 * @param regex
 	 * @param replacement
-	 * @param encoding
+	 * @param charset
 	 * @return
 	 * @throws IOException 
 	 */
-	public static Long findLong(InputStream in, String regex, String replacement, String encoding) throws IOException {
-		return findLong(in, Pattern.compile(regex), replacement, encoding);
+	public static Long findLong(InputStream in, String regex, String replacement, Charset charset) throws IOException {
+		return findLong(in, Pattern.compile(regex), replacement, charset);
 	}
 	
 	/**
@@ -271,14 +271,14 @@ public class IOUtils {
 	 * @param in
 	 * @param pattern
 	 * @param replacement
-	 * @param encoding
+	 * @param charset
 	 * @return
 	 * @throws IOException
 	 */
-	public static Long findLong(InputStream in, Pattern pattern, String replacement, String encoding) throws IOException {
+	public static Long findLong(InputStream in, Pattern pattern, String replacement, Charset charset) throws IOException {
 		try{
 			Long result = null;
-			BufferedReader procin = new BufferedReader(new InputStreamReader(in, encoding));
+			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
 			String s = null;
 			while((s  = procin.readLine()) !=null){
 				result = RegexUtils.findLong(s, pattern, replacement);

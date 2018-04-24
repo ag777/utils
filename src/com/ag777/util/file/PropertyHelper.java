@@ -20,7 +20,7 @@ import com.ag777.util.lang.model.Charsets;
  * 针对属性文件的读写操作工具类
  * 
  * @author ag777
- * @version create on 2017年11月10日,last modify at 2018年03月15日
+ * @version create on 2017年11月10日,last modify at 2018年04月24日
  */
 public class PropertyHelper{
 
@@ -34,22 +34,22 @@ public class PropertyHelper{
 		this(filePath, null);
 	}
 	
-	public PropertyHelper(String filePath, Charset encoding) throws IOException {
+	public PropertyHelper(String filePath, Charset charset) throws IOException {
 		this();
-		if(encoding == null) {
-			encoding = Charsets.utf8();
+		if(charset == null) {
+			charset = Charsets.UTF_8;
 		}
-		initByLine(FileUtils.readLines(filePath, encoding));
+		initByLine(FileUtils.readLines(filePath, charset));
 	}
 	
 	public PropertyHelper(InputStream is) throws IOException {
-		this(is, Charsets.utf8());
+		this(is, Charsets.UTF_8);
 	}
 	
 	public PropertyHelper(InputStream is, Charset encoding) throws IOException {
 		this();
 		if(encoding == null) {
-			encoding = Charsets.utf8();
+			encoding = Charsets.UTF_8;
 		}
 		initByLine(IOUtils.readLines(is, encoding));
 	}
@@ -363,7 +363,7 @@ public class PropertyHelper{
 	 * @throws IOException
 	 */
 	public void save(String filePath, Charset charset) throws IOException {
-		FileUtils.write(filePath, toLines(), charset.toString(), true);
+		FileUtils.write(filePath, toLines(), charset, true);
 	}
 	
 	/**
@@ -372,7 +372,7 @@ public class PropertyHelper{
 	 * @throws IOException
 	 */
 	public void save(String filePath) throws IOException {
-		save(filePath, Charsets.utf8());
+		save(filePath, Charsets.UTF_8);
 	}
 	
 	/**
@@ -381,7 +381,7 @@ public class PropertyHelper{
 	 * @throws IOException
 	 */
 	public void save(OutputStream os) throws IOException {
-		save(os, Charsets.utf8());
+		save(os, Charsets.UTF_8);
 	}
 	
 	/**

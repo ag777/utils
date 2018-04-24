@@ -12,10 +12,22 @@ import java.nio.file.attribute.BasicFileAttributes;
  * 
  * 
  * @author ag777
- * @version create on 2018年04月18日,last modify at 2018年04月18日
+ * @version create on 2018年04月18日,last modify at 2018年04月24日
  */
 public class DeleteDirectory  implements FileVisitor<Path> {
 	private Path cur;
+	private boolean skipOnErr;	//遇到删不掉的文件跳过
+	
+	public DeleteDirectory() {
+		skipOnErr = false;
+	}
+	
+	/**
+	 * @param skipOnErr 遇到删不掉的文件是否跳过,true为跳过，默认是false
+	 */
+	public DeleteDirectory(boolean skipOnErr) {
+		this.skipOnErr = skipOnErr;
+	}
 	
 	public Path getCurPath() {
 		return cur;
@@ -32,7 +44,7 @@ public class DeleteDirectory  implements FileVisitor<Path> {
 			cur = dir;
 			boolean success = deleteFileByFile((Path) dir);
 
-			if (!success) {	//删除失败
+			if (!success && !skipOnErr) {	//删除失败
 				return FileVisitResult.TERMINATE;
 			}
 		} else {
@@ -59,7 +71,7 @@ public class DeleteDirectory  implements FileVisitor<Path> {
 		cur = file;
 		boolean success = deleteFileByFile((Path) file);
 
-		if (!success) {	//删除失败
+		if (!success && !skipOnErr) {	//删除失败
 			return FileVisitResult.TERMINATE;
 		}
 
@@ -74,6 +86,9 @@ public class DeleteDirectory  implements FileVisitor<Path> {
 	@Override
 	public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
 		cur = file;
+		if(skipOnErr) {	//遇到异常时跳过该文件继续执行删除操作
+			return FileVisitResult.CONTINUE;
+		}
 		return FileVisitResult.TERMINATE;
 	}
 }

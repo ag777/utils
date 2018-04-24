@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
+
 import com.ag777.util.lang.model.Charsets;
 
 
@@ -20,13 +22,13 @@ import com.ag777.util.lang.model.Charsets;
  */
 public class CMDUtils {
 	
-	private static String DEFAULT_ENCODING = Charsets.UTF_8;//"gb2312";
+	private static Charset DEFAULT_CHARSET = Charsets.UTF_8;//"gb2312";
 	
-	public static String getReadEncoding() {
-		return DEFAULT_ENCODING;
+	public static Charset getReadCharset() {
+		return DEFAULT_CHARSET;
 	}
-	public static void setReadEncoding(String encoding) {
-		DEFAULT_ENCODING = encoding;
+	public static void setReadCharset(Charset charset) {
+		DEFAULT_CHARSET = charset;
 	}
 	
 	private CMDUtils() {}
@@ -229,7 +231,7 @@ public class CMDUtils {
 	 */
 	public static List<String> readLines(String cmd, String basePath) throws IOException {
 		InputStream in = doCmdForStream(cmd, basePath);
-		return IOUtils.readLines(in, DEFAULT_ENCODING);
+		return IOUtils.readLines(in, DEFAULT_CHARSET);
 	}
 	
 	/**
@@ -241,7 +243,7 @@ public class CMDUtils {
 	 */
 	public static List<String> readShellLines(String cmd) throws IOException {
 		InputStream in = doShellForStream(cmd);
-		return IOUtils.readLines(in, DEFAULT_ENCODING);
+		return IOUtils.readLines(in, DEFAULT_CHARSET);
 	}
 	
 	/**
@@ -255,7 +257,7 @@ public class CMDUtils {
 	 */
 	public static String readText(String cmd, String basePath, String lineSparator) throws IOException {
 		InputStream in = doCmdForStream(cmd, basePath);
-		return IOUtils.readText(in, lineSparator, DEFAULT_ENCODING);
+		return IOUtils.readText(in, lineSparator, DEFAULT_CHARSET);
 	}
 	
 	/**
@@ -269,7 +271,7 @@ public class CMDUtils {
 	 */
 	public static String readShellText(String cmd, String lineSparator) throws IOException  {
 		InputStream in = doShellForStream(cmd);
-		return IOUtils.readText(in, lineSparator, DEFAULT_ENCODING);
+		return IOUtils.readText(in, lineSparator, DEFAULT_CHARSET);
 	}
 	
 	/**
@@ -287,7 +289,7 @@ public class CMDUtils {
 	 */
 	public static String find(String cmd, String basePath, String regex, String replacement) throws IOException {
 		InputStream in = doCmdForStream(cmd, basePath);
-		return IOUtils.find(in, regex, replacement, DEFAULT_ENCODING);
+		return IOUtils.find(in, regex, replacement, DEFAULT_CHARSET);
 	}
 	
 	/**
@@ -305,7 +307,7 @@ public class CMDUtils {
 	 */
 	public static Long findLong(String cmd, String basePath, String regex, String replacement) throws IOException {
 		InputStream in = doCmdForStream(cmd, basePath);
-		return IOUtils.findLong(in, regex, replacement, DEFAULT_ENCODING);
+		return IOUtils.findLong(in, regex, replacement, DEFAULT_CHARSET);
 	}
 	
 	/**
@@ -323,7 +325,7 @@ public class CMDUtils {
 	 */
 	public static List<String> findAll(String cmd, String basePath, String regex, String replacement) throws IOException {
 		InputStream in = doCmdForStream(cmd, basePath);
-		return IOUtils.findAll(in, regex, replacement, DEFAULT_ENCODING);
+		return IOUtils.findAll(in, regex, replacement, DEFAULT_CHARSET);
 	}
 	
 	/**

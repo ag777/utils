@@ -3,6 +3,7 @@ package com.ag777.util.lang;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 
 import com.ag777.util.lang.model.Charsets;
 
@@ -14,8 +15,6 @@ import com.ag777.util.lang.model.Charsets;
  * @version 
  */
 public class CodingUtils {
-
-	
 
 	/**
 	 * 将字符编码转换成US-ASCII码
@@ -70,14 +69,14 @@ public class CodingUtils {
 	 * 解决网页参数乱码
 	 */
 	public static String HtmlDecoder(String str) throws UnsupportedEncodingException {
-		return URLDecoder.decode(str, Charsets.UTF_8);
+		return URLDecoder.decode(str, Charsets.UTF_8.toString());
 	}
 	
 	/**
 	 * 转换网页参数为乱码
 	 */
 	public static String HtmlEncoder(String str) throws UnsupportedEncodingException {
-		return URLEncoder.encode(str, Charsets.UTF_8);
+		return URLEncoder.encode(str, Charsets.UTF_8.toString());
 	}
 	
 	/**
@@ -90,7 +89,7 @@ public class CodingUtils {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	public static String CodingTest(String str, String newCharset)
+	public static String CodingTest(String str, Charset newCharset)
 			throws UnsupportedEncodingException {
 		if (str != null) {
 			// 用默认字符编码解码字符串。

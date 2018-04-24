@@ -24,7 +24,7 @@ import com.ag777.util.lang.model.Charsets;
  * Ini 文件读写辅助类
  * 
  * @author ag777
- * @version create on 2017年11月03日,last modify at 2018年03月15日
+ * @version create on 2017年11月03日,last modify at 2018年04月04日
  */
 public class IniHelper {
 	/* 区块 */
@@ -36,23 +36,23 @@ public class IniHelper {
 		sectionMap = MapUtils.newLinkedHashMap();
 	}
 	public IniHelper(String filePath) throws IOException {
-		this(filePath, Charsets.utf8());
+		this(filePath, Charsets.UTF_8);
 	}
 	public IniHelper(String filePath, Charset charset) throws IOException {
 		this();
 		if(charset == null) {
-			charset = Charsets.utf8();
+			charset = Charsets.UTF_8;
 		}
 		List<String> lines = FileUtils.readLines(filePath, charset);
 		initByLines(lines);
 	}
 	public IniHelper(InputStream inputStream) throws IOException{
-		this(inputStream, Charsets.utf8());
+		this(inputStream, Charsets.UTF_8);
 	}
 	public IniHelper(InputStream inputStream, Charset charset) throws IOException {
 		this();
 		if(charset == null) {
-			charset = Charsets.utf8();
+			charset = Charsets.UTF_8;
 		}
 		List<String> lines = IOUtils.readLines(inputStream, charset);
 		initByLines(lines);
@@ -543,7 +543,7 @@ public class IniHelper {
 	 * @throws IOException
 	 */
 	public void save(String filePath, Charset charset) throws IOException {
-		FileUtils.write(filePath, toLines(), charset.toString(), true);
+		FileUtils.write(filePath, toLines(), charset, true);
 	}
 	
 	/**
@@ -552,7 +552,7 @@ public class IniHelper {
 	 * @throws IOException
 	 */
 	public void save(String filePath) throws IOException {
-		save(filePath, Charsets.utf8());
+		save(filePath, Charsets.UTF_8);
 	}
 	
 	/**
@@ -561,7 +561,7 @@ public class IniHelper {
 	 * @throws IOException
 	 */
 	public void save(OutputStream os) throws IOException {
-		save(os, Charsets.utf8());
+		save(os, Charsets.UTF_8);
 	}
 	
 	/**

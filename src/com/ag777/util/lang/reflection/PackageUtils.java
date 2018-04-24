@@ -49,7 +49,7 @@ public class PackageUtils {
         for (URL url : dirs) {
             String protocol = url.getProtocol();
             if ("file".equals(protocol)) {
-                findResourceInDirPackage(packagePath, URLDecoder.decode(url.getFile(), Charsets.UTF_8), resources);
+                findResourceInDirPackage(packagePath, URLDecoder.decode(url.getFile(), Charsets.UTF_8.toString()), resources);
             } else if ("jar".equals(protocol)) {
                 findResourceInJarPackage(url, packageName, packageDirName, recursive, resources);
             }
@@ -93,7 +93,7 @@ public class PackageUtils {
         for (URL url : dirs) {
             String protocol = url.getProtocol();
             if ("file".equals(protocol)) {
-                findClassesInDirPackage(packagePath, included, excluded, URLDecoder.decode(url.getFile(), Charsets.UTF_8),
+                findClassesInDirPackage(packagePath, included, excluded, URLDecoder.decode(url.getFile(), Charsets.UTF_8.toString()),
                         recursive, classes);
             } else if ("jar".equals(protocol)) {
                 findClassesInJarPackage(url, packageName, included, excluded, packageDirName, recursive, classes);

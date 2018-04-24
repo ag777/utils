@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 import com.ag777.util.file.model.DeleteDirectory;
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.IOUtils;
+import com.ag777.util.lang.collection.ListUtils;
 
 /**
  * 文件操作工具类
@@ -30,11 +31,20 @@ import com.ag777.util.lang.IOUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年04月18日,last modify at 2018年04月20日
+ * @version create on 2018年04月18日,last modify at 2018年04月24日
  */
 public class FileNioUtils {
 
 	private FileNioUtils() {}
+	
+	/**
+	 * 判断文件是否存在
+	 * @param filePath
+	 * @return
+	 */
+	public static boolean exists(String filePath) {
+		return Files.exists(getPath(filePath));
+	}
 	
 	//--读写
 	/**
@@ -64,16 +74,75 @@ public class FileNioUtils {
 	
 	/**
 	 * 将所有行写出到文件
+	 * <p>
+	 * StandardOpenOption.CREATE:文件不存在时创建文件
+	 * StandardOpenOption.TRUNCATE_EXISTING:文件存在时先清空文件内容
+	 * </p>
+	 * 
 	 * @param filePath
 	 * @param lines
 	 * @param chartset
 	 * @return
 	 * @throws IOException
 	 */
-	public static Path write(String filePath, List<String> lines, Charset chartset) throws IOException {
+	public static Path write(String filePath, List<String> lines, Charset charset) throws IOException {
 		Path path = getPath(filePath);
 		makeDir(path);
-		return Files.write(path, lines, chartset, StandardOpenOption.CREATE_NEW);
+		return Files.write(path, lines, charset, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+	}
+	
+	/**
+	 * 在文件末尾追加字符串
+	 * @param filePath
+	 * @param str
+	 * @param charset
+	 * @throws IOException
+	 */
+	public static void append(String filePath, String str, Charset charset) throws IOException {
+		if(str == null) {
+			return;
+		}
+		Path path = getPath(filePath);
+		BufferedWriter writer = null;
+		try {
+			writer = getBufferedWriter(path, charset, true);
+			writer.write(str);
+		} catch (IOException ex) {
+			throw ex;
+		} finally {
+			IOUtils.close(writer);
+		}
+		
+	}
+	
+	/**
+	 * 在文件末尾追加新行
+	 * @param filePath
+	 * @param lines
+	 * @param charset
+	 * @throws IOException
+	 */
+	public static void append(String filePath, List<String> lines, Charset charset) throws IOException {
+		if(ListUtils.isEmpty(lines)) {
+			return;
+		}
+		Path path = getPath(filePath);
+		BufferedWriter writer = null;
+		try {
+			for (String line : lines) {
+				if(writer == null) {
+					writer = getBufferedWriter(path, charset, true);
+				} else {
+					writer.newLine();
+				}
+				writer.write(line);
+			}
+		} catch (IOException ex) {
+			throw ex;
+		} finally {
+			IOUtils.close(writer);
+		}
+		
 	}
 	
 	/**
@@ -106,6 +175,7 @@ public class FileNioUtils {
 	/**
 	 * 删除文件或文件件
 	 * <p>
+	 * 文件不存在返回true
 	 * 遇到删除不了的文件则停止删除
 	 * </p>
 	 * 
@@ -113,15 +183,57 @@ public class FileNioUtils {
 	 * @return
 	 */
 	public static boolean delete(String filePath) {
-		Path src = getPath(filePath);
-		if(!Files.exists(src)) {	//文件不存在
+		return delete(filePath, false);
+	}
+	
+	/**
+	 * 删除文件或文件件
+	 * <p>
+	 * 文件不存在返回true
+	 * 遇到删除不了的文件则停止删除
+	 * </p>
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public static boolean delete(Path path) {
+		return delete(path, false);
+	}
+	
+	/**
+	 * 删除文件或文件件
+	 * <p>
+	 * 文件不存在返回true
+	 * </p>
+	 * 
+	 * @param filePath
+	 * @param skipOnErr 在遇到删不掉的文件时是否跳过
+	 * @return
+	 */
+	public static boolean delete(String filePath, boolean skipOnErr) {
+		Path path = getPath(filePath);
+		return delete(path, skipOnErr);
+	}
+	
+	/**
+	 * 删除文件或文件件
+	 * <p>
+	 * 文件不存在返回true
+	 * </p>
+	 * 
+	 * @param path
+	 * @param skipOnErr 在遇到删不掉的文件时是否跳过
+	 * @return
+	 */
+	public static boolean delete(Path path, boolean skipOnErr) {
+		if(!Files.exists(path)) {	//文件不存在
 			return true;
 		}
-		if(Files.isDirectory(src)) {
-			DeleteDirectory walker = new DeleteDirectory();
+		if(Files.isDirectory(path)) {
+			DeleteDirectory walker = new DeleteDirectory(skipOnErr);
 			try {
 				
-				Files.walkFileTree(src, walker);
+				Files.walkFileTree(path, walker);
 				return true;
 			} catch (IOException e) {
 				if(walker != null) {
@@ -131,7 +243,7 @@ public class FileNioUtils {
 			}
 		} else {
 			try {
-				Files.delete(src);
+				Files.delete(path);
 				return true;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -143,7 +255,10 @@ public class FileNioUtils {
 	
 	/**
 	 * 移动文件或者文件夹,如从e:/aa/到f:/bb/aa/
-	 * 
+	 * <p>
+     * StandardCopyOption.REPLACE_EXISTING:如果存在则覆盖
+     * </p>
+     * 
 	 * @param source	源文件路径
 	 * @param target	目标路径
 	 * @return 
@@ -167,6 +282,7 @@ public class FileNioUtils {
 	 * <p>
 	 * 注意复制目录是将该目录底下的文件复制到目标目录下，
 	 * 比如要将/usr/a/目录移到/b/a/路径下要写copy("/usr/a/", "/b/a/");
+	 * StandardCopyOption.REPLACE_EXISTING:如果存在则覆盖
 	 * </p>
 	 * 
 	 * @param source	源文件路径
@@ -191,9 +307,31 @@ public class FileNioUtils {
 	//--输入/输出流
 	//-写
 	/**
+	 * 获取写出器
+	 * <p>
+	 * StandardOpenOption.CREATE:文件不存在时创建文件
+	 * StandardOpenOption.APPEND 向文件末尾追加内容
+	 * </p>
+	 * 
+	 * @param path
+	 * @param charset
+	 * @param isAppend
+	 * @return
+	 * @throws IOException
+	 */
+	public static BufferedWriter getBufferedWriter(Path path, Charset charset, boolean isAppend) throws IOException {
+		if(!isAppend) {
+			return getBufferedWriter(path, charset);
+		}
+    	return Files.newBufferedWriter(path, charset,
+    			StandardOpenOption.CREATE, StandardOpenOption.APPEND); // 追加
+    }
+	/**
 	 * 通过文件路径获取写出(写)
      * <p>
      * 	该方法会帮忙创建文件父路径
+     * StandardOpenOption.CREATE:文件不存在时创建文件
+     * StandardOpenOption.TRUNCATE_EXISTING:文件存在时清空文件
      * </p>
      * 
 	 * @param path
@@ -201,8 +339,8 @@ public class FileNioUtils {
 	 * @return
 	 * @throws IOException
 	 */
-    public static BufferedWriter getBufferedOutputStream(Path path, Charset charset) throws IOException {
-    	return Files.newBufferedWriter(path, charset);
+    public static BufferedWriter getBufferedWriter(Path path, Charset charset) throws IOException {
+    	return Files.newBufferedWriter(path, charset, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
     
     /**
@@ -321,6 +459,10 @@ public class FileNioUtils {
     /*===================内部方法==================*/
     /**
      * 移动单个文件
+     * <p>
+     * StandardCopyOption.REPLACE_EXISTING:如果存在则覆盖
+     * </p>
+     * 
      * @param source
      * @param target
      * @return
@@ -376,6 +518,9 @@ public class FileNioUtils {
     
     /**
 	 * 复制单个文件
+	 * <p>
+	 * StandardCopyOption.REPLACE_EXISTING:如果存在则覆盖
+	 * </p>
 	 * 
 	 * @param source	源文件路径
 	 * @param target	目标路径
@@ -434,4 +579,11 @@ public class FileNioUtils {
 		return Paths.get(filePath);
 	}
 	
+	public static void main(String[] args) throws IOException {
+//		append("e:\\a.txt", ListUtils.of("a","b啊啊啊"), StandardCharsets.UTF_8);
+//		write("e:\\a.txt", ListUtils.of("c","d啊啊啊"), StandardCharsets.UTF_8);
+		BufferedInputStream in = getBufferedInputStream("e:\\base.txt");
+		BufferedOutputStream out = getBufferedOutputStream("e:\\b\\a.txt");
+		IOUtils.write(in, out, 1024);
+	}
 }
