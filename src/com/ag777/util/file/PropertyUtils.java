@@ -13,7 +13,7 @@ import com.ag777.util.lang.IOUtils;
  * 针对属性文件的读写操作工具类
  * 
  * @author ag777
- * @version create on 2015年04月04日,last modify at 20218年04月19日
+ * @version create on 2015年04月04日,last modify at 20218年04月25日
  */
 public class PropertyUtils extends java.util.Properties{
 
@@ -55,11 +55,11 @@ public class PropertyUtils extends java.util.Properties{
 		return this;
 	}
 	
-	public String get(String key) {
+	public String getStr(String key) {
 		return getProperty(key);
 	}
 	
-	public String get(String key, String defaultValue) {
+	public String getStr(String key, String defaultValue) {
 		return getProperty(key, defaultValue);
 	}
 	

@@ -17,10 +17,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import com.ag777.util.db.connection.MysqlConnection;
+import com.ag777.util.db.connection.OracleConnection;
+import com.ag777.util.db.connection.SqlServerConnection;
+import com.ag777.util.db.connection.SqliteConnection;
 import com.ag777.util.db.interf.DBTransactionInterf;
 import com.ag777.util.db.model.ColumnPojo;
 import com.ag777.util.db.model.DBIPojo;
+import com.ag777.util.db.model.DbDriver;
 import com.ag777.util.db.model.DbPojo;
+import com.ag777.util.db.model.DbPropertieKey;
+import com.ag777.util.db.model.OracleRole;
 import com.ag777.util.db.model.TypePojo;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.reflection.ReflectionUtils;
@@ -29,19 +37,14 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2018年01月29日
+ * @version create on 2017年07月28日,last modify at 2018年04月25日
  */
 public class DbHelper {
-
-	public static final String DRIVER_CLASS_NAME_MYSQL = "com.mysql.jdbc.Driver";
-	public static final String DRIVER_CLASS_NAME_ORACLE = "oracle.jdbc.driver.OracleDriver";
-	public static final String DRIVER_CLASS_NAME_SQLITE = "org.sqlite.JDBC";
 	
 	//控制控制台输出开关
 	private static boolean MODE_DEBUG = true;
 	//执行完sql后关闭数据库连接,一旦开启则该工具类不可重复使用(连接不存在了)
 	private static boolean MODE_CLOSE_AFTER_EXECUTE = false;
-	private static String URL_TAIL = "?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull";
 
 	public static void setModeDebug(boolean debugMode) {
 		DbHelper.MODE_DEBUG = debugMode;
@@ -79,66 +82,84 @@ public class DbHelper {
 	
 	//--mysql
 	public static DbHelper connectMysql(String ip, int port, String dbName, String user, String password) throws ClassNotFoundException, SQLException {
-		return connectMysql(getDbUrlString(ip, port, dbName, DRIVER_CLASS_NAME_MYSQL), user, password);
+		return new DbHelper(
+				MysqlConnection.connect(ip, port, user, password, dbName));
 	}
 	
 	public static DbHelper connectMysql(String url,String user, String password) throws ClassNotFoundException, SQLException {
-		return connectDB(url, user, password, DRIVER_CLASS_NAME_MYSQL);
+		return new DbHelper(
+				MysqlConnection.connect(url, user, password, null));
     }
 	
 	//--oracle
-	public static DbHelper connectOracle(String ip, int port, String dbName, String user, String password) throws ClassNotFoundException, SQLException {
-		return connectOracle(getDbUrlString(ip, port, dbName, DRIVER_CLASS_NAME_ORACLE), user, password);
+	public static DbHelper connectOracle(String ip, int port, String dbName, String user, String password, OracleRole role) throws ClassNotFoundException, SQLException {
+		return new DbHelper(
+				OracleConnection.connect(ip, port, user, password, dbName, role));
 	}
 	
-	public static DbHelper connectOracle(String url,String user, String password) throws ClassNotFoundException, SQLException {
-		return connectDB(url, user, password, DRIVER_CLASS_NAME_ORACLE);
+	public static DbHelper connectOracleBySid(String ip, int port, String sid, String user, String password, OracleRole role) throws ClassNotFoundException, SQLException {
+		return new DbHelper(
+				OracleConnection.connectBySid(ip, port, user, password, sid, role));
+	}
+	
+	public static DbHelper connectOracle(String url,String user, String password, OracleRole role) throws ClassNotFoundException, SQLException {
+		return new DbHelper(
+				OracleConnection.connect(url, user, password, role, null));
     }
 	
 	//--sqlite
 	public static DbHelper connectSqlite(String filePath) throws ClassNotFoundException, SQLException {
-		return new DbHelper(
-				getConn(
-						"jdbc:sqlite:"+filePath,
-						DRIVER_CLASS_NAME_SQLITE));
+		return new DbHelper(SqliteConnection.connect(filePath));
 	}
 	
-	public static DbHelper connectDB(String url,String user, String password, String driverClassName) throws ClassNotFoundException, SQLException {
-		// 加载驱动程序
-		Class.forName(driverClassName);
-		// 连接数据库
+	//--sqlserver
+	public static DbHelper connectSqlServer(String ip, int port, String dbName, String user, String password) throws ClassNotFoundException, SQLException {
 		return new DbHelper(
-				DriverManager.getConnection(url, user, password));
+				SqlServerConnection.connect(ip, port, user, password, dbName));
+	}
+	
+	public static DbHelper connectSqlServer(String url,String user, String password) throws ClassNotFoundException, SQLException {
+		return new DbHelper(
+				SqlServerConnection.connect(url, user, password, null));
+    }
+	
+	/**
+	 * 获取数据库连接
+	 * @param url
+	 * @param user
+	 * @param password
+	 * @param driver
+	 * @param props
+	 * @return
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	public static Connection getConnection(String url, String user, String password, DbDriver driver, Properties props) throws ClassNotFoundException, SQLException {
+		if(props == null) {
+			props = new Properties();
+		}
+		props.put(DbPropertieKey.COMMON_USER, user);	//账号
+		props.put(DbPropertieKey.COMMON_PASSWORD, password);		//密码
+		if(!props.containsKey(DbPropertieKey.COMMON_USEUNICODE)) {	//使用本地编码,value得是字符串类型,不然回报空指针异常
+			props.put(DbPropertieKey.COMMON_USEUNICODE, "true");
+		}
+		if(!props.containsKey(DbPropertieKey.COMMON_ENCODING)) {	//编码
+			props.put(DbPropertieKey.COMMON_ENCODING, "utf-8");
+		}
+		if(!props.containsKey("zeroDateTimeBehavior")) {
+			props.put("zeroDateTimeBehavior", "convertToNull");
+		}
+		// 加载驱动程序
+		Class.forName(driver.getName());
+		return DriverManager.getConnection(url, props);
+	}
+	
+	public static DbHelper connectDB(String url, String user, String password, DbDriver driver, Properties props) throws ClassNotFoundException, SQLException {
+		return new DbHelper(
+				getConnection(url, user, password, driver, props));
 	}
 	
 	//--静态方法
-	/**
-	 * 通过ip端口号和数据库名称获取用于连接数据库的url
-	 * @param ip
-	 * @param port
-	 * @param dbName
-	 * @return
-	 */
-	public static String getDbUrlString(String ip, int port, String dbName, String driverClassName){
-		StringBuilder sb = new StringBuilder();
-		switch(driverClassName) {
-			case DRIVER_CLASS_NAME_MYSQL:
-				sb.append("jdbc:mysql://");
-				break;
-			case DRIVER_CLASS_NAME_ORACLE:
-				sb.append("jdbc:oracle:thin:@//");
-				break;
-			default:
-				return null;
-		}
-		return sb.append(ip)
-						.append(':')
-						.append(port)
-						.append('/')
-						.append(dbName)
-						.append(URL_TAIL).toString();
-	}
-	
 	/**
 	 * 数据库类型转java类型(不全，只列出常用的，不在范围内返回null)
 	 * <p>
@@ -209,71 +230,6 @@ public class DbHelper {
 		}
 		return clazz;
 	}
-	
-	/**
-	 * 数据库类型转名称
-	 * @param sqlType
-	 * @return
-	 */
-	private static String toString(int sqlType) {
-		return toString(sqlType, 0);
-	}
-	
-	/**
-	 * int型的type对应mysql数据库的类型名称(不全，只列出常用的，不在范围内返回null)
-	 * @param sqlType
-	 * @param size
-	 * @return
-	 */
-	public static String toString(int sqlType, int size) {
-		switch(sqlType) {
-			case Types.TINYINT:
-				return "tinyint";
-			case Types.SMALLINT:
-				return "smallint";
-			case Types.INTEGER:
-				return "int";
-			case Types.BIGINT:
-				return "bigint";
-			case Types.BIT:
-				return "bit";
-			case Types.REAL:
-				return "real";
-			case Types.DOUBLE:
-				return "double";
-			case Types.FLOAT:
-				return "float";
-			case Types.DECIMAL:
-				return "decimal";
-			case Types.NUMERIC:
-				return "numeric";
-			case Types.CHAR:
-				return "char";
-			case Types.VARCHAR:
-				return "varchar";
-			case Types.LONGVARCHAR:
-				if(size > 65535) {
-					return "mediumtext";
-				}
-				return "text";
-			case Types.DATE:
-				return "date";
-			case Types.TIME:
-				return "time";
-			case Types.TIMESTAMP:
-				return "timestamp";
-			case Types.BLOB:
-			case Types.LONGVARBINARY:
-				return "blob";
-			case Types.BINARY:
-				return "binary";
-			case Types.VARBINARY:
-				return "varbinary";
-			default:
-				return null;
-		}
-	}
-	
 	
 	/**
 	 * 获取字段类型最大长度(不准确)
@@ -360,19 +316,6 @@ public class DbHelper {
 		}
 	}
 	
-	/**
-	 * 将java类型转为数据库字段类型，返回对应的字符串
-	 * @param clazz
-	 * @return
-	 */
-	public String toSqlTypeStr(Class<?> clazz) {
-		Integer sqlType = toSqlType(clazz);
-		if(sqlType != null) {
-			return toString(sqlType);
-		}
-		return null;
-	}
-	
 	//--非静态方法
 	/**
 	 * 获取连接
@@ -380,6 +323,30 @@ public class DbHelper {
 	 */
 	public Connection getConn() {
 		return conn;
+	}
+	
+	/**
+	 * 测试连接
+	 * @param timeoutSeconds
+	 * @return
+	 */
+	public boolean test(int timeoutSeconds) {
+		Statement stmt = null;
+		try {
+			stmt = conn.createStatement();
+			stmt.setQueryTimeout(timeoutSeconds);//单位秒
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(stmt != null) {
+					stmt.close();
+				}
+			} catch (SQLException e) {
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -622,7 +589,7 @@ public class DbHelper {
 	 * @param sql
 	 * @return
 	 */
-	public Integer getInteger(String sql, Object[] params) {
+	public Integer getInt(String sql, Object[] params) {
 		try {
 			Map<String, Object> resultMap = getMap(sql, params);
 			if(resultMap != null) {
@@ -682,7 +649,7 @@ public class DbHelper {
 	 * @param params
 	 * @return
 	 */
-	public String getString(String sql, Object[] params) {
+	public String getStr(String sql, Object[] params) {
 		try {
 			Map<String, Object> resultMap = getMap(sql, params);
 			if(resultMap != null) {
@@ -1259,21 +1226,6 @@ public class DbHelper {
 	 */
 	private static boolean isBasicClass(Class<?> clazz) {
 		return ReflectionUtils.isBasicClass(clazz);
-	}
-	
-	/**
-	 * 通过url和驱动类获取数据库连接
-	 * @param url
-	 * @param driverClazzName
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 */
-	private static Connection getConn(String url, String driverClazzName) throws ClassNotFoundException, SQLException {
-		// 加载驱动程序
-		Class.forName(driverClazzName);
-		// 连接数据库
-		return DriverManager.getConnection(url);
 	}
 	
 	private static void err(Exception ex) {

@@ -22,6 +22,7 @@ import com.ag777.util.file.model.DeleteDirectory;
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.collection.ListUtils;
+import com.ag777.util.lang.model.Charsets;
 
 /**
  * 文件操作工具类
@@ -31,10 +32,12 @@ import com.ag777.util.lang.collection.ListUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年04月18日,last modify at 2018年04月24日
+ * @version create on 2018年04月18日,last modify at 2018年04月25日
  */
 public class FileNioUtils {
 
+	private final static Charset DEFAULT_CHARSET = Charsets.UTF_8;
+	
 	private FileNioUtils() {}
 	
 	/**
@@ -55,6 +58,9 @@ public class FileNioUtils {
 	 * @throws IOException
 	 */
 	public static Stream<String> lines(String filePath, Charset charset) throws IOException {
+		if(charset == null) {
+    		charset = DEFAULT_CHARSET;
+    	}
 		Path path = getPath(filePath);
 		return Files.lines(path, charset);
 	}
@@ -68,6 +74,9 @@ public class FileNioUtils {
 	 * @throws IOException
 	 */
 	public static List<String> readLines(String filePath, Charset charset) throws IOException {
+		if(charset == null) {
+    		charset = DEFAULT_CHARSET;
+    	}
 		Path path = getPath(filePath);
 		return Files.readAllLines(path, charset);
 	}
@@ -86,6 +95,9 @@ public class FileNioUtils {
 	 * @throws IOException
 	 */
 	public static Path write(String filePath, List<String> lines, Charset charset) throws IOException {
+		if(charset == null) {
+    		charset = DEFAULT_CHARSET;
+    	}
 		Path path = getPath(filePath);
 		makeDir(path);
 		return Files.write(path, lines, charset, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -99,6 +111,9 @@ public class FileNioUtils {
 	 * @throws IOException
 	 */
 	public static void append(String filePath, String str, Charset charset) throws IOException {
+		if(charset == null) {
+    		charset = DEFAULT_CHARSET;
+    	}
 		if(str == null) {
 			return;
 		}
@@ -123,6 +138,9 @@ public class FileNioUtils {
 	 * @throws IOException
 	 */
 	public static void append(String filePath, List<String> lines, Charset charset) throws IOException {
+		if(charset == null) {
+    		charset = DEFAULT_CHARSET;
+    	}
 		if(ListUtils.isEmpty(lines)) {
 			return;
 		}
@@ -320,6 +338,9 @@ public class FileNioUtils {
 	 * @throws IOException
 	 */
 	public static BufferedWriter getBufferedWriter(Path path, Charset charset, boolean isAppend) throws IOException {
+		if(charset == null) {
+    		charset = DEFAULT_CHARSET;
+    	}
 		if(!isAppend) {
 			return getBufferedWriter(path, charset);
 		}
@@ -340,6 +361,9 @@ public class FileNioUtils {
 	 * @throws IOException
 	 */
     public static BufferedWriter getBufferedWriter(Path path, Charset charset) throws IOException {
+    	if(charset == null) {
+    		charset = DEFAULT_CHARSET;
+    	}
     	return Files.newBufferedWriter(path, charset, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
     }
     
@@ -409,6 +433,9 @@ public class FileNioUtils {
      * @throws IOException
      */
     public static BufferedReader getBufferedReader(Path path, Charset charset) throws IOException {
+    	if(charset == null) {
+    		charset = DEFAULT_CHARSET;
+    	}
     	return Files.newBufferedReader(path, charset);
     }
     
