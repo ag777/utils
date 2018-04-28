@@ -18,15 +18,16 @@ import com.ag777.util.lang.RegexUtils;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.collection.MapUtils;
+import com.ag777.util.lang.interf.Disposable;
 import com.ag777.util.lang.model.Charsets;
 
 /**
  * Ini 文件读写辅助类
  * 
  * @author ag777
- * @version create on 2017年11月03日,last modify at 2018年04月04日
+ * @version create on 2017年11月03日,last modify at 2018年04月28日
  */
-public class IniHelper {
+public class IniHelper implements Disposable {
 	/* 区块 */
 	private LinkedHashMap<String, Section> sectionMap;
 	
@@ -77,6 +78,7 @@ public class IniHelper {
 		}
 	}
 	
+	@Override
 	public void dispose() {
 		sectionMap = null;
 	}

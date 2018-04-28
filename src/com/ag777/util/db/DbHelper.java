@@ -31,15 +31,16 @@ import com.ag777.util.db.model.DbPropertieKey;
 import com.ag777.util.db.model.OracleRole;
 import com.ag777.util.db.model.TypePojo;
 import com.ag777.util.lang.StringUtils;
+import com.ag777.util.lang.interf.Disposable;
 import com.ag777.util.lang.reflection.ReflectionUtils;
 
 /**
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2018年04月25日
+ * @version create on 2017年07月28日,last modify at 2018年04月28日
  */
-public class DbHelper {
+public class DbHelper implements Disposable{
 	
 	//控制控制台输出开关
 	private static boolean MODE_DEBUG = true;
@@ -352,6 +353,7 @@ public class DbHelper {
 	/**
 	 * 关闭数据库连接.释放资源
 	 */
+	@Override
 	public void dispose() {
 		try {
 			if(conn != null) {

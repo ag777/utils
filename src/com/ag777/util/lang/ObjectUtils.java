@@ -9,13 +9,14 @@ import java.util.Map;
 
 import com.ag777.util.gson.GsonUtils;
 import com.ag777.util.lang.collection.ListUtils;
+import com.ag777.util.lang.interf.Disposable;
 import com.ag777.util.lang.reflection.ReflectionUtils;
 
 /**
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年03月15日
+ * @version create on 2017年09月22日,last modify at 2018年04月28日
  */
 public class ObjectUtils {
 
@@ -28,6 +29,16 @@ public class ObjectUtils {
 	 */
 	public static <T>T newInstace(Class<T> clazz) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
 		return ReflectionUtils.newInstace(clazz);
+	}
+	
+	/**
+	 * 释放对象内存
+	 * @param obj
+	 */
+	public static void dispose(Disposable obj) {
+		if(obj != null) {
+			obj.dispose();
+		}
 	}
 	
 	//--转换

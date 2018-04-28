@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import com.ag777.util.lang.Console;
+import com.ag777.util.lang.interf.Disposable;
 
 
 /**
@@ -16,9 +17,9 @@ import com.ag777.util.lang.Console;
  * </p>
  * 
  * @author ag777
- * @version  create on 2017年10月10日,last modify at 2018年03月23日
+ * @version  create on 2017年10月10日,last modify at 2018年04月28日
  */
-public class ExecutorHelper {
+public class ExecutorHelper implements Disposable {
 
 	private ExecutorService pool;
 	
@@ -170,6 +171,7 @@ public class ExecutorHelper {
 	/**
 	 * 释放资源
 	 */
+	@Override
 	public void dispose() {
 		if(pool == null) {
 			return;
