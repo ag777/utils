@@ -18,7 +18,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年03月21日
+ * @version create on 2017年09月22日,last modify at 2018年05月03日
  */
 public class ListUtils {
 
@@ -50,6 +50,22 @@ public class ListUtils {
 	
 	public static <T>boolean isEmpty(T[] array) {
 		return CollectionAndMapUtils.isEmpty(array);
+	}
+	
+	/**
+	 * 判断对象是否是数组
+	 * <p>
+	 * 如果对象为null,则返回false
+	 * </p>
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public boolean isArray(Object obj) {
+		if(obj==null) {
+			return false;
+		}
+		return obj.getClass().isArray();
 	}
 	
 	 /**
@@ -430,6 +446,9 @@ public class ListUtils {
      * 		值得注意的是如果传入的limit不为正数，则会抛出RuntimeException
      * </pre>
      * </p>
+     * 例如:
+     * ListUtils.subArray(new Integer[]{1}, 0, 3)=>[1]
+     * ListUtils.subArray(new Integer[]{1}, 1, 3)=>[]
      * </p>
      */
 	public static <T>List<List<T>> splitList(List<T> list, int limit) {
@@ -483,6 +502,45 @@ public class ListUtils {
 		list.add(toArray(itemList, clazz));
 		T[][] temp = (T[][]) newArray(getArrayClass(clazz), list.size());
 		return list.toArray(temp);
+	}
+	
+	/**
+	 * 截取数组中的一部分作为新数组,类比subString方法
+	 * <p>
+	 * 利用System.arraycopy()的api做数组复制实现
+	 *  begin和limit最好能保证在数组能截取的范围内
+	 *  如果不行
+	 *  <ul>
+	 *  <li>当传入数组为null或者为空时返回空数组</li>
+	 *  <li>新数组长度不一定为limit,不会返回null</li>
+	 *  <li>begin如果小于0, 强制begin为0</li>
+	 *  <li>limit如果超过原数组限制,新数组的长度为有效部分,最短为0</li>
+	 *  </ul>
+	 * </p>
+	 * 
+	 * @param array
+	 * @param begin
+	 * @param limit
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T>T[] subArray(T[] array, int begin, int limit) {
+		if(array == null || array.length == 0) {
+			return (T[]) new Object[0];
+		}
+		if(begin<0){
+			begin=0;
+		}
+		int maxLength = array.length-begin;
+		if(limit>maxLength) {
+			limit = maxLength;
+		}
+		if(limit>0) {
+			Object[] result = new Object[limit];
+			System.arraycopy(array, begin, result, 0, limit);
+			return (T[]) result;
+		}
+		return (T[]) new Object[0];
 	}
 	
 	/**
