@@ -24,6 +24,11 @@ import java.util.Map;
 /**
  * 有关 <code>List</code> 列表工具类。
  * <p>
+ * 	需要jar包:
+ * <ul>
+ * <li>joda-time-xxx.jar</li>
+ * </ul>
+ * 
  * 	巧妙的考勤统计:http://www.01happy.com/mysql-bit_count-bit_or/
  * 	SELECT year,month,BIT_COUNT(BIT_OR(1<<day)) AS days FROM t1
        GROUP BY year,month;

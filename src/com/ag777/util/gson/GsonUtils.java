@@ -31,6 +31,12 @@ import java.lang.reflect.Type;
 
 /**
  * gson统一管理类，全局保持一个gson对象
+ * <p>
+ * 需要jar包:
+ * <ul>
+ * <li>gson-xxx.jar</li>
+ * </ul>
+ * </p>
  * 
  * @author ag777
  * @version create on 2017年05月27日,last modify at 2018年03月30日
