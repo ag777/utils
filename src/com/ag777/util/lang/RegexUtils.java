@@ -12,6 +12,16 @@ import com.ag777.util.lang.collection.ListUtils;
  * 正则表达式工具类
  * <p>
  * 		2017年09月07日 增加对pattern支持
+ * <p>
+ * 正则断言:
+ * <ul>
+ * <li>(?=xxx)向右,后面紧挨着xxx</li>
+ * <li>(?!xxx)向右,后面不能紧挨着xxx</li>
+ * <li>(?&lt;=xxx)向左,前面紧挨着xxx</li>
+ * <li>(?&lt;!xxx)向左,前面不能紧挨着xxx</li>
+ * </ul>
+ * </p>
+ * 
  * </p>
  * 
  * @author ag777

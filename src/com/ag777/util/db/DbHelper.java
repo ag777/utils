@@ -38,7 +38,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2018年04月28日
+ * @version create on 2017年07月28日,last modify at 2018年05月07日
  */
 public class DbHelper implements Disposable{
 	
@@ -673,24 +673,71 @@ public class DbHelper implements Disposable{
 	}
 	
 	/**
-	 * 插入或更新
+	 * update语句
 	 * @param sql
 	 * @return
 	 */
-	public int update(String sql)
-    {
+	public int update(String sql) {
+    	try {
+			return updateWithException(sql);
+		} catch (SQLException ex) {
+			err(ex);
+		}
+    	return -1;
+    }
+	
+	/**
+	 * update语句
+	 */
+	public int updateWithException(String sql) throws SQLException {
     	Statement stmt = null;
     	int row = -1;
     	try {
 			stmt = conn.createStatement();
 			row = stmt.executeUpdate(sql);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw e;
 		} finally {
 			closeAfterExecute();
 		} 
     	
     	return row;
+    }
+	
+	/**
+	 * update语句(带参数)
+	 * @param sql
+	 * @param params
+	 * @return
+	 */
+	public int update(String sql, Object[] params) {
+		try {
+			return updateWithException(sql, params);
+		} catch (SQLException ex) {
+			err(ex);
+		}
+		return -1;
+    }
+	
+	/**
+	 * update语句(带参数)
+	 * @param sql
+	 * @param params
+	 * @return
+	 * @throws SQLException
+	 */
+	public int updateWithException(String sql, Object[] params) throws SQLException {
+		if(isNullOrEmpty(params)) {
+			return updateWithException(sql);
+		}
+    	try {
+	    	PreparedStatement pstmt = getPreparedStatement(sql, params);
+	    	return pstmt.executeUpdate(); 
+    	} catch (SQLException e) {
+    		throw e;
+		} finally {
+			closeAfterExecute();
+		}
     }
 	
 	/**
@@ -704,33 +751,21 @@ public class DbHelper implements Disposable{
 	}
 	
 	/**
-	 * 插入或更新
-	 * @param sql
-	 * @param params
-	 * @return
-	 */
-	public int update(String sql, Object[] params) {
-		if(isNullOrEmpty(params)) {
-			return update(sql);
-		}
-    	try {
-	    	PreparedStatement pstmt = getPreparedStatement(sql, params);
-	    	return pstmt.executeUpdate(); 
-    	} catch (SQLException e) {
-    		e.printStackTrace();
-			return -1;
-		} finally {
-			closeAfterExecute();
-		}
-    }
-	
-	/**
 	 * 插入一条数据并获取对应的主键(自增长),如果失败，返回-1
 	 * @param sql
 	 * @param params
 	 * @return
 	 */
 	public int insertAndGetKey(String sql, Object[] params) {
+    	try {
+			return insertAndGetKeyWithException(sql, params);
+		} catch (SQLException ex) {
+			err(ex);
+		}
+    	return -1;
+	}
+	
+	public int insertAndGetKeyWithException(String sql, Object[] params) throws SQLException {
     	try {
 	    	PreparedStatement pstmt = getPreparedStatement(sql, params, Statement.RETURN_GENERATED_KEYS);
 	    	pstmt.executeUpdate(); 
@@ -739,20 +774,35 @@ public class DbHelper implements Disposable{
 	        int key = rs.getInt(1);
 	        return key;
     	} catch (SQLException ex) {
-    		err(ex);
-			return -1;
+    		throw ex;
 		} finally {
 			closeAfterExecute();
 		}
 	}
 	
 	/**
-	 * 批量插入或更新
+	 * 批量update(sync方法)
 	 * @param sql
 	 * @param paramsList
 	 * @return
 	 */
 	public int[] batchUpdate(String sql, List<Object[]> paramsList) {
+		try {
+			return batchUpdateWithException(sql, paramsList);
+		} catch (SQLException ex) {
+			err(ex);
+		}
+		return null;
+    }
+	
+	/**
+	 * 批量update(sync方法)
+	 * @param sql
+	 * @param paramsList
+	 * @return
+	 * @throws SQLException
+	 */
+	public synchronized int[] batchUpdateWithException(String sql, List<Object[]> paramsList) throws SQLException {
 		if(paramsList == null || paramsList.isEmpty()) {
 			return new int[]{};
 		}
@@ -762,12 +812,12 @@ public class DbHelper implements Disposable{
 	    	int[] results = pstmt.executeBatch(); //批量执行   
 	    	conn.commit();//提交事务 
 	    	return results;
-    	} catch (SQLException e) {
-    		e.printStackTrace();
+    	} catch (SQLException ex) {
     		try {
 				conn.rollback();
 			} catch (SQLException e1) {
 			}
+    		throw ex;
 		}  finally {
 			try {
 				conn.setAutoCommit(true);
@@ -776,7 +826,6 @@ public class DbHelper implements Disposable{
 			}
 			closeAfterExecute();
 		}
-    	return null;
     }
 	
 	/**
