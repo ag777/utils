@@ -14,7 +14,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2018年04月08日
+ * @version last modify at 2018年05月08日
  */
 public class StringUtils {
 
@@ -442,14 +442,14 @@ public class StringUtils {
 	 * 	比如stack("0", 3)=>"000"
 	 * 函数命名参考游戏minecraft创世神插件的函数名
 	 * </p>
-	 * @param a
+	 * @param src
 	 * @param times
 	 * @return
 	 */
-	public static String stack(String a, int times) {
+	public static String stack(String src, int times) {
 		StringBuilder sb = new StringBuilder();
 		for(int i=0;i<times;i++) {
-			sb.append(a);
+			sb.append(src);
 		}
 		return sb.toString();
 	}

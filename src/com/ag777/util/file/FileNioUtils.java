@@ -28,7 +28,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * <p>
  * 使用nio包底下的Files工具类进行操作,能提高效率
- * 后续会逐渐完善去掉掉FileUtils
+ * java.nio.file.Path(Jdk7) 与java.io.File比较:http://www.coin163.com/it/x237395809225888872/jdk7-path-java
  * </p>
  * 
  * @author ag777
