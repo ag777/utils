@@ -78,11 +78,12 @@ public class ImageUtils {
 	 * @param srcPath
 	 * @param destPath
 	 * @param type
+	 * @return 
 	 * @throws IllegalArgumentException 文件不存在等异常
 	 * @throws ImageNotSupportException 图片文件格式不支持异常(一般文件就不是图片)
 	 * @throws IOException IO相关异常
 	 */
-	public static void transform(String srcPath, String destPath, String type) throws IllegalArgumentException, ImageNotSupportException, IOException  {
+	public static File transform(String srcPath, String destPath, String type) throws IllegalArgumentException, ImageNotSupportException, IOException  {
 		BufferedImage bi = null;
 		try {
 			File file = new File(srcPath);
@@ -95,6 +96,7 @@ public class ImageUtils {
             File f2 = new File(destPath);  
             f2.getParentFile().mkdirs();
             ImageIO.write(bi, type, f2); 
+            return new File(destPath);
 		} catch (IOException ex) {
 			 throw ex;
 		} finally {
@@ -116,7 +118,7 @@ public class ImageUtils {
 	 * @throws ImageNotSupportException
 	 * @throws IOException
 	 */
-    public static void complexRWImage(String srcPath, String destPath, String imgType, ComplexHelper helper) throws IllegalArgumentException, ImageNotSupportException, IOException {  
+    public static File complexRWImage(String srcPath, String destPath, String imgType, ComplexHelper helper) throws IllegalArgumentException, ImageNotSupportException, IOException {  
     	ImageInputStream is = null;
     	ImageOutputStream os=null;
     	try {  
@@ -135,7 +137,7 @@ public class ImageUtils {
              * 如果输入源文件包含多张图片，而程序不保证按顺序读取时，第二个参数应该设置为 false。  
              * 对于那些只允许存储一张图片的文件格式，永远传递true是合理的  
             */  
-            reader.setInput(is, true);  
+            reader.setInput(is, true);
             
             /*  
              * 如果需要更多的控制，可以向read()方法传递一个ImageReadParam类型的参数。  
@@ -158,14 +160,14 @@ public class ImageUtils {
             os=ImageIO.createImageOutputStream(file);  
             imageWriter.setOutput(os);  
             imageWriter.write(bi);
+            return new File(destPath);
         } catch (IOException ex) {  
             throw ex;
         }  finally {
         	IOUtils.close(is);
         	IOUtils.close(os);
         }
-    }  
-    
+    } 
     
     public static void main(String[] args) throws IOException, IllegalArgumentException, ImageNotSupportException {
 		String srcPath = "e:\\ad.png";
