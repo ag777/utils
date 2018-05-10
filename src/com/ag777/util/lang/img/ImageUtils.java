@@ -1,6 +1,9 @@
 package com.ag777.util.lang.img;
 
+import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +28,7 @@ import com.ag777.util.lang.exception.model.ImageNotSupportException;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年05月08日,last modify at 2018年05月08日
+ * @version create on 2018年05月08日,last modify at 2018年05月10日
  */
 public class ImageUtils {
 	
@@ -168,6 +171,44 @@ public class ImageUtils {
         	IOUtils.close(os);
         }
     } 
+    
+    /**
+     * 缩放至固定大小(未测试)
+     * 
+     * @param srcPath
+     * @param destPath
+     * @param w
+     * @param h
+     * @throws IllegalArgumentException
+     * @throws ImageNotSupportException 
+     * @throws IOException 
+     */
+    public static void scare(String srcPath, String destPath, int w, int h)  throws IllegalArgumentException, ImageNotSupportException, IOException {
+        
+        double wr=0,hr=0;
+        File srcFile = new File(srcPath);
+        Assert.notExisted(srcFile, "文件["+srcPath+"]不存在");
+        File destFile = new File(destPath);
+
+        BufferedImage bufImg = ImageIO.read(srcFile); //读取图片
+        if(bufImg == null) {
+			 throw new ImageNotSupportException("不支持的图片格式:"+srcPath);
+		}
+        
+		Image Itemp = bufImg.getScaledInstance(w, h, BufferedImage.SCALE_SMOOTH);//设置缩放目标图片模板
+        
+        wr=w*1.0/bufImg.getWidth();     //获取缩放比例
+        hr=h*1.0 / bufImg.getHeight();
+
+        AffineTransformOp ato = new AffineTransformOp(AffineTransform.getScaleInstance(wr, hr), null);
+        Itemp = ato.filter(bufImg, null);
+        try {
+        	destFile.getParentFile().mkdirs();
+            ImageIO.write((BufferedImage) Itemp,destPath.substring(destPath.lastIndexOf(".")+1), destFile); //写入缩减后的图片
+        } catch (IOException ex) {
+            throw ex;
+        }
+    }
     
     public static void main(String[] args) throws IOException, IllegalArgumentException, ImageNotSupportException {
 		String srcPath = "e:\\ad.png";
