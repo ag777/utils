@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import com.ag777.util.file.model.ProgressListener;
 import com.ag777.util.lang.collection.ListUtils;
 
 /**
@@ -20,7 +21,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 		有很多操作，比如文件，cmd命令，都是通过操作流来完成目的，为了避免重复及统一代码新建此类
  * </p>
  * @author ag777
- * @version create on 2017年06月16日,last modify at 2018年04月24日
+ * @version create on 2017年06月16日,last modify at 2018年05月15日
  */
 public class IOUtils {
 
@@ -315,6 +316,43 @@ public class IOUtils {
 			throw ex;
 		} finally {
 			close(in,out);
+		}
+	}
+	
+	/**
+	 * 将输入流写入输出流(带进度监听)
+	 * @param in
+	 * @param out
+	 * @param buffSize
+	 * @param listener
+	 * @throws IOException
+	 */
+	public static void write(InputStream in, OutputStream out, int buffSize, ProgressListener listener)
+			throws IOException {
+		if (listener == null) {
+			write(in, out, buffSize);
+			return;
+		}
+		try {
+			int cur = 0;
+			int total = in.available();
+			listener.update(cur, total, false);
+
+			int byteCount = 0;
+			byte[] bytes = new byte[buffSize];
+
+			while ((byteCount = in.read(bytes)) != -1) {
+				out.write(bytes, 0, byteCount);
+				cur += byteCount;
+				listener.update(cur, total, false);
+			}
+
+			out.flush();
+			listener.update(cur, total, true);
+		} catch (IOException ex) {
+			throw ex;
+		} finally {
+			close(in, out);
 		}
 	}
 	

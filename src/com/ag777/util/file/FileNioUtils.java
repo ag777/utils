@@ -22,6 +22,7 @@ import com.ag777.util.file.model.DeleteDirectory;
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.collection.ListUtils;
+import com.ag777.util.lang.exception.Assert;
 import com.ag777.util.lang.model.Charsets;
 
 /**
@@ -32,7 +33,7 @@ import com.ag777.util.lang.model.Charsets;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年04月18日,last modify at 2018年04月25日
+ * @version create on 2018年04月18日,last modify at 2018年05月15日
  */
 public class FileNioUtils {
 
@@ -47,6 +48,15 @@ public class FileNioUtils {
 	 */
 	public static boolean exists(String filePath) {
 		return Files.exists(getPath(filePath));
+	}
+	
+	/**
+	 * 判断文件是否存在
+	 * @param path
+	 * @return
+	 */
+	public static boolean exists(Path path) {
+		return Files.exists(path);
 	}
 	
 	//--读写
@@ -276,23 +286,32 @@ public class FileNioUtils {
 	 * <p>
      * StandardCopyOption.REPLACE_EXISTING:如果存在则覆盖
      * </p>
+     * <p>
+     * <h2>题外话</h2>
+     * 换成File的renameTo方法复制文件跨文件系统使用会失败
+     * 比如C盘是NTFS格式,E盘是FAT32格式，在这两个盘移动文件就会返回false
+     * 用Files类下的move方法不存在该问题
+     * </p>
      * 
-	 * @param source	源文件路径
-	 * @param target	目标路径
-	 * @return 
+	 * @param source
+	 * @param target
+	 * @return
+	 * @throws IllegalArgumentException 文件路径为空,源文件不存在
 	 */
-	public static boolean move(String source, String target) {
+	public static boolean move(String source, String target) throws IllegalArgumentException {
+		Assert.notBlank(source, "源文件路径不能为空");
+		Assert.notBlank(target, "目标文件路径不能为空");
 		Path src = getPath(source);
+		if(!exists(src)) {
+			throw new IllegalArgumentException("源文件["+source+"]不存在");
+		}
 		Path dest = getPath(target);
-		if(Files.exists(src)) {
-			if(Files.isDirectory(src)) {
-				return moveFolder(src, dest);
-			} else {
-				return moveFile(src, dest);
-			}
-		} 
-		Console.err("文件不存在:"+source);
-		return false;
+		makeDir(dest);
+		if(Files.isDirectory(src)) {
+			return moveFolder(src, dest);
+		} else {
+			return moveFile(src, dest);
+		}
 	}
 	
 	/**
@@ -303,23 +322,25 @@ public class FileNioUtils {
 	 * StandardCopyOption.REPLACE_EXISTING:如果存在则覆盖
 	 * </p>
 	 * 
-	 * @param source	源文件路径
-	 * @param target	目标路径
+	 * @param source
+	 * @param target
 	 * @return
+	 * @throws IllegalArgumentException 文件路径为空,源文件不存在
 	 */
-	public static boolean copy(String source, String target) {
+	public static boolean copy(String source, String target) throws IllegalArgumentException {
+		Assert.notBlank(source, "源文件路径不能为空");
+		Assert.notBlank(target, "目标文件路径不能为空");
 		Path src = getPath(source);
+		if(!exists(src)) {
+			throw new IllegalArgumentException("源文件["+source+"]不存在");
+		}
 		Path dest = getPath(target);
 		makeDir(dest);
-		if(Files.exists(src)) {
-			if(Files.isDirectory(src)) {
-				return copyFolder(src, dest);
-			} else {
-				return copyFile(src, dest);
-			}
-		} 
-		Console.err("文件不存在:"+source);
-		return false;
+		if(Files.isDirectory(src)) {
+			return copyFolder(src, dest);
+		} else {
+			return copyFile(src, dest);
+		}
 	}
 	
 	//--输入/输出流

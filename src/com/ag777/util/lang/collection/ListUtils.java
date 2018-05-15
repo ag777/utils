@@ -18,7 +18,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年05月03日
+ * @version create on 2017年09月22日,last modify at 2018年05月14日
  */
 public class ListUtils {
 
@@ -42,6 +42,20 @@ public class ListUtils {
 	
 	public static Object newArray(Class<?> clazz, int length) {
 		return CollectionAndMapUtils.newArray(clazz, length);
+	}
+	
+	/**
+	 * 复制数组
+	 * <p>
+	 * 详见Arrays.copyOf(T[] original, int newLength)方法
+	 * </p>
+	 * 
+	 * @param original
+	 * @param newLength
+	 * @return
+	 */
+	public static <T>T[] copyArray(T[] original, int newLength) {
+		return Arrays.copyOf(original, newLength);
 	}
 	
 	public static <E>boolean isEmpty(Collection<E> collection) {
@@ -155,92 +169,13 @@ public class ListUtils {
 	/**
 	 * 构建list
 	 * <p>
-	 * 	含一项
+	 * 	含任意多项
 	 * </p>
 	 * 
 	 */
-	public static <T>List<T> of(T item) {
-		List<T> list = newList();
-		list.add(item);
-		return list;
-	}
-	
-	/**
-	 * 构建list
-	 * <p>
-	 * 	含两项
-	 * </p>
-	 * 
-	 */
-	public static <T>List<T> of(T item1, T item2) {
-		List<T> list = of(item1);
-		list.add(item2);
-		return list;
-	}
-	
-	/**
-	 * 构建list
-	 * <p>
-	 * 	含三项
-	 * </p>
-	 * 
-	 */
-	public static <T>List<T> of(T item1, T item2, T item3) {
-		List<T> list = of(item1, item2);
-		list.add(item3);
-		return list;
-	}
-	
-	/**
-	 * 构建list
-	 * <p>
-	 * 	含四项
-	 * </p>
-	 * 
-	 */
-	public static <T>List<T> of(T item1, T item2, T item3, T item4) {
-		List<T> list = of(item1, item2, item3);
-		list.add(item4);
-		return list;
-	}
-	
-	/**
-	 * 构建list
-	 * <p>
-	 * 	含五项
-	 * </p>
-	 * 
-	 */
-	public static <T>List<T> of(T item1, T item2, T item3, T item4, T item5) {
-		List<T> list = of(item1, item2, item3, item4);
-		list.add(item5);
-		return list;
-	}
-	
-	/**
-	 * 构建list
-	 * <p>
-	 * 	含六项
-	 * </p>
-	 * 
-	 */
-	public static <T>List<T> of(T item1, T item2, T item3, T item4, T item5, T item6) {
-		List<T> list = of(item1, item2, item3, item4, item5);
-		list.add(item6);
-		return list;
-	}
-	
-	/**
-	 * 构建list
-	 * <p>
-	 * 	含七项
-	 * </p>
-	 * 
-	 */
-	public static <T>List<T> of(T item1, T item2, T item3, T item4, T item5, T item6, T item7) {
-		List<T> list = of(item1, item2, item3, item4, item5, item6);
-		list.add(item7);
-		return list;
+	@SafeVarargs
+	public static <T>List<T> of(T... items) {
+		return Arrays.asList(items);
 	}
 	
 	 /**
@@ -445,11 +380,7 @@ public class ListUtils {
      * 		将会得到值为[[1,2],[3]]的嵌套列表
      * 		值得注意的是如果传入的limit不为正数，则会抛出RuntimeException
      * </pre>
-     * </p>
-     * 例如:
-     * ListUtils.subArray(new Integer[]{1}, 0, 3)=>[1]
-     * ListUtils.subArray(new Integer[]{1}, 1, 3)=>[]
-     * </p>
+     * 
      */
 	public static <T>List<List<T>> splitList(List<T> list, int limit) {
 		if(list == null) {
@@ -517,6 +448,12 @@ public class ListUtils {
 	 *  <li>limit如果超过原数组限制,新数组的长度为有效部分,最短为0</li>
 	 *  </ul>
 	 * </p>
+	 * 
+	 * <p>
+     * 例如:
+     * ListUtils.subArray(new Integer[]{1}, 0, 3)=>[1]
+     * ListUtils.subArray(new Integer[]{1}, 1, 3)=>[]
+     * </p>
 	 * 
 	 * @param array
 	 * @param begin

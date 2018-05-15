@@ -22,12 +22,14 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.ag777.util.file.model.FileAnnotation;
+import com.ag777.util.file.model.ProgressListener;
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.RegexUtils;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.SystemUtils;
 import com.ag777.util.lang.collection.ListUtils;
+import com.ag777.util.lang.exception.Assert;
 import com.ag777.util.lang.filter.StringFilter;
 import com.ag777.util.lang.model.Charsets;
 
@@ -35,7 +37,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2018年04月24日
+ * @version create on 2017年04月25日,last modify at 2018年05月15日
  */
 public class FileUtils {
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
@@ -587,45 +589,115 @@ public class FileUtils {
     
     
     //--文件操作
-	/**
-	 * 移动文件或者文件夹,如从e:/aa/到f:/bb/aa/
+    /**
+     * 移动文件或者文件夹,如从e:/aa/到f:/bb/aa/
 	 * <p>
-	 * 复制文件到目标路径,再删除原文件(覆盖式)
+	 * 实质是复制文件到对应的位置,成功后删除源文件
+	 * </p>
+	 * <p>
+	 * 为什么不能用renameTo,请参考文章https://blog.csdn.net/findmyself_for_world/article/details/41648095
+	 * 简单来说,renameTo不能跨文件系统移动文件,比如C盘是NTFS格式,E盘是FAT32格式，在这两个盘移动文件就会返回false
+	 * 相对的，用Files包下的方法就没这种问题,对应本工具包的FileNioUtils中的move方法
 	 * </p>
 	 * 
-	 * @param source	源文件路径
-	 * @param target	目标路径
-	 * @return 
-	 */
-	public static boolean move(String source, String target) {
+     * @param source
+     * @param target
+     * @return
+     * @throws IllegalArgumentException 文件路径为空,源文件不存在
+     */
+	public static boolean move(String source, String target) throws IllegalArgumentException {
+		Assert.notBlank(source, "源文件路径不能为空");
+		Assert.notBlank(target, "目标文件路径不能为空");
 		File srcFile = new File(source);
-		if(srcFile.exists()) {
-			if(srcFile.isFile()) {
-				return moveFile(source, target);
-			} else if(srcFile.isDirectory()) {
-				return moveFolder(source, target);
-			}
-		} 
-		Console.err("文件不存在");
+		Assert.notExisted(srcFile, "源文件["+source+"]不存在");
+		if(srcFile.isFile()) {
+			return moveFile(source, target);
+		} else if(srcFile.isDirectory()) {
+			return moveFolder(source, target);
+		}
 		return false;
 	}
     
 	/**
-	 * 复制文件
-	 * @param source	源文件路径
-	 * @param target	目标路径
+	 * 移动单个文件带进度监听
+	 * <p>
+	 * 实质是复制文件到对应的位置,成功后删除源文件
+	 * </p>
+	 * 
+	 * @param source
+	 * @param target
+	 * @param listener
 	 * @return
+	 * @throws IllegalArgumentException 文件路径为空,源文件不存在，源文件不是个文件(可能是文件夹)
 	 */
-	public static boolean copy(String source, String target) {
+	public static boolean moveFileWithProgress(String source, String target, ProgressListener listener) throws IllegalArgumentException {
+		if(copyFileWithProgress(source, target, listener)) {
+			new File(source).delete();
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 复制文件或文件夹
+	 * @param source
+	 * @param target
+	 * @return
+	 * @throws IllegalArgumentException 文件路径为空,源文件不存在
+	 */
+	public static boolean copy(String source, String target) throws IllegalArgumentException {
+		Assert.notBlank(source, "源文件路径不能为空");
+		Assert.notBlank(target, "目标文件路径不能为空");
 		File srcFile = new File(source);
-		if(srcFile.exists()) {
-			if(srcFile.isFile()) {
-				return copyFile(source, target);
-			} else if(srcFile.isDirectory()) {
-				return copyFolder(source, target);
+		Assert.notExisted(srcFile, "源文件["+source+"]不存在");
+		if(srcFile.isFile()) {
+			return copyFile(source, target);
+		} else if(srcFile.isDirectory()) {
+			return copyFolder(source, target);
+		}
+		return false;
+	}
+	
+	/**
+	 * 复制单个文件带进度条
+	 * <p>
+	 * 进度监听参数传null则单做普通的单个文件复制使用，不如直接调用copy方法
+	 * </p>
+	 * 
+	 * @param source
+	 * @param target
+	 * @param listener
+	 * @return
+	 * @throws IllegalArgumentException 文件路径为空,源文件不存在，源文件不是个文件(可能是文件夹)
+	 */
+	public static boolean copyFileWithProgress(String source, String target, ProgressListener listener) throws IllegalArgumentException {
+		Assert.notBlank(source, "源文件路径不能为空");
+		Assert.notBlank(target, "目标文件路径不能为空");
+		BufferedInputStream bis = null;
+		BufferedOutputStream bos = null;
+		try {
+			File fin = new File(source);
+			Assert.notExisted(fin, "源文件["+source+"]不存在");
+			if(!fin.isFile()) {
+				throw new IllegalArgumentException("copyFileWithProgress方法只支持复制单个文件:["+source+"]");
 			}
+			File fout = new File(target);
+			if (!fout.exists()) {
+				File parent = fout.getParentFile(); // 得到父文件夹
+				if (!parent.exists()) {
+					parent.mkdirs();
+				}
+				fout.createNewFile();
+			}
+			bis = new BufferedInputStream(
+					new FileInputStream(fin));
+			bos = new BufferedOutputStream(
+					new FileOutputStream(fout));
+			IOUtils.write(bis, bos, BUFFSIZE, listener);
+			return true;
+		} catch(IOException ex) {
+			ex.printStackTrace();
 		} 
-		Console.err("文件不存在");
 		return false;
 	}
 	
@@ -755,7 +827,7 @@ public class FileUtils {
     /**
 	 * 移动单个文件
 	 * <p>
-	 * 复制完后删除源文件
+	 * 实质是复制文件到对应的位置,成功后删除源文件
 	 * </p>
 	 * 
 	 * @param source	源文件路径
@@ -763,8 +835,8 @@ public class FileUtils {
 	 * @throws IOException
 	 */
 	private static boolean moveFile(String source, String target) {
-		if(copyFile(source, target)) {
-			new File(source).delete();
+		if(moveFileWithProgress(source, target, null)) {
+			delete(source);
 			return true;
 		}
 		return false;
@@ -773,7 +845,7 @@ public class FileUtils {
 	/**
 	 * 移动文件夹及其子文件夹
 	 * <p>
-	 * 复制完后删除源文件夹
+	 * 实质是复制文件到对应的位置,成功后删除源文件
 	 * </p>
 	 * 
 	 * @param source 源文件夹,如: d:/tmp
@@ -818,32 +890,7 @@ public class FileUtils {
 	 * @throws IOException
 	 */
 	private static boolean copyFile(String source, String target) {
-		BufferedInputStream bis = null;
-		BufferedOutputStream bos = null;
-		try {
-			File fin = new File(source);
-			File fout = new File(target);
-			if (!fin.exists()) {
-				Console.err(StringUtils.concat("源文件夹[", source,"]不存在"));
-				return false;
-			}
-			if (!fout.exists()) {
-				File parent = new File(fout.getParent()); // 得到父文件夹
-				if (!parent.exists()) {
-					parent.mkdirs();
-				}
-				fout.createNewFile();
-			}
-			bis = new BufferedInputStream(
-					new FileInputStream(fin));
-			bos = new BufferedOutputStream(
-					new FileOutputStream(fout));
-			IOUtils.write(bis, bos, BUFFSIZE);
-			return true;
-		} catch(IOException ex) {
-			ex.printStackTrace();
-		} 
-		return false;
+		return copyFileWithProgress(source, target, null);
 	}
 	
 	/**

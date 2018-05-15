@@ -14,7 +14,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年03月15日
+ * @version create on 2017年09月22日,last modify at 2018年05月14日
  */
 public class MapUtils {
 
@@ -129,6 +129,33 @@ public class MapUtils {
 		map.put(key7, value7);
 		return map;
 	}
+	
+	/**
+	 * 构建map
+	 * <p>
+	 * 	含八对key-value
+	 * </p>
+	 * 
+	 */
+	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5, String key6, Object value6, String key7, Object value7, String key8, Object value8) {
+		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6, key7, value7);
+		map.put(key8, value8);
+		return map;
+	}
+	
+	/**
+	 * 构建map
+	 * <p>
+	 * 	含九对key-value
+	 * </p>
+	 * 
+	 */
+	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5, String key6, Object value6, String key7, Object value7, String key8, Object value8, String key9, Object value9) {
+		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6, key7, value7, key8, value8);
+		map.put(key9, value9);
+		return map;
+	}
+	
 	
 	/**
      * 将List<Map> 中的键值从新组成map(不做类型转化判断，就是说结果类型要是对不上，强转报错请注意)
