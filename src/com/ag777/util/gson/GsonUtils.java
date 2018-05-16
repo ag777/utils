@@ -1,10 +1,10 @@
 package com.ag777.util.gson;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.ag777.util.gson.model.TypeFactory;
 import com.ag777.util.lang.exception.model.JsonSyntaxException;
 import com.ag777.util.lang.interf.JsonUtilsInterf;
 import com.google.gson.Gson;
@@ -39,7 +39,7 @@ import java.lang.reflect.Type;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年05月27日,last modify at 2018年03月30日
+ * @version create on 2017年05月27日,last modify at 2018年05月16日
  */
 public class GsonUtils implements JsonUtilsInterf{
 	
@@ -219,7 +219,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	@Override
 	public Map<String, Object> toMapWithException(String json) throws JsonSyntaxException {
 		try {
-			return fromJsonWithException(json, new TypeToken<Map<String, Object>>() {}.getType());
+			return fromJsonWithException(json, new TypeFactory(Map.class, String.class, Object.class));
 		} catch(Exception ex) {
 			throw new JsonSyntaxException(ex);
 		}
@@ -252,30 +252,57 @@ public class GsonUtils implements JsonUtilsInterf{
 	public <T>List<T> toList(String json, Class<T> classOfT) {
 		try {
 			return toListWithException(json, classOfT);
-		} catch (Exception e) {
+		} catch (JsonSyntaxException e) {
 		}
 		return null;
 	}
 	
 	/**
-	 * 转化json为对象列表,效率低
+	 * 转化json为对象列表
+	 * <p>
+	 * 利用ParameterizedType类获取对应List<T>的Type作为转化媒介
+	 * </p>
+	 * 
 	 * @param json
 	 * @param classOfT
 	 * @return
-	 * @throws Exception
+	 * @throws JsonSyntaxException
 	 */
-	public <T>List<T> toListWithException(String json, Class<T> classOfT) throws Exception {
-		List<T> result = new ArrayList<>();
-		JsonArray ja = toJsonArray(json);
-		Iterator<JsonElement> itor = ja.iterator();
-		while(itor.hasNext()) {
-			JsonElement element = itor.next();
-			T item = gson().fromJson(element.toString(), classOfT);
-			result.add(item);
+	public <T>List<T> toListWithException(String json, Class<T> classOfT) throws JsonSyntaxException {
+		try {
+			return gson.fromJson(json, new TypeFactory(List.class, classOfT));
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
 		}
-		return result;
 	}
 	
+	/**
+	 * 转换对象为JsonElement
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public JsonElement toJsonTree(Object obj) {
+		try {
+			return toJsonTreeWithException(obj);
+		} catch (JsonSyntaxException e) {
+		}
+		return null;
+	}
+	
+	/**
+	 * 转换对象为JsonElement
+	 * @param obj
+	 * @return
+	 * @throws JsonSyntaxException
+	 */
+	public JsonElement toJsonTreeWithException(Object obj)  throws JsonSyntaxException {
+		try {
+			return gson.toJsonTree(obj);
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
+	}
 	
 	
 	/**
