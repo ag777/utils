@@ -25,7 +25,7 @@ import com.ag777.util.lang.model.Charsets;
  * Ini 文件读写辅助类
  * 
  * @author ag777
- * @version create on 2017年11月03日,last modify at 2018年04月28日
+ * @version create on 2017年11月03日,last modify at 2018年05月17日
  */
 public class IniHelper implements Disposable {
 	/* 区块 */
@@ -104,6 +104,7 @@ public class IniHelper implements Disposable {
 	public boolean containSection(String sectionKey) {
 		return sectionMap.containsKey(sectionKey);
 	}
+	
 	/**
 	 * 获取某个标签下所有键
 	 * @param sectionKey
@@ -117,6 +118,7 @@ public class IniHelper implements Disposable {
 			return section.keyList();
 		}
 	}
+	
 	/**
 	 * 获取值
 	 * @param sectionKey
@@ -331,11 +333,12 @@ public class IniHelper implements Disposable {
 	 * 通过标签名获取对应标签，不存在抛出异常
 	 * @param section
 	 * @return
+	 * @throws Exception 
 	 */
-	public Section section(String section) {
+	public Section section(String section) throws Exception {
 		Section result = MapUtils.get(sectionMap, section);
 		if(result == null) {
-			throw new RuntimeException(
+			throw new Exception(
 					StringUtils.concat("section[", section, "] not found"));
 		}
 		return result;

@@ -16,7 +16,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年04月28日
+ * @version create on 2017年09月22日,last modify at 2018年05月21日
  */
 public class ObjectUtils {
 
@@ -169,6 +169,16 @@ public class ObjectUtils {
 	}
 	
 	//其它
+	/**
+	 * 如果obj为null则返回默认值
+	 * @param obj
+	 * @param defaultValue
+	 * @return
+	 */
+	public static <T>T getOrDefault(T obj, T defaultValue) {
+		return obj != null?obj:defaultValue;
+	}
+	
 	/**
 	 * 判断对象是否为空
 	 * <p>

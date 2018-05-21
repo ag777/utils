@@ -20,7 +20,7 @@ import com.ag777.util.lang.model.Charsets;
  * 针对属性文件的读写操作工具类
  * 
  * @author ag777
- * @version create on 2017年11月10日,last modify at 2018年04月24日
+ * @version create on 2017年11月10日,last modify at 2018年05月17日
  */
 public class PropertyHelper{
 
@@ -350,7 +350,10 @@ public class PropertyHelper{
 			}
 			
 			ih.addOrUpadate(sectionKey, keyTmp, item.get());	//插入键值对
-			ih.section(sectionKey).value(keyTmp).noteList(item.noteList);	//更新注释
+			try {
+				ih.section(sectionKey).value(keyTmp).noteList(item.noteList);	//更新注释
+			} catch(Exception ex) {
+			}
 		});
 		return ih;
 	}

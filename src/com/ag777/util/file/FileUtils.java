@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.nio.file.NoSuchFileException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2018年05月15日
+ * @version create on 2017年04月25日,last modify at 2018年05月17日
  */
 public class FileUtils {
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
@@ -603,13 +604,14 @@ public class FileUtils {
      * @param source
      * @param target
      * @return
-     * @throws IllegalArgumentException 文件路径为空,源文件不存在
+     * @throws IllegalArgumentException 文件路径为空
+     * @throws NoSuchFileException 源文件不存在
      */
-	public static boolean move(String source, String target) throws IllegalArgumentException {
+	public static boolean move(String source, String target) throws IllegalArgumentException, NoSuchFileException {
 		Assert.notBlank(source, "源文件路径不能为空");
 		Assert.notBlank(target, "目标文件路径不能为空");
 		File srcFile = new File(source);
-		Assert.notExisted(srcFile, "源文件["+source+"]不存在");
+		Assert.notExisted(srcFile, NoSuchFileException.class, "源文件["+source+"]不存在");
 		if(srcFile.isFile()) {
 			return moveFile(source, target);
 		} else if(srcFile.isDirectory()) {
@@ -628,9 +630,10 @@ public class FileUtils {
 	 * @param target
 	 * @param listener
 	 * @return
-	 * @throws IllegalArgumentException 文件路径为空,源文件不存在，源文件不是个文件(可能是文件夹)
+	 * @throws IllegalArgumentException 文件路径为空
+	 * @throws NoSuchFileException 源文件不存在，源文件不是个文件(可能是文件夹)
 	 */
-	public static boolean moveFileWithProgress(String source, String target, ProgressListener listener) throws IllegalArgumentException {
+	public static boolean moveFileWithProgress(String source, String target, ProgressListener listener) throws IllegalArgumentException, NoSuchFileException {
 		if(copyFileWithProgress(source, target, listener)) {
 			new File(source).delete();
 			return true;
@@ -644,8 +647,9 @@ public class FileUtils {
 	 * @param target
 	 * @return
 	 * @throws IllegalArgumentException 文件路径为空,源文件不存在
+	 * @throws NoSuchFileException 
 	 */
-	public static boolean copy(String source, String target) throws IllegalArgumentException {
+	public static boolean copy(String source, String target) throws IllegalArgumentException, NoSuchFileException {
 		Assert.notBlank(source, "源文件路径不能为空");
 		Assert.notBlank(target, "目标文件路径不能为空");
 		File srcFile = new File(source);
@@ -668,19 +672,20 @@ public class FileUtils {
 	 * @param target
 	 * @param listener
 	 * @return
-	 * @throws IllegalArgumentException 文件路径为空,源文件不存在，源文件不是个文件(可能是文件夹)
+	 * @throws IllegalArgumentException 文件路径为空
+	 * @throws NoSuchFileException 源文件不存在，源文件不是个文件(可能是文件夹)
 	 */
-	public static boolean copyFileWithProgress(String source, String target, ProgressListener listener) throws IllegalArgumentException {
+	public static boolean copyFileWithProgress(String source, String target, ProgressListener listener) throws IllegalArgumentException, NoSuchFileException {
 		Assert.notBlank(source, "源文件路径不能为空");
 		Assert.notBlank(target, "目标文件路径不能为空");
 		BufferedInputStream bis = null;
 		BufferedOutputStream bos = null;
+		File fin = new File(source);
+		Assert.notExisted(fin, "源文件["+source+"]不存在");
+		if(!fin.isFile()) {
+			throw new NoSuchFileException("copyFileWithProgress方法只支持复制单个文件:["+source+"]");
+		}
 		try {
-			File fin = new File(source);
-			Assert.notExisted(fin, "源文件["+source+"]不存在");
-			if(!fin.isFile()) {
-				throw new IllegalArgumentException("copyFileWithProgress方法只支持复制单个文件:["+source+"]");
-			}
 			File fout = new File(target);
 			if (!fout.exists()) {
 				File parent = fout.getParentFile(); // 得到父文件夹
@@ -832,9 +837,11 @@ public class FileUtils {
 	 * 
 	 * @param source	源文件路径
 	 * @param target	目标路径
+     * @throws IllegalArgumentException 
+     * @throws NoSuchFileException 
 	 * @throws IOException
 	 */
-	private static boolean moveFile(String source, String target) {
+	private static boolean moveFile(String source, String target) throws NoSuchFileException, IllegalArgumentException {
 		if(moveFileWithProgress(source, target, null)) {
 			delete(source);
 			return true;
@@ -850,9 +857,11 @@ public class FileUtils {
 	 * 
 	 * @param source 源文件夹,如: d:/tmp
 	 * @param target 目标文件夹,如: e:/tmp
+	 * @throws IllegalArgumentException 
+	 * @throws NoSuchFileException 
 	 * @throws IOException
 	 */
-	private static boolean moveFolder(String source, String target) {
+	private static boolean moveFolder(String source, String target) throws NoSuchFileException, IllegalArgumentException {
 		File f1 = new File(source);
 		File f2 = new File(target);
 		if (!f1.exists()) {
@@ -887,9 +896,11 @@ public class FileUtils {
 	 * 
 	 * @param source	源文件路径
 	 * @param target	目标路径
+	 * @throws IllegalArgumentException 
+	 * @throws NoSuchFileException 
 	 * @throws IOException
 	 */
-	private static boolean copyFile(String source, String target) {
+	private static boolean copyFile(String source, String target) throws NoSuchFileException, IllegalArgumentException {
 		return copyFileWithProgress(source, target, null);
 	}
 	
@@ -898,9 +909,11 @@ public class FileUtils {
 	 * 
 	 * @param source 源文件夹,如: d:/tmp
 	 * @param target 目标文件夹,如: e:/tmp
+	 * @throws IllegalArgumentException 
+	 * @throws NoSuchFileException 
 	 * @throws IOException
 	 */
-	private static boolean copyFolder(String source, String target) {
+	private static boolean copyFolder(String source, String target) throws NoSuchFileException, IllegalArgumentException {
 		
 		File f1 = new File(source);
 		File f2 = new File(target);

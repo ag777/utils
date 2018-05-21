@@ -2,6 +2,7 @@ package com.ag777.util.file;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Paths;
 
 import com.ag777.util.lang.StringUtils;
 
@@ -9,7 +10,7 @@ import com.ag777.util.lang.StringUtils;
  * 路径工具类
  * 
  * @author ag777
- * @version last modify at 2018年01月05日
+ * @version last modify at 2018年05月21日
  */
 public class PathUtils {
 	
@@ -65,5 +66,21 @@ public class PathUtils {
 	 */
 	public static String srcPath(Class<?> clazz, String subPath) {
 		return StringUtils.concatFilePath(srcPath(clazz), subPath);
+	}
+	
+	/**
+	 * 获取相对路径
+	 * <p>
+	 * <pre>
+	 *  PathUtils.getRelativizePath("f:\\a\\b.txt","f:\\").toString(); => "a\\b.txt"
+	 *  </pre>
+	 * </p>
+	 * 
+	 * @param targetPath 目标路径(需要转化为相对路径的绝对路径)
+	 * @param basePath 基础路径(标尺)
+	 * @return
+	 */
+	public static String getRelativizePath(String targetPath, String basePath) {
+		return Paths.get(basePath).relativize(Paths.get(targetPath)).toString();
 	}
 }

@@ -10,7 +10,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -21,6 +23,7 @@ import java.util.stream.Stream;
 import com.ag777.util.file.model.DeleteDirectory;
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.IOUtils;
+import com.ag777.util.lang.StreamUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.exception.Assert;
 import com.ag777.util.lang.model.Charsets;
@@ -33,7 +36,7 @@ import com.ag777.util.lang.model.Charsets;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年04月18日,last modify at 2018年05月15日
+ * @version create on 2018年04月18日,last modify at 2018年05月17日
  */
 public class FileNioUtils {
 
@@ -57,6 +60,40 @@ public class FileNioUtils {
 	 */
 	public static boolean exists(Path path) {
 		return Files.exists(path);
+	}
+	
+	/**
+	 * 判断路径对应的是否为文件
+	 * <p>
+	 *  文件不存在也返回false
+	 * </p>
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public static boolean isDirectory(Path path) {
+		return Files.isDirectory(path);
+	}
+	
+	/**
+	 * 获取文件夹下的所有文件
+	 * <p>
+	 * 如果不存在或者是文件则返回空列表
+	 * </p>
+	 * 
+	 * @param dirPath
+	 * @return
+	 * @throws IOException
+	 */
+	public static List<Path> subPaths(String dirPath) throws IOException {
+		Path path = getPath(dirPath);
+		if(!isDirectory(path)) {
+			return ListUtils.newArrayList();
+		}
+		Stream<Path> pathStream = Files.walk(path, FileVisitOption.FOLLOW_LINKS);
+		List<Path> list = StreamUtils.toList(pathStream);
+		list.remove(path);	//移除自身
+		return list;
 	}
 	
 	//--读写
@@ -183,7 +220,7 @@ public class FileNioUtils {
 			return true;
 		}
 		try {
-			if(Files.isDirectory(path)) {	//如果是目录则直接创建
+			if(isDirectory(path)) {	//如果是目录则直接创建
 				Files.createDirectories(path);
 			} else {	//如果是文件就创建父路径
 				Path dir = path.getParent();	//path是根目录则得到null
@@ -257,7 +294,7 @@ public class FileNioUtils {
 		if(!Files.exists(path)) {	//文件不存在
 			return true;
 		}
-		if(Files.isDirectory(path)) {
+		if(isDirectory(path)) {
 			DeleteDirectory walker = new DeleteDirectory(skipOnErr);
 			try {
 				
@@ -296,18 +333,19 @@ public class FileNioUtils {
 	 * @param source
 	 * @param target
 	 * @return
-	 * @throws IllegalArgumentException 文件路径为空,源文件不存在
+	 * @throws IllegalArgumentException 文件路径为空
+	 * @throws NoSuchFileException 源文件不存在
 	 */
-	public static boolean move(String source, String target) throws IllegalArgumentException {
+	public static boolean move(String source, String target) throws IllegalArgumentException, NoSuchFileException {
 		Assert.notBlank(source, "源文件路径不能为空");
 		Assert.notBlank(target, "目标文件路径不能为空");
 		Path src = getPath(source);
 		if(!exists(src)) {
-			throw new IllegalArgumentException("源文件["+source+"]不存在");
+			throw new NoSuchFileException("源文件["+source+"]不存在");
 		}
 		Path dest = getPath(target);
 		makeDir(dest);
-		if(Files.isDirectory(src)) {
+		if(isDirectory(src)) {
 			return moveFolder(src, dest);
 		} else {
 			return moveFile(src, dest);
@@ -317,6 +355,7 @@ public class FileNioUtils {
 	/**
 	 * 复制文件
 	 * <p>
+	 * 可改为用FileVisitor操作
 	 * 注意复制目录是将该目录底下的文件复制到目标目录下，
 	 * 比如要将/usr/a/目录移到/b/a/路径下要写copy("/usr/a/", "/b/a/");
 	 * StandardCopyOption.REPLACE_EXISTING:如果存在则覆盖
@@ -325,18 +364,19 @@ public class FileNioUtils {
 	 * @param source
 	 * @param target
 	 * @return
-	 * @throws IllegalArgumentException 文件路径为空,源文件不存在
+	 * @throws IllegalArgumentException 文件路径为空
+	 * @throws NoSuchFileException 源文件不存在
 	 */
-	public static boolean copy(String source, String target) throws IllegalArgumentException {
+	public static boolean copy(String source, String target) throws IllegalArgumentException, NoSuchFileException {
 		Assert.notBlank(source, "源文件路径不能为空");
 		Assert.notBlank(target, "目标文件路径不能为空");
 		Path src = getPath(source);
 		if(!exists(src)) {
-			throw new IllegalArgumentException("源文件["+source+"]不存在");
+			throw new NoSuchFileException("源文件["+source+"]不存在");
 		}
 		Path dest = getPath(target);
 		makeDir(dest);
-		if(Files.isDirectory(src)) {
+		if(isDirectory(src)) {
 			return copyFolder(src, dest);
 		} else {
 			return copyFile(src, dest);
@@ -542,7 +582,7 @@ public class FileNioUtils {
 			streamList = Files.newDirectoryStream(source);  
 	        for (Path pathSun : streamList){
 	        	String targetSun = target.toString()+File.separator+pathSun.getFileName();
-	        	if(Files.isDirectory(pathSun)) {
+	        	if(isDirectory(pathSun)) {
 	        		moveFolder(pathSun, getPath(targetSun+File.separator));
 	        	} else {
 	        		moveFile(pathSun, getPath(targetSun));
@@ -602,7 +642,7 @@ public class FileNioUtils {
 			streamList = Files.newDirectoryStream(source);  
 	        for (Path pathSun : streamList){
 	        	String targetSun = target.toString()+File.separator+pathSun.getFileName();
-	        	if(Files.isDirectory(pathSun)) {
+	        	if(isDirectory(pathSun)) {
 	        		copyFolder(pathSun, getPath(targetSun+File.separator));
 	        	} else {
 	        		copyFile(pathSun, getPath(targetSun));
