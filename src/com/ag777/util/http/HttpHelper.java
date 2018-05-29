@@ -80,8 +80,8 @@ public class HttpHelper {
 	
 	/**===================POST请求===========================*/
 	
-	public <K,V>MyCall postJson(String url, String json, Map<K,V> headerMap) throws IllegalArgumentException {
-		Call call = HttpUtils.postJsonByClient(client, url, json, headerMap);
+	public <K,V>MyCall postJson(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.postJsonByClient(client, url, json, paramMap, headerMap, tag);
 		return new MyCall(call);
 	}
 	

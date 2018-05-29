@@ -40,7 +40,7 @@ public class HttpEasy {
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K, V>Optional<String> get(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException  {
-		Call call = HttpUtils.getByClient(null, url, paramMap, headerMap);
+		Call call = HttpUtils.getByClient(null, url, paramMap, headerMap, null);
 		return callForStrForce(call);
 	}
 	
@@ -58,7 +58,7 @@ public class HttpEasy {
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K, V>Optional<Map<String, Object>> getForMap(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException  {
-		Call call = HttpUtils.getByClient(null, url, paramMap, headerMap);
+		Call call = HttpUtils.getByClient(null, url, paramMap, headerMap, null);
 		return callForMapForce(call);
 	}
 	
@@ -72,12 +72,13 @@ public class HttpEasy {
 	 * 
 	 * @param url
 	 * @param json
+	 * @param paramMap 放在url里的参数
 	 * @param headerMap
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static <K, V>Optional<String> postJson(String url, String json, Map<K,V> headerMap) throws IllegalArgumentException {
-		Call call = HttpUtils.postJsonByClient(null, url, json, headerMap);
+	public static <K, V>Optional<String> postJson(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.postJsonByClient(null, url, json, paramMap, headerMap, null);
 		return callForStrForce(call);
 	}
 	
@@ -107,12 +108,13 @@ public class HttpEasy {
 	 * 
 	 * @param url
 	 * @param json
+	 * @param paramMap 放在请求头里的参数
 	 * @param headerMap
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static <K, V>Optional<Map<String, Object>> postJsonForMap(String url, String json, Map<K,V> headerMap) throws IllegalArgumentException {
-		Call call = HttpUtils.postJsonByClient(null, url, json, headerMap);
+	public static <K, V>Optional<Map<String, Object>> postJsonForMap(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.postJsonByClient(null, url, json, paramMap, headerMap, null);
 		return callForMapForce(call);
 	}
 	

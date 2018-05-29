@@ -209,12 +209,13 @@ public class HttpUtils {
 	 * post请求
 	 * @param client
 	 * @param url
-	 * @param json
+	 * @param json 放在url里的参数
+	 * @param tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static Call postJsonByClient(OkHttpClient client, String url, String json, Object tag) throws IllegalArgumentException {
-		return postJsonByClient(client, url, json, null, tag);
+		return postJsonByClient(client, url, json, null, null, tag);
 	}
 	
 	/**
@@ -222,13 +223,15 @@ public class HttpUtils {
 	 * @param client
 	 * @param url
 	 * @param json
+	 * @param paramMap 放在url里的参数
 	 * @param headerMap
+	 * @param tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static <K,V>Call postJsonByClient(OkHttpClient client, String url, String json, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
+	public static <K,V>Call postJsonByClient(OkHttpClient client, String url, String json, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
 		RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
-		return postByClient(client, url, requestBody, getHeaders(headerMap), tag);
+		return postByClient(client, getGetUrl(url, paramMap), requestBody, getHeaders(headerMap), tag);
 	}
 	
 	/**
@@ -237,6 +240,7 @@ public class HttpUtils {
 	 * @param url
 	 * @param paramMap
 	 * @param headerMap
+	 * @param tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */

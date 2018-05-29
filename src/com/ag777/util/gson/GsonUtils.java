@@ -36,10 +36,11 @@ import java.lang.reflect.Type;
  * <ul>
  * <li>gson-xxx.jar</li>
  * </ul>
+ * GSON更新日志:https://github.com/google/gson/blob/master/CHANGELOG.md
  * </p>
  * 
  * @author ag777
- * @version create on 2017年05月27日,last modify at 2018年05月16日
+ * @version create on 2017年05月27日,last modify at 2018年05月29日
  */
 public class GsonUtils implements JsonUtilsInterf{
 	
@@ -103,6 +104,14 @@ public class GsonUtils implements JsonUtilsInterf{
 	 */
 	public GsonUtils serializeNulls() {
 		return new GsonUtils(builder.serializeNulls());
+	}
+	
+	/**
+	 * 格式化输出
+	 * @return
+	 */
+	public GsonUtils prettyPrinting() {
+		return new GsonUtils(builder.setPrettyPrinting());
 	}
 	
 	/**
