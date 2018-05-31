@@ -17,7 +17,7 @@ import okhttp3.RequestBody;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2018年04月03日
+ * @version create on 2018年03月30日,last modify at 2018年05月31日
  */
 public class HttpHelper {
 	
@@ -37,9 +37,39 @@ public class HttpHelper {
 	private OkHttpClient client;
 	private Object tag;
 	
+	/**
+	 * 构造函数
+	 * <p>
+	 * 如果两个参数都不需要自定义，并且没有取消请求的需求，不如用HttpEasy工具类做请求来的方便
+	 * </p>
+	 * 
+	 * @param client 默认为HttpUtils.client()
+	 * @param tag 请求的统一tag,用于请求分组管理,可以传null
+	 */
 	public HttpHelper(OkHttpClient client, Object tag) {
+		if(client == null) {
+			client = HttpUtils.client();
+		}
 		this.client = client;
 		this.tag = tag;
+	}
+	
+	/**
+	 * 返回自定义client的HttpHelper
+	 * @param client 默认为HttpUtils.client()
+	 * @return
+	 */
+	public static HttpHelper client(OkHttpClient client) {
+		return new HttpHelper(client, null);
+	}
+	
+	/**
+	 * 返回自定义tag的HttpHelper
+	 * @param tag
+	 * @return
+	 */
+	public static HttpHelper tag(Object tag) {
+		return new HttpHelper(null, tag);
 	}
 	
 	/**===================其他方法===========================*/
@@ -62,7 +92,7 @@ public class HttpHelper {
 	}
 	
 	public <K, V>MyCall get(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
-		Call call = HttpUtils.getByClient(client, url, paramMap, headerMap);
+		Call call = HttpUtils.getByClient(client, url, paramMap, headerMap, tag);
 		return new MyCall(call);
 	}
 	
@@ -74,7 +104,7 @@ public class HttpHelper {
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public <K,V>MyCall get(String url, Headers headers) throws IllegalArgumentException {
-		Call call = HttpUtils.getByClient(client, url, headers);
+		Call call = HttpUtils.getByClient(client, url, headers, tag);
 		return new MyCall(call);
 	}
 	
@@ -108,13 +138,15 @@ public class HttpHelper {
 	/**
 	 * 带进度条的文件下载
 	 * @param url
+	 * @param paramMap
+	 * @param headerMap
 	 * @param listener
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public MyCall downLoad(String url,  ProgressResponseBody.ProgressListener listener) throws IllegalArgumentException {
-		OkHttpClient client = HttpUtils.clientWithProgress(this.client.newBuilder(), listener);
-		Call call = HttpUtils.getByClient(client, url, tag);
+	public <K, V>MyCall downLoad(String url, Map<K, V> paramMap, Map<K,V> headerMap,  ProgressResponseBody.ProgressListener listener) throws IllegalArgumentException {
+		OkHttpClient client = HttpUtils.builderWithProgress(this.client.newBuilder(), listener).build();
+		Call call = HttpUtils.getByClient(client, url, paramMap, headerMap, tag);
 		return new MyCall(call);
 	}
 	

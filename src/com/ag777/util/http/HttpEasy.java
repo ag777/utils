@@ -19,7 +19,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2018年04月03日
+ * @version create on 2018年03月30日,last modify at 2018年05月31日
  */
 public class HttpEasy {
 	
@@ -163,14 +163,16 @@ public class HttpEasy {
 	 * </p>
 	 * 
 	 * @param url
+	 * @param paramMap
+	 * @param headerMap
 	 * @param targetPath
 	 * @param listener
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static Optional<InputStream> downLoadForStream(String url, String targetPath, ProgressResponseBody.ProgressListener listener) throws IllegalArgumentException {
-		OkHttpClient client = HttpUtils.clientWithProgress(null, listener);
-		Call call = HttpUtils.getByClient(client, url, null);
+	public static <K, V>Optional<InputStream> downLoadForStream(String url, Map<K, V> paramMap, Map<K,V> headerMap, String targetPath, ProgressResponseBody.ProgressListener listener) throws IllegalArgumentException {
+		OkHttpClient client = HttpUtils.builderWithProgress(null, listener).build();
+		Call call = HttpUtils.getByClient(client, url, paramMap, headerMap, null);
 		return callForInputStream(call);
 	}
 	
@@ -182,14 +184,16 @@ public class HttpEasy {
 	 * </p>
 	 * 
 	 * @param url
+	 * @param paramMap
+	 * @param headerMap
 	 * @param targetPath
 	 * @param listener
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static Optional<File> downLoad(String url, String targetPath, ProgressResponseBody.ProgressListener listener) throws IllegalArgumentException {
-		OkHttpClient client = HttpUtils.clientWithProgress(null, listener);
-		Call call = HttpUtils.getByClient(client, url, null);
+	public static <K, V>Optional<File> downLoad(String url, Map<K, V> paramMap, Map<K,V> headerMap, String targetPath, ProgressResponseBody.ProgressListener listener) throws IllegalArgumentException {
+		OkHttpClient client = HttpUtils.builderWithProgress(null, listener).build();
+		Call call = HttpUtils.getByClient(client, url, paramMap, headerMap, null);
 		return callForFile(call, targetPath);
 	}
 	

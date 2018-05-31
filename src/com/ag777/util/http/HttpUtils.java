@@ -10,16 +10,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
 import com.ag777.util.Utils;
 import com.ag777.util.file.FileUtils;
+import com.ag777.util.http.model.MyCookieJar;
 import com.ag777.util.http.model.ProgressResponseBody;
 import com.ag777.util.http.model.SSLSocketClient;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.collection.MapUtils;
 import com.ag777.util.lang.exception.model.JsonSyntaxException;
-
 import okhttp3.Call;
 import okhttp3.Dispatcher;
 import okhttp3.FormBody;
@@ -48,7 +47,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年04月03日
+ * @version last modify at 2018年05月31日
  */
 public class HttpUtils {
 	
@@ -82,12 +81,24 @@ public class HttpUtils {
 	}
 	
 	/**
-	 * 构建带进度监听的okhttpClient
+	 * 构造带cookie持久化的okhttpBuilder
+	 * @param builder
+	 * @return
+	 */
+	public static OkHttpClient.Builder builderWithCookie(OkHttpClient.Builder builder) {
+		if(builder == null) {
+			builder = client().newBuilder();
+		}
+		return builder.cookieJar(new MyCookieJar());
+	}
+	
+	/**
+	 * 构建带进度监听的okhttpBuilder
 	 * @param builder
 	 * @param listener
 	 * @return
 	 */
-	public static OkHttpClient clientWithProgress(OkHttpClient.Builder builder, ProgressResponseBody.ProgressListener listener) {
+	public static OkHttpClient.Builder builderWithProgress(OkHttpClient.Builder builder, ProgressResponseBody.ProgressListener listener) {
 		if(listener != null) {		
 			if(builder == null) {
 				builder = client().newBuilder();
@@ -102,11 +113,10 @@ public class HttpUtils {
 		                        .body(new ProgressResponseBody(response.body(),listener))
 		                        .build();
 		            }
-		        })
-		        .build();
+		        });
 		}
 		//监听事件和builder都为null则不重构client
-		return client();
+		return builder;
 	}
 	
 	/**===================GET请求===========================*/
@@ -153,31 +163,6 @@ public class HttpUtils {
 	 * get请求
 	 * @param client
 	 * @param url
-	 * @param tag
-	 * @return
-	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
-	 */
-	public static Call getByClient(OkHttpClient client, String url, Object tag) throws IllegalArgumentException {
-		return getByClient(client, url, null, null, tag);
-	}
-
-	/**
-	 * get请求
-	 * @param client
-	 * @param url
-	 * @param paramMap
-	 * @param tag
-	 * @return
-	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
-	 */
-	public static <K, V>Call getByClient(OkHttpClient client, String url, Map<K, V> paramMap, Object tag) throws IllegalArgumentException {
-		return getByClient(client, url, paramMap, null, tag);
-	}
-	
-	/**
-	 * get请求
-	 * @param client
-	 * @param url
 	 * @param paramMap
 	 * @param headerMap
 	 * @param tag
@@ -204,19 +189,6 @@ public class HttpUtils {
 	}
 	
 	/**===================POST请求===========================*/
-	
-	/**
-	 * post请求
-	 * @param client
-	 * @param url
-	 * @param json 放在url里的参数
-	 * @param tag
-	 * @return
-	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
-	 */
-	public static Call postJsonByClient(OkHttpClient client, String url, String json, Object tag) throws IllegalArgumentException {
-		return postJsonByClient(client, url, json, null, null, tag);
-	}
 	
 	/**
 	 * post请求
