@@ -25,7 +25,7 @@ import com.ag777.util.lang.model.Charsets;
  * Ini 文件读写辅助类
  * 
  * @author ag777
- * @version create on 2017年11月03日,last modify at 2018年05月17日
+ * @version create on 2017年11月03日,last modify at 2018年06月12日
  */
 public class IniHelper implements Disposable {
 	/* 区块 */
@@ -85,10 +85,18 @@ public class IniHelper implements Disposable {
 	
 	//--取值
 	/**
+	 * 获取sectionMap
+	 * @return
+	 */
+	public LinkedHashMap<String, Section> getSectionMap() {
+		return sectionMap;
+	}
+	
+	/**
 	 * 获取所有标签
 	 * @return
 	 */
-	public List<String> getSectionList() {
+	public List<String> getSectionNameList() {
 		List<String> list = ListUtils.newArrayList();
 		Iterator<String> itor = sectionMap.keySet().iterator();
 		while(itor.hasNext()) {
@@ -96,6 +104,7 @@ public class IniHelper implements Disposable {
 		}
 		return list;
 	}
+	
 	/**
 	 * 判断标签是否存在
 	 * @param sectionKey
@@ -104,6 +113,40 @@ public class IniHelper implements Disposable {
 	public boolean containSection(String sectionKey) {
 		return sectionMap.containsKey(sectionKey);
 	}
+	
+	/**
+	 * 判断键是否存在
+	 * @param sectionKey
+	 * @param valueKey
+	 * @return
+	 */
+	public boolean containValueKey(String sectionKey, String valueKey) {
+		if(sectionMap.containsKey(sectionKey)) {
+			Section section = sectionMap.get(valueKey);
+			return section.containKey(valueKey);
+		}
+		return false;
+	}
+	
+	/**
+	 * 遍历所有section,判断key是否存在
+	 * <p>
+	 * 至少存在一个返回true
+	 * </p>
+	 * @param valueKey
+	 * @return
+	 */
+	public boolean containKey(String valueKey) {
+		Iterator<String> itor = sectionMap.keySet().iterator();
+		while(itor.hasNext()) {
+			Section section = sectionMap.get(itor.next());
+			if(section.containKey(valueKey)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 	/**
 	 * 获取某个标签下所有键

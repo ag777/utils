@@ -1,8 +1,12 @@
 package com.ag777.util.lang;
 
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Properties;
 import java.util.Set;
 
@@ -14,7 +18,7 @@ import java.util.Set;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月12日,last modify at 2018年04月10日
+ * @version create on 2017年06月12日,last modify at 2018年06月13日
  */
 public class SystemUtils {
 	private static OsType osType;
@@ -47,6 +51,34 @@ public class SystemUtils {
 	public static void resetSystemOut() {
 		System.setOut(System.out);
 	}
+	
+	/**
+	 * 获取操作系统里所有的字体名称
+	 * @return
+	 */
+	public static String[] fontNames() {
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment ();
+		return ge.getAvailableFontFamilyNames();
+	}
+	
+	/**
+	 * 获取操作系统里所有字体
+	 * @return
+	 */
+	public static Font[] fonts() {
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment ();
+		return ge.getAllFonts();
+	}
+	
+	/**
+	 * 获取本地ip地址
+	 * @return
+	 * @throws UnknownHostException 
+	 */
+	public static String getLocalHost() throws UnknownHostException {
+		return InetAddress.getLocalHost().getHostAddress();
+	}
+	
 	
 	/**
 	 * 获取cpu核数(可用于确定子线程数量以优化程序执行效率)

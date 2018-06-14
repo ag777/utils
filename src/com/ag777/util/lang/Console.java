@@ -3,6 +3,7 @@ package com.ag777.util.lang;
 import java.util.List;
 
 import com.ag777.util.Utils;
+import com.ag777.util.gson.GsonUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.exception.ExceptionHelper;
 
@@ -14,13 +15,27 @@ import com.ag777.util.lang.exception.ExceptionHelper;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年01月19日
+ * @version last modify at 2018年06月01日
  */
 public class Console {
 
 	private static boolean devMode = true;
 	private static boolean showSourceMethod = false;
-	private static boolean formatMode = false;
+	
+	private static GsonUtils prettyGson;
+	
+	private static GsonUtils getPrettyGson() {
+		if(prettyGson == null) {
+			synchronized (Console.class) {
+				if(prettyGson == null) {
+					prettyGson = GsonUtils.get().prettyPrinting();
+				}
+				
+			}
+		}
+		return prettyGson;
+	}
+	
 	
 	/**
 	 * 控制是否打印日志, 默认为true
@@ -31,17 +46,6 @@ public class Console {
 	}
 	public static boolean isDevMode() {
 		return devMode;
-	}
-	
-	/**
-	 * 控制输出是否格式化,默认为false
-	 * @param formatMode
-	 */
-	public static void setFormatMode(boolean formatMode) {
-		Console.formatMode = formatMode;
-	}
-	public static boolean isFormatMode() {
-		return Console.formatMode;
 	}
 	
 	/**
@@ -56,6 +60,27 @@ public class Console {
 	}
 	
 	/**
+	 * 控制台打印格式化信息
+	 * @param obj
+	 * @return
+	 */
+	public static String prettyLog(Object obj) {
+		if(isDevMode()) {
+			String msg = getMethod();
+			
+			if(obj != null && obj instanceof String) {
+				msg += (String) obj;
+			} else {
+				msg += toJson(obj, true);
+			}
+			
+			System.out.println(msg);
+			return msg;
+		} 
+		return null;
+	}
+	
+	/**
 	 * 控制台打印信息
 	 * @param obj
 	 * @return
@@ -67,12 +92,35 @@ public class Console {
 			if(obj != null && obj instanceof String) {
 				msg += (String) obj;
 			} else {
-				msg += toJson(obj);
+				msg += toJson(obj, false);
 			}
 			
 			System.out.println(msg);
 			return msg;
 		} 
+		return null;
+	}
+	
+	/**
+	 * 将传入参数转为list并进行格式化输出
+	 * 
+	 * @param objs
+	 * @return
+	 */
+	public static String prettyLog(Object obj, Object... objs) {
+		if(isDevMode()) {
+			if(objs == null) {
+				return log(obj);
+			}
+			String msg = getMethod();
+			List<Object> list = ListUtils.of(obj);
+			for (Object item : objs) {
+				list.add(item);
+			}
+			msg += toJson(list, true);
+			System.out.println(msg);
+			return msg;
+		}
 		return null;
 	}
 	
@@ -91,7 +139,7 @@ public class Console {
 			for (Object item : objs) {
 				list.add(item);
 			}
-			msg += toJson(list);
+			msg += toJson(list, false);
 			System.out.println(msg);
 			return msg;
 		}
@@ -154,15 +202,20 @@ public class Console {
 	
 	/**
 	 * 统一json转化
+	 * <p>
+	 *  如果是用默认的Gsonutils,会去用gson的格式化方法，否则用Formatter工具类进行格式化
+	 * </p>
 	 * @param obj
 	 * @return
 	 */
-	private static String toJson(Object obj) {
-		String result = Utils.jsonUtils().toJson(obj);
-		if(result != null && formatMode) {	//需要被格式化
-			return Formatter.formatJson(result, "    ");
+	private static String toJson(Object obj, boolean formatMode) {
+		if(formatMode) {	//需要被格式化
+			if(Utils.jsonUtils() instanceof GsonUtils) {
+				return getPrettyGson().toJson(obj);
+			}
+			return Formatter.formatJson(Utils.jsonUtils().toJson(obj), "    ");
 		}
-		return result;
+		return Utils.jsonUtils().toJson(obj);
 	}
 	
 }

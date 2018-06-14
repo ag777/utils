@@ -29,6 +29,10 @@ public class RegexRule {
 		public static final String EMAIL = "^(\\w)+(\\.\\w+)*@(\\w)+((\\.\\w+)+)$";
 	}
 
+	
+	public static void main(String[] args) {
+		System.out.println(Email.EMAIL);
+	}
 	/**
 	 * IP格式
 	 */

@@ -28,7 +28,7 @@ import com.ag777.util.lang.exception.model.ImageNotSupportException;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年05月08日,last modify at 2018年05月10日
+ * @version create on 2018年05月08日,last modify at 2018年06月01日
  */
 public class ImageUtils {
 	
@@ -40,17 +40,17 @@ public class ImageUtils {
 	/**
 	 * 获取图片格式
 	 * 
-	 * @param path
+	 * @param filePath
 	 * @return
 	 * @throws IllegalArgumentException 文件不存在等异常
 	 * @throws ImageNotSupportException 图片文件格式不支持异常(一般文件就不是图片)
 	 * @throws IOException IO相关异常
 	 */
-	public static String getType(String path) throws IllegalArgumentException, ImageNotSupportException, IOException {
+	public static String getType(String filePath) throws IllegalArgumentException, ImageNotSupportException, IOException {
 		ImageInputStream iis = null;
 		try {
-			File file = new File(path);
-			Assert.notExisted(file, "文件["+path+"]不存在");
+			File file = new File(filePath);
+			Assert.notExisted(file, "文件["+filePath+"]不存在");
 			// create an image input stream from the specified fileDD
 			iis = ImageIO.createImageInputStream(file);
 	 
@@ -58,7 +58,7 @@ public class ImageUtils {
 	        Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
 	 
 	        if (!iter.hasNext()) {
-	            throw new ImageNotSupportException("不支持的图片格式:"+path);
+	            throw new ImageNotSupportException("不支持的图片格式:"+filePath);
 	        }
 	 
 	        // get the first reader
@@ -74,7 +74,38 @@ public class ImageUtils {
        
 	}
 	
-
+	/**
+	 * 获取图片宽高
+	 * <p>
+	 * 数组第一个值使宽度，第二个值是高度
+	 * </p>
+	 * 
+	 * @param filePath
+	 * @return
+	 * @throws IllegalArgumentException 文件不存在等异常
+	 * @throws ImageNotSupportException 图片文件格式不支持异常(一般文件就不是图片)
+	 * @throws IOException IO相关异常
+	 */
+	public static int[] getWidthAndHeight(String filePath) throws IllegalArgumentException, ImageNotSupportException, IOException {
+		BufferedImage bi = null;
+		try {
+			File file = new File(filePath);
+			Assert.notExisted(file, "文件["+ filePath+"]不存在");
+			bi=ImageIO.read(file);  
+			if(bi == null) {
+				 throw new ImageNotSupportException("不支持的图片格式:"+filePath);
+			}
+           int width = bi.getWidth();
+           int height = bi.getHeight();
+           return new int[]{width, height};
+		} catch (IOException ex) {
+			 throw ex;
+		} finally {
+		}
+       
+	}
+	
+	
 	/**
 	 * 转换图片格式
 	 * 
@@ -174,11 +205,14 @@ public class ImageUtils {
     
     /**
      * 缩放至固定大小(未测试)
+     * <p>
+     * 宽高不能同时为0，其中一项为0代表该项为按比例缩放
+     * </p>
      * 
      * @param srcPath
      * @param destPath
-     * @param w
-     * @param h
+     * @param w 传0则需要固定高度,等比缩放
+     * @param h 传0则需要固定宽度,等比缩放
      * @throws IllegalArgumentException
      * @throws ImageNotSupportException 
      * @throws IOException 
@@ -194,6 +228,16 @@ public class ImageUtils {
         if(bufImg == null) {
 			 throw new ImageNotSupportException("不支持的图片格式:"+srcPath);
 		}
+        
+        if(w ==0 || h==0) {
+        	int width = bufImg.getWidth();
+        	int height = bufImg.getHeight();
+        	if(w == 0) {	//计算宽度,四舍五入
+        		w = Math.round((width * h * 1f)/height);
+        	} else if(h == 0) {	//计算高度,四舍五入
+        		h = Math.round((height * w * 1f)/width);
+        	}
+        }  
         
 		Image Itemp = bufImg.getScaledInstance(w, h, BufferedImage.SCALE_SMOOTH);//设置缩放目标图片模板
         

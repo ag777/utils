@@ -47,7 +47,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年05月31日
+ * @version last modify at 2018年06月01日
  */
 public class HttpUtils {
 	
@@ -78,6 +78,57 @@ public class HttpUtils {
 			}
 		}
 		return mOkHttpClient;
+	}
+	
+	/**
+	 * 构建带拦截器的okhttpBuilder
+	 * <p>
+	 * 以下资料来源于:https://blog.csdn.net/briblue/article/details/52911998
+	 * 不必关心url的重定向和重连。
+		只执行一次，即使Resopnse是来自于缓存。
+		只关心request的原始意图，而不用关心额外添加的Header信息如If-None-Match
+	 * </p>
+	 * 
+	 * @param builder
+	 * @param interceptors
+	 * @return
+	 */
+	public OkHttpClient.Builder builderWithInterceptor(OkHttpClient.Builder builder, Interceptor... interceptors) {
+		if(builder == null) {
+			builder = client().newBuilder();
+		}
+		
+		if(interceptors != null) {
+			for (Interceptor interceptor : interceptors) {
+				builder.addInterceptor(interceptor);
+			}
+		}
+		return builder;
+	}
+	
+	/**
+	 * 构建带网络拦截器的okhttpBuilder
+	 * <p>
+	 * 能够详尽地追踪访问链接的重定向。
+		短时间内的网络访问，它将不执行缓存过来的回应。
+		监测整个网络访问过程中的数据流向。
+	 * </p>
+	 * 
+	 * @param builder
+	 * @param interceptors
+	 * @return
+	 */
+	public OkHttpClient.Builder builderWithNetWorkInterceptor(OkHttpClient.Builder builder, Interceptor... interceptors) {
+		if(builder == null) {
+			builder = client().newBuilder();
+		}
+		
+		if(interceptors != null) {
+			for (Interceptor interceptor : interceptors) {
+				builder.addNetworkInterceptor(interceptor);
+			}
+		}
+		return builder;
 	}
 	
 	/**

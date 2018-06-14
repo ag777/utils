@@ -40,7 +40,7 @@ import java.lang.reflect.Type;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年05月27日,last modify at 2018年05月29日
+ * @version create on 2017年05月27日,last modify at 2018年06月01日
  */
 public class GsonUtils implements JsonUtilsInterf{
 	
@@ -258,6 +258,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * @param classOfT
 	 * @return
 	 */
+	@Override
 	public <T>List<T> toList(String json, Class<T> classOfT) {
 		try {
 			return toListWithException(json, classOfT);
@@ -277,6 +278,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * @return
 	 * @throws JsonSyntaxException
 	 */
+	@Override
 	public <T>List<T> toListWithException(String json, Class<T> classOfT) throws JsonSyntaxException {
 		try {
 			return gson.fromJson(json, new TypeFactory(List.class, classOfT));
