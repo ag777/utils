@@ -595,6 +595,25 @@ public class ListUtils {
 	}
 	
 	/**
+	 * 判断字符串在数组中的位置,无视大小写
+	 * 
+	 * @param list
+	 * @param item
+	 * @return
+	 */
+	public static Optional<Integer> inListIgnoreCase(List<String> list, String item) {
+		if(isEmpty(list) || item == null) {
+			return Optional.empty();
+		}
+		for(int i=0; i<list.size(); i++) {
+			if(item.equalsIgnoreCase(list.get(i))) {
+				return Optional.of(i);
+			}
+		}
+		return Optional.empty();
+	}
+	
+	/**
 	 * 获取一个元素在数组中的位置
 	 * <p>
 	 * 	用equals实现比较<br/>
@@ -617,6 +636,24 @@ public class ListUtils {
 	}
 	
 	/**
+	 * 获取字符串在字符串数组里的位置,大小写无视
+	 * @param array
+	 * @param item
+	 * @return
+	 */
+	public static Optional<Integer> inArrayIgnoreCase(String[] array, String item) {
+		if(array == null || item==null) {
+			return Optional.empty();
+		}
+		for(int i=0;i<array.length;i++) {
+			if(item.equalsIgnoreCase(array[i])) {
+				return Optional.of(i);
+			}
+		}
+		return Optional.empty();
+	}
+	
+	/**
 	 * 获取一个元素在数据堆中的位置
 	 * <p>
 	 * 	用equals实现比较<br/>
@@ -627,7 +664,7 @@ public class ListUtils {
 	 * @return
 	 */
 	public static <T>Optional<Integer> in(Object target, Object... objs) {
-		if(objs == null || objs==null) {
+		if(objs == null || objs.length == 0 || target == null) {
 			return Optional.empty();
 		}
 		for(int i=0;i<objs.length;i++) {
@@ -637,6 +674,30 @@ public class ListUtils {
 		}
 		return Optional.empty();
 	}
+	
+	/**
+	 * 获取一个元素在数据堆中的位置,无视大小写
+	 * <p>
+	 * 	用equals实现比较<br/>
+	 * 	通过调用isPresent()方法直接获取是否在数组中,不需要判断值是否大于-1
+	 * </p>
+	 * 
+	 * @param target
+	 * @param objs
+	 * @return
+	 */
+	public static Optional<Integer> inIgnoreCase(String target, String... objs) {
+		if(objs == null || objs.length == 0 || target == null) {
+			return Optional.empty();
+		}
+		for(int i=0;i<objs.length;i++) {
+			if(target.equalsIgnoreCase(objs[i])) {
+				return Optional.of(i);
+			}
+		}
+		return Optional.empty();
+	}
+	
 	
 	/**
 	 * 获取数组类型

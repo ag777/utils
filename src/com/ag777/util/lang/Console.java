@@ -15,7 +15,7 @@ import com.ag777.util.lang.exception.ExceptionHelper;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年06月01日
+ * @version last modify at 2018年06月14日
  */
 public class Console {
 
@@ -24,7 +24,7 @@ public class Console {
 	
 	private static GsonUtils prettyGson;
 	
-	private static GsonUtils getPrettyGson() {
+	public static GsonUtils getPrettyGson() {
 		if(prettyGson == null) {
 			synchronized (Console.class) {
 				if(prettyGson == null) {
