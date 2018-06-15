@@ -1,8 +1,8 @@
 package com.ag777.util.file;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -12,7 +12,7 @@ import com.ag777.util.lang.IOUtils;
  * 针对属性文件的读写操作工具类
  * 
  * @author ag777
- * @version create on 2015年04月04日,last modify at 20218年05月24日
+ * @version create on 2015年04月04日,last modify at 20218年06月15日
  */
 public class PropertyUtils extends java.util.Properties{
 
@@ -42,14 +42,14 @@ public class PropertyUtils extends java.util.Properties{
 	 * @throws IOException
 	 */
 	public PropertyUtils load(String filePath, Charset charset) throws FileNotFoundException, IOException {
-		InputStream in = null;
+		BufferedReader reader = null;
 		try {
-			in = FileUtils.getInputStream(filePath);
-			load(in);
+			reader = FileUtils.getBufferedReader(filePath, charset);
+			load(reader);
 		} catch(IOException ex) {
 			throw ex;
 		} finally {
-			IOUtils.close(in);
+			IOUtils.close(reader);
 		}
 		return this;
 	}

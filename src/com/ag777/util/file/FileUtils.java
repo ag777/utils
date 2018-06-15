@@ -2,6 +2,7 @@ package com.ag777.util.file;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
@@ -38,7 +40,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2018年05月17日
+ * @version create on 2017年04月25日,last modify at 2018年06月15日
  */
 public class FileUtils {
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
@@ -544,6 +546,21 @@ public class FileUtils {
     	return new FileOutputStream(file);
     }
 
+    /**
+     * 获取BufferedReader(读)
+     * @param filePath
+     * @param charset
+     * @return
+     * @throws FileNotFoundException
+     */
+    public static BufferedReader getBufferedReader(String filePath, Charset charset) throws FileNotFoundException {
+    	if(charset != null) {
+    		charset = FILE_READING_CHARSET;
+    	}
+    	FileInputStream in = FileUtils.getInputStream(filePath);
+    	return new BufferedReader(new InputStreamReader(in, charset));
+    }
+    
     /**
      * 获取文件输入流(读)
      * 

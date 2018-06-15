@@ -3,7 +3,6 @@ package com.ag777.util.lang;
 import java.util.List;
 
 import com.ag777.util.Utils;
-import com.ag777.util.gson.GsonUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.exception.ExceptionHelper;
 
@@ -15,26 +14,12 @@ import com.ag777.util.lang.exception.ExceptionHelper;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年06月14日
+ * @version last modify at 2018年06月15日
  */
 public class Console {
 
 	private static boolean devMode = true;
 	private static boolean showSourceMethod = false;
-	
-	private static GsonUtils prettyGson;
-	
-	public static GsonUtils getPrettyGson() {
-		if(prettyGson == null) {
-			synchronized (Console.class) {
-				if(prettyGson == null) {
-					prettyGson = GsonUtils.get().prettyPrinting();
-				}
-				
-			}
-		}
-		return prettyGson;
-	}
 	
 	
 	/**
@@ -203,19 +188,17 @@ public class Console {
 	/**
 	 * 统一json转化
 	 * <p>
-	 *  如果是用默认的Gsonutils,会去用gson的格式化方法，否则用Formatter工具类进行格式化
+	 *  先转json后格式化，效率会低一些，建议只在调试的时候用
 	 * </p>
 	 * @param obj
 	 * @return
 	 */
 	private static String toJson(Object obj, boolean formatMode) {
+		String json = Utils.jsonUtils().toJson(obj);
 		if(formatMode) {	//需要被格式化
-			if(Utils.jsonUtils() instanceof GsonUtils) {
-				return getPrettyGson().toJson(obj);
-			}
-			return Formatter.formatJson(Utils.jsonUtils().toJson(obj), "    ");
+			return Utils.jsonUtils().prettyFormat(json);
 		}
-		return Utils.jsonUtils().toJson(obj);
+		return json;
 	}
 	
 }

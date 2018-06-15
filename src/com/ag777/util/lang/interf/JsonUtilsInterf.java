@@ -10,10 +10,17 @@ import com.ag777.util.lang.exception.model.JsonSyntaxException;
  * json转化接口
  * 
  * @author wanggz
- * @version last modify at 2018年06月01日
+ * @version last modify at 2018年06月15日
  */
 public interface JsonUtilsInterf {
 
+	/**
+	 * 格式化json串
+	 * @param src
+	 * @return
+	 */
+	public String prettyFormat(String str);
+	
 	/**
 	 * 对象转json
 	 * @param obj

@@ -27,6 +27,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import java.io.StringReader;
 import java.lang.reflect.Type;
 
 /**
@@ -40,7 +41,7 @@ import java.lang.reflect.Type;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年05月27日,last modify at 2018年06月01日
+ * @version create on 2017年05月27日,last modify at 2018年06月15日
  */
 public class GsonUtils implements JsonUtilsInterf{
 	
@@ -200,6 +201,22 @@ public class GsonUtils implements JsonUtilsInterf{
 	public static JsonArray toJsonArray(String json) {
 		return new JsonParser().parse(json).getAsJsonArray();
 	}
+	
+	/**
+	 * 格式化字符串
+	 * @param src
+	 * @return
+	 */
+	@Override
+	public String prettyFormat(String src){
+      Gson gson = new Gson();
+      JsonReader reader = new JsonReader(new StringReader(src));
+      reader.setLenient(true);
+      JsonParser jsonPar = new JsonParser();
+      JsonElement jsonEl = jsonPar.parse(reader);
+      String prettyJson = gson.toJson(jsonEl);
+      return prettyJson;
+  }
 	
 	/**
 	 * 转换任意类为json串（类型不支持会报错，这里不做捕获也不做抛出, 就当业务有问题应当报错,免得写try-catch）
