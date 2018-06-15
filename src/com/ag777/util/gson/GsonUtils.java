@@ -204,19 +204,28 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 格式化字符串
+	 * <p>
+	 * 每次都new一个用于格式化的新gson
+	 * </p>
 	 * @param src
 	 * @return
 	 */
 	@Override
-	public String prettyFormat(String src){
-      Gson gson = new Gson();
-      JsonReader reader = new JsonReader(new StringReader(src));
-      reader.setLenient(true);
-      JsonParser jsonPar = new JsonParser();
-      JsonElement jsonEl = jsonPar.parse(reader);
-      String prettyJson = gson.toJson(jsonEl);
-      return prettyJson;
-  }
+	public String prettyFormat(String src) throws JsonSyntaxException {
+		if (src == null || src.isEmpty()) {
+			return src;
+		}
+		try {
+			JsonReader reader = new JsonReader(new StringReader(src));
+			reader.setLenient(true);
+			JsonParser jsonPar = new JsonParser();
+			JsonElement jsonEl = jsonPar.parse(reader);
+			String prettyJson = prettyPrinting().toJson(jsonEl);
+			return prettyJson;
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
+	}
 	
 	/**
 	 * 转换任意类为json串（类型不支持会报错，这里不做捕获也不做抛出, 就当业务有问题应当报错,免得写try-catch）
@@ -503,6 +512,7 @@ public class GsonUtils implements JsonUtilsInterf{
 //					.setDateFormat("yyyy_MM")
 //				).toJson(map));
 		System.out.println(GsonUtils.get().toMapWithException(null));
+		System.out.println(GsonUtils.get().prettyFormat("{\"a\":1"));
 	}
 	
 }

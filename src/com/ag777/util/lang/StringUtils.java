@@ -2,6 +2,7 @@ package com.ag777.util.lang;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -14,7 +15,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2018年05月08日
+ * @version last modify at 2018年06月15日
  */
 public class StringUtils {
 
@@ -223,6 +224,19 @@ public class StringUtils {
 	        ch[0] = (char) (ch[0] - 32);  
 	    }  
 	    return new String(ch);  
+	}
+	
+	/**
+	 * 格式化数字,保留decimalPlaces位小数
+	 * 
+	 * @param num
+	 * @param decimalPlaces 保留小数位数
+	 * @return
+	 */
+	public static String formatNum(double num, int decimalPlaces) {
+		NumberFormat nf = NumberFormat.getNumberInstance();
+		nf.setMaximumFractionDigits(2);
+		return nf.format(num);
 	}
 	
 	/**

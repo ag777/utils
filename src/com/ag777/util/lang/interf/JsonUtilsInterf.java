@@ -19,7 +19,7 @@ public interface JsonUtilsInterf {
 	 * @param src
 	 * @return
 	 */
-	public String prettyFormat(String str);
+	public String prettyFormat(String str)  throws JsonSyntaxException;
 	
 	/**
 	 * 对象转json

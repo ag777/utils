@@ -5,6 +5,7 @@ import java.util.List;
 import com.ag777.util.Utils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.exception.ExceptionHelper;
+import com.ag777.util.lang.exception.model.JsonSyntaxException;
 
 
 /**
@@ -196,7 +197,10 @@ public class Console {
 	private static String toJson(Object obj, boolean formatMode) {
 		String json = Utils.jsonUtils().toJson(obj);
 		if(formatMode) {	//需要被格式化
-			return Utils.jsonUtils().prettyFormat(json);
+			try {
+				json = Utils.jsonUtils().prettyFormat(json);
+			} catch (JsonSyntaxException e) {
+			}
 		}
 		return json;
 	}

@@ -3,8 +3,6 @@ package com.ag777.util.lang.calculate;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
-
-import com.ag777.util.lang.Formatter;
 import com.ag777.util.lang.StringUtils;
 
 /**
@@ -13,7 +11,7 @@ import com.ag777.util.lang.StringUtils;
  * 		java原有对于浮点型的计算结果不精确,例：试下用java直接计算0.06612d+0.00413d
  * </p>
  * @author ag777
- * @version create on 2017年11月14日,last modify at 2017年11月21日
+ * @version create on 2017年11月14日,last modify at 2018年06月15日
  */
 public class CalculateHelper {
 
@@ -77,7 +75,7 @@ public class CalculateHelper {
 	 * @return
 	 */
 	public String toString(int decimalPlaces) {
-		return Formatter.num(num.doubleValue(), decimalPlaces);
+		return StringUtils.formatNum(num.doubleValue(), decimalPlaces);
 	}
 	
 	//--计算
