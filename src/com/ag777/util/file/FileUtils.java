@@ -40,7 +40,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2018年06月15日
+ * @version create on 2017年04月25日,last modify at 2018年06月27日
  */
 public class FileUtils {
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
@@ -750,17 +750,59 @@ public class FileUtils {
     	return delete(new File(path));
     }
 
-	
+	/**
+	 * 替换文件名
+	 * <p>
+	 * replaceName("a.tar.gz", "b")=>"b.gz"
+	 * </p>
+	 * 
+	 * @param wholeFileName
+	 * @param newName
+	 * @return
+	 */
+    public static String replaceName(String wholeFileName, String newName) {
+    	return wholeFileName.replaceFirst("^.+?(\\.[^\\.]+)?$", newName+"$1");
+    }
+    
+    /**
+     * 替换文件名(保留长拓展名)
+     * <p>
+     * replaceNameWithLongSuffix("a.tar.gz", "b")=>"b.tar.gz"
+     * </p>
+     * @param wholeFileName
+     * @param newName
+     * @return
+     */
+    public static String replaceNameWithLongSuffix(String wholeFileName, String newName) {
+    	return wholeFileName.replaceFirst("^[^\\.]*(.+)?$", newName+"$1");
+    }
+    
 	/**
 	 * 获取文件拓展名
+	 * <p>
+	 * a.tar.gz获取到的是.gz
+	 * </p>
+	 * 
 	 * @param filePath 源文件路径
 	 * @return
 	 */
-	public static String getFilePrefix(String filePath) {
-		//String prefix=fileName.substring(fileName.lastIndexOf(".")+1);
-	    //return prefix;
+	public static String getFileSuffix(String filePath) {
 		return RegexUtils.find(filePath, "\\.([^\\.]*)$","$1","");
 	}	
+	
+	/**
+	 * 获取文件尾缀(长)
+	 * <p>
+	 * 比如a.tar.gz获取到的是tar.gz
+	 * </p>
+	 * 
+	 * @param filePath
+	 * @return
+	 */
+	public static String getFileLongSuffix(String filePath) {
+		return RegexUtils.find(filePath, "\\.(.*)$","$1","");
+	}
+	
 	
     /**
      * 移除字符串中的BOM前缀
