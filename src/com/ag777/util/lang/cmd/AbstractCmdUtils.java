@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.model.Charsets;
@@ -37,6 +38,8 @@ public abstract class AbstractCmdUtils {
 		return charsetDefault;
 	}
 	
+	
+	
 	/**
 	 * 
 	 * @param cmd
@@ -47,8 +50,21 @@ public abstract class AbstractCmdUtils {
 	 * @throws IOException
 	 */
 	public String find(String cmd, String baseDir, String regex, String replacement) throws IOException {
+		return find(cmd, baseDir, Pattern.compile(regex), replacement);
+	}
+	
+	/**
+	 * 
+	 * @param cmd
+	 * @param baseDir
+	 * @param pattern
+	 * @param replacement
+	 * @return
+	 * @throws IOException
+	 */
+	public String find(String cmd, String baseDir, Pattern pattern, String replacement) throws IOException {
 		InputStream in = execForStream(cmd, baseDir);
-		return IOUtils.find(in, regex, replacement, charsetDefault);
+		return IOUtils.find(in, pattern, replacement, charsetDefault);
 	}
 	
 	/**
@@ -61,8 +77,21 @@ public abstract class AbstractCmdUtils {
 	 * @throws IOException
 	 */
 	public Long findLong(String cmd, String baseDir, String regex, String replacement) throws IOException {
+		return findLong(cmd, baseDir, Pattern.compile(regex), replacement);
+	}
+	
+	/**
+	 * 
+	 * @param cmd
+	 * @param baseDir
+	 * @param pattern
+	 * @param replacement
+	 * @return
+	 * @throws IOException
+	 */
+	public Long findLong(String cmd, String baseDir, Pattern pattern, String replacement) throws IOException {
 		InputStream in = execForStream(cmd, baseDir);
-		return IOUtils.findLong(in, regex, replacement, charsetDefault);
+		return IOUtils.findLong(in, pattern, replacement, charsetDefault);
 	}
 	
 	/**
@@ -75,8 +104,21 @@ public abstract class AbstractCmdUtils {
 	 * @throws IOException
 	 */
 	public List<String> findAll(String cmd, String baseDir, String regex, String replacement) throws IOException {
+		return findAll(cmd, baseDir, Pattern.compile(regex), replacement);
+	}
+	
+	/**
+	 * 
+	 * @param cmd
+	 * @param baseDir
+	 * @param pattern
+	 * @param replacement
+	 * @return
+	 * @throws IOException
+	 */
+	public List<String> findAll(String cmd, String baseDir, Pattern pattern, String replacement) throws IOException {
 		InputStream in = execForStream(cmd, baseDir);
-		return IOUtils.findAll(in, regex, replacement, charsetDefault);
+		return IOUtils.findAll(in, pattern, replacement, charsetDefault);
 	}
 	
 	/**
