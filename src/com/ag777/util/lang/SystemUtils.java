@@ -7,8 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+
+import sun.net.dns.ResolverConfiguration;
 
 
 /**
@@ -18,7 +21,7 @@ import java.util.Set;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月12日,last modify at 2018年06月13日
+ * @version create on 2017年06月12日,last modify at 2018年07月05日
  */
 public class SystemUtils {
 	private static OsType osType;
@@ -228,6 +231,17 @@ public class SystemUtils {
 		}
 	}
 	
+	/**
+	 * 获取所有dns
+	 * <p>
+	 * jni实现,linux查询/etc/resolv.conf也可获取<br/>
+	 * 参考:https://www.cnblogs.com/crazyacking/p/5672032.html
+	 * </p>
+	 * @return
+	 */
+	public static List<String> getAllDns() {
+		return ResolverConfiguration.open().nameservers();
+	}
 	
 /*--------------------操作系统相关-------------- */
 	
