@@ -12,7 +12,7 @@ import com.ag777.util.lang.IOUtils;
  * 针对属性文件的读写操作工具类
  * 
  * @author ag777
- * @version create on 2015年04月04日,last modify at 20218年06月15日
+ * @version create on 2015年04月04日,last modify at 2018年06月15日
  */
 public class PropertyUtils extends java.util.Properties{
 

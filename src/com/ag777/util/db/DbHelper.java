@@ -1,5 +1,7 @@
 package com.ag777.util.db;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -40,7 +42,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * @author ag777
  * @version create on 2017年07月28日,last modify at 2018年05月07日
  */
-public class DbHelper implements Disposable{
+public class DbHelper implements Disposable, Closeable {
 	
 	//控制控制台输出开关
 	private static boolean MODE_DEBUG = true;
@@ -348,21 +350,6 @@ public class DbHelper implements Disposable{
 			}
 		}
 		return false;
-	}
-	
-	/**
-	 * 关闭数据库连接.释放资源
-	 */
-	@Override
-	public void dispose() {
-		try {
-			if(conn != null) {
-				conn.close();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		conn = null;
 	}
 	
 	/**
@@ -1293,5 +1280,34 @@ public class DbHelper implements Disposable{
 			dispose();
 		}
 	
+	}
+
+	/**
+	 * 关闭数据库连接.释放资源
+	 * <p>
+	 * 和dispose()的作用相同
+	 * </p>
+	 */
+	@Override
+	public void close() throws IOException {
+		dispose();
+	}
+	
+	/**
+	 * 关闭数据库连接.释放资源
+	 * <p>
+	 * 和close()的作用相同
+	 * </p>
+	 */
+	@Override
+	public void dispose() {
+		try {
+			if(conn != null) {
+				conn.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		conn = null;
 	}
 }
