@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
 import com.ag777.util.lang.StringUtils;
+import com.ag777.util.lang.exception.model.DivisorIsZeroException;
 
 /**
  * 科学计算辅助类
@@ -11,7 +12,7 @@ import com.ag777.util.lang.StringUtils;
  * 		java原有对于浮点型的计算结果不精确,例：试下用java直接计算0.06612d+0.00413d
  * </p>
  * @author ag777
- * @version create on 2017年11月14日,last modify at 2018年06月15日
+ * @version create on 2017年11月14日,last modify at 2018年07月19日
  */
 public class CalculateHelper {
 
@@ -112,7 +113,7 @@ public class CalculateHelper {
 	 * 乘
 	 * 
 	 * <p>
-	 * 	将参数转换为BigDecimal类型再进行计算转化失败抛出runtime异常
+	 * 	将参数转换为BigDecimal类型再进行计算转化失败抛出runtime异常<br/>
 	 * </p>
 	 * 
 	 * @param multiplicand
@@ -127,14 +128,37 @@ public class CalculateHelper {
 	 * 除
 	 * 
 	 * <p>
-	 * 	将参数转换为BigDecimal类型再进行计算转化失败抛出runtime异常
-	 * 结果保留10位，四舍五入
+	 * 	将参数转换为BigDecimal类型再进行计算转化失败抛出runtime异常<br/>
+	 * 结果保留10位，四舍五入<br/>
+	 * 除数为0不做任何处理
 	 * </p>
 	 * 
 	 * @param divisor
 	 * @return
 	 */
 	public CalculateHelper divide(Object divisor) {
+		if(divisor.equals(0)) {
+			return this;
+		}
+		num = num.divide(valueOfWithException(divisor), 10, BigDecimal.ROUND_HALF_DOWN);
+		return this;
+	}
+	
+	/**
+	 * 除
+	 * <p>
+	 * 结果保留10位，四舍五入<br/>
+	 * 除数为0抛出异常
+	 * </p>
+	 * 
+	 * @param divisor
+	 * @return
+	 * @throws DivisorIsZeroException 
+	 */
+	public CalculateHelper divideWithException(Object divisor) throws DivisorIsZeroException {
+		if(divisor.equals(0)) {
+			throw new DivisorIsZeroException();
+		}
 		num = num.divide(valueOfWithException(divisor), 10, BigDecimal.ROUND_HALF_DOWN);
 		return this;
 	}
