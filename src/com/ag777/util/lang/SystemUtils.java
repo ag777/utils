@@ -21,7 +21,7 @@ import sun.net.dns.ResolverConfiguration;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月12日,last modify at 2018年07月05日
+ * @version create on 2017年06月12日,last modify at 2018年07月20日
  */
 public class SystemUtils {
 	private static OsType osType;
@@ -243,7 +243,26 @@ public class SystemUtils {
 		return ResolverConfiguration.open().nameservers();
 	}
 	
-/*--------------------操作系统相关-------------- */
+	/**
+	 * 获取硬盘使用率
+	 * <p>
+	 * jdk原生实现
+	 * linux有偏差,可能得这么做:https://blog.csdn.net/u010738184/article/details/77725973
+	 * </p>
+	 * @return {硬盘总大小(bytes), 剩余大小(bytes)}
+	 */
+	public static long[] getDiskUsage() {
+		long total = 0l;
+		long used = 0l;
+		File[] rootFiles = File.listRoots();
+		for (File file : rootFiles) {
+			total += file.getTotalSpace();
+			used += file.getUsableSpace();	//his method usually provide a more accurate estimate of how much new data can actually be written as this method checks for write permissions and other operating system restrictions.
+		}
+		return new long[]{total, used};
+	}
+	
+	/*--------------------操作系统相关-------------- */
 	
 	/**
 	 * 获取操作系统的版本
