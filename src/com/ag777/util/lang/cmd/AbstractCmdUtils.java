@@ -16,7 +16,7 @@ import com.ag777.util.lang.model.Charsets;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年07月04日,last modify at 2018年07月04日
+ * @version create on 2018年07月04日,last modify at 2018年07月25日
  */
 public abstract class AbstractCmdUtils {
 
@@ -123,7 +123,10 @@ public abstract class AbstractCmdUtils {
 	
 	/**
 	 * 执行cmd命令获取返回的所有行
-	 * 
+	 * <p>
+	 * 要小心
+	 * 所有读取内容的方法都有可能导致卡死，原因是某些shell命令读取inputSteam时判断不了何时读取结束
+	 * </p>
 	 * @param cmd
 	 * @param baseDir
 	 * @return
@@ -186,7 +189,8 @@ public abstract class AbstractCmdUtils {
 	 */
 	public  boolean execWithException(String cmd, String baseDir) throws IOException, InterruptedException {
 		Process shellPro = getProcess(cmd, baseDir);
-		readLines(cmd, baseDir);
+		pre(shellPro);		//关闭输出流,子线程读取错误流
+		readOutput(shellPro);	//子线程读取输入流
 		int exitValue = shellPro.waitFor();
 		return exitValue == 0;
 	}
@@ -213,7 +217,6 @@ public abstract class AbstractCmdUtils {
 		closeOutput(pro);
 		readErr(pro);
 	}
-
 	
 	/**
 	 * 关闭输出流
@@ -239,6 +242,26 @@ public abstract class AbstractCmdUtils {
 					try {
 						IOUtils.readLines(pro.getErrorStream(), "gb2312");
 					} catch (IOException e) {
+					}
+				}
+			};
+			t.start();
+		} catch(Exception ex) {
+		}
+	}
+	
+	/**
+	 * 子线程读取输出流
+	 * @param pro
+	 */
+	protected static void readOutput(Process pro) {
+		try {
+			Thread t = new Thread() {
+				public void run() {
+					try {
+						IOUtils.readLines(pro.getInputStream(), "gb2312");
+					} catch (IOException e) {
+					} finally {
 					}
 				}
 			};
