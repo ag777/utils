@@ -15,7 +15,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2018年06月15日
+ * @version last modify at 2018年07月30日
  */
 public class StringUtils {
 
@@ -449,6 +449,46 @@ public class StringUtils {
 		}
 		return ListUtils.ofList(src, "(\r)?\n");
 	}
+	
+	/**
+	 * 汉字转Unicode字符串
+	 * @param src
+	 * @return
+	 */
+	public static String toUnicode(String src) {
+		if(src == null) {
+			return null;
+		}
+        StringBuffer unicode = new StringBuffer();
+        for (int i = 0; i < src.length(); i++) {
+            char c = src.charAt(i);  // 取出每一个字符
+            unicode.append("\\u").append(Integer.toHexString(c));// 转换为unicode
+        }
+        return unicode.toString();
+    }
+	
+	/**
+	 * unicode字符串转汉字
+	 * <p>
+	 * 通过\\\\u分隔
+	 * </p>
+	 * 
+	 * @param unicode
+	 * @return
+	 */
+	public static String unicode2String(String unicode) {
+		if(unicode == null) {
+			return null;
+		}
+    	/* 以 \ u 分割，因为java注释也能识别unicode，因此中间加了一个空格*/
+        String[] strs = unicode.split("\\\\u");
+        String returnStr = "";
+        // 由于unicode字符串以 \ u 开头，因此分割出的第一个字符是""。
+        for (int i = 1; i < strs.length; i++) {
+          returnStr += (char) Integer.valueOf(strs[i], 16).intValue();
+        }
+        return returnStr;
+    }
 	
 	/**
 	 * 将字符串a重复times次
