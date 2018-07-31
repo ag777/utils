@@ -28,6 +28,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Request.Builder;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
@@ -47,7 +48,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年06月01日
+ * @version last modify at 2018年07月31日
  */
 public class HttpUtils {
 	
@@ -235,7 +236,7 @@ public class HttpUtils {
 	 */
 	public static <K,V>Call getByClient(OkHttpClient client, String url, Headers headers, Object tag) throws IllegalArgumentException {
 		return call(
-				getRequest(url, null, headers, tag),
+				getRequest(url, headers, tag).get().build(),
 				client);
 	}
 	
@@ -282,7 +283,9 @@ public class HttpUtils {
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static Call postByClient(OkHttpClient client, String url, RequestBody body, Headers headers, Object tag) throws IllegalArgumentException {
-		return call(getRequest(url, body, headers, tag), client);
+		return call(
+				getRequest(url, headers, tag).post(body).build(), 
+				client);
 	}
 	
 	/**===================文件上传/下载===========================*/
@@ -300,6 +303,99 @@ public class HttpUtils {
 	 */
 	public static <K, V>Call postMultiFilesByClient(OkHttpClient client, String url, File[] files, Map<K, V> paramMap, Map<K, V> headerMap, Object tag) throws IllegalArgumentException, FileNotFoundException {
 		return postByClient(client, url, getRequestBody(files, paramMap), getHeaders(headerMap), tag);
+	}
+	
+	/**===================delete===========================*/
+	
+	/**
+	 * delete请求
+	 * @param client
+	 * @param url
+	 * @param paramMap
+	 * @param headerMap
+	 * @param tag
+	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K,V>Call deleteByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
+		return deleteByClient(client, getGetUrl(url, paramMap), getHeaders(headerMap), tag);
+	}
+	
+	/**
+	 * delete请求
+	 * @param client
+	 * @param url
+	 * @param headers
+	 * @param tag
+	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K,V>Call deleteByClient(OkHttpClient client, String url, Headers headers, Object tag) throws IllegalArgumentException {
+		return call(
+				getRequest(url, headers, tag).delete().build(),
+				client);
+	}
+	
+	/**===================put===========================*/
+	/**
+	 * put请求
+	 * @param client
+	 * @param url
+	 * @param paramMap
+	 * @param headerMap
+	 * @param tag
+	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K,V>Call putByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
+		return putByClient(client, url, getRequestBody(paramMap), getHeaders(headerMap), tag);
+	}
+	
+	/**
+	 * put请求
+	 * @param client
+	 * @param url
+	 * @param body
+	 * @param headers
+	 * @param tag
+	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static Call putByClient(OkHttpClient client, String url, RequestBody body, Headers headers, Object tag) throws IllegalArgumentException {
+		return call(
+				getRequest(url, headers, tag).put(body).build(), 
+				client);
+	}
+	
+	/**===================head===========================*/
+	
+	/**
+	 * head请求
+	 * @param client
+	 * @param url
+	 * @param paramMap
+	 * @param headerMap
+	 * @param tag
+	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K,V>Call headByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
+		return headByClient(client, getGetUrl(url, paramMap), getHeaders(headerMap), tag);
+	}
+	
+	/**
+	 * delete请求
+	 * @param client
+	 * @param url
+	 * @param headers
+	 * @param tag
+	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K,V>Call headByClient(OkHttpClient client, String url, Headers headers, Object tag) throws IllegalArgumentException {
+		return call(
+				getRequest(url, headers, tag).head().build(),
+				client);
 	}
 	
 	/**===================其他方法===========================*/
@@ -620,18 +716,14 @@ public class HttpUtils {
 	/**
 	 * 根据参数,请求头等数据构造request
 	 * @param url
-	 * @param body
 	 * @param headers
 	 * @param tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	private static Request getRequest(String url, RequestBody body, Headers headers, Object tag) throws IllegalArgumentException {
+	private static Builder getRequest(String url, Headers headers, Object tag) throws IllegalArgumentException {
 		Request.Builder builder = new Request.Builder()
 															.url(url);
-		if(body != null) {
-			builder.post(body);
-		}
 		
 		if(headers != null) {
 			builder.headers(headers);
@@ -640,7 +732,7 @@ public class HttpUtils {
 		if(tag != null) {
 			builder.tag(tag);
 		}
-		return builder.build();
+		return builder;
 	}
 	
 	/**

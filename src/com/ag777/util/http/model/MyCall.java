@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.ConnectException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -12,6 +14,7 @@ import com.ag777.util.http.HttpUtils;
 import com.ag777.util.lang.exception.model.JsonSyntaxException;
 
 import okhttp3.Call;
+import okhttp3.Headers;
 import okhttp3.Response;
 
 /**
@@ -22,7 +25,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2018年04月03日
+ * @version create on 2018年03月30日,last modify at 2018年07月31日
  */
 public class MyCall {
 	
@@ -62,6 +65,25 @@ public class MyCall {
 	}
 	
 	/**
+	 * 获取返回头对应的map
+	 * @return
+	 */
+	public Map<String, Object> headers() {
+		if(response == null) {
+			return null;
+		}
+		Map<String, Object> map = new HashMap<>();
+		Headers headers = response.headers();
+		Iterator<String> itor = headers.names().iterator();
+		while(itor.hasNext()) {
+			String name = itor.next();
+			String value = headers.get(name);
+			map.put(name, value);
+		}
+		return map;
+	}
+	
+	/**
 	 * 发送请求并获取返回的封装
 	 * @return
 	 * @throws ConnectException
@@ -72,6 +94,12 @@ public class MyCall {
 		return response;
 	}
 	
+	/**
+	 * 请求并获取返回码
+	 * @return
+	 * @throws ConnectException
+	 * @throws IOException
+	 */
 	public Integer executeForCode() throws ConnectException, IOException {
 		executeForResponse();
 		return HttpUtils.responseCode(response);

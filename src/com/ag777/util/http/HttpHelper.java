@@ -133,6 +133,48 @@ public class HttpHelper {
 		return new MyCall(call);
 	}
 	
+	/**===================DELETE请求===========================*/
+	/**
+	 * delete请求
+	 * @param url
+	 * @param paramMap
+	 * @param headerMap
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	public <K,V>MyCall delete(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.deleteByClient(client, url, paramMap, headerMap, tag);
+		return new MyCall(call);
+	}
+	
+	/**===================PUT请求===========================*/
+	/**
+	 * put请求
+	 * @param url
+	 * @param paramMap
+	 * @param headerMap
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	public <K,V>MyCall put(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.putByClient(client, url, paramMap, headerMap, tag);
+		return new MyCall(call);
+	}
+	
+	/**===================HEAD请求===========================*/
+	/**
+	 * head请求
+	 * @param url
+	 * @param paramMap
+	 * @param headerMap
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	public <K,V>MyCall head(String url, Map<K, V> paramMap, Map<K, V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.headByClient(client, url, paramMap, headerMap, tag);
+		return new MyCall(call);
+	}
+	
 	/**===================文件上传下载=========================== */
 	
 	/**
