@@ -1,23 +1,37 @@
 package com.ag777.util.http.model;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 /**
  * 用于连接https
  * 
  * @author ag777
- * @version create on 2017年06月06日,last modify at 2017年09月15日
+ * @version create on 2017年06月06日,last modify at 2018年08月02日
  */
 public class SSLSocketClient {  
-	  
-    //获取这个SSLSocketFactory  
+	
+	private SSLSocketClient() {}
+	
+	/**
+     * 绕过https
+     * @return
+     */
     public static SSLSocketFactory getSSLSocketFactory() {  
         try {  
             SSLContext sslContext = SSLContext.getInstance("SSL");  
@@ -26,7 +40,39 @@ public class SSLSocketClient {
         } catch (Exception e) {  
             throw new RuntimeException(e);  
         }  
-    }  
+    }
+    
+    /**
+     * 导入ssl证书
+     * @param certificates
+     * @return
+     * @throws KeyStoreException
+     * @throws CertificateException
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     * @throws KeyManagementException
+     */
+    public static SSLSocketFactory getSSLSocketFactory(InputStream... certificates) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
+        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(null);
+        int index = 0;
+        for (InputStream certificate : certificates) {
+            String certificateAlias = Integer.toString(index++);
+            keyStore.setCertificateEntry(certificateAlias, certificateFactory.generateCertificate(certificate));
+
+            try {
+                if (certificate != null)
+                    certificate.close();
+            } catch (IOException e) {
+            }
+        }
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init(keyStore);
+        sslContext.init(null, trustManagerFactory.getTrustManagers(), new SecureRandom());
+        return sslContext.getSocketFactory();
+	}
   
     //获取TrustManager  
     private static TrustManager[] getTrustManager() {  

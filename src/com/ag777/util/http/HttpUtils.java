@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.ConnectException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
@@ -48,7 +52,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年07月31日
+ * @version last modify at 2018年08月02日
  */
 public class HttpUtils {
 	
@@ -63,22 +67,34 @@ public class HttpUtils {
 	 * 生成并获取client对象,双锁校验
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
 	public static OkHttpClient client() {
 		if(mOkHttpClient == null) {
 			synchronized (HttpUtils.class) {
 				if(mOkHttpClient == null) {
-					mOkHttpClient = new OkHttpClient().newBuilder()  
-		                    .connectTimeout(15, TimeUnit.SECONDS)  
-		                    .readTimeout(15, TimeUnit.SECONDS)  
-		                    .writeTimeout(15, TimeUnit.SECONDS)  
-		                    .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())  
-		                    .hostnameVerifier(SSLSocketClient.getHostnameVerifier())  
+					mOkHttpClient = defaultBuilder()  
 		                    .build();  
 				}
 			}
 		}
 		return mOkHttpClient;
+	}
+	
+	/**
+	 * 默认builder
+	 * <p>
+	 * 连接超时时间为15秒,写出超时时间为15秒
+	 * 绕过https验证
+	 * </p>
+	 * @return
+	 */
+	@SuppressWarnings("deprecation")
+	public static OkHttpClient.Builder defaultBuilder() {
+		return new OkHttpClient().newBuilder()  
+	         .connectTimeout(15, TimeUnit.SECONDS)  
+	         .readTimeout(15, TimeUnit.SECONDS)  
+	         .writeTimeout(15, TimeUnit.SECONDS)  
+	         .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())  
+	         .hostnameVerifier(SSLSocketClient.getHostnameVerifier());
 	}
 	
 	/**
@@ -96,7 +112,7 @@ public class HttpUtils {
 	 */
 	public OkHttpClient.Builder builderWithInterceptor(OkHttpClient.Builder builder, Interceptor... interceptors) {
 		if(builder == null) {
-			builder = client().newBuilder();
+			builder = defaultBuilder();
 		}
 		
 		if(interceptors != null) {
@@ -104,6 +120,27 @@ public class HttpUtils {
 				builder.addInterceptor(interceptor);
 			}
 		}
+		return builder;
+	}
+	
+	/**
+	 * 导入https证书
+	 * @param builder
+	 * @param certificates
+	 * @return
+	 * @throws KeyManagementException
+	 * @throws KeyStoreException
+	 * @throws CertificateException
+	 * @throws NoSuchAlgorithmException
+	 * @throws IOException
+	 */
+	@SuppressWarnings("deprecation")
+	public OkHttpClient.Builder builderWithHttpCertificate(OkHttpClient.Builder builder, InputStream... certificates) throws KeyManagementException, KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
+		if(builder == null) {
+			builder = defaultBuilder();
+		}
+		
+		builder.sslSocketFactory(SSLSocketClient.getSSLSocketFactory(certificates));
 		return builder;
 	}
 	
@@ -121,7 +158,7 @@ public class HttpUtils {
 	 */
 	public OkHttpClient.Builder builderWithNetWorkInterceptor(OkHttpClient.Builder builder, Interceptor... interceptors) {
 		if(builder == null) {
-			builder = client().newBuilder();
+			builder = defaultBuilder();
 		}
 		
 		if(interceptors != null) {
