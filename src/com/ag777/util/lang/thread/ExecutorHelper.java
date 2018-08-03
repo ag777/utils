@@ -17,18 +17,19 @@ import com.ag777.util.lang.interf.Disposable;
  * </p>
  * 
  * @author ag777
- * @version  create on 2017年10月10日,last modify at 2018年04月28日
+ * @version  create on 2017年10月10日,last modify at 2018年08月03日
  */
 public class ExecutorHelper implements Disposable {
 
-	private ExecutorService pool;
+	protected ExecutorService pool;
 	
 	public ExecutorHelper(int size) {
 		pool = Executors.newFixedThreadPool(size);
 	}
 	
-	public void add(Runnable command) {
+	public ExecutorHelper add(Runnable command) {
 		pool.execute(command);
+		return this;
 	}
 	
 	public <T>Future<T> add(Callable<T> task) {
@@ -144,7 +145,6 @@ public class ExecutorHelper implements Disposable {
 		try {
 			waitFor();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
 			throw new RuntimeException(e);
 		} finally {
 			dispose();
