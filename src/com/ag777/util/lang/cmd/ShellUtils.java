@@ -28,7 +28,7 @@ public class ShellUtils extends AbstractCmdUtils {
 	}
 	
 	public ShellUtils() {
-		super(Charsets.UTF_8);
+		super();
 	}
 
 	public ShellUtils(Charset charset) {
