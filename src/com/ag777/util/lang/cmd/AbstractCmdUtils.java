@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import com.ag777.util.lang.IOUtils;
+import com.ag777.util.lang.SystemUtils;
 import com.ag777.util.lang.model.Charsets;
 
 /**
@@ -16,14 +17,19 @@ import com.ag777.util.lang.model.Charsets;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年07月04日,last modify at 2018年07月25日
+ * @version create on 2018年07月04日,last modify at 2018年08月06日
  */
 public abstract class AbstractCmdUtils {
 
 	private Charset charsetDefault;
 	
 	public AbstractCmdUtils() {
-		this.charsetDefault = Charsets.UTF_8;//"gb2312";
+		if(SystemUtils.isWindows()) {	//windows用gbk读取
+			this.charsetDefault = Charsets.GBK;
+		} else {	//linux用utf8读取
+			this.charsetDefault = Charsets.UTF_8;
+		}
+		
 	}
 	
 	public AbstractCmdUtils(Charset charset) {
