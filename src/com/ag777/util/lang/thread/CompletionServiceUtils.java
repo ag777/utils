@@ -17,7 +17,7 @@ import com.ag777.util.lang.interf.Disposable;
  * 回调线程池CompletionService辅助类
  * 
  * @author ag777
- * @version  create on 2018年08月03日,last modify at 2018年08月03日
+ * @version  create on 2018年08月03日,last modify at 2018年08月06日
  */
 public class CompletionServiceUtils<T> implements Disposable {
 	private ExecutorService pool;
@@ -29,14 +29,20 @@ public class CompletionServiceUtils<T> implements Disposable {
 		completionService = new ExecutorCompletionService<T>(pool);
 	}
 	
-	public CompletionServiceUtils<T> add(Callable<T> task) {
-		completionService.submit(task);
-		taskCount++;
+	@SuppressWarnings("unchecked")
+	public CompletionServiceUtils<T> add(Callable<T>... tasks) {
+		if(tasks == null) {
+			return this;
+		}
+		for (Callable<T> task : tasks) {
+			completionService.submit(task);
+			taskCount++;
+		}
 		return this;
 	}
 	
 	public boolean hasNext() {
-		return pool.isTerminated();
+		return taskCount>0;
 	}
 	
 	/**
@@ -51,6 +57,7 @@ public class CompletionServiceUtils<T> implements Disposable {
 			T result = completionService.take().get();
 			list.add(result);
 		}
+		taskCount = 0;
 		return list;
 	}
 	
