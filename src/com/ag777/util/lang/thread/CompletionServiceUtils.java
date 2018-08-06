@@ -36,7 +36,7 @@ public class CompletionServiceUtils<T> implements Disposable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public CompletionServiceUtils<T> add(Callable<T>... tasks) {
+	public CompletionServiceUtils<T> addAll(Callable<T>... tasks) {
 		if(tasks == null) {
 			return this;
 		}
