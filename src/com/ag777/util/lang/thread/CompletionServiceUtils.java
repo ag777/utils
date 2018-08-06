@@ -29,14 +29,19 @@ public class CompletionServiceUtils<T> implements Disposable {
 		completionService = new ExecutorCompletionService<T>(pool);
 	}
 	
+	public CompletionServiceUtils<T> add(Callable<T> task) {
+		completionService.submit(task);
+		taskCount++;
+		return this;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public CompletionServiceUtils<T> add(Callable<T>... tasks) {
 		if(tasks == null) {
 			return this;
 		}
 		for (Callable<T> task : tasks) {
-			completionService.submit(task);
-			taskCount++;
+			add(task);
 		}
 		return this;
 	}
