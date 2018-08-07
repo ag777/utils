@@ -17,30 +17,44 @@ import com.ag777.util.lang.interf.Disposable;
  * 回调线程池CompletionService辅助类
  * 
  * @author ag777
- * @version  create on 2018年08月03日,last modify at 2018年08月06日
+ * @version  create on 2018年08月03日,last modify at 2018年08月07日
  */
-public class CompletionServiceUtils<T> implements Disposable {
+public class CompletionServiceHelper<T> implements Disposable {
 	private ExecutorService pool;
 	private CompletionService<T> completionService;
 	private long taskCount = 0;
 	
-	public CompletionServiceUtils(int poolSize) {
+	/**
+	 * 执行任务返回任务结果列表
+	 * @param taskList 任务列表
+	 * @param poolSize 同时执行的任务数量
+	 * @param errHandler 异常捕获
+	 * @return
+	 */
+	public static <T>List<T> task(List<Callable<T>> taskList, int poolSize, ErrHandler<T> errHandler) {
+		CompletionServiceHelper<T> helper = new CompletionServiceHelper<>(poolSize);
+		List<T> list = helper.addAll(taskList).takeAll(errHandler);
+		helper.waitForDispose();
+		return list;
+	}
+	
+	
+	public CompletionServiceHelper(int poolSize) {
 		pool = Executors.newFixedThreadPool(poolSize);
 		completionService = new ExecutorCompletionService<T>(pool);
 	}
 	
-	public CompletionServiceUtils<T> add(Callable<T> task) {
+	public CompletionServiceHelper<T> add(Callable<T> task) {
 		completionService.submit(task);
 		taskCount++;
 		return this;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public CompletionServiceUtils<T> addAll(Callable<T>... tasks) {
-		if(tasks == null) {
+	public CompletionServiceHelper<T> addAll(List<Callable<T>> taskList) {
+		if(ListUtils.isEmpty(taskList)) {
 			return this;
 		}
-		for (Callable<T> task : tasks) {
+		for (Callable<T> task : taskList) {
 			add(task);
 		}
 		return this;
@@ -52,11 +66,36 @@ public class CompletionServiceUtils<T> implements Disposable {
 	
 	/**
 	 * 获取所有结果
+	 * <p>
+	 * 如果单个任务异常用handler捕获,并将返回添加至结果列表
+	 * </p>
+	 * @param errHandler
+	 * @return
+	 */
+	public synchronized List<T> takeAll(ErrHandler<T> errHandler) {
+		List<T> list = ListUtils.newArrayList();
+		for(;taskCount>0;taskCount--) {
+			T result = null;
+			try {
+				result = completionService.take().get();
+			} catch (InterruptedException | ExecutionException e) {
+				if(errHandler != null) {
+					result = errHandler.onErr(e, list.size());	//这里取巧,当前列表大小(未加上新元素)就是新元素下标
+				}
+			}
+			list.add(result);
+		}
+		taskCount = 0;
+		return list;
+	}
+	
+	/**
+	 * 获取所有结果
 	 * @return
 	 * @throws InterruptedException
 	 * @throws ExecutionException
 	 */
-	public synchronized List<T> takeAll() throws InterruptedException, ExecutionException {
+	public synchronized List<T> takeAllWithException() throws InterruptedException, ExecutionException {
 		List<T> list = ListUtils.newArrayList();
 		for(;taskCount>0;taskCount--) {
 			T result = completionService.take().get();
@@ -158,16 +197,7 @@ public class CompletionServiceUtils<T> implements Disposable {
 		waitFor(100, TimeUnit.MILLISECONDS);
 	}
 	
-	public static void main(String[] args) throws InterruptedException, ExecutionException {
-		CompletionServiceUtils<Integer> u = new CompletionServiceUtils<>(5);
-		for (int i = 0; i < 10; i++) {
-			int n = i;
-			u.add(()->{
-				Thread.sleep(1000);
-				return n;
-			});
-		}
-		Console.log(u.takeAll());
-		u.waitForDispose();
+	public static interface ErrHandler<T> {
+		public T onErr(Throwable throwable, int index);
 	}
 }
