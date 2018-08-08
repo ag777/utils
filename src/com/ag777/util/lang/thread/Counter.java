@@ -1,50 +1,46 @@
 package com.ag777.util.lang.thread;
 
+import java.util.concurrent.atomic.LongAdder;
+
 /**
  * 线程安全计数器
  * 
  * @author ag777
- * @version  create on 2017年11月1日,last modify at 2018年01月09日
+ * @version  create on 2017年11月1日,last modify at 2018年08月08日
  */
 public class Counter {
-	private long i;
-	public Counter(int i) {
-		this.i = i;
-	}
+	private LongAdder l;
 	
 	public Counter(long i) {
-		this.i = i;
+		this.l = new LongAdder();
+		this.l.add(i);
 	}
 	
-	public long add(int b) {
+	public void add(int b) {
+		l.add(b);
+	}
+	
+	public long addForNum(int b) {
 		synchronized (Counter.class) {
-			i = i+b;
-			long n = i;
-			return n;
+			add(b);
+			return l.longValue();
 		}
 	}
 	
-	public long add() {
-		return add(1);
+	public void add() {
+		add(1);
 	}
 	
-	public long subtract(int b) {
-		synchronized (Counter.class) {
-			i = i-b;
-			long n = i;
-			return n;
-		}
+	public long addForNum() {
+		return addForNum(1);
 	}
 	
-	public long subtract() {
-		return subtract(1);
-	}
 	
 	public long longValue() {
-		return i;
+		return l.longValue();
 	}
 	
 	public int intValue() {
-		return Long.valueOf(i).intValue();
+		return l.intValue();
 	}
 }

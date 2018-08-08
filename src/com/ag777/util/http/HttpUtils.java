@@ -52,7 +52,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年08月02日
+ * @version last modify at 2018年08月08日
  */
 public class HttpUtils {
 	
@@ -672,7 +672,7 @@ public class HttpUtils {
 		}
 		Optional<InputStream> in = responseInputStream(response);
 		if(in.isPresent()) {
-			File file = FileUtils.write(in.get(), targetPath, true);
+			File file = FileUtils.write(in.get(), targetPath);
 			if(file.exists() && file.isFile()) {
 				return Optional.ofNullable(file);
 			}

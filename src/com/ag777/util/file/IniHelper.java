@@ -25,7 +25,7 @@ import com.ag777.util.lang.model.Charsets;
  * Ini 文件读写辅助类
  * 
  * @author ag777
- * @version create on 2017年11月03日,last modify at 2018年06月12日
+ * @version create on 2017年11月03日,last modify at 2018年08月08日
  */
 public class IniHelper implements Disposable {
 	/* 区块 */
@@ -591,7 +591,7 @@ public class IniHelper implements Disposable {
 	 * @throws IOException
 	 */
 	public void save(String filePath, Charset charset) throws IOException {
-		FileUtils.write(filePath, toLines(), charset, true);
+		FileUtils.write(filePath, toLines(), charset);
 	}
 	
 	/**
@@ -628,7 +628,7 @@ public class IniHelper implements Disposable {
 	 * @throws IOException 
 	 */
 	public void saveBaseSrcPath(String path, Class<?> clazz) throws IOException {
-		FileUtils.write(PathUtils.srcPath(clazz)+path, toLines(), Charsets.UTF_8, true);
+		FileUtils.write(PathUtils.srcPath(clazz)+path, toLines(), Charsets.UTF_8);
 	}
 	
 	//--内部方法

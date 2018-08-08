@@ -106,5 +106,5 @@ public abstract class Handler {
 	
 	/*====子类选择重写部分 结束=============*/
 	
-	public abstract String handler(String msg);
+	public abstract String handler(String msg, String sessionId);
 }

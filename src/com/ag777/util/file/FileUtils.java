@@ -40,7 +40,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2018年06月27日
+ * @version create on 2017年04月25日,last modify at 2018年08月08日
  */
 public class FileUtils {
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
@@ -254,7 +254,7 @@ public class FileUtils {
     		}
 		}
     	
-    	write(targetPath, newLines, null, true);
+    	write(targetPath, newLines, null);
     }
     
     /**
@@ -284,7 +284,7 @@ public class FileUtils {
 				}
 			}
     	}
-    	write(filePath, lines, null, true);
+    	write(filePath, lines, null);
     }
     
     /**
@@ -326,7 +326,7 @@ public class FileUtils {
     	} else {
     		content.replaceFirst(regex, replacement);
     	}
-    	write(filePath,content, null, true);
+    	write(filePath,content, null);
     }
     
     /**
@@ -397,30 +397,28 @@ public class FileUtils {
      * @param filePath
      * @param content
      * @param charset
-     * @param isOverride
      * @return
      * @throws IOException
      */
-    public static File write(String filePath, String content, Charset charset, boolean isOverride) throws IOException {
+    public static File write(String filePath, String content, Charset charset) throws IOException {
         if (charset == null) {
         	charset = FILE_WRITING_CHARSET;
         }
         InputStream is = new ByteArrayInputStream(content.getBytes(charset));
-        return write(is, filePath, isOverride);
+        return write(is, filePath);
     }
     
     /**
-     * 将所有行写出到文件
+     * 将所有行写入文件
      * @param filePath
      * @param lines
-     * @param encoding
-     * @param isOverride
+     * @param charset
      * @return
      * @throws IOException
      */
-    public static File write(String filePath, List<String> lines, Charset charset, boolean isOverride) throws IOException {
+    public static File write(String filePath, List<String> lines, Charset charset) throws IOException {
     	String content = ListUtils.toString(lines, SystemUtils.lineSeparator());
-    	return write(filePath, content, charset, isOverride);
+    	return write(filePath, content, charset);
     }
 
     /**
@@ -470,11 +468,8 @@ public class FileUtils {
      * @return
      * @throws IOException
      */
-    public static File write(InputStream in, String filePath, boolean isOverride) throws IOException {
+    public static File write(InputStream in, String filePath) throws IOException {
     	OutputStream out = null;
-        if (!isOverride && fileExists(filePath)) {
-            return new File(filePath);
-        }
         
         try {
             out = getOutputStream(filePath);

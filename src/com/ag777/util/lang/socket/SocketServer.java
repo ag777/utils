@@ -8,6 +8,7 @@ import java.util.Map;
 import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.collection.MapUtils;
+import com.ag777.util.lang.interf.Disposable;
 import com.ag777.util.lang.socket.model.Handler;
 import com.ag777.util.lang.socket.model.Session;
 
@@ -16,9 +17,9 @@ import com.ag777.util.lang.socket.model.Session;
  * 
  * 
  * @author ag777
- * @version create on 2018年05月30日,last modify at 2018年05月30日
+ * @version create on 2018年05月30日,last modify at 2018年08月08日
  */
-public class SocketServer {
+public class SocketServer implements Disposable {
 
 	private ServerSocket server;
 	private int port;
@@ -40,12 +41,16 @@ public class SocketServer {
 
 	/**
 	 * 停止监听客户端请求
-	 * <p>
-	 * 注意，服务端并不是马上销毁，需要等待轮询结束
-	 * </p>
+	 * 
 	 */
+	@Override
 	public void dispose() {
 		isRunning = false;
+		try {
+			server.close();
+		} catch (IOException e) {
+//			e.printStackTrace();
+		}
 	}
 	
 	public SocketServer(ServerSocket server, Handler handler) {
@@ -115,7 +120,7 @@ public class SocketServer {
 			@Override
 			public boolean onPreConnect(Socket socket, String sessionId) {
 				System.out.println("连接中:"+sessionId);
-				return false;
+				return true;
 			}
 			
 			@Override
@@ -130,8 +135,13 @@ public class SocketServer {
 			}
 			
 			@Override
-			public String handler(String msg) {
+			public String handler(String msg, String sessionId) {
 				return "得到的消息"+msg;
+			}
+			
+			@Override
+			public boolean hasNext(String msg) {
+				return !"结束".equals(msg);
 			}
 		});
 		System.out.println("服务端建立");

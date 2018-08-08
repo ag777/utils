@@ -44,7 +44,7 @@ public class Session {
 	        	if(msg == null) {
 	        		break;
 	        	}
-        		String outMsg = handler.handler(msg);	//准备回复的信息
+        		String outMsg = handler.handler(msg, id);	//准备回复的信息
         		out.println(outMsg);
         		out.flush();
         		if(!handler.hasNext(msg)) {
@@ -56,6 +56,7 @@ public class Session {
     	} finally {
     		IOUtils.close(in);
     		IOUtils.close(out);
+    		socket.close();	//断开连接
     	}
 		System.out.println("通信结束:"+id);
 	}
