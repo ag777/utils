@@ -41,7 +41,7 @@ import java.lang.reflect.Type;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年05月27日,last modify at 2018年06月24日
+ * @version create on 2017年05月27日,last modify at 2018年08月10日
  */
 public class GsonUtils implements JsonUtilsInterf{
 	
@@ -170,16 +170,17 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * @return
 	 */
 	public static GsonBuilder getDefaultBuilder() {
+		MapTypeAdapter objAdapter = new MapTypeAdapter();
 		return new GsonBuilder()
 				.disableHtmlEscaping()	//html标签不转义 (避免符号被转义)
 				.setDateFormat("yyyy-MM-dd HH:mm:ss")	//序列化和反序化时将时间以此形式输出
 				.registerTypeAdapter(
 						new TypeToken<Map<String, Object>>() {}.getType(), 
-						new MapTypeAdapter()
+						objAdapter
 				)
 				.registerTypeAdapter(
 						new TypeToken<List<Object>>() {}.getType(), 
-						new MapTypeAdapter()
+						objAdapter
 				)
 				.registerTypeAdapter(Class.class, new ClassTypeAdapter());
 	}
@@ -395,10 +396,12 @@ public class GsonUtils implements JsonUtilsInterf{
 	/**
 	 * 重载json转换类,主要目的是为了防止转为map时double型变量错误地转换为long型变量
 	 * @author ag777
-	 * Time: created at 2017/6/6. last modify at 2017/6/6.
+	 * Time: created at 2017/6/6. last modify at 2018/8/10.
 	 */
 	public static class MapTypeAdapter extends TypeAdapter<Object> {
 
+		private TypeAdapter<Object> defaultAdapter = new Gson().getAdapter(Object.class);
+		
 		@Override
 		public Object read(JsonReader in) throws IOException {
 			JsonToken token = in.peek();
@@ -459,7 +462,11 @@ public class GsonUtils implements JsonUtilsInterf{
 
 		@Override
 		public void write(JsonWriter out, Object value) throws IOException {
-			// 序列化无需实现
+			/*
+			 * 坑:如果不写,内部类包含对应的成员变量时将无法转化为json串
+			 * 这里使用原生gson的typeAdapter来代理进行解析,希望有更好的解决方案
+			 */
+			defaultAdapter.write(out, value);
 		}
 
 	}
