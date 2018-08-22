@@ -17,7 +17,7 @@ import com.ag777.util.lang.interf.Disposable;
  * 回调线程池CompletionService辅助类
  * 
  * @author ag777
- * @version  create on 2018年08月03日,last modify at 2018年08月07日
+ * @version  create on 2018年08月03日,last modify at 2018年08月21日
  */
 public class CompletionServiceHelper<T> implements Disposable {
 	private ExecutorService pool;
@@ -74,7 +74,7 @@ public class CompletionServiceHelper<T> implements Disposable {
 	 */
 	public synchronized List<T> takeAll(ErrHandler<T> errHandler) {
 		List<T> list = ListUtils.newArrayList();
-		for(;taskCount>0;taskCount--) {
+		for(;taskCount>0;) {
 			T result = null;
 			try {
 				result = completionService.take().get();
@@ -82,8 +82,11 @@ public class CompletionServiceHelper<T> implements Disposable {
 				if(errHandler != null) {
 					result = errHandler.onErr(e, list.size());	//这里取巧,当前列表大小(未加上新元素)就是新元素下标
 				}
+			} finally {
+				taskCount--;
+				list.add(result);
 			}
-			list.add(result);
+			
 		}
 		taskCount = 0;
 		return list;
@@ -97,9 +100,13 @@ public class CompletionServiceHelper<T> implements Disposable {
 	 */
 	public synchronized List<T> takeAllWithException() throws InterruptedException, ExecutionException {
 		List<T> list = ListUtils.newArrayList();
-		for(;taskCount>0;taskCount--) {
-			T result = completionService.take().get();
-			list.add(result);
+		for(;taskCount>0;) {
+			try {
+				T result = completionService.take().get();
+				list.add(result);
+			} finally {
+				taskCount--;
+			}
 		}
 		taskCount = 0;
 		return list;
@@ -115,9 +122,13 @@ public class CompletionServiceHelper<T> implements Disposable {
 		if(taskCount==0) {
 			return null;
 		}
-		T result = completionService.take().get();
-		taskCount--;
-		return result;
+		try {
+			T result = completionService.take().get();
+			return result;
+		} finally {
+			taskCount--;
+		}
+		
 	}
 	
 	/**

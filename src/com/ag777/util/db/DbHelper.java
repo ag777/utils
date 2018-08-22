@@ -40,7 +40,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2018年05月07日
+ * @version create on 2017年07月28日,last modify at 2018年08月15日
  */
 public class DbHelper implements Disposable, Closeable {
 	
@@ -150,7 +150,7 @@ public class DbHelper implements Disposable, Closeable {
 			props.put(DbPropertieKey.COMMON_ENCODING, "utf-8");
 		}
 		if(!props.containsKey("zeroDateTimeBehavior")) {
-			props.put("zeroDateTimeBehavior", "convertToNull");
+			props.put("zeroDateTimeBehavior", "convertToNull");	//CONVERT_TO_NULL
 		}
 		// 加载驱动程序
 		Class.forName(driver.getName());
@@ -997,8 +997,8 @@ public class DbHelper implements Disposable, Closeable {
 			return db;
 		} catch(Exception ex) {
 			err(ex);
-		} finally {
-			closeAfterExecute();
+		} finally {	//构造函数调用，所以无论如何都不关闭连接
+//			closeAfterExecute();
 		}
 		return null;
 	}
