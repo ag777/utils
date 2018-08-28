@@ -25,7 +25,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月06日,last modify at 2018年03月19日
+ * @version create on 2017年06月06日,last modify at 2018年08月28日
  */
 public class RegexUtils {
 
@@ -182,6 +182,9 @@ public class RegexUtils {
 	 * @return
 	 */
 	public static List<String> findGroups(String src, Pattern pattern) {
+		if(src == null) {
+			return ListUtils.newArrayList();
+		}
 		List<String> list = ListUtils.newArrayList();
 		Matcher matcher = getMatcher(src, pattern);
 		

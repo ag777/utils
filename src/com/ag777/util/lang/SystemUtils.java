@@ -21,7 +21,7 @@ import sun.net.dns.ResolverConfiguration;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年06月12日,last modify at 2018年07月20日
+ * @version create on 2017年06月12日,last modify at 2018年08月27日
  */
 public class SystemUtils {
 	private static OsType osType;
@@ -49,10 +49,33 @@ public class SystemUtils {
 	}
 	
 	/**
+	 * 将控制台输出(错误)重定向到文件
+	 * 
+	 * @param filePath
+	 * @return
+	 */
+	public static boolean setErrOut(String filePath) {
+		try {
+			System.setErr(new PrintStream(new File(filePath)));
+			return true;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
 	 * 还原控制台输出到控制台
 	 */
 	public static void resetSystemOut() {
 		System.setOut(System.out);
+	}
+	
+	/**
+	 * 还原控制台输出(错误)到控制台
+	 */
+	public static void resetErrOut() {
+		System.setErr(System.err);
 	}
 	
 	/**
