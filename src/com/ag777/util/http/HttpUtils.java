@@ -52,7 +52,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年08月08日
+ * @version last modify at 2018年09月04日
  */
 public class HttpUtils {
 	
@@ -91,10 +91,26 @@ public class HttpUtils {
 	public static OkHttpClient.Builder defaultBuilder() {
 		return new OkHttpClient().newBuilder()  
 	         .connectTimeout(15, TimeUnit.SECONDS)  
-	         .readTimeout(15, TimeUnit.SECONDS)  
+	         .readTimeout(15, TimeUnit.SECONDS)  	//读取超时
 	         .writeTimeout(15, TimeUnit.SECONDS)  
 	         .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())  
 	         .hostnameVerifier(SSLSocketClient.getHostnameVerifier());
+	}
+	
+	/**
+	 * 定制读取超时时间
+	 * @param builder
+	 * @param timeout
+	 * @param unit
+	 * @return
+	 */
+	public OkHttpClient.Builder readTimeout(OkHttpClient.Builder builder, long timeout,  TimeUnit unit) {
+		if(builder == null) {
+			builder = defaultBuilder();
+		}
+		builder.readTimeout(timeout, unit);
+		
+		return builder;
 	}
 	
 	/**
