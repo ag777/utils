@@ -15,7 +15,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2018年07月30日
+ * @version last modify at 2018年09月11日
  */
 public class StringUtils {
 
@@ -70,11 +70,11 @@ public class StringUtils {
 	 * @param src
 	 * @return
 	 */
-	public static String emptyIfNull(String src) {
+	public static String emptyIfNull(Object src) {
 		if(src == null) {
 			return "";
 		}
-		return src;
+		return src.toString();
 	}
 	
 	/**
