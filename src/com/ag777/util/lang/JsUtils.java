@@ -29,14 +29,21 @@ public class JsUtils {
 	private static final String ENGINE_NAME_JS = "JavaScript";
 	
 	/**
-	 * 传入公式，调用js获取结果
-	 * <p>
-	 * 公式可以是这种形式var v1=false;var v2=true;(v1&&v2)||v2;
-	 * </p>
-	 * @param formula 公式
+	 * 预编译脚本
+	 * @param formula
 	 * @return
-	 * @throws ScriptException
+	 * @throws ScriptException 
 	 */
+	public static CompiledScript compile(String formula) throws ScriptException {
+		ScriptEngine engine = getEngine();
+		Compilable compEngine = (Compilable)engine;
+		return compEngine.compile(formula);
+	}
+	
+	public static ScriptEngine getEngine() {
+		return new ScriptEngineManager().getEngineByName(ENGINE_NAME_JS);
+	}
+	
 	/**
 	 * 传入公式，调用js获取结果
 	 * <p>
@@ -48,21 +55,31 @@ public class JsUtils {
 	 * @return
 	 * @throws ScriptException
 	 */
-	public static <K, V>Object calculate(String formula, Map<K, V> params) throws ScriptException {
-		ScriptEngine engine = new ScriptEngineManager().getEngineByName(ENGINE_NAME_JS);
-	    return eval(engine, formula, getBindings(params));
+	public static <K, V>Object eval(String formula, Map<K, V> params) throws ScriptException {
+	    return eval(formula, getBindings(params));
 	}
 	
-	
 	/**
-	 * 通过公式及一些初始变量计算出结果
-	 * @param engine 引擎
-	 * @param formula 公式
-	 * @param bindings 变量,可以传一个SimpleBindings,可以为null
+	 * 传入公式，调用js获取结果
+	 * @param formula
+	 * @param bindings
 	 * @return
 	 * @throws ScriptException
 	 */
-	public static Object eval(ScriptEngine engine, String formula, Bindings bindings) throws ScriptException {
+	public static <K, V>Object eval(String formula, Bindings bindings) throws ScriptException {
+		ScriptEngine engine = getEngine();
+	    return eval(formula, bindings, engine);
+	}
+	
+	/**
+	 * 通过公式及一些初始变量计算出结果
+	 * @param formula 公式
+	 * @param bindings 变量,可以传一个SimpleBindings,可以为null
+	 * @param engine 引擎
+	 * @return
+	 * @throws ScriptException
+	 */
+	public static Object eval(String formula, Bindings bindings, ScriptEngine engine) throws ScriptException {
 		if(engine instanceof Compilable) {	//预编译，其实这里(公式和变量都是一次性的)是没啥用的，只是举个例子
 			Compilable compEngine = (Compilable)engine;
 			CompiledScript script = compEngine.compile(formula);
@@ -132,7 +149,7 @@ public class JsUtils {
 	}
 	
 	public static void main(String[] args) throws ScriptException {
-		Object a = calculate("v3", MapUtils.of("v3", false));
+		Object a = eval("v3<1", MapUtils.of("v3", "1"));
 		System.out.println(a);
 	}
 }
