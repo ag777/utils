@@ -14,7 +14,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年05月14日
+ * @version create on 2017年09月22日,last modify at 2018年10月18日
  */
 public class MapUtils {
 
@@ -201,13 +201,13 @@ public class MapUtils {
 	 * @param src
 	 * @param separatorItem 分割map每一项的分隔符
 	 * @param separatorKeyValue	分割每一项key-value的分隔符
-	 * @return
+	 * @return linkedHashMap 保留先后顺序
 	 */
 	public static Map<String, Object> ofMap(String src, String separatorItem, String separatorKeyValue) {
 		if(StringUtils.isBlank(src)) {
-			return newMap();
+			return newLinkedHashMap();
 		}
-		Map<String, Object> result = newMap();
+		Map<String, Object> result = newLinkedHashMap();
 		String[] groups = src.split(separatorItem);
 		for (String item : groups) {
 			String[] itemGroup = item.split(separatorKeyValue);

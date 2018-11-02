@@ -52,7 +52,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年09月04日
+ * @version last modify at 2018年10月24日
  */
 public class HttpUtils {
 	
@@ -104,7 +104,7 @@ public class HttpUtils {
 	 * @param unit
 	 * @return
 	 */
-	public OkHttpClient.Builder readTimeout(OkHttpClient.Builder builder, long timeout,  TimeUnit unit) {
+	public static OkHttpClient.Builder readTimeout(OkHttpClient.Builder builder, long timeout,  TimeUnit unit) {
 		if(builder == null) {
 			builder = defaultBuilder();
 		}
@@ -126,7 +126,7 @@ public class HttpUtils {
 	 * @param interceptors
 	 * @return
 	 */
-	public OkHttpClient.Builder builderWithInterceptor(OkHttpClient.Builder builder, Interceptor... interceptors) {
+	public static OkHttpClient.Builder builderWithInterceptor(OkHttpClient.Builder builder, Interceptor... interceptors) {
 		if(builder == null) {
 			builder = defaultBuilder();
 		}
@@ -151,7 +151,7 @@ public class HttpUtils {
 	 * @throws IOException
 	 */
 	@SuppressWarnings("deprecation")
-	public OkHttpClient.Builder builderWithHttpCertificate(OkHttpClient.Builder builder, InputStream... certificates) throws KeyManagementException, KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
+	public static OkHttpClient.Builder builderWithHttpCertificate(OkHttpClient.Builder builder, InputStream... certificates) throws KeyManagementException, KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
 		if(builder == null) {
 			builder = defaultBuilder();
 		}
@@ -172,7 +172,7 @@ public class HttpUtils {
 	 * @param interceptors
 	 * @return
 	 */
-	public OkHttpClient.Builder builderWithNetWorkInterceptor(OkHttpClient.Builder builder, Interceptor... interceptors) {
+	public static OkHttpClient.Builder builderWithNetWorkInterceptor(OkHttpClient.Builder builder, Interceptor... interceptors) {
 		if(builder == null) {
 			builder = defaultBuilder();
 		}
