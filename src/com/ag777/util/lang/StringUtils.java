@@ -15,7 +15,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2018年09月11日
+ * @version last modify at 2018年11月06日
  */
 public class StringUtils {
 
@@ -129,6 +129,36 @@ public class StringUtils {
 		}
 		StringBuilder sb = new StringBuilder(src);
 		return sb.replace(start, end, newStr).toString();
+	}
+	
+	/**
+	 * 将一个字符串拆分成每一项定长为length(最后一项不定)的字符串列表<br/>
+	 * <p>
+	 * splitStr("abc", 2)=>["ab","c"]<br/>
+	 * splitStr("abc",4)=>["abc"]<br/>
+	 * </p>
+	 * @param src
+	 * @param length
+	 * @return
+	 */
+	public static List<String> splitStr(String src, int length) {
+		if(isEmpty(src)) {
+			return ListUtils.newArrayList();
+		}
+		if(length<=0) {
+			return ListUtils.of(src);
+		}
+		List<String> list = ListUtils.newArrayList();
+		int max = src.length();
+		for (int start = 0; start < max;) {
+			int end = start+length;
+			if(end > max) {
+				end = max;
+			}
+			list.add(src.substring(start, end));
+			start = end;
+		}
+		return list;
 	}
 	
 	/**
@@ -509,6 +539,84 @@ public class StringUtils {
 	}
 	
 	//--转义相关
+	/**
+	 * 16进制转2进制
+	 * <p>
+	 * 如果源数据以0x开头会先去掉0x在做处理<br/>
+	 * decimal2Binary("AA");=>"10101010"<br/>
+	 * decimal2Binary("0xAA");=>"10101010"<br/>
+	 * </p>
+	 * 
+	 * @param src
+	 * @return
+	 */
+	public static String decimal2Binary(String src) {
+		if(src == null) {
+			return null;
+		}
+		if(src.startsWith("0x")) {
+			src = src.substring(2, src.length());
+		}
+		StringBuilder sb = new StringBuilder();
+		int length = src.length();
+		src = src.toUpperCase();
+		for (int i = 0; i < length; i++) {
+			switch(src.charAt(i)) {
+				case '0':
+					sb.append("0000");
+					break;
+				case '1':
+					sb.append("0001");
+					break;
+				case '2':
+					sb.append("0010");
+					break;
+				case '3':
+					sb.append("0011");
+					break;
+				case '4':
+					sb.append("0100");
+					break;
+				case '5':
+					sb.append("0101");
+					break;
+				case '6':
+					sb.append("0110");
+					break;
+				case '7':
+					sb.append("0111");
+					break;
+				case '8':
+					sb.append("1000");
+					break;
+				case '9':
+					sb.append("1001");
+					break;
+				case 'A':
+					sb.append("1010");
+					break;
+				case 'B':
+					sb.append("1011");
+					break;
+				case 'C':
+					sb.append("1100");
+					break;
+				case 'D':
+					sb.append("1101");
+					break;
+				case 'E':
+					sb.append("1110");
+					break;
+				case 'F':
+					sb.append("1111");
+					break;
+				default:
+					throw new RuntimeException("含有非法字符:"+src.charAt(i)+",位置:"+i);
+			}
+		}
+		return sb.toString();
+	}
+	
 	/**
 	 * 转义xml
 	 * 
