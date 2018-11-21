@@ -20,7 +20,7 @@ import com.ag777.util.lang.model.Charsets;
  * 针对属性文件的读写操作工具类
  * 
  * @author ag777
- * @version create on 2017年11月10日,last modify at 2018年08月08日
+ * @version create on 2017年11月10日,last modify at 2018年11月20日
  */
 public class PropertyHelper{
 
@@ -303,6 +303,16 @@ public class PropertyHelper{
 		if(item != null) {
 			item.set(value).noteList(noteList);
 		}
+		return this;
+	}
+	
+	/**
+	 * 删除key(包括上方的注释)
+	 * @param key
+	 * @return
+	 */
+	public PropertyHelper remove(String key) {
+		keyValueMap.remove(key);
 		return this;
 	}
 	

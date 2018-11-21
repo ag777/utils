@@ -2,7 +2,7 @@ package com.ag777.util.lang;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.Closeable;
+import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,7 +21,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 		有很多操作，比如文件，cmd命令，都是通过操作流来完成目的，为了避免重复及统一代码新建此类
  * </p>
  * @author ag777
- * @version create on 2017年06月16日,last modify at 2018年05月15日
+ * @version create on 2017年06月16日,last modify at 2018年11月20日
  */
 public class IOUtils {
 
@@ -32,32 +32,37 @@ public class IOUtils {
 	
 	/*--------------读取--------------------*/
 	/**
-	 * 关闭流
+	 * 关闭流或连接
+	 * <p>
+	 * jdk1.7引入了资源自动关闭的接口AutoCloseable。一些资源也实现了该接口，如preparedStatement、Connection、InputStream、outputStream等等资源接口。在使用的时候只需要把资源在try块中用小括号括起来就可以了。<br>
+	 * 看了示例后感觉不够灵活
+	 * </p>
 	 * @param closeable
 	 */
-	public static void close(Closeable closeable) {
+	public static void close(AutoCloseable closeable) {
 		try{
 			if(closeable != null) {
-				if(closeable instanceof OutputStream) {
-					((OutputStream) closeable).flush();
+				if(closeable instanceof Flushable) {
+					((Flushable) closeable).flush();
 				}
 				closeable.close();
 			}
-		} catch(IOException ex) {
+		} catch(Exception ex) {
 		}
 		
 	}
 	
 	/**
-	 * 关闭流(批量)
+	 * 关闭流或连接(批量)
 	 * @param closeables
 	 */
-	public static void close(Closeable... closeables) {
-		for (Closeable closeable : closeables) {
+	public static void close(AutoCloseable... closeables) {
+		for (AutoCloseable closeable : closeables) {
 			close(closeable);
 		}
 		
 	}
+
 	
 	/**
 	 * 从流中读取文本
