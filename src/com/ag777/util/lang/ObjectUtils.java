@@ -38,16 +38,6 @@ public class ObjectUtils {
 		}
 	}
 	
-	/**
-	 * 如果对象不为null则返回本身，否则返回默认值
-	 * @param obj
-	 * @param defaultObj
-	 * @return
-	 */
-	public static <T>T defaultIfNull(T obj, T defaultObj) {
-		return obj!=null?obj:defaultObj;
-	}
-	
 	//--转换
 	public static String toStr(Object obj) {
 		if(obj != null) {
@@ -58,7 +48,7 @@ public class ObjectUtils {
 	
 	public static String toStr(Object obj, String defaultValue) {
 		String result = toStr(obj);
-		return defaultIfNull(result, defaultValue);
+		return getOrDefault(result, defaultValue);
 	}
 	
 	public static Double toDouble(Object obj) {
@@ -74,7 +64,7 @@ public class ObjectUtils {
 	
 	public static double toDouble(Object obj, double defaultValue) {
 		Double result = toDouble(obj);
-		return defaultIfNull(result, defaultValue);
+		return getOrDefault(result, defaultValue);
 	}
 	
 	public static Float toFloat(Object obj) {
@@ -90,7 +80,7 @@ public class ObjectUtils {
 	
 	public static float toFloat(Object obj, float defaultValue) {
 		Float result = toFloat(obj);
-		return defaultIfNull(result, defaultValue);
+		return getOrDefault(result, defaultValue);
 	}
 	
 	public static Integer toInt(Object obj) {
@@ -106,7 +96,7 @@ public class ObjectUtils {
 	
 	public static int toInt(Object obj, int defaultValue) {
 		Integer result = toInt(obj);
-		return defaultIfNull(result, defaultValue);
+		return getOrDefault(result, defaultValue);
 	}
 	
 	public static Long toLong(Object obj) {
@@ -122,7 +112,7 @@ public class ObjectUtils {
 	
 	public static long toLong(Object obj, long defaultValue) {
 		Long result = toLong(obj);
-		return defaultIfNull(result, defaultValue);
+		return getOrDefault(result, defaultValue);
 	}
 	
 	public static Boolean toBoolean(Object obj) {
@@ -138,7 +128,7 @@ public class ObjectUtils {
 	
 	public static boolean toBoolean(Object obj, boolean defaultValue) {
 		Boolean result = toBoolean(obj);
-		return defaultIfNull(result, defaultValue);
+		return getOrDefault(result, defaultValue);
 	}
 	
 	public static Date toDate(Object obj) {
@@ -154,7 +144,7 @@ public class ObjectUtils {
 	
 	public static Date toDate(Object obj, Date defaultValue) {
 		Date result = toDate(obj);
-		return defaultIfNull(result, defaultValue);
+		return getOrDefault(result, defaultValue);
 	}
 	
 	public static Map<String, Object> toMap(Object obj) {
@@ -252,6 +242,19 @@ public class ObjectUtils {
 
 	
 	//--判断
+	/**
+	 * 判断对象是否为数值类型
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean isNumber(Object obj) throws Exception {
+		if(obj == null) {
+			throw new RuntimeException("对象为空,不能判断是否为数组");
+		}
+		return Number.class.isAssignableFrom(obj.getClass());
+	}
+	
 	/**
 	 * 判断是否为数组
 	 * @param obj
