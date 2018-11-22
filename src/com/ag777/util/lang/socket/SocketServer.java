@@ -17,7 +17,7 @@ import com.ag777.util.lang.socket.model.Session;
  * 
  * 
  * @author ag777
- * @version create on 2018年05月30日,last modify at 2018年08月08日
+ * @version create on 2018年05月30日,last modify at 2018年11月22日
  */
 public class SocketServer implements Disposable {
 
@@ -56,7 +56,7 @@ public class SocketServer implements Disposable {
 	public SocketServer(ServerSocket server, Handler handler) {
 		this.server = server;
 		this.port = server.getLocalPort();
-		sessionMap = MapUtils.newHashTable();
+		sessionMap = MapUtils.newConcurrentHashMap();
 		isRunning = true;
 		handler.onSeverCreate(port);
 		

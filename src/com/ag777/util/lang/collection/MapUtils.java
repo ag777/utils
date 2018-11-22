@@ -7,6 +7,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.ag777.util.lang.ObjectUtils;
 import com.ag777.util.lang.StringUtils;
 
@@ -14,7 +16,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年10月18日
+ * @version create on 2017年09月22日,last modify at 2018年11月22日
  */
 public class MapUtils {
 
@@ -30,10 +32,18 @@ public class MapUtils {
 		return CollectionAndMapUtils.newLinkedHashMap();
 	}
 	
+	@Deprecated
 	public static <K,V>Hashtable<K,V> newHashTable() {
 		return CollectionAndMapUtils.newHashtable();
 	}
 	
+	/**
+	 * @see com.ag777.util.lang.collection.CollectionAndMapUtils#newConcurrentHashMap()
+	 * @return
+	 */
+	public static <K, V>ConcurrentHashMap<K, V> newConcurrentHashMap() {
+		return CollectionAndMapUtils.newConcurrentHashMap();
+	}
 	
 	public static <K, V>boolean isEmpty(Map<K, V> map) {
 		return CollectionAndMapUtils.isEmpty(map);
@@ -47,7 +57,14 @@ public class MapUtils {
 	 * 
 	 */
 	public static Map<String, Object> of(String key, Object value) {
-		Map<String, Object> map = newMap();
+		return of(String.class, Object.class, key, value);
+	}
+	
+	/**
+	 * 构建map
+	 */
+	public static <K, V>Map<K, V> of(Class<K> clazzT, Class<V> clazzV, K key, V value) {
+		Map<K, V> map = newMap();
 		map.put(key, value);
 		return map;
 	}
@@ -60,7 +77,14 @@ public class MapUtils {
 	 * 
 	 */
 	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2) {
-		Map<String, Object> map = of(key1, value1);
+		return of(String.class, Object.class, key1, value1, key2, value2);
+	}
+	
+	/**
+	 * 构建map
+	 */
+	public static <K, V>Map<K, V> of(Class<K> clazzT, Class<V> clazzV, K key1, V value1, K key2, V value2) {
+		Map<K, V> map = of(clazzT, clazzV, key1, value1);
 		map.put(key2, value2);
 		return map;
 	}
@@ -73,7 +97,14 @@ public class MapUtils {
 	 * 
 	 */
 	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3) {
-		Map<String, Object> map = of(key1, value1, key2, value2);
+		return of(String.class, Object.class, key1, value1, key2, value2, key3, value3);
+	}
+	
+	/**
+	 * 构建map
+	 */
+	public static <K, V>Map<K, V> of(Class<K> clazzT, Class<V> clazzV, K key1, V value1, K key2, V value2, K key3, V value3) {
+		Map<K, V> map = of(clazzT, clazzV, key1, value1, key2, value2);
 		map.put(key3, value3);
 		return map;
 	}
@@ -86,7 +117,14 @@ public class MapUtils {
 	 * 
 	 */
 	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4) {
-		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3);
+		return of(String.class, Object.class, key1, value1, key2, value2, key3, value3, key4, value4);
+	}
+	
+	/**
+	 * 构建map
+	 */
+	public static <K, V>Map<K, V> of(Class<K> clazzT, Class<V> clazzV, K key1, V value1, K key2, V value2, K key3, V value3, K key4, V value4) {
+		Map<K, V> map = of(clazzT, clazzV, key1, value1, key2, value2, key3, value3);
 		map.put(key4, value4);
 		return map;
 	}
@@ -99,7 +137,14 @@ public class MapUtils {
 	 * 
 	 */
 	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5) {
-		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3, key4, value4);
+		return of(String.class, Object.class, key1, value1, key2, value2, key3, value3, key4, value4, key5, value5);
+	}
+	
+	/**
+	 * 构建map
+	 */
+	public static <K, V>Map<K, V> of(Class<K> clazzT, Class<V> clazzV, K key1, V value1, K key2, V value2, K key3, V value3, K key4, V value4, K key5, V value5) {
+		Map<K, V> map = of(clazzT, clazzV, key1, value1, key2, value2, key3, value3, key4, value4);
 		map.put(key5, value5);
 		return map;
 	}
@@ -112,7 +157,14 @@ public class MapUtils {
 	 * 
 	 */
 	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5, String key6, Object value6) {
-		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3, key4, value4, key5, value5);
+		return of(String.class, Object.class, key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6);
+	}
+	
+	/**
+	 * 构建map
+	 */
+	public static <K, V>Map<K, V> of(Class<K> clazzT, Class<V> clazzV, K key1, V value1, K key2, V value2, K key3, V value3, K key4, V value4, K key5, V value5, K key6, V value6) {
+		Map<K, V> map = of(clazzT, clazzV, key1, value1, key2, value2, key3, value3, key4, value4, key5, value5);
 		map.put(key6, value6);
 		return map;
 	}
@@ -125,7 +177,14 @@ public class MapUtils {
 	 * 
 	 */
 	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5, String key6, Object value6, String key7, Object value7) {
-		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6);
+		return of(String.class, Object.class, key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6, key7, value7);
+	}
+	
+	/**
+	 * 构建map
+	 */
+	public static <K, V>Map<K, V> of(Class<K> clazzT, Class<V> clazzV, K key1, V value1, K key2, V value2, K key3, V value3, K key4, V value4, K key5, V value5, K key6, V value6, K key7, V value7) {
+		Map<K, V> map = of(clazzT, clazzV, key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6);
 		map.put(key7, value7);
 		return map;
 	}
@@ -138,7 +197,14 @@ public class MapUtils {
 	 * 
 	 */
 	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5, String key6, Object value6, String key7, Object value7, String key8, Object value8) {
-		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6, key7, value7);
+		return of(String.class, Object.class, key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6, key7, value7, key8, value8);
+	}
+	
+	/**
+	 * 构建map
+	 */
+	public static <K, V>Map<K, V> of(Class<K> clazzT, Class<V> clazzV, K key1, V value1, K key2, V value2, K key3, V value3, K key4, V value4, K key5, V value5, K key6, V value6, K key7, V value7, K key8, V value8) {
+		Map<K, V> map = of(clazzT, clazzV, key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6, key7, value7);
 		map.put(key8, value8);
 		return map;
 	}
@@ -151,11 +217,17 @@ public class MapUtils {
 	 * 
 	 */
 	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5, String key6, Object value6, String key7, Object value7, String key8, Object value8, String key9, Object value9) {
-		Map<String, Object> map = of(key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6, key7, value7, key8, value8);
+		return of(String.class, Object.class, key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6, key7, value7, key8, value8, key9, value9);
+	}
+	
+	/**
+	 * 构建map
+	 */
+	public static <K, V>Map<K, V> of(Class<K> clazzT, Class<V> clazzV, K key1, V value1, K key2, V value2, K key3, V value3, K key4, V value4, K key5, V value5, K key6, V value6, K key7, V value7, K key8, V value8, K key9, V value9) {
+		Map<K, V> map = of(clazzT, clazzV, key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6, key7, value7, key8, value8);
 		map.put(key9, value9);
 		return map;
 	}
-	
 	
 	/**
      * 将List<Map> 中的键值从新组成map(不做类型转化判断，就是说结果类型要是对不上，强转报错请注意)

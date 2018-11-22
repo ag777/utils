@@ -12,13 +12,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import com.ag777.util.lang.collection.interf.ListFilter;
 
 /**
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年10月31日
+ * @version create on 2017年09月22日,last modify at 2018年11月22日
  */
 public class ListUtils {
 
@@ -38,6 +40,14 @@ public class ListUtils {
 	
 	public static <T>Vector<T> newVector() {
 		return CollectionAndMapUtils.newVector();
+	}
+	
+	/**
+	 * @see com.ag777.util.lang.collection.CollectionAndMapUtils#newCopyOnWriteArrayList()
+	 * @return
+	 */
+	public static <T>CopyOnWriteArrayList<T> newCopyOnWriteArrayList() {
+		return CollectionAndMapUtils.newCopyOnWriteArrayList();
 	}
 	
 	public static Object newArray(Class<?> clazz, int length) {

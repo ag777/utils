@@ -16,16 +16,13 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年11月21日
+ * @version create on 2017年09月22日,last modify at 2018年11月22日
  */
 public class ObjectUtils {
 
 	/**
 	 * 实例化class对象,支持内部类
-	 * <p>
-	 * 	详见ReflectionUtils.newInstace(Class<T> clazz)方法注释
-	 * </p>
-	 * 
+	 * @see ReflectionUtils#newInstace(Class)
 	 */
 	public static <T>T newInstace(Class<T> clazz) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
 		return ReflectionUtils.newInstace(clazz);
@@ -41,6 +38,16 @@ public class ObjectUtils {
 		}
 	}
 	
+	/**
+	 * 如果对象不为null则返回本身，否则返回默认值
+	 * @param obj
+	 * @param defaultObj
+	 * @return
+	 */
+	public static <T>T defaultIfNull(T obj, T defaultObj) {
+		return obj!=null?obj:defaultObj;
+	}
+	
 	//--转换
 	public static String toStr(Object obj) {
 		if(obj != null) {
@@ -51,7 +58,7 @@ public class ObjectUtils {
 	
 	public static String toStr(Object obj, String defaultValue) {
 		String result = toStr(obj);
-		return result!=null?result:defaultValue;
+		return defaultIfNull(result, defaultValue);
 	}
 	
 	public static Double toDouble(Object obj) {
@@ -67,7 +74,7 @@ public class ObjectUtils {
 	
 	public static double toDouble(Object obj, double defaultValue) {
 		Double result = toDouble(obj);
-		return result!=null?result:defaultValue;
+		return defaultIfNull(result, defaultValue);
 	}
 	
 	public static Float toFloat(Object obj) {
@@ -83,7 +90,7 @@ public class ObjectUtils {
 	
 	public static float toFloat(Object obj, float defaultValue) {
 		Float result = toFloat(obj);
-		return result!=null?result:defaultValue;
+		return defaultIfNull(result, defaultValue);
 	}
 	
 	public static Integer toInt(Object obj) {
@@ -99,7 +106,7 @@ public class ObjectUtils {
 	
 	public static int toInt(Object obj, int defaultValue) {
 		Integer result = toInt(obj);
-		return result!=null?result:defaultValue;
+		return defaultIfNull(result, defaultValue);
 	}
 	
 	public static Long toLong(Object obj) {
@@ -115,7 +122,7 @@ public class ObjectUtils {
 	
 	public static long toLong(Object obj, long defaultValue) {
 		Long result = toLong(obj);
-		return result!=null?result:defaultValue;
+		return defaultIfNull(result, defaultValue);
 	}
 	
 	public static Boolean toBoolean(Object obj) {
@@ -131,7 +138,7 @@ public class ObjectUtils {
 	
 	public static boolean toBoolean(Object obj, boolean defaultValue) {
 		Boolean result = toBoolean(obj);
-		return result!=null?result:defaultValue;
+		return defaultIfNull(result, defaultValue);
 	}
 	
 	public static Date toDate(Object obj) {
@@ -147,7 +154,7 @@ public class ObjectUtils {
 	
 	public static Date toDate(Object obj, Date defaultValue) {
 		Date result = toDate(obj);
-		return result!=null?result:defaultValue;
+		return defaultIfNull(result, defaultValue);
 	}
 	
 	public static Map<String, Object> toMap(Object obj) {
