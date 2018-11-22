@@ -2,6 +2,8 @@ package com.ag777.util.lang;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.List;
@@ -15,7 +17,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2018年11月06日
+ * @version last modify at 2018年11月22日
  */
 public class StringUtils {
 
@@ -24,18 +26,30 @@ public class StringUtils {
 	private static final Pattern PATTERN_EMPTY_RIGHT = Pattern.compile("[\\u00A0\\s　]+$");	//空值验证(\\u00A0为ASCII值为160的空格)
 	
 	/**
-	 * 获得字符串长度（一个汉字算两个字节）
+	 * 获得字符串长度(utf-8)
+	 * @see #getLength(String, Charset)
 	 * 
 	 * @param s
 	 * @return
 	 */
 	public static int getLength(String src) {
+//		src = src.replaceAll("[^\\x00-\\xff]", "**");
+//		int length = src.length();
+		return getLength(src, StandardCharsets.UTF_8);
+	}
+	
+	/**
+	 * 获得字符串长度<br>
+	 * 实现原理:String.getBytes(charset).length
+	 * @param src
+	 * @param charset
+	 * @return
+	 */
+	public static int getLength(String src, Charset charset) {
 		if(isEmpty(src)) {
 			return 0;
 		}
-		src = src.replaceAll("[^\\x00-\\xff]", "**");
-		int length = src.length();
-		return length;
+		return src.getBytes(charset).length;
 	}
 	
 	/**
