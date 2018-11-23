@@ -25,7 +25,7 @@ import com.ag777.util.lang.model.Charsets;
  * Ini 文件读写辅助类
  * 
  * @author ag777
- * @version create on 2017年11月03日,last modify at 2018年08月08日
+ * @version create on 2017年11月03日,last modify at 2018年11月23日
  */
 public class IniHelper implements Disposable {
 	/* 区块 */
@@ -735,6 +735,21 @@ public class IniHelper implements Disposable {
 		}
 		public Map<String, Value> valueMap() {
 			return valueMap;
+		}
+		
+		/**
+		 * 获取key_value对应关系
+		 * <p>
+		 * 实际上的Map<String, String>
+		 * </p>
+		 * @return
+		 */
+		public Map<String, Object> getMap() {
+			Map<String, Object> result = MapUtils.newHashMap();
+			valueMap.forEach((k, v)->{
+				result.put(k, v.get());
+			});
+			return result;
 		}
 		
 		/**
