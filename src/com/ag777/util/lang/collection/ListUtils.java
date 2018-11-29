@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import com.ag777.util.lang.collection.interf.ListFilter;
 
@@ -20,7 +21,7 @@ import com.ag777.util.lang.collection.interf.ListFilter;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年11月22日
+ * @version create on 2017年09月22日,last modify at 2018年11月29日
  */
 public class ListUtils {
 
@@ -316,6 +317,19 @@ public class ListUtils {
 			}
 		}
 		return sb.toString();
+	}
+	
+	/**
+	 * 统计list中每一项及其出现次数
+	 * <p>
+	 * toCountMap(of("a","b","a"))=>{"a":2,"b":1}
+	 * </p>
+	 * 
+	 * @param list
+	 * @return
+	 */
+	public <T>Map<T, Long> toCountMap(List<T> list) {
+		return list.stream().collect(Collectors.groupingBy(p -> p,Collectors.counting()));
 	}
 	
 	/**
