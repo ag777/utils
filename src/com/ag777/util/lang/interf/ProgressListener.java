@@ -1,4 +1,4 @@
-package com.ag777.util.file.model;
+package com.ag777.util.lang.interf;
 
 /**
  * 进度监听回调接口

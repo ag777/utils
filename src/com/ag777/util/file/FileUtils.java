@@ -26,7 +26,6 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.ag777.util.file.model.FileAnnotation;
-import com.ag777.util.file.model.ProgressListener;
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.RegexUtils;
@@ -35,6 +34,7 @@ import com.ag777.util.lang.SystemUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.exception.Assert;
 import com.ag777.util.lang.filter.StringFilter;
+import com.ag777.util.lang.interf.ProgressListener;
 import com.ag777.util.lang.model.Charsets;
 
 /**

@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.ag777.util.file.model.ProgressListener;
 import com.ag777.util.lang.collection.ListUtils;
+import com.ag777.util.lang.interf.ProgressListener;
 
 /**
  * IO操作工具类
