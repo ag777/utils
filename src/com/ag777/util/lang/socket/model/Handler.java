@@ -105,6 +105,11 @@ public abstract class Handler {
 	}
 	
 	/*====子类选择重写部分 结束=============*/
-	
+	/**
+	 * 
+	 * @param msg 客户端发上来的消息
+	 * @param sessionId 当前对话的session编号
+	 * @return
+	 */
 	public abstract String handler(String msg, String sessionId);
 }

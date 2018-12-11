@@ -297,4 +297,22 @@ public class ObjectUtils {
 		return a.equals(b);
 	}
 	
+	/**
+	 * 都为null时返回true
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static boolean bothNull(Object a, Object... b) {
+		if(a != null) {
+			return false;
+		}
+		for (Object item : b) {
+			if(item != null) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
 }

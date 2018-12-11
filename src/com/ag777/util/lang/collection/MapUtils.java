@@ -1,5 +1,8 @@
 package com.ag777.util.lang.collection;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -7,6 +10,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.ag777.util.lang.ObjectUtils;
@@ -16,7 +20,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年11月22日
+ * @version create on 2017年09月22日,last modify at 2018年12月10日
  */
 public class MapUtils {
 
@@ -637,5 +641,30 @@ public class MapUtils {
 			sb.append(value);
 		}
 		return sb.toString();	//理论上不用考虑sb为null的情况，因为map不为空
+	}
+	
+	/**
+	 * 对linkedHashedMap进行排序
+	 * <p>
+	 * 参考:https://blog.csdn.net/qq997404392/article/details/73333215
+	 * </p>
+	 * @param src
+	 * @param comparator
+	 * @return
+	 */
+	public static <K,V>Map<K,V> sort(LinkedHashMap<K,V> src, Comparator<Map.Entry<K, V>> comparator) {
+		if(isEmpty(src)) {
+			return src;
+		}
+		//先转成ArrayList集合
+		List<Entry<K, V>> list = 
+		        new ArrayList<>(src.entrySet());
+		Collections.sort(list, comparator);
+		//清空源map，把排序后的List放入
+		src.clear();
+		for (Map.Entry<K, V> entry : list) {
+			src.put(entry.getKey(), entry.getValue());
+		}
+		return src;
 	}
 }

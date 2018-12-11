@@ -25,9 +25,9 @@ import com.ag777.util.lang.model.Charsets;
  * Ini 文件读写辅助类
  * 
  * @author ag777
- * @version create on 2017年11月03日,last modify at 2018年11月23日
+ * @version create on 2017年11月03日,last modify at 2018年12月11日
  */
-public class IniHelper implements Disposable {
+public class IniHelper implements Disposable,Iterable<String> {
 	/* 区块 */
 	private LinkedHashMap<String, Section> sectionMap;
 	
@@ -406,6 +406,9 @@ public class IniHelper implements Disposable {
 	 * @return
 	 */
 	public IniHelper update(String sectionKey, String valueKey, Object value) {
+		if(sectionKey==null || StringUtils.isEmpty(valueKey)) {	//key为空不执行操作
+			return this;
+		}
 		Section section = MapUtils.get(sectionMap, sectionKey);
 		if(section != null) {
 			if(section.containKey(valueKey)) {
@@ -424,6 +427,9 @@ public class IniHelper implements Disposable {
 	 * @return
 	 */
 	public IniHelper addOrUpadate(String sectionKey, String valueKey, Object value) {
+		if(sectionKey==null || StringUtils.isEmpty(valueKey)) {	//key为空不执行操作
+			return this;
+		}
 		Section section = MapUtils.get(sectionMap, sectionKey);
 		if(section == null) {
 			section = newSection(sectionKey);
@@ -504,7 +510,9 @@ public class IniHelper implements Disposable {
 							lines.add("#"+noteLine);
 						});
 					}
-					lines.add(StringUtils.concat(key, "=", val));
+					if(!key.isEmpty()) {	//尾部注释行加载时的key为空字符串，这里需要过滤掉
+						lines.add(StringUtils.concat(key, "=", val));
+					}
 				});
 			}
 			lines.add("");	//标签(模块之间隔出一行空行)
@@ -653,6 +661,7 @@ public class IniHelper implements Disposable {
 			String note = RegexUtils.find(line, p_note, "$1");
 			if(note != null) {	//这是一个注释行
 				noteList.add(note.trim());
+				continue;
 			}
 			String sectionKey = RegexUtils.find(line, p_section, "$1");
 			if(sectionKey != null) {	//这是一个模块行[xx] xx为模块名
@@ -672,6 +681,9 @@ public class IniHelper implements Disposable {
 				}
 			}
 			
+		}
+		if(!ListUtils.isEmpty(noteList)) {	//说明文件尾部有注释行,一般是注释掉了部分配置，在生成文件的时候需要把这行特殊处理掉
+			sectionTmp.put("", "", noteList);
 		}
 	}
 	
@@ -856,6 +868,11 @@ public class IniHelper implements Disposable {
 		System.out.println(iu3.getValue("test", "path").get());
 		System.out.println(iu3.getFloatValue("第二块", "pi").get());
 		iu3.toPropertyHelper().save(propertiesPath);
+	}
+	
+	@Override
+	public Iterator<String> iterator() {
+		return sectionMap.keySet().iterator();
 	}
 	
 }

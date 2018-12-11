@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
+
 import com.ag777.util.db.connection.MysqlConnection;
 import com.ag777.util.db.connection.OracleConnection;
 import com.ag777.util.db.connection.SqlServerConnection;
@@ -40,7 +42,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2018年08月15日
+ * @version create on 2017年07月28日,last modify at 2018年12月10日
  */
 public class DbHelper implements Disposable, Closeable {
 	
@@ -1165,6 +1167,15 @@ public class DbHelper implements Disposable, Closeable {
 			typeMap.put(field, new TypePojo().setField(field).setType(type).setNullAble(nullAble));
 		}
 		return typeMap;
+	}
+	
+	/**
+	 * 获取所有表结构
+	 * @return
+	 */
+	public Map<String, List<ColumnPojo>> tableColumnMap() {
+		return tableNameList().stream()
+				.collect(Collectors.toMap(tableName->tableName, tableName->columnList(tableName)));
 	}
 	
 	/**
