@@ -12,6 +12,7 @@ import com.ag777.util.db.model.VersionSqlPojo;
 import com.ag777.util.db.model.VersionSqlPojo.DdlListBean;
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.StringUtils;
+import com.ag777.util.lang.interf.Disposable;
 
 /**
  * 数据库版本升级辅助类
@@ -21,9 +22,9 @@ import com.ag777.util.lang.StringUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年09月06日,last modify at 2018年01月29日
+ * @version create on 2017年09月06日,last modify at 2018年12月17日
  */
-public abstract class DBUpdateHelper {
+public abstract class DBUpdateHelper implements Disposable {
 
 	private boolean mode_debug = false;	//独立的debug模式，控制这块的输出
 	public void debugMode(boolean isDebugMode) {
@@ -250,5 +251,11 @@ public abstract class DBUpdateHelper {
 		if(mode_debug) {
 			Console.log(msg);
 		}
+	}
+	
+	@Override
+	public void dispose() {
+		p_classPath = null;
+		versionSqlPojoList = null;
 	}
 }
