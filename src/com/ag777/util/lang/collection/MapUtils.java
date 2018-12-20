@@ -20,7 +20,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年12月10日
+ * @version create on 2017年09月22日,last modify at 2018年12月20日
  */
 public class MapUtils {
 
@@ -51,6 +51,17 @@ public class MapUtils {
 	
 	public static <K, V>boolean isEmpty(Map<K, V> map) {
 		return CollectionAndMapUtils.isEmpty(map);
+	}
+	
+	/**
+	 * 相当于新建一个map并执行putAll，用于深度拷贝map
+	 * @param map
+	 * @return
+	 */
+	public static <K, V>Map<K, V> of(Map<K, V> map) {
+		HashMap<K, V> result = newHashMap();
+		putAll(result, map);
+		return result;
 	}
 	
 	/**

@@ -14,15 +14,16 @@ import com.ag777.util.lang.RegexUtils;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.collection.MapUtils;
+import com.ag777.util.lang.interf.Disposable;
 import com.ag777.util.lang.model.Charsets;
 
 /**
  * 针对属性文件的读写操作工具类
  * 
  * @author ag777
- * @version create on 2017年11月10日,last modify at 2018年11月20日
+ * @version create on 2017年11月10日,last modify at 2018年12月19日
  */
-public class PropertyHelper{
+public class PropertyHelper implements Disposable {
 
 	public LinkedHashMap<String, KeyValue> keyValueMap;
 	
@@ -535,5 +536,10 @@ public class PropertyHelper{
 		PropertyHelper ph3 = new PropertyHelper(path);
 		System.out.println(ph3.getValue("c.d", "未知"));
 		ph3.toIniHelper("default").save(iniPath);
+	}
+
+	@Override
+	public void dispose() {
+		keyValueMap = null;
 	}
 }

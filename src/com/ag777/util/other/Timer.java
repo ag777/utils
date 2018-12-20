@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
  * 计时工具类，用来查看代码执行耗时
  * 
  * @author ag777
- * @version create on 2017年10月10日,last modify at 2017年12月14日
+ * @version create on 2017年10月10日,last modify at 2017年12月19日
  */
 public class Timer {
 
@@ -59,7 +59,7 @@ public class Timer {
 	 * 打印当前操作用时和总操作用时
 	 * @param operate
 	 */
-	public void signStr(String operate) {
+	public void sign(String operate) {
 		String[] times = cutinStr();
 		StringBuilder sb = new StringBuilder();
 		if(operate != null) {
