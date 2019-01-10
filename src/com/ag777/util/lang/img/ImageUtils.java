@@ -5,20 +5,36 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.stream.FileImageInputStream;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
 import com.ag777.util.lang.IOUtils;
+import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.exception.Assert;
 import com.ag777.util.lang.exception.model.ImageNotSupportException;
+import com.sun.imageio.plugins.gif.GIFImageReader;
+import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
+import com.sun.imageio.plugins.png.PNGImageWriter;
+import com.sun.imageio.plugins.png.PNGImageWriterSpi;
 
 /**
  * 图片处理工具类
@@ -28,7 +44,7 @@ import com.ag777.util.lang.exception.model.ImageNotSupportException;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年05月08日,last modify at 2018年06月01日
+ * @version create on 2018年05月08日,last modify at 2019年01月10日
  */
 public class ImageUtils {
 	
@@ -253,6 +269,118 @@ public class ImageUtils {
             throw ex;
         }
     }
+    
+    /**
+     * 压缩图片质量
+     * <p>
+     * 代码地址:http://www.ibooker.cc/article/109/detail
+     * </p>
+     * 
+     * @param bufferedImage
+     * @param targetPath
+     * @param quality
+     * @throws IOException
+     */
+    public static void zoomBufferedImageByQuality(BufferedImage bufferedImage, String targetPath, float quality) throws IOException {
+		// 得到指定Format图片的writer
+		Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpeg");// 得到迭代器
+		ImageWriter writer = (ImageWriter) iter.next(); // 得到writer
+
+		// 得到指定writer的输出参数设置(ImageWriteParam)
+		ImageWriteParam iwp = writer.getDefaultWriteParam();
+		iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT); // 设置可否压缩
+		iwp.setCompressionQuality(quality); // 设置压缩质量参数，0~1，1为最高质量
+		iwp.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
+		ColorModel colorModel = ColorModel.getRGBdefault();
+		// 指定压缩时使用的色彩模式
+		iwp.setDestinationType(new ImageTypeSpecifier(colorModel, colorModel.createCompatibleSampleModel(16, 16)));
+		// 开始打包图片，写入byte[]
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(); // 取得内存输出流
+		IIOImage iIamge = new IIOImage(bufferedImage, null, null);
+		// 此处因为ImageWriter中用来接收write信息的output要求必须是ImageOutput
+		// 通过ImageIo中的静态方法，得到byteArrayOutputStream的ImageOutput
+		writer.setOutput(ImageIO.createImageOutputStream(byteArrayOutputStream));
+		writer.write(null, iIamge, iwp);
+
+		// 获取压缩后的btye
+		byte[] tempByte = byteArrayOutputStream.toByteArray();
+		// 创建输出文件，outputPath输出文件路径，imgStyle目标文件格式（png）
+		File outFile = new File(targetPath);
+		FileOutputStream fos = new FileOutputStream(outFile);
+		try {
+		fos.write(tempByte);
+		} finally {
+			IOUtils.close(fos);
+		}
+	}
+    
+    /**
+	 * 解析gif文件的每一帧到特定文件夹下(导出格式为png)
+	 * <p>
+	 * 实测导出的图片会失真
+	 * </p>
+	 * @param gifPath
+	 * @param targetDir
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+    @Deprecated
+	public static void splitGif(String gifPath, String targetDir) throws FileNotFoundException, IOException {
+		splitGif(getFileImageInputStream(gifPath), targetDir);
+	}
+	
+	/**
+	 * 解析gif文件的每一帧到特定文件夹下(导出格式为png)
+	 * <p>
+	 * 实测导出的图片会失真
+	 * </p>
+	 * @param in
+	 * @param targetDir
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	@Deprecated
+	public static void splitGif(FileImageInputStream in, String targetDir) throws FileNotFoundException, IOException {
+		try {
+			FileImageOutputStream out = null;
+			//加载gif解析工具
+			ImageReaderSpi readerSpi = new GIFImageReaderSpi();
+			GIFImageReader gifReader = (GIFImageReader) readerSpi.createReaderInstance();
+			gifReader.setInput(in);
+			
+			//创建输出路径
+			new File(targetDir).mkdirs();
+			
+			//解析每一帧
+			int num = gifReader.getNumImages(true);
+			
+			ImageWriterSpi writerSpi = new PNGImageWriterSpi();
+			PNGImageWriter writer = (PNGImageWriter) writerSpi.createWriterInstance();
+			for (int i = 0; i < num; i++) {
+				String targetPath = StringUtils.concat(targetDir, i, ".png");
+				try {
+					out = getFileImageOutputStream(targetPath);
+					writer.setOutput(out);
+					// 读取读取帧的图片
+					writer.write(gifReader.read(i));
+				} finally {
+					IOUtils.close(out);
+				}
+				
+			}
+		} finally {
+			IOUtils.close(in);
+		}
+
+	}
+	
+	public static FileImageInputStream getFileImageInputStream(String imgPath) throws FileNotFoundException, IOException {
+		return new FileImageInputStream(new File(imgPath));
+	}
+	
+	public static FileImageOutputStream getFileImageOutputStream(String imgPath) throws FileNotFoundException, IOException {
+		return new FileImageOutputStream(new File(imgPath));
+	}
     
     public static void main(String[] args) throws IOException, IllegalArgumentException, ImageNotSupportException {
 		String srcPath = "e:\\ad.png";

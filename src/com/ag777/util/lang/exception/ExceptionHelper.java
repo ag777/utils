@@ -3,15 +3,16 @@ package com.ag777.util.lang.exception;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
+
 import com.ag777.util.Utils;
 import com.ag777.util.lang.collection.ListUtils;
-import com.ag777.util.lang.collection.interf.ListFilter;
 
 /**
  * 异常辅助类
  * 
  * @author ag777
- * Time: created at 2017/06/06. last modify at 2018/01/25.
+ * Time: created at 2017/06/06. last modify at 2019/01/07.
  * Mark: 
  */
 public class ExceptionHelper {
@@ -160,10 +161,10 @@ public class ExceptionHelper {
 		if(excludePackages == null || excludePackages.isEmpty()) {
 			return excludePackages;
 		}
-		return ListUtils.removeByFilter(excludePackages, new ListFilter<String>() {
+		return ListUtils.removeByFilter(excludePackages, new Predicate<String>() {
 
 			@Override
-			public boolean dofilter(String item) {
+			public boolean test(String item) {
 				if(item.contains(workPackageName)) {
 					return false;
 				}

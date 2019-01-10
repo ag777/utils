@@ -13,15 +13,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import com.ag777.util.lang.collection.interf.ListFilter;
 
 /**
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年11月29日
+ * @version create on 2017年09月22日,last modify at 2019年01月07日
  */
 public class ListUtils {
 
@@ -519,14 +518,14 @@ public class ListUtils {
      * </p>
      * </p>
      */
-	public static <T>List<T> removeByFilter(List<T> list, ListFilter<T> filter) {
+	public static <T>List<T> removeByFilter(List<T> list, Predicate<T> filter) {
 		if(list == null) {
 			return null;
 		}
 		Iterator<T> itor = list.iterator();
 		while(itor.hasNext()) {
 			T item = itor.next();
-			if(filter.dofilter(item)) {	//删除对应数据
+			if(filter.test(item)) {	//删除对应数据
 				itor.remove();
 			}
 		}

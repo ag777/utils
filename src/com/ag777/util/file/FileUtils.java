@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.ag777.util.file.model.FileAnnotation;
@@ -33,7 +34,6 @@ import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.SystemUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.exception.Assert;
-import com.ag777.util.lang.filter.StringFilter;
 import com.ag777.util.lang.interf.ProgressListener;
 import com.ag777.util.lang.model.Charsets;
 
@@ -41,7 +41,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2018年11月14日
+ * @version create on 2017年04月25日,last modify at 2019年01月07日
  */
 public class FileUtils {
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
@@ -159,7 +159,7 @@ public class FileUtils {
      * @param charset
      * @throws IOException
      */
-    public static void readLinesByScaner(String filePath, StringFilter filter, Charset charset) throws IOException {
+    public static void readLinesByScaner(String filePath, Function<String, String> filter, Charset charset) throws IOException {
 		FileInputStream in = null;
 		Scanner sc = null;
 		try {
@@ -167,7 +167,7 @@ public class FileUtils {
 			sc = new Scanner(in, charset.toString());
 			while (sc.hasNextLine()) {
 				String line = sc.nextLine();
-				filter.doFilter(line);
+				filter.apply(line);
 			}
 			// note that Scanner suppresses exceptions
 		    if (sc.ioException() != null) {
@@ -252,30 +252,30 @@ public class FileUtils {
     /**
      * 逐行替换文件中的内容
      * @param filePath 文件路径
-     * @param stringFilter 参数为当前行内容,结果返回null则删除该行，其余则替换掉源内容
+     * @param filter 参数为当前行内容,结果返回null则删除该行，其余则替换掉源内容
      * @throws IOException
      */
-    public static void replaceAllByLines(String filePath, StringFilter stringFilter) throws IOException {
-    	replaceAllByLines(filePath, filePath, stringFilter);
+    public static void replaceAllByLines(String filePath, Function<String, String> filter) throws IOException {
+    	replaceAllByLines(filePath, filePath, filter);
     }
     
     /**
      * 逐行替换文件中的内容,另存
      * @param filePath 文件路径
-     * @param stringFilter 参数为当前行内容,结果返回null则删除该行，其余则替换掉源内容
+     * @param filter 参数为当前行内容,结果返回null则删除该行，其余则替换掉源内容
      * @throws IOException
      */
-    public static void replaceAllByLines(String srcPath, String targetPath, StringFilter stringFilter) throws IOException {
+    public static void replaceAllByLines(String srcPath, String targetPath, Function<String, String> filter) throws IOException {
     	List<String> newLines = ListUtils.newArrayList();
     	if(StringUtils.isBlank(srcPath)) {
     		throw new IOException("文件名为空");
     	}
-    	if(stringFilter == null) {
+    	if(filter == null) {
     		return;
     	}
     	List<String> lines = readLines(srcPath);
     	for (String line : lines) {
-    		String temp = stringFilter.doFilter(line);
+    		String temp = filter.apply(line);
     		if(temp != null) {
     			newLines.add(temp);
     		}
