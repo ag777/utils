@@ -31,6 +31,9 @@ import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.exception.Assert;
 import com.ag777.util.lang.exception.model.ImageNotSupportException;
+import com.sun.image.codec.jpeg.ImageFormatException;
+import com.sun.image.codec.jpeg.JPEGCodec;
+import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 import com.sun.imageio.plugins.png.PNGImageWriter;
@@ -44,7 +47,7 @@ import com.sun.imageio.plugins.png.PNGImageWriterSpi;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年05月08日,last modify at 2019年01月10日
+ * @version create on 2018年05月08日,last modify at 2019年01月17日
  */
 public class ImageUtils {
 	
@@ -372,6 +375,23 @@ public class ImageUtils {
 			IOUtils.close(in);
 		}
 
+	}
+	
+	/**
+	 * BufferedImage转byte数组
+	 * <p>
+	 * 参考文章:https://zhoupuyue.iteye.com/blog/780315
+	 * </p>
+	 * @param img
+	 * @return
+	 * @throws ImageFormatException
+	 * @throws IOException
+	 */
+	public static byte[] toBytes(BufferedImage img) throws ImageFormatException, IOException {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();  
+        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(os);  
+        encoder.encode(img);  
+        return os.toByteArray();  
 	}
 	
 	public static FileImageInputStream getFileImageInputStream(String imgPath) throws FileNotFoundException, IOException {

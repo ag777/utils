@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 /**
  * 科学计算工具类
  * @author ag777
- * @version create on 2019年01月07日,last modify at 2019年01月07日
+ * @version create on 2019年01月07日,last modify at 2019年01月16日
  */
 public class MathUtils {
 
@@ -50,4 +50,47 @@ public class MathUtils {
 	public static  BigDecimal divide(double a, double b, int scale, int roundingMode) {
 		return new BigDecimal(a).divide(new BigDecimal(b), scale, roundingMode);
 	}
+	
+	
+	 /**
+	  * 使用欧几里得算法求解数m和数n最大公约数
+	  * @param m
+	  * @param n
+	  * @return
+	  */
+   public static int getGcd(int m,int n){
+       while(n > 0){
+           int temp = m % n;
+           m = n;
+           n = temp;
+       }
+       return m;
+   }
+   
+  /**
+   * 求两个数的最小公倍数
+   * @param m
+   * @param n
+   * @return
+   */
+   public static int getLcm(int m,int n){
+       int gcd = getGcd(m,n);
+       int result = m*n / gcd;
+       return result;
+   }
+   
+   /**
+    * 求n个数的最小公倍数
+    * @param m
+    * @param n
+    * @param others
+    * @return
+    */
+   public static int getLcm(int m, int n, int... others) {
+   	int num = getLcm(m, n);
+   	for (int i : others) {
+   		num = getLcm(num, i);
+		}
+   	return num;
+   }
 }
