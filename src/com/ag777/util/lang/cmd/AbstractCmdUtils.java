@@ -17,7 +17,7 @@ import com.ag777.util.lang.model.Charsets;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年07月04日,last modify at 2018年08月06日
+ * @version create on 2018年07月04日,last modify at 2019年01月21日
  */
 public abstract class AbstractCmdUtils {
 
@@ -69,8 +69,14 @@ public abstract class AbstractCmdUtils {
 	 * @throws IOException
 	 */
 	public String find(String cmd, String baseDir, Pattern pattern, String replacement) throws IOException {
-		InputStream in = execForStream(cmd, baseDir);
-		return IOUtils.find(in, pattern, replacement, charsetDefault);
+		Process pro = getProcess(cmd, baseDir);
+		try {
+			InputStream in = execByProcess(pro);
+			return IOUtils.find(in, pattern, replacement, charsetDefault);
+		} finally {
+			destroy(pro);
+			pro = null;
+		}
 	}
 	
 	/**
@@ -96,8 +102,14 @@ public abstract class AbstractCmdUtils {
 	 * @throws IOException
 	 */
 	public Long findLong(String cmd, String baseDir, Pattern pattern, String replacement) throws IOException {
-		InputStream in = execForStream(cmd, baseDir);
-		return IOUtils.findLong(in, pattern, replacement, charsetDefault);
+		Process pro = getProcess(cmd, baseDir);
+		try {
+			InputStream in = execByProcess(pro);
+			return IOUtils.findLong(in, pattern, replacement, charsetDefault);
+		} finally {
+			destroy(pro);
+			pro = null;
+		}
 	}
 	
 	/**
@@ -123,8 +135,14 @@ public abstract class AbstractCmdUtils {
 	 * @throws IOException
 	 */
 	public List<String> findAll(String cmd, String baseDir, Pattern pattern, String replacement) throws IOException {
-		InputStream in = execForStream(cmd, baseDir);
-		return IOUtils.findAll(in, pattern, replacement, charsetDefault);
+		Process pro = getProcess(cmd, baseDir);
+		try {
+			InputStream in = execByProcess(pro);
+			return IOUtils.findAll(in, pattern, replacement, charsetDefault);
+		} finally {
+			destroy(pro);
+			pro = null;
+		}
 	}
 	
 	/**
@@ -139,8 +157,14 @@ public abstract class AbstractCmdUtils {
 	 * @throws IOException
 	 */
 	public List<String> readLines(String cmd, String baseDir) throws IOException {
-		InputStream in = execForStream(cmd, baseDir);
-		return IOUtils.readLines(in, charsetDefault);
+		Process pro = getProcess(cmd, baseDir);
+		try {
+			InputStream in = execByProcess(pro);
+			return IOUtils.readLines(in, charsetDefault);
+		} finally {
+			destroy(pro);
+			pro = null;
+		}
 	}
 	
 	/**
@@ -153,17 +177,27 @@ public abstract class AbstractCmdUtils {
 	 * @throws IOException
 	 */
 	public String readText(String cmd, String baseDir, String lineSparator) throws IOException {
-		InputStream in = execForStream(cmd, baseDir);
-		return IOUtils.readText(in, lineSparator, charsetDefault);
+		Process pro = getProcess(cmd, baseDir);
+		try {
+			InputStream in = execByProcess(pro);
+			return IOUtils.readText(in, lineSparator, charsetDefault);
+		} finally {
+			destroy(pro);
+			pro = null;
+		}
 	}
 	
 	/**
 	 * 执行命令并返回IO流
+	 * <p>
+	 * 该方法未关闭process,请慎用
+	 * </p>
 	 * @param cmd
 	 * @param baseDir
 	 * @return
 	 * @throws IOException
 	 */
+	@Deprecated
 	public InputStream execForStream(String cmd, String baseDir) throws IOException {
 		Process pro = getProcess(cmd, baseDir);
 		return execByProcess(pro);
@@ -195,20 +229,27 @@ public abstract class AbstractCmdUtils {
 	 */
 	public  boolean execWithException(String cmd, String baseDir) throws IOException, InterruptedException {
 		Process shellPro = getProcess(cmd, baseDir);
-		pre(shellPro);		//关闭输出流,子线程读取错误流
-		readOutput(shellPro);	//子线程读取输入流
-		int exitValue = shellPro.waitFor();
-		return exitValue == 0;
+		try {
+			pre(shellPro);		//关闭输出流,子线程读取错误流
+			readOutput(shellPro);	//子线程读取输入流
+			int exitValue = shellPro.waitFor();
+			return exitValue == 0;
+		} finally {
+			destroy(shellPro);
+			shellPro = null;
+		}
 	}
 	
-	public abstract Process getProcess(String cmd, String baseDir) throws IOException;
-	
-	/*===内部方法=======*/
-	
-	protected InputStream execByProcess(Process pro) {
+	/**
+	 * 执行命令并得到返回流
+	 * @param pro
+	 * @return
+	 */
+	public InputStream execByProcess(Process pro) {
 		pre(pro);
 		return pro.getInputStream();
 	}
+	
 	/**
 	 * 读取cmd返回时先关输出流，开子线程读错误流
 	 * <p>
@@ -219,9 +260,18 @@ public abstract class AbstractCmdUtils {
 	 * 参考文章:http://xiaohuafyle.iteye.com/blog/1562786
 	 * @param pro
 	 */
-	protected static void pre(Process pro) {
+	public static void pre(Process pro) {
 		closeOutput(pro);
 		readErr(pro);
+	}
+	
+	public abstract Process getProcess(String cmd, String baseDir) throws IOException;
+	
+	/*===内部方法=======*/
+	protected void destroy(Process process) {
+		if(process != null) {
+			process.destroy();
+		}
 	}
 	
 	/**
