@@ -12,7 +12,7 @@ import com.ag777.util.lang.model.Pair;
  * </p>
  * 
  * @author ag777
- * @version create on 2016年10月10日,last modify at 2017年10月12日
+ * @version create on 2016年10月10日,last modify at 2019年02月14日
  */
 public class RandomUtils {
 
@@ -91,6 +91,19 @@ public class RandomUtils {
 			}
 		}
 		throw new Exception("抽奖概率异常:"+rDouble);
+	}
+	
+	/**
+	 * 从列表中随机抽取一项,所有项的概率平均
+	 * @param list
+	 * @return
+	 */
+	public static <T>T draw(List<T> list) {
+		if(list == null || list.isEmpty()) {
+			return null;
+		}
+		int index = rInt(list.size());
+		return list.get(index);
 	}
 	
 	/**

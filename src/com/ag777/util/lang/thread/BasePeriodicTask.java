@@ -11,7 +11,7 @@ import com.ag777.util.lang.model.ThreadStatus;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年01月08日,last modify at 2017年03月27日
+ * @version create on 2018年01月08日,last modify at 2019年01月24日
  */
 public abstract class BasePeriodicTask {
 
@@ -53,7 +53,7 @@ public abstract class BasePeriodicTask {
 						if(onInterrupt(ex)) {	//如果线程被打断则不继续执行(返回true)
 							return;
 						}
-					} catch(Exception ex) {
+					} catch(Throwable ex) {
 						try{
 							if(onError(ex)) {	//线程发生错误则不继续执行(返回true)
 								//置状态为已停止,并结束该线程
@@ -439,10 +439,10 @@ public abstract class BasePeriodicTask {
 	
 	/**
 	 * 该线程的具体业务
-	 * @throws Exception
+	 * @throws Throwable
 	 * @throws InterruptedException
 	 */
-	public abstract void task() throws Exception, InterruptedException;
+	public abstract void task() throws Throwable, InterruptedException;
 	
 	/**
 	 * 程序发生错误时执行。如果这个方法返回true则直接终止该线程
@@ -450,5 +450,5 @@ public abstract class BasePeriodicTask {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	public abstract boolean onError(Exception ex) throws InterruptedException;
+	public abstract boolean onError(Throwable ex) throws InterruptedException;
 }

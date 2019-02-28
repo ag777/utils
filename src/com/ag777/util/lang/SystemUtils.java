@@ -116,7 +116,7 @@ public class SystemUtils {
 	}
 
 	/**
-	 * 总内存
+	 * 系统当前分配给虚拟机的内存
 	 * <p>
 	 * Returns the total amount of memory in the Java virtual machine. The value returned by this method may vary over time, depending on the host environment.
 	 * </p>
@@ -128,7 +128,7 @@ public class SystemUtils {
 	}
 	
 	/**
-	 * 最大内存
+	 * 虚拟机可能从系统获取到的最大内存
 	 * <p>
 	 * Returns the maximum amount of memory that the Java virtual machine will attempt to use. If there is no inherent limit then the value java.lang.Long.MAX_VALUE will be returned.
 	 * </p>
@@ -140,7 +140,7 @@ public class SystemUtils {
 	}
 	
 	/**
-	 * 剩余内存
+	 * 系统当前分配给虚拟机的内存中，空闲的部分
 	 * <p>
 	 * Returns the amount of free memory in the Java Virtual Machine. Calling the gc method may result in increasing the value returned by freeMemory
 	 * </p>
@@ -272,7 +272,7 @@ public class SystemUtils {
 	 * jdk原生实现
 	 * linux有偏差,可能得这么做:https://blog.csdn.net/u010738184/article/details/77725973
 	 * </p>
-	 * @return {硬盘总大小(bytes), 剩余大小(bytes)}
+	 * @return {硬盘总大小(bytes,也就是B), 剩余大小(bytes,也就是B)}
 	 */
 	public static long[] getDiskUsage() {
 		long total = 0l;

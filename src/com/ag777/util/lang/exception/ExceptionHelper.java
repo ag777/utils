@@ -12,7 +12,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 异常辅助类
  * 
  * @author ag777
- * Time: created at 2017/06/06. last modify at 2019/01/07.
+ * Time: created at 2017/06/06. last modify at 2019/02/12.
  * Mark: 
  */
 public class ExceptionHelper {
@@ -161,7 +161,7 @@ public class ExceptionHelper {
 		if(excludePackages == null || excludePackages.isEmpty()) {
 			return excludePackages;
 		}
-		return ListUtils.removeByFilter(excludePackages, new Predicate<String>() {
+		return ListUtils.removeIf(excludePackages, new Predicate<String>() {
 
 			@Override
 			public boolean test(String item) {

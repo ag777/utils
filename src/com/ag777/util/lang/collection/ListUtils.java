@@ -1,5 +1,11 @@
 package com.ag777.util.lang.collection;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,7 +26,7 @@ import java.util.stream.Collectors;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2019年01月07日
+ * @version create on 2017年09月22日,last modify at 2019年02月12日
  */
 public class ListUtils {
 
@@ -333,6 +339,9 @@ public class ListUtils {
 	
 	/**
 	 * 去重
+	 * <p>
+	 * 解决结果不符合预期的bug,详见{@link #remove(List, Object)}
+	 * </p>
 	 */
     public static <T>List<T> distinct(List<T> list) {
     	if(list == null) {
@@ -343,7 +352,7 @@ public class ListUtils {
         	T item = list.get(i);
         	boolean a = set.add(item);
         	if (!a) {	//如果set中不能加入数据，说明重复了，需要移除
-            	list.remove(item);
+            	remove(list, item);
             }
         }
         return list;
@@ -359,12 +368,7 @@ public class ListUtils {
     	if(list == null) {
     		return null;
     	}
-    	Iterator<T> itor = list.iterator();
-    	while(itor.hasNext()) {
-    		if(itor.next() == null) {
-    			itor.remove();
-    		}
-    	}
+    	list.removeIf(item->item==null);
         return list;
     }
 	
@@ -518,17 +522,11 @@ public class ListUtils {
      * </p>
      * </p>
      */
-	public static <T>List<T> removeByFilter(List<T> list, Predicate<T> filter) {
+	public static <T>List<T> removeIf(List<T> list, Predicate<T> filter) {
 		if(list == null) {
 			return null;
 		}
-		Iterator<T> itor = list.iterator();
-		while(itor.hasNext()) {
-			T item = itor.next();
-			if(filter.test(item)) {	//删除对应数据
-				itor.remove();
-			}
-		}
+		list.removeIf(filter);
 		return list;
 	}
 	
@@ -583,14 +581,36 @@ public class ListUtils {
 	//--复制
 	
 	/**
-	 * 深度拷贝
+	 * 深度拷贝（有问题，会报错）
 	 * @return
 	 */
-	public static <T>List<T> copy(List<T> list) {
-		List<T> newList = emptyToCopy(list);
-//		Collections.addAll(newList,  toArray(list)); 
-		Collections.copy(newList, list);	//深拷贝，不光拷贝的是src的元素（引用），src内每个元素的所指向的对象都进行一次拷贝。即是两个list的每个元素所指向的不是同一内存
-		return newList;
+//	public static <T>List<T> copy(List<T> list) {
+//		List<T> newList = emptyToCopy(list);
+////		Collections.addAll(newList,  toArray(list)); 
+//		Collections.copy(newList, list);	//深拷贝，不光拷贝的是src的元素（引用），src内每个元素的所指向的对象都进行一次拷贝。即是两个list的每个元素所指向的不是同一内存
+//		return newList;
+//	}
+	
+	/**
+	 * 深拷贝(原理是序列化和反序列化)
+	 * @param src
+	 * @return
+	 * @throws Exception
+	 */
+	public static <T extends Serializable> List<T> deepCopy(List<T> src) throws Exception {
+		try {
+		    ByteArrayOutputStream byteOut = new ByteArrayOutputStream();  
+		    ObjectOutputStream out = new ObjectOutputStream(byteOut);  
+		    out.writeObject(src);  
+		  
+		    ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOut.toByteArray());  
+		    ObjectInputStream in = new ObjectInputStream(byteIn);  
+		    @SuppressWarnings("unchecked")  
+		    List<T> dest = (List<T>) in.readObject();  
+		    return dest;
+		} catch(IOException|ClassNotFoundException ex) {
+			throw ex;
+		}
 	}
 	
 	//--排序
