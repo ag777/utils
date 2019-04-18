@@ -1242,7 +1242,8 @@ public class DateUtils {
 //		System.out.println(DateUtils.getMinimumToCopy(
 //				DateUtils.toDateTime("23:02","mm:ss"),
 //				TimeUnit.MINUTE).toString("mm:ss"));
-		Console.log(
-				betweenMonth(toLocalDate("2017-02-03"), toLocalDate("2017-01-04")));
+//		Console.log(
+//				betweenMonth(toLocalDate("2017-02-03"), toLocalDate("2017-01-04")));
+		System.out.println(between(toLocalDate("2019-03-01"), toLocalDate("2019-12-25"), TimeUnit.DAY)+1);
 	}
 }
