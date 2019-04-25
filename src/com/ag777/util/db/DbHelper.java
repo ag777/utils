@@ -42,7 +42,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2018年12月10日
+ * @version create on 2017年07月28日,last modify at 2019年04月25日
  */
 public class DbHelper implements Disposable, Closeable {
 	
@@ -168,14 +168,22 @@ public class DbHelper implements Disposable, Closeable {
 	/**
 	 * 数据库类型转java类型(不全，只列出常用的，不在范围内返回null)
 	 * <p>
-	 * 	参考http://blog.csdn.net/haofeng82/article/details/34857991
+	 * 	参考http://blog.csdn.net/haofeng82/article/details/34857991<br/>
+	 * 同时java类型受字段是否无符号影响:https://blog.csdn.net/weixin_42127613/article/details/84791794
 	 * </p>
-	 * @param sqlType
-	 * @param size
+	 * @param sqlType 字段的数据类型
+	 * @param size 字段长度
+	 * @param typeName 请使用ColumnPojo里的typeName
 	 * @return
 	 */
-	public static Class<?> toPojoType(int sqlType, int size) {
+	public static Class<?> toPojoType(int sqlType, int size, String typeName) {
 		Class<?> clazz = null;
+		
+		boolean unsign = false;
+		if(typeName != null && typeName.toUpperCase().contains("UNSIGNED")) {
+			unsign = true;
+		}
+		
 		switch(sqlType) {
 			case Types.VARCHAR:	//12
 			case Types.CHAR:			//1
@@ -190,7 +198,11 @@ public class DbHelper implements Disposable, Closeable {
 				break;
 			case Types.INTEGER:	//4
 			case Types.SMALLINT:	//5
-				clazz = Integer.class;
+				if(!unsign) {
+					clazz = Integer.class;
+				} else {
+					clazz = Long.class;
+				}
 				break;
 			case Types.TINYINT:		//-6
 				if(size == 1) {
@@ -203,7 +215,11 @@ public class DbHelper implements Disposable, Closeable {
 				clazz = Boolean.class;
 				break;
 			case Types.BIGINT:		//-5
-				clazz = Long.class;
+				if(!unsign) {
+					clazz = Long.class;
+				} else {
+					clazz = BigInteger.class;
+				}
 				break;
 			case Types.FLOAT:		//6
 			case Types.REAL:			//7

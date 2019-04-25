@@ -14,21 +14,26 @@ import java.lang.reflect.Type;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年05月16日,last modify at 2018年05月16日
+ * @version create on 2018年05月16日,last modify at 2019年04月22日
  */
 public class TypeFactory implements ParameterizedType {
 
-	private Class<?> rawClass;
-	private Class<?> argumentsClass[];
+	private Type rawClass;
+	private Type[] argumentsType;
 
 	public TypeFactory(Class<?> rawClass, Class<?>... argumentsClass) {
 		this.rawClass = rawClass;
-		this.argumentsClass = argumentsClass;
+		this.argumentsType = argumentsClass;
+	}
+	
+	public TypeFactory(Class<?> rawClass, Type... argumentsType) {
+		this.rawClass = rawClass;
+		this.argumentsType = argumentsType;
 	}
 
 	@Override
 	public Type[] getActualTypeArguments() {
-		return argumentsClass;
+		return argumentsType;
 	}
 
 	@Override
