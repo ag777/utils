@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import com.ag777.util.lang.collection.ListUtils;
@@ -21,7 +22,7 @@ import com.ag777.util.lang.interf.ProgressListener;
  * 		有很多操作，比如文件，cmd命令，都是通过操作流来完成目的，为了避免重复及统一代码新建此类
  * </p>
  * @author ag777
- * @version create on 2017年06月16日,last modify at 2018年12月25日
+ * @version create on 2017年06月16日,last modify at 2019年05月28日
  */
 public class IOUtils {
 
@@ -211,6 +212,59 @@ public class IOUtils {
 				result.addAll(RegexUtils.findAllLong(s, pattern, replacement));
 			}
 			return result;
+		} catch(IOException ex) {
+			throw ex;
+		} finally {
+			close(in);
+		}
+	}
+	
+	/**
+	 * 根据条件查询单个符合条件的值,找到即停
+	 * @param in 输入流
+	 * @param finder 返回null则说明不需要该值，继续遍历下一行
+	 * @param charset 字符编码
+	 * @return
+	 * @throws IOException
+	 */
+	public static <T>T find(InputStream in, Function<String, T> finder, Charset charset) throws IOException {
+		try{
+			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
+			String s = null;
+			while((s  = procin.readLine()) !=null){
+				T result = finder.apply(s);
+				if(result != null) {
+					return result;
+				}
+			}
+		} catch(IOException ex) {
+			throw ex;
+		} finally {
+			close(in);
+		}
+		return null;
+	}
+	
+	/**
+	 * 根据条件查询所有符合条件的值
+	 * @param in 输入流
+	 * @param finder 返回null则说明不需要该值，继续遍历下一行
+	 * @param charset 字符编码
+	 * @return
+	 * @throws IOException
+	 */
+	public static <T>List<T> findAll(InputStream in, Function<String, T> finder, Charset charset) throws IOException {
+		try{
+			List<T> list = new ArrayList<>();
+			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
+			String s = null;
+			while((s  = procin.readLine()) !=null){
+				T result = finder.apply(s);
+				if(result != null) {
+					list.add(result);
+				}
+			}
+			return list;
 		} catch(IOException ex) {
 			throw ex;
 		} finally {

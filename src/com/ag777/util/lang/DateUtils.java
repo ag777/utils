@@ -32,6 +32,9 @@ import java.util.Map;
  * 	巧妙的考勤统计:http://www.01happy.com/mysql-bit_count-bit_or/
  * 	SELECT year,month,BIT_COUNT(BIT_OR(1<<day)) AS days FROM t1
        GROUP BY year,month;
+    <ul>
+    <li>更新日志:https://www.joda.org/joda-time/changes-report.html</li>
+    </ul>
  * </p>
  * 
  * @author ag777

@@ -41,7 +41,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2019年01月07日
+ * @version create on 2017年04月25日,last modify at 2019年05月28日
  */
 public class FileUtils {
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
@@ -378,6 +378,65 @@ public class FileUtils {
     	replaceByWhole(filePath, regex, replacement, false);
     }
     
+    /**
+     * 根据条件查询单个符合条件的值,找到即停
+     * @param filePath 文件路径
+     * @param finder 返回null则说明不需要该值，继续遍历下一行
+     * @return
+     * @throws IOException
+     */
+    public static <T>T find(String filePath, Function<String, T> finder) throws IOException {
+    	return find(filePath, finder, FILE_READING_CHARSET);
+    }
+    
+    /**
+     * 根据条件查询单个符合条件的值,找到即停
+     * @param filePath 文件路径
+     * @param finder 返回null则说明不需要该值，继续遍历下一行
+     * @param charset 字符编码
+     * @return
+     * @throws IOException
+     */
+    public static <T>T find(String filePath, Function<String, T> finder, Charset charset) throws IOException {
+    	try {
+	    	FileInputStream fis = new FileInputStream(filePath);
+	    	return IOUtils.find(fis, finder, charset);
+    	} catch (FileNotFoundException ex) {
+            throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
+        } catch (IOException ex) {
+            throw new IOException(StringUtils.concat("读取文件[",filePath,"]时发生错误!"), ex);
+        } 
+    }
+    
+    /**
+     * 根据条件查询所有符合条件的值
+     * @param filePath 文件路径
+     * @param finder 返回null则说明不需要该值，继续遍历下一行
+     * @return
+     * @throws IOException
+     */
+    public static <T>List<T> findAll(String filePath, Function<String, T> finder) throws IOException {
+    	return findAll(filePath, finder, FILE_READING_CHARSET);
+    }
+    
+    /**
+     * 根据条件查询所有符合条件的值
+     * @param filePath 文件路径
+     * @param finder 返回null则说明不需要该值，继续遍历下一行
+     * @param charset 字符编码
+     * @return
+     * @throws IOException
+     */
+    public static <T>List<T> findAll(String filePath, Function<String, T> finder, Charset charset) throws IOException {
+    	try {
+	    	FileInputStream fis = new FileInputStream(filePath);
+	    	return IOUtils.findAll(fis, finder, charset);
+    	} catch (FileNotFoundException ex) {
+            throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
+        } catch (IOException ex) {
+            throw new IOException(StringUtils.concat("读取文件[",filePath,"]时发生错误!"), ex);
+        } 
+    }
     
     /**
      * 从文件内容中定位信息并以一定格式返回
