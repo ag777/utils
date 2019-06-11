@@ -56,7 +56,7 @@ import okhttp3.Response;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2018年10月24日
+ * @version last modify at 2019年06月11日
  */
 public class HttpUtils {
 	
@@ -208,10 +208,10 @@ public class HttpUtils {
 	 * @return
 	 */
 	public static OkHttpClient.Builder builderWithProgress(OkHttpClient.Builder builder, ProgressResponseBody.ProgressListener listener) {
-		if(listener != null) {		
-			if(builder == null) {
-				builder = client().newBuilder();
-			}
+		if(builder == null) {
+			builder = client().newBuilder();
+		}
+		if(listener != null) {
 			return builder
 		        .addNetworkInterceptor(new Interceptor() {
 		            @Override
