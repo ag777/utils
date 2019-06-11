@@ -29,13 +29,15 @@ import java.util.Map;
  * <li>joda-time-xxx.jar</li>
  * </ul>
  * 
- * 	巧妙的考勤统计:http://www.01happy.com/mysql-bit_count-bit_or/
+ * <p>
+ * 	巧妙的考勤统计:http://www.01happy.com/mysql-bit_count-bit_or/<br>
+ * <pre>{@code
  * 	SELECT year,month,BIT_COUNT(BIT_OR(1<<day)) AS days FROM t1
        GROUP BY year,month;
+    }</pre>
     <ul>
     <li>更新日志:https://www.joda.org/joda-time/changes-report.html</li>
     </ul>
- * </p>
  * 
  * @author ag777
  * @version create on 2016年07月07日,last modify at 2018年04月09日
@@ -195,7 +197,7 @@ public class DateUtils {
 	
 	/**
 	 * 等同于ld.toString(DEFAULT_TEMPLATE_TIME);
-	 * @param dt
+	 * @param ld 
 	 * @return
 	 */
 	public static String toString(LocalDate ld) {
@@ -223,8 +225,8 @@ public class DateUtils {
 	}
 	/**
 	 * 转换为Date
-	 * @param str
-	 * @param template
+	 * @param date 日期
+	 * @param template 格式
 	 * @return
 	 */
 	public static java.util.Date toDate(String date,String template) {
@@ -239,8 +241,8 @@ public class DateUtils {
 	}
 	/**
 	 * 转换为TimeStamp
-	 * @param str
-	 * @param template
+	 * @param date 日期
+	 * @param template 格式
 	 * @return
 	 */
 	public static Timestamp toTimeStamp(String date, String template) {

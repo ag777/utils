@@ -137,7 +137,7 @@ public class FileNioUtils {
 	 * 
 	 * @param filePath
 	 * @param lines
-	 * @param chartset
+	 * @param charset
 	 * @return
 	 * @throws IOException
 	 */
@@ -322,13 +322,12 @@ public class FileNioUtils {
 	 * 移动文件或者文件夹,如从e:/aa/到f:/bb/aa/
 	 * <p>
      * StandardCopyOption.REPLACE_EXISTING:如果存在则覆盖
-     * </p>
+     * 
      * <p>
      * <h2>题外话</h2>
-     * 换成File的renameTo方法复制文件跨文件系统使用会失败
-     * 比如C盘是NTFS格式,E盘是FAT32格式，在这两个盘移动文件就会返回false
+     * 换成File的renameTo方法复制文件跨文件系统使用会失败<br>
+     * 比如C盘是NTFS格式,E盘是FAT32格式，在这两个盘移动文件就会返回false<br>
      * 用Files类下的move方法不存在该问题
-     * </p>
      * 
 	 * @param source
 	 * @param target

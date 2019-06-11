@@ -7,11 +7,10 @@ import java.lang.reflect.Type;
  * 便捷地获取带泛型类的Type
  * <p>
  * 比如:
- * <pre>
+ * <pre>{@code
  * new TypeFactory(List.class, String.class) => List<String>
  * new TypeFactory(Map.class, String.class, Object.class) => Map<String, Object>
- * </pre>
- * </p>
+ * }</pre>
  * 
  * @author ag777
  * @version create on 2018年05月16日,last modify at 2019年04月22日

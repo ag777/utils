@@ -113,8 +113,7 @@ public class CalculateHelper {
 	 * 乘
 	 * 
 	 * <p>
-	 * 	将参数转换为BigDecimal类型再进行计算转化失败抛出runtime异常<br/>
-	 * </p>
+	 * 	将参数转换为BigDecimal类型再进行计算转化失败抛出runtime异常<br>
 	 * 
 	 * @param multiplicand
 	 * @return
@@ -128,10 +127,9 @@ public class CalculateHelper {
 	 * 除
 	 * 
 	 * <p>
-	 * 	将参数转换为BigDecimal类型再进行计算转化失败抛出runtime异常<br/>
-	 * 结果保留10位，四舍五入<br/>
+	 * 	将参数转换为BigDecimal类型再进行计算转化失败抛出runtime异常<br>
+	 * 结果保留10位，四舍五入<br>
 	 * 除数为0不做任何处理
-	 * </p>
 	 * 
 	 * @param divisor
 	 * @return
@@ -147,7 +145,7 @@ public class CalculateHelper {
 	/**
 	 * 除
 	 * <p>
-	 * 结果保留10位，四舍五入<br/>
+	 * 结果保留10位，四舍五入<br>
 	 * 除数为0抛出异常
 	 * </p>
 	 * 

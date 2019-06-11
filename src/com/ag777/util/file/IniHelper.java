@@ -751,9 +751,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 		
 		/**
 		 * 获取key_value对应关系
-		 * <p>
+		 * <p><pre>{@code
 		 * 实际上的Map<String, String>
-		 * </p>
+		 * }</pre>
 		 * @return
 		 */
 		public Map<String, Object> getMap() {

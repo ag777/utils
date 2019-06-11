@@ -44,16 +44,16 @@ import okhttp3.Response;
  * <li>okhttp-xxx.jar</li>
  * <li>okio-xxx.jar</li>
  * </ul>
- * 
+ * 		<pre>{@code
  * 		2017/6/8:尝试通过反射机制参数callback<T>来转换结果为类达成优雅代码的目的,没成功,原因如下:<br>
  * 		1.直接用反射从参数中取泛型的类型只实现了一个递归获取的方法（已删）<br>
  * 		2.通过gson的typetoken类来获取T的类型失败，原因应该是java在编译时擦除泛型类型导致的<br>
  * 		2018/03/30重写
+ * 		}</pre>
  * <ul>
  * <li>ohttp更新日志:https://github.com/square/okhttp/blob/master/CHANGELOG.md</li>
  * <li>okio更新日志:https://github.com/square/okio/blob/master/CHANGELOG.md</li>
  * </ul>
- * </p>
  * 
  * @author ag777
  * @version last modify at 2018年10月24日
@@ -352,8 +352,9 @@ public class HttpUtils {
 	 * @param client
 	 * @param url
 	 * @param files
-	 * @param params
+	 * @param paramMap
 	 * @param headerMap
+	 * @param tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 * @throws FileNotFoundException
@@ -525,7 +526,7 @@ public class HttpUtils {
 	 * 
 	 * @param response
 	 * @return
-	 * @throws Exception 
+	 * @throws IOException 
 	 */
 	public static Optional<Map<String, Object>> responseMap(Response response) throws IOException {
 		if(response == null) {

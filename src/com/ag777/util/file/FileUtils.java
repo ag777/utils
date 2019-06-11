@@ -261,7 +261,8 @@ public class FileUtils {
     
     /**
      * 逐行替换文件中的内容,另存
-     * @param filePath 文件路径
+     * @param srcPath 源路径
+     * @param targetPath 目标路径
      * @param filter 参数为当前行内容,结果返回null则删除该行，其余则替换掉源内容
      * @throws IOException
      */
@@ -511,9 +512,9 @@ public class FileUtils {
      * 将内容追加到文件尾部
      * <p>
      * 	使用RandomAccessFile实现
-     * </p>
-     * @param fileName
-     * @param content
+     * 
+     * @param filePath 文件路径
+     * @param content 文件内容
      * @return 
      */
     public static boolean appendFileContent(String filePath, String content) {
@@ -537,8 +538,8 @@ public class FileUtils {
      * <p>
      * 	使用RandomAccessFile实现
      * </p>
-     * @param fileName
-     * @param content
+     * @param filePath
+     * @param lines
      * @return 
      */
     public static boolean appendFileContent(String filePath, List<String> lines) {
@@ -548,9 +549,8 @@ public class FileUtils {
     
     /**
      * 将流写文件(写)
-     * @param is
+     * @param in
      * @param filePath
-     * @param isOverride
      * @return
      * @throws IOException
      */
@@ -833,9 +833,9 @@ public class FileUtils {
 
 	/**
 	 * 替换文件名
-	 * <p>
+	 * <p><pre>{@code
 	 * replaceName("a.tar.gz", "b")=>"b.gz"
-	 * </p>
+	 * }</pre>
 	 * 
 	 * @param wholeFileName
 	 * @param newName
@@ -847,9 +847,9 @@ public class FileUtils {
     
     /**
      * 替换文件名(保留长拓展名)
-     * <p>
+     * <p><pre>{@code
      * replaceNameWithLongSuffix("a.tar.gz", "b")=>"b.tar.gz"
-     * </p>
+     * }</pre>
      * @param wholeFileName
      * @param newName
      * @return
@@ -955,7 +955,6 @@ public class FileUtils {
      *
      * @param dirPath             目录名称
      * @param needCreateParentDir 如果父目录不存在，是否创建父目录
-     * @return
      */
     public static void makeDir(String dirPath, boolean needCreateParentDir) {
     	if(dirPath == null) {

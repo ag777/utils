@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2019年02月12日
+ * @version create on 2017年09月22日,last modify at 2019年06月11日
  */
 public class ListUtils {
 
@@ -104,13 +104,11 @@ public class ListUtils {
      * 例如：
      * </p>
      * 
-     * <pre>
+     * <pre>{@code
      * 		List<String> list = ListUtils.of("1,2,3", ",");
      *		结果为包含"1","2"和"3"的列表
      *		值得注意的是由于调用的是String.split(String regex)方法所以参数separator为正则表达式,注意字符串转义
-     * </pre>
-     * </p>
-     * </p>
+     * }</pre>
      */
 	public static List<String> ofList(String src, String separator) {
 		List<String> result = newList();
@@ -145,12 +143,11 @@ public class ListUtils {
      * 例如：
      * </p>
      * 
-     * <pre>
+     * <pre>{@code
      * 		List<Integer> list = ListUtils.toFinalList(new Integer[]{1,2,3});
      *		之后可以随意操作该列表
-     * </pre>
-     * </p>
-     * </p>
+     * }</pre>
+     * 
      */
 	public static <T>List<T> ofList(T[] items) {
 		List<T> result = newList();
@@ -168,12 +165,11 @@ public class ListUtils {
      * 例如：
      * </p>
      * 
-     * <pre>
+     * <pre>{@code
      * 		List<Integer> list = ListUtils.toFinalList(new Integer[]{1,2,3});
      *		这时如果调用list.add(3)或者list.remove(2)就会报错
-     * </pre>
-     * </p>
-     * </p>
+     * }</pre>
+     * 
      */
 	public static <T>List<T> ofFinalList(T[] items) {
 		if(items == null) {
@@ -206,13 +202,11 @@ public class ListUtils {
      * 例如：
      * </p>
      * 
-     * <pre>
+     * <pre>{@code
      * 		现有key-value 为[{a:1,b:2},{a:2},{a:3}]的列表list
      *		ListUtils.of(list, "a");
      *		结果将是值[1,2,3] 的列表
-     * </pre>
-     * </p>
-     * </p>
+     * }</pre>
      */
 	public static <K,V>List<Object> ofList(List<Map<K, V>> list, K key) {
 		List<Object> resultList = newList();
@@ -231,18 +225,16 @@ public class ListUtils {
 	}
 	
 	/**
-     *  将list<Map>中每个map的第一个值(非空)整合成一个列表,适用于单列list
+     *  将<pre>{@code list<Map> }</pre>中每个map的第一个值(非空)整合成一个列表,适用于单列list
      * <p>
      * 例如：
-     * </p>
      * 
-     * <pre>
+     * <pre>{@code
      * 		现有key-value 为[{a:1},{a:2},{a:3}]的列表list
      *		ListUtils.of(list);
      *		结果将是值[1,2,3] 的列表
-     * </pre>
-     * </p>
-     * </p>
+     * }</pre>
+     * 
      */
 	public static <K,V>List<Object> ofList(List<Map<K,V>> list) {
 		List<Object> resultList = newList();
@@ -270,13 +262,12 @@ public class ListUtils {
      * 例如：
      * </p>
      * 
-     * <pre>
+     * <pre>{@code
      * 		ListUtils.of(new Integer[]{1,2,3});
      *		ListUtils.toString(list,",");
      *		得到的结果是1,2,3
-     * </pre>
-     * </p>
-     * </p>
+     * }</pre>
+     * 
      */
 	public static <T>String toString(List<T> list, String separator) {
 		if(CollectionAndMapUtils.isEmpty(list)) {	//列表为空则返回空字符串
@@ -326,9 +317,9 @@ public class ListUtils {
 	
 	/**
 	 * 统计list中每一项及其出现次数
-	 * <p>
+	 * <p><pre>{@code
 	 * toCountMap(of("a","b","a"))=>{"a":2,"b":1}
-	 * </p>
+	 * }</pre>
 	 * 
 	 * @param list
 	 * @return
@@ -373,12 +364,12 @@ public class ListUtils {
     }
 	
     /**
-     * 删除列表中某项元素，避免list<Integer> 的下标陷阱
+     * 删除列表中某项元素，避免<pre>{@code list<Integer> }</pre> 的下标陷阱
      * <p>
      * 例如：
      * </p>
      * 
-     * <pre>
+     * <pre>{@code
      * List<Integer> list = newList();
 		list.add(1);
 		list.add(2);
@@ -387,9 +378,8 @@ public class ListUtils {
 		list.remove(2);
 		结果是1,2而不是预期的1,3
 		通常情况下,我们需要用list.remove((Object)2);来得到预期的结果
-     * </pre>
-     * </p>
-     * </p>
+     * }</pre>
+     * 
      */
     public static <T>List<T> remove(List<T> list, Object item) {
     	if(list == null) {
@@ -405,15 +395,16 @@ public class ListUtils {
      * <p>
      * 	该方法原用于解决一次性批量插入数据到数据库时数据量太大导致插入失败的异常，将列表数据分次插入
      * 例如：
-     * </p>
      * 
-     * <pre>
+     * <pre>{@code
      * 		现有值为[1,2,3]的列表list,执行
      * 		ListUtils.splitList(list, 2);
      * 		将会得到值为[[1,2],[3]]的嵌套列表
      * 		值得注意的是如果传入的limit不为正数，则会抛出RuntimeException
-     * </pre>
+     * }</pre>
      * 
+     *  注意：拆分方法用的是List中的subList方法，该方法会引发一个比较隐蔽的问题(会抛java.util.ConcurrentModificationExceptio异常)<br> 
+     *  简单来说需要对拆分后列表进行操作的话不建议使用该方法,或者用其它方式绕过对subList对象的操作
      */
 	public static <T>List<List<T>> splitList(List<T> list, int limit) {
 		if(list == null) {
@@ -435,6 +426,50 @@ public class ListUtils {
 			
 		}
 		return result;
+	}
+	
+	/**
+	 * 列表分段(将一个列表，每limit长度分一个列表并将这些新列表整合到一个列表里),多用于数据库批量插入拆分
+	 * <p>
+	 * 	和splitList方法区别的区别是构造出来的子list都是arrayList而不是subList {@link #splitList(List, int)}<br>
+	 * 	这样做可以避免对源列表的依赖关系，但是需要新建很多列表对象
+	 * </p>
+	 * @param list
+	 * @param limit
+	 * @return
+	 */
+	public static <T>List<List<T>> splitList2(List<T> list, int limit) {
+		if(list == null) {
+			return null;
+		}
+		if(limit <= 0) {
+			throw new RuntimeException("参数limit必须大于0");
+		} 
+		
+		List<List<T>> resultList = ListUtils.newArrayList();
+		int size = list.size();
+		if(size == 0) {
+			return resultList;
+		}
+		int remainder = size % limit;  //(先计算出余数)
+	    int number = size / limit;  //然后是商
+	    if(remainder>0) {
+	    	number+=1;
+	    }
+		for (int i = 0; i<number;i=i+1) {
+			List<T> l = ListUtils.newArrayList();
+			int z =i*limit;
+			for (int j = 0; j < limit; j++) {
+				int k = z+j;
+				if(k>=size) {
+					break;
+				}
+				l.add(list.get(k));
+				
+			}
+			resultList.add(l);
+		}
+		return resultList;
 	}
 	
 	/**
@@ -480,13 +515,13 @@ public class ListUtils {
 	 *  <li>begin如果小于0, 强制begin为0</li>
 	 *  <li>limit如果超过原数组限制,新数组的长度为有效部分,最短为0</li>
 	 *  </ul>
-	 * </p>
 	 * 
 	 * <p>
      * 例如:
+     * <pre>{@code
      * ListUtils.subArray(new Integer[]{1}, 0, 3)=>[1]
      * ListUtils.subArray(new Integer[]{1}, 1, 3)=>[]
-     * </p>
+     * }</pre>
 	 * 
 	 * @param array
 	 * @param begin
@@ -519,8 +554,6 @@ public class ListUtils {
      * <pre>
      * 		filter返回true时则会删除该项
      * </pre>
-     * </p>
-     * </p>
      */
 	public static <T>List<T> removeIf(List<T> list, Predicate<T> filter) {
 		if(list == null) {
@@ -547,19 +580,16 @@ public class ListUtils {
 	}
 	
 	/**
-     * 列表转List<Map<String, Object>>
+     * 列表转<pre>{@code List<Map<String, Object>> }</pre>
      * <p>
      * 例如：
-     * </p>
      * 
-     * <pre>
+     * <pre>{@code
      * 		现有值为[1,2,3]的列表list,执行
      * 		ListUtils.toMap(list, "a");
      * 		将会得到值为[{a:1},{a:2},{a:3}]的列表
      * 		值得注意的是如果传入的key为null的话返回也会是null,传入的list为null返回的将是空列表
-     * </pre>
-     * </p>
-     * </p>
+     * }</pre>
      */
 	public static <T>List<Map<String, Object>> toListMap(List<T> list, String key) {
 		if(key == null) {	//键为null的情况
@@ -659,9 +689,8 @@ public class ListUtils {
 	/**
 	 * 获取一个元素在数组中的位置
 	 * <p>
-	 * 	用equals实现比较<br/>
+	 * 	用equals实现比较<br>
 	 * 	通过调用isPresent()方法直接获取是否在数组中,不需要判断值是否大于-1
-	 * </p>
 	 * @param array
 	 * @param item
 	 * @return
@@ -699,9 +728,9 @@ public class ListUtils {
 	/**
 	 * 获取一个元素在数据堆中的位置
 	 * <p>
-	 * 	用equals实现比较<br/>
+	 * 	用equals实现比较<br>
 	 * 	通过调用isPresent()方法直接获取是否在数组中,不需要判断值是否大于-1
-	 * </p>
+	 * 
 	 * @param target	目标元素
 	 * @param objs 数据堆
 	 * @return
@@ -721,9 +750,8 @@ public class ListUtils {
 	/**
 	 * 获取一个元素在数据堆中的位置,无视大小写
 	 * <p>
-	 * 	用equals实现比较<br/>
+	 * 	用equals实现比较<br>
 	 * 	通过调用isPresent()方法直接获取是否在数组中,不需要判断值是否大于-1
-	 * </p>
 	 * 
 	 * @param target
 	 * @param objs
@@ -788,20 +816,20 @@ public class ListUtils {
 	 * @param list
 	 * @return
 	 */
-	private static <T>List<T> emptyToCopy(List<T> list) {
-		if(list == null) {	//所有方法都要做空指针判断
-			return null;
-		}
-		List<T> newList;
-		if(list instanceof Vector) {	//继承于线程安全列表
-			newList = CollectionAndMapUtils.newVector();
-		}else if(list instanceof LinkedList) {
-			newList = CollectionAndMapUtils.newLinkedList();
-		}else {
-			newList = newArrayList();
-		}
-		return newList;
-	}
+//	private static <T>List<T> emptyToCopy(List<T> list) {
+//		if(list == null) {	//所有方法都要做空指针判断
+//			return null;
+//		}
+//		List<T> newList;
+//		if(list instanceof Vector) {	//继承于线程安全列表
+//			newList = CollectionAndMapUtils.newVector();
+//		}else if(list instanceof LinkedList) {
+//			newList = CollectionAndMapUtils.newLinkedList();
+//		}else {
+//			newList = newArrayList();
+//		}
+//		return newList;
+//	}
 	
 	/**
 	 * 获取一个类型对应的数组类型

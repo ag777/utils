@@ -26,7 +26,7 @@ public class Utils {
 	
 	/**
 	 * 获取这个工具包的包名
-	 * @return
+	 * @return 包名
 	 */
 	public static String getUtilsPackageName() {
 		return getPageName(Utils.class);
@@ -35,7 +35,7 @@ public class Utils {
 	//--配置
 	/**
 	 * 切换开发模式,非开发模式下，部分输出不会打印出来
-	 * @param isDeviceMode
+	 * @param isDeviceMode 是否是开发模式
 	 */
 	public static void deviceMode(Boolean isDeviceMode) {
 		Console.setDevMode(isDeviceMode);
@@ -43,7 +43,7 @@ public class Utils {
 	
 	/**
 	 * 定制文件读写编码
-	 * @param encoding
+	 * @param charset 字符编码
 	 */
 	public static void FileEncoding(Charset charset) {
 		FileUtils.encodingRead(charset);

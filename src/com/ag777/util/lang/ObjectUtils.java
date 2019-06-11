@@ -179,13 +179,9 @@ public class ObjectUtils {
 	/**
 	 * 判断对象是否为空
 	 * <p>
-	 * 	支持字符串，数组，列表，map;
+	 * 	支持字符串，数组，列表，map;<br>
 	 * 此外都返回false;
-	 * 	<p>
-	 * 		ObjectUtils.isEmpty(new int[]{}) = false
-	 * 	</p>
-	 * 
-	 * </p>
+	 * 	ObjectUtils.isEmpty(new int[]{}) = false<br>
 	 * 
 	 */
 	@SuppressWarnings({ "rawtypes" })
@@ -212,12 +208,9 @@ public class ObjectUtils {
 	/**
 	 * 获取对象长度
 	 * <p>
-	 * 	支持字符串(一个汉字占两个字节)，数组，列表，map;
-	 * 此外都返回-1
-	 * 	<p>
-	 * 	ObjectUtils.isEmpty(new int[]{1,2,3}) = 3
-	 * 	</p>
-	 * </p>
+	 * 	支持字符串(一个汉字占两个字节)，数组，列表，map;<br>
+	 * 此外都返回-1<br>
+	 * 	ObjectUtils.isEmpty(new int[]{1,2,3}) = 3<br>
 	 * 
 	 */
 	@SuppressWarnings("rawtypes")

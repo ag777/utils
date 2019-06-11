@@ -122,7 +122,7 @@ public class IOUtils {
 	/**
 	 * 读取所有行
 	 * @param in
-	 * @param encoding
+	 * @param charset
 	 * @return
 	 * @throws IOException 
 	 */

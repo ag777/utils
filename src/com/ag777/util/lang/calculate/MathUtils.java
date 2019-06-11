@@ -38,13 +38,16 @@ public class MathUtils {
 	 * @param b
 	 * @param scale 保留小数点后几位
 	 * @param roundingMode 如<br>
-		BigDecimal.ROUND_DOWN 截端操作，类似truncate 该模式永远不会增加被操作的数的值<br>
-		BigDecimal.ROUND_UP 在精度最后一位加一个单位  setScale(2,BigDecimal.ROUND_UP) 1.666 ->1.67<br>
-		BigDecimal.ROUND_CEILING 朝正无穷方向round 如果为正数，行为和round_up一样，如果为负数，行为和round_down一样<br>
-		BigDecimal.ROUND_FLOOR 朝负无穷方向round 如果为正数，行为和round_down一样，如果为负数，行为和round_up一样<br>
-		BigDecimal.ROUND_HALF_UP 遇到.5的情况时往上近似,例: 1.5 ->2;<br>
-		BigDecimal.ROUND_HALF_DOWN 遇到.5的情况时往下近似,例: 1.5 ->;1 注：1.51->2<br>
+	 * <pre>{@code
+		BigDecimal.ROUND_DOWN 截端操作，类似truncate 该模式永远不会增加被操作的数的值
+		BigDecimal.ROUND_UP 在精度最后一位加一个单位  setScale(2,BigDecimal.ROUND_UP) 1.666 ->1.67
+		BigDecimal.ROUND_CEILING 朝正无穷方向round 如果为正数，行为和round_up一样，如果为负数，行为和round_down一样
+		BigDecimal.ROUND_FLOOR 朝负无穷方向round 如果为正数，行为和round_down一样，如果为负数，行为和round_up一样
+		BigDecimal.ROUND_HALF_UP 遇到.5的情况时往上近似,例: 1.5 ->2;
+		BigDecimal.ROUND_HALF_DOWN 遇到.5的情况时往下近似,例: 1.5 ->;1 注：1.51->2
 		BigDecimal.ROUND_HALF_EVEN 如果舍弃部分左边的数字为奇数，则作   ROUND_HALF_UP   ；如果它为偶数，则作   ROUND_HALF_DOWN
+	 	}
+     * </pre>
 	 * @return
 	 */
 	public static  BigDecimal divide(double a, double b, int scale, int roundingMode) {

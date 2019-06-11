@@ -29,7 +29,7 @@ public class StringUtils {
 	 * 获得字符串长度(utf-8)
 	 * @see #getLength(String, Charset)
 	 * 
-	 * @param s
+	 * @param src 源字符串
 	 * @return
 	 */
 	public static int getLength(String src) {
@@ -146,11 +146,12 @@ public class StringUtils {
 	}
 	
 	/**
-	 * 将一个字符串拆分成每一项定长为length(最后一项不定)的字符串列表<br/>
-	 * <p>
-	 * splitStr("abc", 2)=>["ab","c"]<br/>
-	 * splitStr("abc",4)=>["abc"]<br/>
-	 * </p>
+	 * 将一个字符串拆分成每一项定长为length(最后一项不定)的字符串列表<br>
+	 * <p><pre>{@code
+	 * splitStr("abc", 2)=>["ab","c"]
+	 * splitStr("abc",4)=>["abc"]
+	 * }</pre>
+	 * 
 	 * @param src
 	 * @param length
 	 * @return
@@ -256,7 +257,7 @@ public class StringUtils {
 	/**
 	 * 首字母大写
 	 * 
-	 * @param str
+	 * @param src 源字符串
 	 * @return
 	 */
 	public static String upperCaseFirst(String src) {  
@@ -536,10 +537,11 @@ public class StringUtils {
 	
 	/**
 	 * 将字符串a重复times次
-	 * <p>
+	 * <p><pre>{@code
 	 * 	比如stack("0", 3)=>"000"
 	 * 函数命名参考游戏minecraft创世神插件的函数名
-	 * </p>
+	 * }</pre>
+	 * 
 	 * @param src
 	 * @param times
 	 * @return
@@ -556,10 +558,11 @@ public class StringUtils {
 	/**
 	 * 16进制转2进制
 	 * <p>
-	 * 如果源数据以0x开头会先去掉0x在做处理<br/>
-	 * decimal2Binary("AA");=>"10101010"<br/>
-	 * decimal2Binary("0xAA");=>"10101010"<br/>
-	 * </p>
+	 * 如果源数据以0x开头会先去掉0x在做处理<br>
+	 * <pre>{@code
+	 * decimal2Binary("AA");=>"10101010"
+	 * decimal2Binary("0xAA");=>"10101010"
+	 * }</pre>
 	 * 
 	 * @param src
 	 * @return
@@ -651,12 +654,13 @@ public class StringUtils {
 	 * 
 	 * <p>
 	 * 	替换法:
+	 * <pre>{@code
 	 * &->&amp;
 	 * <->&lt;
 	 * >->&gt;
 	 * '->&apos;
 	 * "->&quot;
-	 * </p>
+	 * }</pre>
 	 * 
 	 * @param src
 	 * @return
@@ -674,8 +678,7 @@ public class StringUtils {
 	 * <p>
 	 * 最直观的作用就是防止插入数据库时报错
 	 * </p>
-	 * @param src
-	 * @param replacement
+	 * @param src 源字符串
 	 * @return
 	 */
 	public static String clearEmoji(String src) {

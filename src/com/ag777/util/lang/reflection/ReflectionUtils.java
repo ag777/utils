@@ -21,7 +21,7 @@ public class ReflectionUtils {
 	
 	/**
 	 * 判断一个类是否是数值类型,不能直接用Number.class.isAssignableFrom(clazz)判断
-	 * @param targetClazz
+	 * @param clazz
 	 * @return
 	 */
 	public static boolean isNumberType(Class<?> clazz) {

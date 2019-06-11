@@ -35,10 +35,6 @@ public abstract class DBUpdateHelper implements Disposable {
 	
 	private List<VersionSqlPojo> versionSqlPojoList;	//版本号及对应sql列表
 	
-	/**
-	 * 执行更新数据库操作
-	 * @throws SQLException
-	 */
 	public DBUpdateHelper(List<VersionSqlPojo> versionSqlPojoList) {
 		this.versionSqlPojoList = versionSqlPojoList;
 	}

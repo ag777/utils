@@ -168,9 +168,9 @@ public class DbHelper implements Disposable, Closeable {
 	/**
 	 * 数据库类型转java类型(不全，只列出常用的，不在范围内返回null)
 	 * <p>
-	 * 	参考http://blog.csdn.net/haofeng82/article/details/34857991<br/>
+	 * 	参考http://blog.csdn.net/haofeng82/article/details/34857991<br>
 	 * 同时java类型受字段是否无符号影响:https://blog.csdn.net/weixin_42127613/article/details/84791794
-	 * </p>
+	 * 
 	 * @param sqlType 字段的数据类型
 	 * @param size 字段长度
 	 * @param typeName 请使用ColumnPojo里的typeName
@@ -536,7 +536,6 @@ public class DbHelper implements Disposable, Closeable {
 	/**
 	 * 查询单行, 通过Statement执行
 	 * @param sql
-	 * @param conn
 	 * @return
 	 */
 	public Map<String, Object> getMap(String sql) {
@@ -835,10 +834,10 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 通过sql和参数列表获取PreparedStatement(批量)
-	 * @param sql
-	 * @param paramsList
+	 * @param sql sql语句
+	 * @param paramsList 参数列表
 	 * @return
-	 * @throws SQLException
+	 * @throws SQLException sql异常
 	 */
 	public PreparedStatement getBatchPreparedStatement(String sql, List<Object[]> paramsList) throws SQLException {
 		PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -853,10 +852,11 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 通过sql和参数列表获取PreparedStatement
-	 * @param sql
-	 * @param params
+	 * 
+	 * @param sql sql语句
+	 * @param params 参数数组
 	 * @return
-	 * @throws SQLException
+	 * @throws SQLException sql异常
 	 */
 	public PreparedStatement getPreparedStatement(String sql, Object[] params) throws SQLException {
 		PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -914,11 +914,11 @@ public class DbHelper implements Disposable, Closeable {
 	}
 	
 	/**
-	 * 将resultset转化为List<Map<String, Object>>
+	 * 将resultset转化为List&lt;Map&lt;String, Object&gt;&gt;
 	 * <p>
-	 * 171021改获取字段名称的方法getColumnName(i)为
+	 * 171021改获取字段名称的方法getColumnName(i)为<br>
 	 * 获取别名getColumnLabel(i) 以免sql里写的别名不生效
-	 * </p>
+	 * 
 	 * @param rs
 	 * @return
 	 * @throws SQLException
@@ -1002,7 +1002,6 @@ public class DbHelper implements Disposable, Closeable {
 	 * 参考:http://blog.csdn.net/anxinliu2011/article/details/7560511
 	 * </p>
 	 * 
-	 * @param tableName
 	 * @return
 	 */
 	public DbPojo dbInfo() {
@@ -1023,7 +1022,6 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 获取所有表的名称列表
-	 * @param tableName
 	 * @return
 	 */
 	public List<String> tableNameList() {
@@ -1201,7 +1199,6 @@ public class DbHelper implements Disposable, Closeable {
 	 * 	参考:http://blog.csdn.net/uikoo9/article/details/39926687
 	 * </p>
 	 * 
-	 * @param connection
 	 * @param tableName
 	 * @return
 	 */

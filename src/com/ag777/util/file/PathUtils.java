@@ -71,10 +71,9 @@ public class PathUtils {
 	/**
 	 * 获取相对路径
 	 * <p>
-	 * <pre>
+	 * <pre>{@code
 	 *  PathUtils.getRelativizePath("f:\\a\\b.txt","f:\\").toString(); => "a\\b.txt"
-	 *  </pre>
-	 * </p>
+	 *  }</pre>
 	 * 
 	 * @param targetPath 目标路径(需要转化为相对路径的绝对路径)
 	 * @param basePath 基础路径(标尺)

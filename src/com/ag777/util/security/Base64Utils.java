@@ -15,7 +15,7 @@ import java.util.Base64;
 public class Base64Utils {
 
 	/**
-	 * base64加密(String -> String)
+	 * base64加密<pre>{@code (String -> String)  }</pre>
 	 *  
 	 * @param src
 	 * @return
@@ -26,7 +26,7 @@ public class Base64Utils {
 	}
 	
 	/**
-	 * base64加密(byte[] -> byte[])
+	 * base64加密<pre>{@code (byte[] -> byte[]) }</pre>
 	 * 
 	 * @param src
 	 * @return
@@ -37,7 +37,7 @@ public class Base64Utils {
 	}
 	
 	/**
-	 * base64解码(String -> String)
+	 * base64解码<pre>{@code (String -> String) }</pre>
 	 * <p>
 	 * 值得注意的一点是Base64.Decoder的decode方法源码用的编码是ISO_8859_1不过对于加密串解密一般没啥影响(非中文)
 	 * 几种情况抛出异常列举:
@@ -55,7 +55,7 @@ public class Base64Utils {
 	}
 	
 	/**
-	 * base64解密(byte[] -> byte[])
+	 * base64解密<pre>{@code (byte[] -> byte[]) }</pre>
 	 * 
 	 * @param src
 	 * @return

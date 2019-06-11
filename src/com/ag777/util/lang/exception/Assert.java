@@ -200,7 +200,7 @@ public class Assert {
 	
 	/**
 	 * 判断文件是否文件是否存在,不存在的话抛出异常
-	 * @param filePath
+	 * @param file
 	 * @param errMsg
 	 * @throws IllegalArgumentException
 	 */
@@ -211,11 +211,11 @@ public class Assert {
 	}
 	
 	/**
-	 *  判断文件是否文件是否存在,不存在的话抛出异常
-	 * @param filePath
-	 * @param clazz 
-	 * @param errMsg
-	 * @throws T
+	 *  判断class是否存在,不存在的话抛出异常
+	 * @param file 文件
+	 * @param clazz 指定的异常抛出类
+	 * @param errMsg 错误信息
+	 * @throws T 执行的抛出异常
 	 */
 	public static <T extends Throwable>void notExisted(File file, Class<T> clazz, String errMsg) throws T {
 		if(file == null || !file.exists()) {

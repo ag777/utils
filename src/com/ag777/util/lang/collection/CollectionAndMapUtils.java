@@ -28,10 +28,10 @@ public class CollectionAndMapUtils {
 	 * 创建数组
 	 * <p>
 	 * 	由于基本类型不能作为泛型，所以只好在外部自行强转了
-	 * 	<p>
+	 * 	<p><pre>{@code
 	 * 		CollectionAndMapUtils.newArray(int.class, 3) = [0,0,0];
-	 * 	</p>
-	 * </p>
+	 * }</pre>
+	 * 
 	 * @param clazz
 	 * @param length
 	 * @return

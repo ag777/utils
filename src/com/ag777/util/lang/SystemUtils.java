@@ -257,9 +257,9 @@ public class SystemUtils {
 	/**
 	 * 获取所有dns
 	 * <p>
-	 * jni实现,linux查询/etc/resolv.conf也可获取<br/>
+	 * jni实现,linux查询/etc/resolv.conf也可获取<br>
 	 * 参考:https://www.cnblogs.com/crazyacking/p/5672032.html
-	 * </p>
+	 * 
 	 * @return
 	 */
 	public static List<String> getAllDns() {

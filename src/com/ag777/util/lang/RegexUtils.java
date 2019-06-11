@@ -11,8 +11,7 @@ import com.ag777.util.lang.collection.ListUtils;
 /**
  * 正则表达式工具类
  * <p>
- * 		2017年09月07日 增加对pattern支持
- * <p>
+ * 		2017年09月07日 增加对pattern支持<br>
  * 正则断言:
  * <ul>
  * <li>(?=xxx)向右,后面紧挨着xxx</li>
@@ -20,9 +19,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * <li>(?&lt;=xxx)向左,前面紧挨着xxx</li>
  * <li>(?&lt;!xxx)向左,前面不能紧挨着xxx</li>
  * </ul>
- * </p>
  * 
- * </p>
  * 
  * @author ag777
  * @version create on 2017年06月06日,last modify at 2018年08月28日
@@ -113,15 +110,14 @@ public class RegexUtils {
 	 * 通过源字符串和正则获取Matcher,之后通过遍历就可以为所欲为(划掉)
 	 * <p>
 	 * 	例子
-	 * 	<p>
+	 * 	<p><pre class="code">
 	 * 		String a = "aacaa";
 			Matcher matcher = RegexUtils.getMatcher(a, "a([^a]+?)a");
 			while(matcher.find()) {
 				System.out.println(matcher.group(1));
 			}
 			结果为"c"
-	 * 	</p>
-	 * </p>
+		</pre>
 	 */
 	public static Matcher getMatcher(String src, String regex) {
 		return getMatcher(src, getPattern(regex));
@@ -244,8 +240,8 @@ public class RegexUtils {
 	/**
 	 * 从字符串中找到第一个匹配的字符串并转为Long型
 	 * 
-	 * @param src
-	 * @param regex
+	 * @param src 源字符串
+	 * @param pattern 正则
 	 * @return
 	 */
 	public static Long findLong(String src, Pattern pattern) {

@@ -38,7 +38,6 @@ import java.lang.reflect.Type;
  * <li>gson-xxx.jar</li>
  * </ul>
  * GSON更新日志:https://github.com/google/gson/blob/master/CHANGELOG.md
- * </p>
  * 
  * @author ag777
  * @version create on 2017年05月27日,last modify at 2018年08月10日
@@ -296,9 +295,9 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 转化json为对象列表
-	 * <p>
+	 * <p><pre>{@code
 	 * 利用ParameterizedType类获取对应List<T>的Type作为转化媒介
-	 * </p>
+	 * }</pre>
 	 * 
 	 * @param json
 	 * @param classOfT
@@ -371,7 +370,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	/**
 	 * 转化json串为javaBean，类型不支持时会报错
 	 * @param json
-	 * @param type 例:new TypeToken<Map<String, Object>>() {}.getType()
+	 * @param type 例:<pre>{@code new TypeToken<Map<String, Object>>() {}.getType() }</pre>
 	 * @return 返回null则表示json转换失败
 	 */
 	@Override

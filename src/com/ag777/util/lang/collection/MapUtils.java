@@ -245,18 +245,15 @@ public class MapUtils {
 	}
 	
 	/**
-     * 将List<Map> 中的键值从新组成map(不做类型转化判断，就是说结果类型要是对不上，强转报错请注意)
+     * 将<pre>{@code List<Map> }</pre> 中的键值从新组成map(不做类型转化判断，就是说结果类型要是对不上，强转报错请注意)
      * <p>
      * 可以理解为纵表转横表
      * 例如：
-     * </p>
      * 
-     * <pre>
+     * <pre>{@code
      * 		现有值为[{a:key1,b:2}{a:key2,b:3}]的list
      *		MapUtils.of(list, "a", "b") = {key1:2, key2:3}
-     * </pre>
-     * </p>
-     * </p>
+     * }</pre>
      * 
      * @param list 校验的类
      * @param keyTilte 作为新map的key的键
@@ -282,9 +279,9 @@ public class MapUtils {
 	/**
 	 * 根据分隔符拆分字符串得到map
 	 * <p>
-	 * 	注意分割服都是正则(注意转义问题)<br\>
+	 * 	注意分割服都是正则(注意转义问题)<br>
 	 * key-value分割符无法拆分的项会被略过,不会报错
-	 * </P>
+	 * 
 	 * @param src
 	 * @param separatorItem 分割map每一项的分隔符
 	 * @param separatorKeyValue	分割每一项key-value的分隔符
@@ -340,15 +337,11 @@ public class MapUtils {
      * 获取map里key对应的值，不存在或null返回defaultValue
      * <p>
      * 例如：
-     * </p>
-     * 
-     * <pre>
+     * </p><pre>{@code
      * 		现有值为{a:1,b:2}的map
      *		MapUtils.get(map, a, 2) = 1
      *		MapUtils.get(map, c, 2) = 2
-     * </pre>
-     * </p>
-     * </p>
+     * }</pre>
      * 
      * @param map 校验的类
      * @param key 键
@@ -371,15 +364,11 @@ public class MapUtils {
      * 获取map里key对应的值，不存在或null返回null
      * <p>
      * 例如：
-     * </p>
-     * 
-     * <pre>
+     * </p><pre>{@code
      * 		现有值为{a:1,b:2}的map
      *		MapUtils.get(map, a) = 1
      *		MapUtils.get(map, c) = null
-     * </pre>
-     * </p>
-     * </p>
+     * }</pre>
      * 
      * @param map 校验的类
      * @param key 键

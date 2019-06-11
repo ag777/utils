@@ -24,7 +24,7 @@ public class ExceptionHelper {
 	/**
 	 * 功能：得到异常的堆栈信息。包括异常信息简述，以及详细堆栈信息。
 	 * @param e 异常
-	 * @return List<String>
+	 * @return 异常信息列表
 	 */
 	public static List<String> getStackTrace(Throwable e){
 		List<String> errList=new LinkedList<String>();

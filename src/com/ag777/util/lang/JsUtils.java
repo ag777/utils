@@ -46,10 +46,11 @@ public class JsUtils {
 	
 	/**
 	 * 传入公式，调用js获取结果
-	 * <p>
+	 * <p><pre>{@code
 	 * 公式可以是这种形式var v1=false;var v2=true;(v1&&v2)||v2;
-	 * 也可以是(v1&&v2)||v2,这时变量键值对需要传输{"v1": false,"v2":true}
-	 * </p>
+	 * 也可以是(v1&&v2)||v2;</pre>,这时变量键值对需要传输<pre class="code">{"v1": false,"v2":true};
+	 * }</pre>
+	 * 
 	 * @param formula 公式
 	 * @param params 变量键值对
 	 * @return
