@@ -2,6 +2,7 @@ package com.ag777.util.lang.cmd;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -17,7 +18,7 @@ import com.ag777.util.lang.model.Charsets;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年07月04日,last modify at 2019年01月21日
+ * @version create on 2018年07月04日,last modify at 2019年06月20日
  */
 public abstract class AbstractCmdUtils {
 
@@ -44,7 +45,23 @@ public abstract class AbstractCmdUtils {
 		return charsetDefault;
 	}
 	
-	
+	/**
+	 * 使用反射机制获取进程的pid
+	 * @param pro 进程
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws NoSuchFieldException
+	 * @throws SecurityException
+	 */
+	public int getPid(Process pro) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
+		Class<?> cProcessImpl = pro.getClass();
+		Field fPid = cProcessImpl.getDeclaredField("pid");
+		if (!fPid.isAccessible()) {
+		    fPid.setAccessible(true);
+		}
+		return fPid.getInt(pro);
+	}
 	
 	/**
 	 * 
