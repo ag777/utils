@@ -16,7 +16,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年11月23日
+ * @version create on 2017年09月22日,last modify at 2019年07月16日
  */
 public class ObjectUtils {
 
@@ -249,16 +249,25 @@ public class ObjectUtils {
 	}
 	
 	/**
-	 * 判断是否为数组
 	 * @param obj
-	 * @return
-	 * @throws Exception
+	 * @return 是否为数组
 	 */
-	public static boolean isArray(Object obj) throws Exception {
+	public static boolean isArray(Object obj) {
 		if(obj == null) {
-			throw new RuntimeException("对象为空,不能判断是否为数组");
+			return false;
 		}
 		return obj.getClass().isArray();
+	}
+	
+	/**
+	 * @param obj
+	 * @return 是否为collection
+	 */
+	public static boolean isCollection(Object obj) {
+		if(obj == null) {
+			return false;
+		}
+		return obj instanceof Collection;
 	}
 	
 	/**

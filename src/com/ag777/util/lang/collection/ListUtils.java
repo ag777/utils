@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,11 +23,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.ag777.util.lang.ObjectUtils;
+
 /**
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2019年06月11日
+ * @version create on 2017年09月22日,last modify at 2019年07月16日
  */
 public class ListUtils {
 
@@ -296,11 +299,26 @@ public class ListUtils {
 	 * @return
 	 */
 	public static <T>String toString(T[] array, String separator) {
-		if(CollectionAndMapUtils.isEmpty(array)) {	//列表为空则返回空字符串
+		return toStringForArray(array, separator);
+	}
+	
+	/**
+	 * 根据分隔符拆分数组获取字符串(支持基础类型数据比如int[]的转换)
+	 * @param array
+	 * @param separator
+	 * @return
+	 */
+	public static String toStringForArray(Object array, String separator) {
+		if(!ObjectUtils.isArray(array)) {	//这里包含了非空判断
+			return "";
+		}
+		int length = Array.getLength(array);
+		if(length == 0) {	//列表为空则返回空字符串
 			return "";
 		}
 		StringBuilder sb = null;
-		for (T item : array) {
+		for (int i=0;i<length;i++) {
+			Object item = Array.get(array, i);
 			if(sb == null) {
 				sb = new StringBuilder();
 			} else if(separator != null) {

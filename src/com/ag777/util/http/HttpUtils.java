@@ -4,21 +4,25 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.net.ConnectException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
 import com.ag777.util.Utils;
 import com.ag777.util.file.FileUtils;
 import com.ag777.util.http.model.MyCookieJar;
 import com.ag777.util.http.model.ProgressResponseBody;
 import com.ag777.util.http.model.SSLSocketClient;
+import com.ag777.util.lang.ObjectUtils;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.collection.MapUtils;
@@ -56,7 +60,7 @@ import okhttp3.Response;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2019年06月11日
+ * @version last modify at 2019年07月16日
  */
 public class HttpUtils {
 	
@@ -751,22 +755,10 @@ public class HttpUtils {
 		if(params == null || StringUtils.isBlank(url)) {
 			return url;
 		}
-		StringBuilder tail = null;;
-		Iterator<K> itor = params.keySet().iterator();
-		while(itor.hasNext()) {
-			if(tail == null) {
-				tail = new StringBuilder();
-			} else {
-				tail.append('&');
-			}
-			K key = itor.next();
-			String value = params.get(key)==null?"":params.get(key).toString();
-			tail.append(key)
-				.append("=")
-				.append(value);
-		}
-		if(tail != null && tail.length()>0) {
-			 return url+"?"+tail.toString();
+		String paramStr = getParamStr(params);
+		
+		if(!paramStr.isEmpty()) {
+			 return url+"?"+paramStr;
 		}
 		return url;
 	}
@@ -804,27 +796,9 @@ public class HttpUtils {
 	 * @return
 	 */
 	private static <K,V> RequestBody getRequestBody(Map<K, V> params) {
-		
-		 if(params != null && !params.isEmpty()) {
-			 StringBuilder sb = null;
-			 Iterator<K> itor = params.keySet().iterator();
-			 while(itor.hasNext()) {
-				 K key = itor.next();
-				 V value = params.get(key);
-				 if(value != null) {
-					 if(sb == null) {
-						 sb = new StringBuilder();
-					 } else {
-						 sb.append("&");
-					 }
-					 sb.append(key.toString()).append("=").append(value.toString());
-				 }
-				 
-			 }
-			 
-			 if(sb != null) {
-				 return RequestBody.create(FORM_CONTENT_TYPE, sb.toString());
-			 }
+		String paramStr = getParamStr(params);
+		 if(!paramStr.isEmpty()) {
+			 return RequestBody.create(FORM_CONTENT_TYPE, paramStr);
 		 }
 		 return  new FormBody.Builder().build();
 	}
@@ -880,6 +854,43 @@ public class HttpUtils {
 		}
 		
 		return  builder.build();
+	}
+	
+	/**
+	 * 
+	 * @param params 参数表
+	 * @return 拼接处的参数字符串
+	 */
+	private static <K, V> String getParamStr(Map<K, V> params) {
+		StringBuilder sb = null;
+		Iterator<K> itor = params.keySet().iterator();
+		while (itor.hasNext()) {
+			if (sb == null) {
+				sb = new StringBuilder();
+			} else {
+				sb.append('&');
+			}
+			K key = itor.next();
+			V value = params.get(key);
+			if (value == null) {
+				sb.append(key).append('=');
+			} else if (ObjectUtils.isArray(value)) { // 数组
+				int length = Array.getLength(value);
+				for (int i = 0; i < length; i++) {
+					Object item = Array.get(value, i);
+					sb.append(key).append('=').append(StringUtils.emptyIfNull(item)).append('&');
+				}
+				sb.setLength(sb.length()-1);	//不论列表是否为空都需要删除最后一个&号
+			} else if (value instanceof Collection) { // 列表
+				for(Object item:((Collection<?>) value)) {
+					sb.append(key).append('=').append(StringUtils.emptyIfNull(item)).append('&');
+				}
+				sb.setLength(sb.length()-1);	//不论列表是否为空都需要删除最后一个&号
+			} else { // 其余的通通转String,后续可加分支拓展
+				sb.append(key).append('=').append(value);
+			}
+		}
+		return StringUtils.emptyIfNull(sb.toString());
 	}
 	
 }
