@@ -41,7 +41,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2019年05月28日
+ * @version create on 2017年04月25日,last modify at 2019年07月16日
  */
 public class FileUtils {
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
@@ -59,6 +59,23 @@ public class FileUtils {
     }
     public static void encodingWrite(Charset charset) {
     	FILE_WRITING_CHARSET = charset;
+    }
+    
+    /**
+     * 读取文件为字节数组
+     * @param filePath
+     * @return
+     * @throws IOException
+     */
+    public static byte[] readBytes(String filePath) throws IOException {
+    	try {
+        	FileInputStream fis = new FileInputStream(filePath);
+            return IOUtils.readBytes(fis);
+        } catch (FileNotFoundException ex) {
+            throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
+        } catch (IOException ex) {
+            throw new IOException(StringUtils.concat("读取文件[",filePath,"]时发生错误!"), ex);
+        }
     }
     
     /**

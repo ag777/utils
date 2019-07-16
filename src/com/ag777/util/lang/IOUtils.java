@@ -2,6 +2,7 @@ package com.ag777.util.lang;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +23,7 @@ import com.ag777.util.lang.interf.ProgressListener;
  * 		有很多操作，比如文件，cmd命令，都是通过操作流来完成目的，为了避免重复及统一代码新建此类
  * </p>
  * @author ag777
- * @version create on 2017年06月16日,last modify at 2019年05月28日
+ * @version create on 2017年06月16日,last modify at 2019年07月16日
  */
 public class IOUtils {
 
@@ -140,6 +141,30 @@ public class IOUtils {
 			throw ex;
 		} finally {
 			close(in);
+		}
+	}
+	
+	/**
+	 * 读取字节数组
+	 * @param in 输入流
+	 * @return
+	 * @throws IOException 文件找不到(FileNotFoundException)或者读取异常
+	 */
+	public static byte[] readBytes(InputStream in) throws IOException {
+		ByteArrayOutputStream bout = null;
+		try{
+			bout = new ByteArrayOutputStream(); 
+	        byte[] buff = new byte[BUFFSIZE]; 
+	        while(true) { 
+	            int n = in.read(buff); 
+	            if(n == -1) { break; } 
+	            bout.write(buff,0,n); 
+	        }
+	        return bout.toByteArray();
+		} catch(IOException ex) {
+			throw ex;
+		} finally {
+			close(in, bout);
 		}
 	}
 	
