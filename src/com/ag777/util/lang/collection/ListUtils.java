@@ -29,7 +29,7 @@ import com.ag777.util.lang.ObjectUtils;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2019年07月16日
+ * @version create on 2017年09月22日,last modify at 2019年07月17日
  */
 public class ListUtils {
 
@@ -153,11 +153,30 @@ public class ListUtils {
      * 
      */
 	public static <T>List<T> ofList(T[] items) {
+		return ofListForArray(items);
+	}
+	
+	/**
+     * 数组转列表
+     * <p>
+     * 例如：
+     * 
+     * <pre>{@code
+     * 		List<Integer> list = ListUtils.ofListForArray(new Integer[]{1,2,3});
+     *		之后可以随意操作该列表
+     * }</pre>
+     * 
+     * <p>注意:基础类型数组会转为包装类型列表<pre>{@codeint[]=>List<Integer>}</pre>
+     */
+	@SuppressWarnings("unchecked")
+	public static <T>List<T> ofListForArray(Object array) {
 		List<T> result = newList();
-		if(items != null && items.length > 0) {
-			for (T item : items) {
-				result.add(item);
-			}
+		if(!ObjectUtils.isArray(array)) {
+			return result;
+		}
+		int length = Array.getLength(array);
+		for (int i = 0; i < length; i++) {
+			result.add((T) Array.get(array, i));
 		}
 		return result;
 	}
