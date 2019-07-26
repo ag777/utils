@@ -17,7 +17,7 @@ import com.ag777.util.db.model.DbDriver;
  * 
  * 
  * @author ag777
- * @version create on 2018年04月24日,last modify at 2018年04月25日
+ * @version create on 2018年04月24日,last modify at 2019年07月26日
  */
 public class MysqlConnection extends BaseDbConnectionUtils{
 
@@ -51,14 +51,16 @@ public class MysqlConnection extends BaseDbConnectionUtils{
 	 * @throws SQLException
 	 */
 	public static Connection connect(String ip, int port, String user, String password, String dbName, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
-		StringBuilder url = new StringBuilder()
-			.append("jdbc:mysql://")
-			.append(ip)
-			.append(':')
-			.append(port);
+		/*这种写法同时支持ipV4和V6*/
+		StringBuilder url = new StringBuilder("jdbc:mysql://address=")
+				.append("(protocol=tcp)")
+				.append("(host=").append(ip).append(')');
+		if(port != 3306) {	//端口号可以省略,非8.0以上驱动url过长可能导致报错(来源百度，真实性未知),尽量缩减url长度
+			url.append("(port=").append(port).append(')');
+		}
+		url.append('/');
 		if(dbName != null) {
-			url.append('/')
-				.append(dbName);
+			url.append(dbName);
 		}
 		
 		return connect(url.toString(), user, password, propMap);

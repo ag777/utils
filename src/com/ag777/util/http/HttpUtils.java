@@ -60,7 +60,7 @@ import okhttp3.Response;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2019年07月16日
+ * @version last modify at 2019年07月26日
  */
 public class HttpUtils {
 	
@@ -890,7 +890,7 @@ public class HttpUtils {
 				sb.append(key).append('=').append(value);
 			}
 		}
-		return StringUtils.emptyIfNull(sb.toString());
+		return StringUtils.emptyIfNull(sb);
 	}
 	
 }
