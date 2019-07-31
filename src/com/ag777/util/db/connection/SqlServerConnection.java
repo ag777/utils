@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import com.ag777.util.db.DbHelper;
 import com.ag777.util.db.model.DbDriver;
+import com.ag777.util.lang.collection.MapUtils;
 
 /**
  * Mysql数据库连接辅助类
@@ -15,7 +16,7 @@ import com.ag777.util.db.model.DbDriver;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年04月24日,last modify at 2018年04月25日
+ * @version create on 2018年04月24日,last modify at 2018年07月29日
  */
 public class SqlServerConnection extends BaseDbConnectionUtils{
 
@@ -50,15 +51,25 @@ public class SqlServerConnection extends BaseDbConnectionUtils{
 	 */
 	public static Connection connect(String ip, int port, String user, String password, String dbName, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
 		StringBuilder url = new StringBuilder()
-			.append("jdbc:sqlserver://")
-			.append(ip)
-			.append(':')
-			.append(port)
-			.append(";");
-		if(dbName != null) {
-			url.append("databaseName=")
-				.append(dbName);
+				.append("jdbc:sqlserver://");
+		if(!isIpV6(ip)) {	//ipV4
+			url.append(ip)
+					.append(':')
+					.append(port)
+					.append(";");
+			if(dbName != null) {
+				url.append("databaseName=")
+					.append(dbName);
+			}
+		} else {	//ipV6
+			if(propMap == null) {
+				propMap = MapUtils.newHashMap();
+			}
+			propMap.put("portNumber", port);  
+			propMap.put("instanceName ", dbName);  
+			propMap.put("serverName", ip);
 		}
+		
 		
 		return connect(url.toString(), user, password, propMap);
 	}

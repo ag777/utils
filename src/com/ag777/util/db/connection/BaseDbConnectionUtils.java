@@ -10,7 +10,7 @@ import java.util.Properties;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年04月24日,last modify at 2018年04月25日
+ * @version create on 2018年04月24日,last modify at 2019年07月29日
  */
 public abstract class BaseDbConnectionUtils {
 
@@ -24,6 +24,10 @@ public abstract class BaseDbConnectionUtils {
 			});
 		}
 		return props;
+	}
+	
+	protected static boolean isIpV6(String ip) {
+		return ip.contains(":");
 	}
 	
 	public abstract int getDefaultPort();

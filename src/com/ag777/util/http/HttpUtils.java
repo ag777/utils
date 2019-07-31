@@ -60,7 +60,7 @@ import okhttp3.Response;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2019年07月26日
+ * @version last modify at 2019年07月31日
  */
 public class HttpUtils {
 	
@@ -862,6 +862,9 @@ public class HttpUtils {
 	 * @return 拼接处的参数字符串
 	 */
 	private static <K, V> String getParamStr(Map<K, V> params) {
+		if(params == null) {
+			return "";
+		}
 		StringBuilder sb = null;
 		Iterator<K> itor = params.keySet().iterator();
 		while (itor.hasNext()) {
