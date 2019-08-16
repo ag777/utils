@@ -42,7 +42,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2019年04月25日
+ * @version create on 2017年07月28日,last modify at 2019年08月08日
  */
 public class DbHelper implements Disposable, Closeable {
 	
@@ -970,11 +970,11 @@ public class DbHelper implements Disposable, Closeable {
 				
 				T rowData = ReflectionUtils.newInstace(clazz);
 	
-				for (int i = 1; i < columnCount; i++) {
-					Object value = rs.getObject(1);
+				for (int i = 1; i <= columnCount; i++) {
+					Object value = rs.getObject(i);
 					Field[] fields = clazz.getDeclaredFields();
 					for (Field field : fields) {
-						if(field.getName().equalsIgnoreCase(cols[i])) {
+						if(field.getName().equalsIgnoreCase(cols[i-1])) {
 							boolean flag = field.isAccessible();
 							field.setAccessible(true);
 							field.set(rowData, value);

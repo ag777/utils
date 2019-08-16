@@ -21,11 +21,12 @@ import com.ag777.util.lang.model.Charsets;
  * 针对属性文件的读写操作工具类
  * 
  * @author ag777
- * @version create on 2017年11月10日,last modify at 2018年12月19日
+ * @version create on 2017年11月10日,last modify at 2019年08月16日
  */
 public class PropertyHelper implements Disposable {
 
 	public LinkedHashMap<String, KeyValue> keyValueMap;
+	private List<String> lastNoteList;	//文件最后的注释行,后面就没有键值对了
 	
 	public PropertyHelper() {
 		keyValueMap = MapUtils.newLinkedHashMap();
@@ -334,6 +335,12 @@ public class PropertyHelper implements Disposable {
 			lines.add(
 					StringUtils.concat(key, '=', keyValue.value));
 		});
+		if(!ListUtils.isEmpty(lastNoteList)) {
+			lines.add("");	//中间插入空行
+			for (String noteLine : lastNoteList) {
+				lines.add("#"+noteLine);
+			}
+		}
 		return lines;
 	}
 	
@@ -438,6 +445,7 @@ public class PropertyHelper implements Disposable {
 			String note = RegexUtils.find(line, p_note, "$1");
 			if(note != null) {	//这是一个注释行
 				noteList.add(note.trim());
+				continue;
 			}
 			
 			String keyValue = RegexUtils.find(line, p_pair, "$1=$2");
@@ -447,6 +455,9 @@ public class PropertyHelper implements Disposable {
 				keyValueMap.put(key, new KeyValue(key, group.length>1?group[1].trim():"").noteList(noteList));
 				noteList = ListUtils.newArrayList();	//清空注释
 			}
+		}
+		if(!noteList.isEmpty()) {
+			this.lastNoteList = noteList;
 		}
 	}
 
