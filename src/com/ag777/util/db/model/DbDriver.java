@@ -14,6 +14,18 @@ public enum DbDriver {
 			return "oracle.jdbc.driver.OracleDriver";
 		}
 	},
+	SQLSERVER{
+		@Override
+		public String getName() {
+			return "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+		}
+	},
+	DB2{
+		@Override
+		public String getName() {
+			return "com.ibm.db2.jcc.DB2Driver";
+		}
+	},
 	SQLITE {
 		@Override
 		public String getName() {

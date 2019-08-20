@@ -17,9 +17,9 @@ import com.ag777.util.db.model.DbDriver;
  * 
  * 
  * @author ag777
- * @version create on 2018年04月24日,last modify at 2019年07月26日
+ * @version create on 2018年04月24日,last modify at 2019年08月20日
  */
-public class MysqlConnection extends BaseDbConnectionUtils{
+public class MysqlConnection extends BaseDbConnectionUtils {
 
 	private MysqlConnection() {}
 	
@@ -39,6 +39,16 @@ public class MysqlConnection extends BaseDbConnectionUtils{
 	}
 	
 	/**
+	 * 连接mysql数据库
+	 * <p>
+	 * ipv4 Driver URL: 
+	 *		jdbc:mysql://127.0.0.1:3306/database
+	 *	ipv6 Driver URL:
+	 *		jdbc:mysql://address=(protocol=tcp)(host=2001:470:23:13::6)(port=3306)/database 
+	 *
+	 *  Deiver package version 5.1.31 以上
+	 * 
+	 * <p>这方法里ipV4和V6都采用ipV6的url
 	 * 
 	 * @param ip
 	 * @param port

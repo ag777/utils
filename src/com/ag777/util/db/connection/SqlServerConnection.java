@@ -16,7 +16,7 @@ import com.ag777.util.lang.collection.MapUtils;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年04月24日,last modify at 2018年07月29日
+ * @version create on 2018年04月24日,last modify at 2019年08月20日
  */
 public class SqlServerConnection extends BaseDbConnectionUtils{
 
@@ -38,6 +38,13 @@ public class SqlServerConnection extends BaseDbConnectionUtils{
 	}
 	
 	/**
+	 * 连接sqlserver数据库
+	 * <p>连接数据库可以使用jtds这个驱动包，也可以使用sqljdbc4这个驱动包,这个方法使用后者
+	 * 
+	 * ipv4 Driver URL: 
+	 *		jdbc:sqlserver://127.0.0.1:1433/master
+	 *	ipv6 Driver URL:
+	 *		jdbc:sqlserver://
 	 * 
 	 * @param ip
 	 * @param port
@@ -86,7 +93,7 @@ public class SqlServerConnection extends BaseDbConnectionUtils{
 	 */
 	public static Connection connect(String url, String user, String password, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
 		Properties props = getProperties(propMap);
-		return DbHelper.getConnection(url, user, password, DbDriver.MYSQL, props);
+		return DbHelper.getConnection(url, user, password, DbDriver.SQLSERVER, props);
 	}
 
 	@Override
