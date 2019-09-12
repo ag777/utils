@@ -47,7 +47,7 @@ import com.sun.imageio.plugins.png.PNGImageWriterSpi;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年05月08日,last modify at 2019年01月17日
+ * @version create on 2018年05月08日,last modify at 2019年08月26日
  */
 public class ImageUtils {
 	
@@ -55,6 +55,34 @@ public class ImageUtils {
 	public static final String JEPG = "JPEG";	//其实就是jpg啦
 	
 	private ImageUtils() {}
+	
+	/**
+	 * 获取图片格式
+	 * @param in 用完会关闭流
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws ImageNotSupportException
+	 * @throws IOException
+	 */
+	public static String getType(ImageInputStream in)  throws IllegalArgumentException, ImageNotSupportException, IOException {
+		try {
+			// get all currently registered readers that recognize the image format
+	        Iterator<ImageReader> iter = ImageIO.getImageReaders(in);
+	 
+	        if (!iter.hasNext()) {
+	            throw new ImageNotSupportException("不支持的图片格式");
+	        }
+	 
+	        // get the first reader
+	        ImageReader reader = iter.next();
+	        return reader.getFormatName();
+		} catch (IOException ex) {
+			 throw ex;
+		} finally {
+			// close stream
+			IOUtils.close(in);
+		}
+	}
 	
 	/**
 	 * 获取图片格式
@@ -73,24 +101,25 @@ public class ImageUtils {
 			// create an image input stream from the specified fileDD
 			iis = ImageIO.createImageInputStream(file);
 	 
-	        // get all currently registered readers that recognize the image format
-	        Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
-	 
-	        if (!iter.hasNext()) {
-	            throw new ImageNotSupportException("不支持的图片格式:"+filePath);
-	        }
-	 
-	        // get the first reader
-	        ImageReader reader = iter.next();
-	 
-	        return reader.getFormatName();
+	        return getType(iis);
 		} catch (IOException ex) {
 			 throw ex;
-		} finally {
-			// close stream
-			IOUtils.close(iis);
 		}
        
+	}
+	
+	/**
+	 * 获取图片宽高
+	 * @param bi
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws ImageNotSupportException
+	 * @throws IOException
+	 */
+	public static int[] getWidthAndHeight(BufferedImage bi) throws IllegalArgumentException, ImageNotSupportException, IOException {
+       int width = bi.getWidth();
+       int height = bi.getHeight();
+       return new int[]{width, height};
 	}
 	
 	/**
@@ -114,9 +143,8 @@ public class ImageUtils {
 			if(bi == null) {
 				 throw new ImageNotSupportException("不支持的图片格式:"+filePath);
 			}
-           int width = bi.getWidth();
-           int height = bi.getHeight();
-           return new int[]{width, height};
+			
+           return getWidthAndHeight(bi);
 		} catch (IOException ex) {
 			 throw ex;
 		} finally {
