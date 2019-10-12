@@ -1,5 +1,13 @@
 package com.ag777.util.file;
 
+import com.ag777.util.lang.IOUtils;
+import com.ag777.util.lang.RegexUtils;
+import com.ag777.util.lang.StringUtils;
+import com.ag777.util.lang.collection.ListUtils;
+import com.ag777.util.lang.collection.MapUtils;
+import com.ag777.util.lang.interf.Disposable;
+import com.ag777.util.lang.model.Charsets;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,19 +17,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import com.ag777.util.lang.IOUtils;
-import com.ag777.util.lang.RegexUtils;
-import com.ag777.util.lang.StringUtils;
-import com.ag777.util.lang.collection.ListUtils;
-import com.ag777.util.lang.collection.MapUtils;
-import com.ag777.util.lang.interf.Disposable;
-import com.ag777.util.lang.model.Charsets;
 
 /**
  * 针对属性文件的读写操作工具类
  * 
  * @author ag777
- * @version create on 2017年11月10日,last modify at 2019年08月16日
+ * @version create on 2017年11月10日,last modify at 2019年10月12日
  */
 public class PropertyHelper implements Disposable {
 
@@ -423,8 +424,8 @@ public class PropertyHelper implements Disposable {
 	public void saveBaseSrcPath(String path, Class<?> clazz) throws IOException {
 		FileUtils.write(PathUtils.srcPath(clazz)+path, toLines(), Charsets.UTF_8);
 	}
-	
-	
+
+
 	//--内部方法
 	/**
 	 * 通过内容行来初始化property工具类对象
@@ -438,7 +439,7 @@ public class PropertyHelper implements Disposable {
 		List<String> noteList = ListUtils.newArrayList();
 		/*正则区*/
 		Pattern p_note = Pattern.compile("^\\#(.*)$");				//注释
-		Pattern p_pair = Pattern.compile("^([^=]+)=([^=]*)$");		//键值对(key一定要有，值可以没有，否则会被忽略)
+		Pattern p_pair = Pattern.compile("^([^=]+)=(.*)$");		//键值对(key一定要有，值可以没有，否则会被忽略)
 		
 		for (String line : lines) {
 			line = line.trim();
@@ -447,12 +448,12 @@ public class PropertyHelper implements Disposable {
 				noteList.add(note.trim());
 				continue;
 			}
-			
-			String keyValue = RegexUtils.find(line, p_pair, "$1=$2");
-			if(keyValue != null) {		//这是一个键值对行
-				String[] group = keyValue.split("=");
-				String key = group[0].trim();
-				keyValueMap.put(key, new KeyValue(key, group.length>1?group[1].trim():"").noteList(noteList));
+
+			List<String> group = RegexUtils.findGroups(line, p_pair);
+			if(group.size()>1) {		//这是一个键值对行
+				String key = group.get(0).trim();
+				String value = group.get(1).trim();
+				keyValueMap.put(key, new KeyValue(key, value).noteList(noteList));
 				noteList = ListUtils.newArrayList();	//清空注释
 			}
 		}
@@ -538,15 +539,16 @@ public class PropertyHelper implements Disposable {
 			.addOrUpdate("a.c", "值a.c", ListUtils.of("不变的注释"))
 			.addOrUpdate("num", 33, ListUtils.of("我是说明","数值","啊哈哈"))
 			.save(path);
-		
+
 		PropertyHelper ph2 = new PropertyHelper(path);
 		System.out.println(ph2.getIntValue("num").get());
 		ph2.addOrUpdate("a.b", "值a.b改", null)
 			.addOrUpdate("c.d", "新值", ListUtils.of("我是说明")).save(path);
-		
+
 		PropertyHelper ph3 = new PropertyHelper(path);
 		System.out.println(ph3.getValue("c.d", "未知"));
 		ph3.toIniHelper("default").save(iniPath);
+
 	}
 
 	@Override
