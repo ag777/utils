@@ -42,7 +42,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2019年08月08日
+ * @version create on 2017年07月28日,last modify at 2019年10月21日
  */
 public class DbHelper implements Disposable, Closeable {
 	
@@ -1157,7 +1157,7 @@ public class DbHelper implements Disposable, Closeable {
 	
 	private Map<String, TypePojo> typeMap_Mysql(String tableName) {
 		Map<String, TypePojo> typeMap = new HashMap<>();
-		List<Map<String, Object>> typeList = queryList("SHOW COLUMNS FROM "+tableName);
+		List<Map<String, Object>> typeList = queryList("SHOW COLUMNS FROM `"+tableName+"`");	//有些表名带关键字会报错
 		for (Map<String, Object> map : typeList) {
 			String field = (String) map.get("Field");
 			String type = (String) map.get("Type");

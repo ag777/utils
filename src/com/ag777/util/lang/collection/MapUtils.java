@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-
 import com.ag777.util.lang.ObjectUtils;
 import com.ag777.util.lang.StringUtils;
 
@@ -20,7 +19,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2018年12月20日
+ * @version create on 2017年09月22日,last modify at 2019年10月14日
  */
 public class MapUtils {
 
@@ -241,6 +240,32 @@ public class MapUtils {
 	public static <K, V>Map<K, V> of(Class<K> clazzT, Class<V> clazzV, K key1, V value1, K key2, V value2, K key3, V value3, K key4, V value4, K key5, V value5, K key6, V value6, K key7, V value7, K key8, V value8, K key9, V value9) {
 		Map<K, V> map = of(clazzT, clazzV, key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6, key7, value7, key8, value8);
 		map.put(key9, value9);
+		return map;
+	}
+	
+	/**
+	 * 构建map,采用了强转的方式实现,请自行保证参数类型正确性
+	 * <p>
+	 * 	含十对key-value及以上
+	 * </p>
+	 * 
+	 */
+	public static Map<String, Object> of(String key1, Object value1, String key2, Object value2, String key3, Object value3, String key4, Object value4, String key5, Object value5, String key6, Object value6, String key7, Object value7, String key8, Object value8, String key9, Object value9, String key10, Object value10, Object... others) {
+		return of(String.class, Object.class, key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6, key7, value7, key8, value8, key9, value9, key10, value10, others);
+	}
+	
+	/**
+	 * 构建map,采用了强转的方式实现,请自行保证参数类型正确性
+	 */
+	@SuppressWarnings("unchecked")
+	public static <K, V>Map<K, V> of(Class<K> clazzT, Class<V> clazzV, K key1, V value1, K key2, V value2, K key3, V value3, K key4, V value4, K key5, V value5, K key6, V value6, K key7, V value7, K key8, V value8, K key9, V value9, K key10, V value10, Object... others) {
+		Map<K, V> map = of(clazzT, clazzV, key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6, key7, value7, key8, value8, key9, value9);
+		map.put(key10, value10);
+		if(others != null) {
+			for (int i = 0; i < others.length; i=i+2) {
+				map.put((K)others[i], (V)others[i+1]);
+			}
+		}
 		return map;
 	}
 	
@@ -667,4 +692,5 @@ public class MapUtils {
 		}
 		return src;
 	}
+	
 }
