@@ -40,7 +40,7 @@ import java.lang.reflect.Type;
  * GSON更新日志:https://github.com/google/gson/blob/master/CHANGELOG.md
  * 
  * @author ag777
- * @version create on 2017年05月27日,last modify at 2018年08月10日
+ * @version create on 2017年05月27日,last modify at 2019年11月25日
  */
 public class GsonUtils implements JsonUtilsInterf{
 	
@@ -190,7 +190,8 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * @return
 	 */
 	public static JsonObject toJsonObject(String json) {
-		return new JsonParser().parse(json).getAsJsonObject();
+		/*源码说明(下同):No need to instantiate this class, use the static methods instead.*/
+		return JsonParser.parseString(json).getAsJsonObject();
 	}
 	
 	/**
@@ -199,7 +200,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * @return
 	 */
 	public static JsonArray toJsonArray(String json) {
-		return new JsonParser().parse(json).getAsJsonArray();
+		return JsonParser.parseString(json).getAsJsonArray();
 	}
 	
 	/**
@@ -218,8 +219,7 @@ public class GsonUtils implements JsonUtilsInterf{
 		try {
 			JsonReader reader = new JsonReader(new StringReader(src));
 			reader.setLenient(true);
-			JsonParser jsonPar = new JsonParser();
-			JsonElement jsonEl = jsonPar.parse(reader);
+			JsonElement jsonEl = JsonParser.parseReader(reader);
 			String prettyJson = prettyPrinting().toJson(jsonEl);
 			return prettyJson;
 		} catch(Exception ex) {
@@ -230,10 +230,13 @@ public class GsonUtils implements JsonUtilsInterf{
 	/**
 	 * 转换任意类为json串（类型不支持会报错，这里不做捕获也不做抛出, 就当业务有问题应当报错,免得写try-catch）
 	 * @param obj
-	 * @return
+	 * @return json串，当obj为null的时候返回null
 	 */
 	@Override
 	public String toJson(Object obj) {
+		if (obj == null) {
+			return null;
+		}
 		return gson().toJson(obj);
 	}
 	

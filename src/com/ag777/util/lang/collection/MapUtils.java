@@ -19,7 +19,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2019年10月14日
+ * @version create on 2017年09月22日,last modify at 2019年11月12日
  */
 public class MapUtils {
 
@@ -255,12 +255,31 @@ public class MapUtils {
 	}
 	
 	/**
-	 * 构建map,采用了强转的方式实现,请自行保证参数类型正确性
+	 * 构建map,采用了强转的方式实现,请自行保证参数类型正确性(others长度为偶数)
 	 */
 	@SuppressWarnings("unchecked")
 	public static <K, V>Map<K, V> of(Class<K> clazzT, Class<V> clazzV, K key1, V value1, K key2, V value2, K key3, V value3, K key4, V value4, K key5, V value5, K key6, V value6, K key7, V value7, K key8, V value8, K key9, V value9, K key10, V value10, Object... others) {
 		Map<K, V> map = of(clazzT, clazzV, key1, value1, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6, key7, value7, key8, value8, key9, value9);
 		map.put(key10, value10);
+		if(others != null) {
+			for (int i = 0; i < others.length; i=i+2) {
+				map.put((K)others[i], (V)others[i+1]);
+			}
+		}
+		return map;
+	}
+	
+	/**
+	 * 往map里插入任意多的键值对,采用了强转的方式实现,请自行保证参数类型正确性(others长度为偶数)
+	 * @param map 原始map
+	 * @param others 需要插入的键值对
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <K, V>Map<K, V> putAll(Map<K, V> map, Object... others) {
+		if(map == null) {
+			map = MapUtils.newHashMap();
+		}
 		if(others != null) {
 			for (int i = 0; i < others.length; i=i+2) {
 				map.put((K)others[i], (V)others[i+1]);
