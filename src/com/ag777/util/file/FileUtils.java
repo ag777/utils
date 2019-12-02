@@ -5,6 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -41,7 +42,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2019年07月16日
+ * @version create on 2017年04月25日,last modify at 2019年12月02日
  */
 public class FileUtils {
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
@@ -60,6 +61,24 @@ public class FileUtils {
     public static void encodingWrite(Charset charset) {
     	FILE_WRITING_CHARSET = charset;
     }
+    
+    /**
+     * 遍历所有子文件(夹)，寻找符合要求的文件(夹)
+     * @param basePath 基础路径
+     * @param filter 过滤器
+     * @return 文件列表
+     */
+    public static List<File> findSubFile(String basePath, FileFilter filter) {
+		List<File> fileList = ListUtils.newArrayList();
+		File baseFile = new File(basePath);
+		if(baseFile.exists() && baseFile.isDirectory()) {
+			if(filter == null) {
+				filter = (file)->true;
+			}
+			fillSubFile(baseFile, fileList, filter);
+		}
+		return fileList;
+	}
     
     /**
      * 读取文件为字节数组
@@ -1099,6 +1118,25 @@ public class FileUtils {
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * 递归填充所有符合条件的文件(夹)到列表中
+	 * @param dir 目录
+	 * @param list 文件列表
+	 * @param filter 过滤器
+	 */
+	private static void fillSubFile(File dir, List<File> list, FileFilter filter) {
+		File[] files = dir.listFiles();
+		for (File f : files) {
+			if(filter.accept(f)) {
+				list.add(f);
+			}
+			if(f.isDirectory()) {
+				fillSubFile(f, list, filter);
+			}
+		}
+		
 	}
 	
 	/**
