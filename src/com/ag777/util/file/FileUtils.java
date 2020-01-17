@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,7 +43,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2019年12月02日
+ * @version create on 2017年04月25日,last modify at 2019年12月30日
  */
 public class FileUtils {
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
@@ -191,11 +192,11 @@ public class FileUtils {
     /**
      * 大文件逐行读取
      * @param filePath
-     * @param filter 返回值无关，直接返回null就好
+     * @param filter 
      * @param charset
      * @throws IOException
      */
-    public static void readLinesByScaner(String filePath, Function<String, String> filter, Charset charset) throws IOException {
+    public static void readLinesByScaner(String filePath, Consumer<String> filter, Charset charset) throws IOException {
 		FileInputStream in = null;
 		Scanner sc = null;
 		try {
@@ -203,7 +204,7 @@ public class FileUtils {
 			sc = new Scanner(in, charset.toString());
 			while (sc.hasNextLine()) {
 				String line = sc.nextLine();
-				filter.apply(line);
+				filter.accept(line);
 			}
 			// note that Scanner suppresses exceptions
 		    if (sc.ioException() != null) {

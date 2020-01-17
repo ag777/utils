@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.net.ConnectException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -60,14 +63,14 @@ import okhttp3.Response;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2019年07月31日
+ * @version last modify at 2020年01月17日
  */
 public class HttpUtils {
 	
 	private static OkHttpClient mOkHttpClient;
 	
 	public static final MediaType FORM_CONTENT_TYPE
-    									= MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");
+    									= MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");//"Content-Type: application/json; charset=utf-8");//
 	
 	private HttpUtils() {}
 	
@@ -755,7 +758,7 @@ public class HttpUtils {
 		if(params == null || StringUtils.isBlank(url)) {
 			return url;
 		}
-		String paramStr = getParamStr(params);
+		String paramStr = getParamStr(params, false);	//get请求不错encode测试也没出现问题
 		
 		if(!paramStr.isEmpty()) {
 			 return url+"?"+paramStr;
@@ -796,9 +799,9 @@ public class HttpUtils {
 	 * @return
 	 */
 	private static <K,V> RequestBody getRequestBody(Map<K, V> params) {
-		String paramStr = getParamStr(params);
+		String paramStr = getParamStr(params, true);
 		 if(!paramStr.isEmpty()) {
-			 return RequestBody.create(FORM_CONTENT_TYPE, paramStr);
+			 return RequestBody.create(FORM_CONTENT_TYPE,  paramStr);
 		 }
 		 return  new FormBody.Builder().build();
 	}
@@ -861,7 +864,7 @@ public class HttpUtils {
 	 * @param params 参数表
 	 * @return 拼接处的参数字符串
 	 */
-	private static <K, V> String getParamStr(Map<K, V> params) {
+	private static <K, V> String getParamStr(Map<K, V> params, boolean needEncode) {
 		if(params == null) {
 			return "";
 		}
@@ -881,19 +884,43 @@ public class HttpUtils {
 				int length = Array.getLength(value);
 				for (int i = 0; i < length; i++) {
 					Object item = Array.get(value, i);
-					sb.append(key).append('=').append(StringUtils.emptyIfNull(item)).append('&');
+					sb.append(key).append('=').append(encode(item, needEncode)).append('&');
 				}
 				sb.setLength(sb.length()-1);	//不论列表是否为空都需要删除最后一个&号
 			} else if (value instanceof Collection) { // 列表
 				for(Object item:((Collection<?>) value)) {
-					sb.append(key).append('=').append(StringUtils.emptyIfNull(item)).append('&');
+					sb.append(key).append('=').append(encode(item, needEncode)).append('&');
 				}
 				sb.setLength(sb.length()-1);	//不论列表是否为空都需要删除最后一个&号
 			} else { // 其余的通通转String,后续可加分支拓展
-				sb.append(key).append('=').append(value);
+				sb.append(key).append('=').append(encode(value, needEncode));
 			}
 		}
 		return StringUtils.emptyIfNull(sb);
+	}
+	
+	/**
+	 * @param value 值
+	 * @param needEncode 是否需要encode操作
+	 * @return urlEncode后的串(null会被置空)
+	 */
+	private static String encode(Object value, boolean needEncode) {
+		if(value == null) {
+			return "";
+		}
+		String v = value.toString();
+		if(v.isEmpty()) {
+			return "";
+		}
+		if(!needEncode) {
+			return v;
+		}
+		try {	//application/x-www-form-urlencoded 模式下，需要对参数进行encode转义，否则接收方会丢失部分数据(比如&号)
+			return URLEncoder.encode(v, StandardCharsets.UTF_8.toString());
+		} catch (UnsupportedEncodingException e) {
+			System.err.println("[HttpUtils]UnsupportedEncodingException:"+e.getMessage());
+		}
+		return v;
 	}
 	
 }
