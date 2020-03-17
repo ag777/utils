@@ -29,7 +29,7 @@ import com.ag777.util.lang.ObjectUtils;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2019年07月17日
+ * @version create on 2017年09月22日,last modify at 2020年03月17日
  */
 public class ListUtils {
 
@@ -845,6 +845,63 @@ public class ListUtils {
 			return null;
 		}
 		return arrays[index];
+	}
+	
+	/**
+	 * 循环列表，一旦获取重复的项即返回，跳过null
+	 * @param list 任意列表
+	 * @return 重复的项
+	 */
+	public static <T>T getDuplicate(List<T> list) {
+		if(list == null || list.isEmpty()) {
+			return null;
+		}
+		List<T> tempList = newArrayList();
+		try {
+			for (T t : list) {
+				if(t == null) {
+					continue;
+				}
+				if(tempList.contains(t)) {
+					return t;
+				}
+				//else
+				tempList.add(t);
+			}
+		} finally {
+			tempList.clear();
+			tempList = null;
+		}
+		return null;
+	}
+	
+	/**
+	 * 循环列表，将所有重复的项加入新列表并返回，跳过null
+	 * @param list 任意列表
+	 * @return 重复项列表
+	 */
+	public static <T>List<T> getDuplicateAll(List<T> list) {
+		List<T> resultList = newArrayList();
+		if(list == null || list.isEmpty()) {
+			return null;
+		}
+		List<T> tempList = newArrayList();	//临时存储
+		try {
+			for (T t : list) {
+				if(t == null) {
+					continue;
+				}
+				if(tempList.contains(t)) {
+					resultList.add(t);
+				} else {
+					tempList.add(t);
+				}
+			}
+		} finally {
+			tempList.clear();
+			tempList = null;
+		}
+		return resultList;
 	}
 	
 	/*----内部方法----*/
