@@ -29,7 +29,7 @@ import com.ag777.util.lang.ObjectUtils;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2020年03月17日
+ * @version create on 2017年09月22日,last modify at 2020年03月18日
  */
 public class ListUtils {
 
@@ -852,9 +852,9 @@ public class ListUtils {
 	 * @param list 任意列表
 	 * @return 重复的项
 	 */
-	public static <T>T getDuplicate(List<T> list) {
+	public static <T>Optional<T> getDuplicate(List<T> list) {
 		if(list == null || list.isEmpty()) {
-			return null;
+			return Optional.empty();
 		}
 		List<T> tempList = newArrayList();
 		try {
@@ -863,7 +863,7 @@ public class ListUtils {
 					continue;
 				}
 				if(tempList.contains(t)) {
-					return t;
+					return Optional.of(t);
 				}
 				//else
 				tempList.add(t);
@@ -872,7 +872,7 @@ public class ListUtils {
 			tempList.clear();
 			tempList = null;
 		}
-		return null;
+		return Optional.empty();
 	}
 	
 	/**
