@@ -12,6 +12,8 @@ import com.ag777.util.db.model.VersionSqlPojo;
 import com.ag777.util.db.model.VersionSqlPojo.DdlListBean;
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.StringUtils;
+import com.ag777.util.lang.collection.ListUtils;
+import com.ag777.util.lang.exception.ExceptionHelper;
 import com.ag777.util.lang.interf.Disposable;
 
 /**
@@ -22,7 +24,7 @@ import com.ag777.util.lang.interf.Disposable;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年09月06日,last modify at 2018年12月17日
+ * @version create on 2017年09月06日,last modify at 2020年03月23日
  */
 public abstract class DBUpdateHelper implements Disposable {
 
@@ -64,8 +66,8 @@ public abstract class DBUpdateHelper implements Disposable {
 				additionalSql(i, versionCodeNew, dmlList);
 				
 				try {
-					executeDdlList(ddlList, conn);
-					executeDmlList(dmlList, conn);	//这里面带上了数据库版本号的更新
+					executeDdlList(ddlList, conn, versionCodeNew);
+					executeDmlList(dmlList, conn, versionCodeNew);	//这里面带上了数据库版本号的更新
 					versionCodeOld = versionCodeNew;
 				} catch(SQLException ex) {
 					String errMsg = new StringBuilder()
@@ -110,10 +112,12 @@ public abstract class DBUpdateHelper implements Disposable {
 	 * 如果当前sql是执行方法获得，执行方法取得sql
 	 * @param src
 	 * @param conn
+	 * @param stmt
+	 * @param versionCodeNew
 	 * @return
 	 * @throws SQLException
 	 */
-	private static String toSql(String src, Connection conn) throws SQLException {
+	private static String toSql(String src, Connection conn, Statement stmt, String versionCodeNew) throws SQLException {
 		if(src.startsWith("[method]")) {
 			src = src.replace("[method]","");	//先去除标识
 			if(!p_classPath.matcher(src).matches()) {
@@ -128,8 +132,8 @@ public abstract class DBUpdateHelper implements Disposable {
 				classPath = src.substring(0, lastIndexOfDot);
 				/*根据类路径和方法名执行方法*/
 				Class<?> clazz = Class.forName(classPath);
-				Method mothod = clazz.getMethod(methodName, Connection.class);
-				Object sql = mothod.invoke(clazz.newInstance(), conn);
+				Method mothod = clazz.getDeclaredMethod(methodName, Connection.class, Statement.class, String.class);
+				Object sql = mothod.invoke(null, conn, stmt, versionCodeNew);
 				if(sql != null) {
 					return sql.toString();
 				} else {
@@ -147,10 +151,12 @@ public abstract class DBUpdateHelper implements Disposable {
 				throw new SQLException("数据库升级异常:执行方法获取sql失败["+src+"]", e);
 			} catch (InvocationTargetException e) {
 				//方法本身抛出的异常
+				e.printStackTrace();
 //				System.out.println(e.getCause().getClass().getName());	//真正的抛出的异常
-				throw new SQLException("数据库升级异常:执行方法["+src+"]抛出异常", e);
-			} catch (InstantiationException e) {
-				throw new SQLException("数据库升级异常:执行方法获取sql失败["+src+"]", e);
+				throw new SQLException("数据库升级异常:执行方法["+src+"]抛出异常:"+ExceptionHelper.getErrMsg(e, "", ListUtils.of("java")), e);
+			} catch(Exception ex) {
+				ex.printStackTrace();
+				throw new SQLException("数据库升级异常:发生未知异常:"+ExceptionHelper.getErrMsg(ex, "", ListUtils.of("java")), ex);
 			}
 		}
 		return src;
@@ -160,18 +166,19 @@ public abstract class DBUpdateHelper implements Disposable {
 	 * 执行ddl语句
 	 * @param ddlList
 	 * @param conn
+	 * @param versionCodeNew
 	 * @throws SQLException
 	 */
-	private void executeDdlList(List<DdlListBean> ddlList, Connection conn) throws SQLException {
+	private void executeDdlList(List<DdlListBean> ddlList, Connection conn, String versionCodeNew) throws SQLException {
 		conn.setAutoCommit(true);
 		Statement stmt = conn.createStatement();
 		for (DdlListBean ddl : ddlList) {
-			log("执行ddl:"+ddl.getSql());
-			String sql = toSql(ddl.getSql(), conn);
+			String sql = toSql(ddl.getSql(), conn, stmt, versionCodeNew);
 			if(sql == null) {
 				continue;
 			}
 			try {
+				log("执行ddl:"+ddl.getSql());
 				stmt.executeUpdate(ddl.getSql());
 			} catch(SQLException ex) {
 				
@@ -189,19 +196,20 @@ public abstract class DBUpdateHelper implements Disposable {
 	 * 执行dml语句(事务)
 	 * @param dmlList
 	 * @param conn
+	 * @param versionCodeNew
 	 * @throws SQLException
 	 */
-	private void executeDmlList(List<String> dmlList, Connection conn) throws SQLException {
+	private void executeDmlList(List<String> dmlList, Connection conn, String versionCodeNew) throws SQLException {
 		try {
 			conn.setAutoCommit(false);
 			Statement stmt = conn.createStatement();
 			for (String sql : dmlList) {
-				log("执行dml:"+sql);
-				sql = toSql(sql, conn);
+				sql = toSql(sql, conn, stmt, versionCodeNew);
 				if(sql == null) {
 					continue;
 				}
 				try {
+					log("执行dml:"+sql);
 					stmt.executeUpdate(sql);
 				} catch(SQLException ex) {
 					throw new SQLException(getErrMsg(sql, ex));
