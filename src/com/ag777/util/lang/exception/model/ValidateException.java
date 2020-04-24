@@ -4,7 +4,7 @@ package com.ag777.util.lang.exception.model;
  * 验证异常(验证参数过程，判断出的异常)
  * @author ag777
  *
- * @version create on 2018年05月17日,last modify at 2019年03月12日
+ * @version create on 2018年05月17日,last modify at 2020年04月24日
  */
 public class ValidateException extends Exception {
 
@@ -24,5 +24,14 @@ public class ValidateException extends Exception {
 		super(message);
 		this.extraMsg = extraMsg;
 	}
+	
+	public ValidateException(String message, Throwable cause) {
+        super(message, cause);
+    }
+	
+	public ValidateException(String message, String extraMsg, Throwable cause) {
+        super(message, cause);
+        this.extraMsg = extraMsg;
+    }
 
 }
