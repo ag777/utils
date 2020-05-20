@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.ag777.util.Utils;
 import com.ag777.util.lang.collection.ListUtils;
-import com.ag777.util.lang.exception.ExceptionHelper;
+import com.ag777.util.lang.exception.ExceptionUtils;
 import com.ag777.util.lang.exception.model.JsonSyntaxException;
 
 
@@ -15,7 +15,7 @@ import com.ag777.util.lang.exception.model.JsonSyntaxException;
  * </p>
  * 
  * @author ag777
- * @version last modify at 2018年06月15日
+ * @version last modify at 2020年05月20日
  */
 public class Console {
 
@@ -142,24 +142,22 @@ public class Console {
 	 * @param helper
 	 * @return
 	 */
-	public static String err(Throwable throwable, ExceptionHelper helper) {
-		if(isDevMode()) {
-			String errMsg = helper.getErrMsg(throwable);
-			System.err.println(errMsg);
-			return errMsg;
-		}
-		return null;
-	}
+//	public static String err(Throwable throwable, ExceptionHelper helper) {
+//		if(isDevMode()) {
+//			String errMsg = helper.getErrMsg(throwable);
+//			System.err.println(errMsg);
+//			return errMsg;
+//		}
+//		return null;
+//	}
 	
 	/**
-	 * 打印错误栈信息(效果差不多等于throwable.printStackTrace())
+	 * 打印错误栈信息(效果差不多等于)
 	 * @param throwable
 	 */
 	public static void err(Throwable throwable) {
-		List<String> list = ExceptionHelper.getStackTrace(throwable);
-		for (String line : list) {
-			System.err.println(line);
-		}
+		String msg = ExceptionUtils.getErrMsg(throwable);
+		System.err.println(msg);
 	}
 	
 	/*=================工具方法====================*/
