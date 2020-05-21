@@ -11,7 +11,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.ag777.util.http.HttpUtils;
+import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.exception.model.JsonSyntaxException;
+import com.ag777.util.lang.interf.Disposable;
 
 import okhttp3.Call;
 import okhttp3.Headers;
@@ -27,7 +29,7 @@ import okhttp3.Response;
  * @author ag777
  * @version create on 2018年03月30日,last modify at 2018年07月31日
  */
-public class MyCall {
+public class MyCall implements Disposable, AutoCloseable {
 	
 	private Call call;
 	private Response response;
@@ -262,5 +264,20 @@ public class MyCall {
 	public  Optional<File> executeForFile(String targetPath) throws ConnectException, IOException {
 		executeForResponse();
 		return HttpUtils.responseFile(response, targetPath);
+	}
+
+	@Override
+	public void dispose() {
+		try {
+			close();
+		} catch (Exception e) {
+		}
+	}
+
+	@Override
+	public void close() throws Exception {
+		call=null;
+		IOUtils.close(response);
+		response = null;
 	}
 }
