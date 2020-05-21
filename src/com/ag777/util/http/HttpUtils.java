@@ -63,7 +63,7 @@ import okhttp3.Response;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2020年01月17日
+ * @version last modify at 2020年05月21日
  */
 public class HttpUtils {
 	
@@ -368,6 +368,23 @@ public class HttpUtils {
 	 */
 	public static <K, V>Call postMultiFilesByClient(OkHttpClient client, String url, File[] files, Map<K, V> paramMap, Map<K, V> headerMap, Object tag) throws IllegalArgumentException, FileNotFoundException {
 		return postByClient(client, url, getRequestBody(files, paramMap), getHeaders(headerMap), tag);
+	}
+	
+	/**
+	 * post请求带附件
+	 * @param client
+	 * @param url
+	 * @param fileMap
+	 * @param fileKey
+	 * @param paramMap
+	 * @param headerMap
+	 * @param tag
+	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 * @throws FileNotFoundException
+	 */
+	public static <K, V>Call postMultiFilesByClient(OkHttpClient client, String url, Map<File, String> fileMap, String fileKey, Map<K, V> paramMap, Map<K, V> headerMap, Object tag) throws IllegalArgumentException, FileNotFoundException {
+		return postByClient(client, url, getRequestBody(fileMap, fileKey, paramMap), getHeaders(headerMap), tag);
 	}
 	
 	/**===================delete===========================*/
@@ -818,26 +835,31 @@ public class HttpUtils {
 	 * @throws FileNotFoundException 
 	 */
 	private static <K,V> RequestBody getRequestBody(File[] files, Map<K, V> params) throws FileNotFoundException {
-		okhttp3.MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+		Map<File, String> fileMap = null;
 		/*附件部分*/
 		if(!ListUtils.isEmpty(files)) {
+			fileMap = MapUtils.newHashMap();
 			for (File file : files) {
-				if(file == null) {
-					throw new FileNotFoundException(
-							StringUtils.concat("文件上传失败:","文件不能为空"));
-				}
-				if(!file.exists()) {
-					throw new FileNotFoundException(
-							StringUtils.concat("文件上传失败:","文件[",file.getPath(),"]未找到"));
-				}
-				if(!file.isFile()) {
-					throw new FileNotFoundException(
-							StringUtils.concat("文件上传失败:","文件[",file.getPath(),"]不是个文件"));
-				}
-				RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), file);
-				builder = builder.addFormDataPart("file", file.getName(), fileBody);									
+				fileMap.put(file, file.getName());
 			}
 		}
+		
+		return  getRequestBody(fileMap, "file", params);
+	}
+	
+	/**
+	 * 通过参数构建请求
+	 * @param fileMap 文件及其上传名称对应map
+	 * @param fileKey 上传文件对应的key
+	 * @param params 其它参数
+	 * @return
+	 * @throws FileNotFoundException
+	 */
+	private static <K,V> RequestBody getRequestBody(Map<File, String> fileMap, String fileKey, Map<K, V> params) throws FileNotFoundException {
+		okhttp3.MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+		/*附件部分*/
+		addFiles2Form(builder, fileMap, fileKey);
+		
 		/*表单部分*/
 		if(!MapUtils.isEmpty(params)) {
 			Iterator<K> itor = params.keySet().iterator();
@@ -857,6 +879,40 @@ public class HttpUtils {
 		}
 		
 		return  builder.build();
+	}
+	
+	/**
+	 * 将附件塞进请求体中
+	 * @param builder 请求体构造器
+	 * @param fileMap 文件及其上传名称对应map
+	 * @param fileKey 上传文件对应的key
+	 * @throws FileNotFoundException
+	 */
+	private static void addFiles2Form(okhttp3.MultipartBody.Builder builder,Map<File, String> fileMap, String fileKey) throws FileNotFoundException {
+		if(!MapUtils.isEmpty(fileMap)) {
+			Iterator<File> itor = fileMap.keySet().iterator();
+			while(itor.hasNext()) {
+				File file = itor.next();
+				if(file == null) {
+					throw new FileNotFoundException(
+							StringUtils.concat("文件上传失败:","文件不能为空"));
+				}
+				if(!file.exists()) {
+					throw new FileNotFoundException(
+							StringUtils.concat("文件上传失败:","文件[",file.getPath(),"]未找到"));
+				}
+				if(!file.isFile()) {
+					throw new FileNotFoundException(
+							StringUtils.concat("文件上传失败:","文件[",file.getPath(),"]不是个文件"));
+				}
+				String fileName = fileMap.get(file);
+				if(fileName == null) {
+					fileName = file.getName();
+				}
+				RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), file);
+				builder = builder.addFormDataPart(fileKey!=null?fileKey:"file", fileName, fileBody);
+			}
+		}
 	}
 	
 	/**

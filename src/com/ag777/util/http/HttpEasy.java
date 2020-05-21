@@ -19,7 +19,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2018年05月31日
+ * @version create on 2018年03月30日,last modify at 2018年05月21日
  */
 public class HttpEasy {
 	
@@ -153,6 +153,22 @@ public class HttpEasy {
 	 */
 	public static <K, V>Optional<String> postMultiFiles(String url, File[] files, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException, FileNotFoundException  {
 		Call call = HttpUtils.postMultiFilesByClient(null, url, files, paramMap, headerMap, null);
+		return callForStrForce(call);
+	}
+	
+	/**
+	 * 
+	 * @param url
+	 * @param fileMap 文件及其上传名称对应map
+	 * @param fileKey 请求体里对应的key
+	 * @param paramMap
+	 * @param headerMap
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws FileNotFoundException
+	 */
+	public static <K, V>Optional<String> postMultiFiles(String url, Map<File, String> fileMap, String fileKey, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException, FileNotFoundException  {
+		Call call = HttpUtils.postMultiFilesByClient(null, url, fileMap, fileKey, paramMap, headerMap, null);
 		return callForStrForce(call);
 	}
 	

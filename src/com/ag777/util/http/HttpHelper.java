@@ -17,7 +17,7 @@ import okhttp3.RequestBody;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2018年05月31日
+ * @version create on 2018年03月30日,last modify at 2018年05月21日
  */
 public class HttpHelper {
 	
@@ -204,6 +204,22 @@ public class HttpHelper {
 	 */
 	public <K, V>MyCall postMultiFiles(String url, File[] files, Map<K, V> params, Map<K, V> headerMap) throws IllegalArgumentException, FileNotFoundException {
 		Call call = HttpUtils.postMultiFilesByClient(client, url, files, params, headerMap, tag);
+		return new MyCall(call);
+	}
+	
+	/**
+	 * post请求带附件
+	 * @param url
+	 * @param fileMap 文件及其上传名称对应map
+	 * @param fileKey 请求体里对应的key
+	 * @param params
+	 * @param headerMap
+	 * @return
+	 * @throws IllegalArgumentException
+	 * @throws FileNotFoundException
+	 */
+	public <K, V>MyCall postMultiFiles(String url, Map<File, String> fileMap, String fileKey, Map<K, V> params, Map<K, V> headerMap) throws IllegalArgumentException, FileNotFoundException {
+		Call call = HttpUtils.postMultiFilesByClient(client, url, fileMap, fileKey, params, headerMap, tag);
 		return new MyCall(call);
 	}
 }
