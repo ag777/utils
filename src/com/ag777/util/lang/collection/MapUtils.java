@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
+
 import com.ag777.util.lang.ObjectUtils;
 import com.ag777.util.lang.StringUtils;
 
@@ -19,7 +22,7 @@ import com.ag777.util.lang.StringUtils;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2019年11月12日
+ * @version create on 2017年09月22日,last modify at 2020年05月27日
  */
 public class MapUtils {
 
@@ -264,6 +267,46 @@ public class MapUtils {
 		if(others != null) {
 			for (int i = 0; i < others.length; i=i+2) {
 				map.put((K)others[i], (V)others[i+1]);
+			}
+		}
+		return map;
+	}
+	
+	/**
+	 * 如果条件成立则往map里插值
+	 * <p>该方法不进行map的空指针判断
+	 * @param map map
+	 * @param key 键
+	 * @param value 值
+	 * @param predicate 判断类
+	 * @return 条件是否成立
+	 */
+	public static <K, V>boolean putIf(Map<K, V> map, K key, V value, Predicate<V> predicate) {
+		if(predicate.test(value)) {
+			map.put(key, value);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 往map里插入任意多的键值对,采用了强转的方式实现,请自行保证参数类型正确性(others长度为偶数)
+	 * @param map
+	 * @param predicate 返回true则插入
+	 * @param others
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <K, V>Map<K, V> putAllIf(Map<K, V> map, BiPredicate<K, V> predicate, Object... others) {
+		if(map == null) {
+			map = MapUtils.newHashMap();
+		}
+		if(others != null) {
+			for (int i = 0; i < others.length; i=i+2) {
+				K key = (K)others[i];
+				V val = (V) others[i+1];
+				if(predicate !=null && predicate.test(key, val))
+				map.put(key, val);
 			}
 		}
 		return map;
