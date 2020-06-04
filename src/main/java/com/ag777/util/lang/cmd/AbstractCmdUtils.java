@@ -18,7 +18,7 @@ import com.ag777.util.lang.model.Charsets;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年07月04日,last modify at 2019年06月20日
+ * @version create on 2018年07月04日,last modify at 2020年06月04日
  */
 public abstract class AbstractCmdUtils {
 
@@ -178,6 +178,33 @@ public abstract class AbstractCmdUtils {
 		try {
 			InputStream in = execByProcess(pro);
 			return IOUtils.readLines(in, charsetDefault);
+		} finally {
+			destroy(pro);
+			pro = null;
+		}
+	}
+
+	/**
+	 * 执行cmd命令获取返回的所有行,每一行的内容实时由consumer接收
+	 * <p>
+	 * 要小心
+	 * 所有读取内容的方法都有可能导致卡死，原因是某些shell命令读取inputSteam时判断不了何时读取结束
+	 * </p>
+	 * @param cmd
+	 * @param baseDir
+	 * @param consumer 消费行的内容，尽量不要在内部做耗时操作
+	 * @throws IOException
+	 */
+	public void readLines(String cmd, String baseDir, java.util.function.Consumer<String> consumer) throws IOException {
+		Process pro = getProcess(cmd, baseDir);
+		try {
+			InputStream in = execByProcess(pro);
+			if(consumer != null) {
+				IOUtils.readLines(in, consumer, charsetDefault);
+			} else {
+				IOUtils.readLines(in, charsetDefault);
+			}
+
 		} finally {
 			destroy(pro);
 			pro = null;
