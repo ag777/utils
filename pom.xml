@@ -116,7 +116,7 @@
                         <target>1.8</target>
                         <encoding>UTF-8</encoding>
                         <compilerArguments>
-                            <bootclasspath>${JAVA_HOME}\jre\lib\rt.jar;${JAVA_HOME}\jre\lib\jce.jar</bootclasspath>
+                            <bootclasspath>${java.home}\lib\rt.jar;${java.home}\lib\jce.jar</bootclasspath>
                         </compilerArguments>
                     </configuration>
                 </plugin>
