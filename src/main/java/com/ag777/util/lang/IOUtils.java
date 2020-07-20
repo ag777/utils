@@ -16,6 +16,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import com.ag777.util.lang.collection.ListUtils;
+import com.ag777.util.lang.function.ConsumerE;
 import com.ag777.util.lang.interf.ProgressListener;
 
 /**
@@ -24,7 +25,7 @@ import com.ag777.util.lang.interf.ProgressListener;
  * 		有很多操作，比如文件，cmd命令，都是通过操作流来完成目的，为了避免重复及统一代码新建此类
  * </p>
  * @author ag777
- * @version create on 2017年06月16日,last modify at 2019年11月11日
+ * @version create on 2017年06月16日,last modify at 2020年07月20日
  */
 public class IOUtils {
 
@@ -153,6 +154,27 @@ public class IOUtils {
 	 * @throws IOException IO异常
 	 */
 	public static void readLines(InputStream in, Consumer<String> consumer, Charset charset) throws IOException {
+		try{
+			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
+			String s = null;
+			while((s  = procin.readLine()) !=null){
+				consumer.accept(s);
+			}
+		} catch(IOException ex) {
+			throw ex;
+		} finally {
+			close(in);
+		}
+	}
+
+	/**
+	 * 按行读取
+	 * @param in 输入流
+	 * @param consumer 消费者
+	 * @param charset 编码
+	 * @throws Throwable 各种异常
+	 */
+	public static void readLinesWithException(InputStream in, ConsumerE<String> consumer, Charset charset) throws Throwable {
 		try{
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
 			String s = null;
