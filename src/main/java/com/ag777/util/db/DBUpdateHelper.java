@@ -219,6 +219,8 @@ public abstract class DBUpdateHelper implements Disposable {
 		} catch(SQLException ex) {
 			conn.rollback();
 			throw ex;
+		} finally {
+			conn.setAutoCommit(true);
 		}
 	}
 	
