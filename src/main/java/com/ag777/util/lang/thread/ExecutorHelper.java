@@ -1,11 +1,8 @@
 package com.ag777.util.lang.thread;
 
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.interf.Disposable;
 
@@ -17,16 +14,63 @@ import com.ag777.util.lang.interf.Disposable;
  * </p>
  * 
  * @author ag777
- * @version  create on 2017年10月10日,last modify at 2018年08月03日
+ * @version  create on 2017年10月10日,last modify at 2020年07月30日
  */
 public class ExecutorHelper implements Disposable {
 
 	protected ExecutorService pool;
-	
+
+	/**
+	 *
+	 * @param size 线程池大小(决定同时执行的线程数量)
+	 */
 	public ExecutorHelper(int size) {
-		pool = Executors.newFixedThreadPool(size);
+		this(Executors.newFixedThreadPool(size));
 	}
-	
+
+	/**
+	 *
+	 * @param size 线程池大小(决定同时执行的线程数量)
+	 * @param uncaughtExceptionHandler 异常捕获器,异步捕获线程池中抛出的异常
+	 */
+	public ExecutorHelper(int size, Thread.UncaughtExceptionHandler uncaughtExceptionHandler) {
+		this(
+			Executors.newFixedThreadPool(size, r -> {
+				Thread t = new Thread(r);
+				t.setUncaughtExceptionHandler(
+						(t1, e) -> {
+							if(uncaughtExceptionHandler != null) {
+								uncaughtExceptionHandler.uncaughtException(t, e);
+							} else {
+								System.err.println(e);
+							}
+						});
+				return t;
+		}));
+	}
+
+	public ExecutorHelper(int corePoolSize,
+						  int maximumPoolSize,
+						  long keepAliveTime,
+						  TimeUnit unit,
+						  BlockingQueue<Runnable> workQueue,
+						  ThreadFactory threadFactory,
+						  RejectedExecutionHandler handler) {
+		this(new ThreadPoolExecutor(
+				corePoolSize,
+				maximumPoolSize,
+				keepAliveTime,
+				unit,
+				workQueue,
+				threadFactory,
+				handler
+		));
+	}
+
+	public ExecutorHelper(ExecutorService pool) {
+		this.pool = pool;
+	}
+
 	public ExecutorHelper add(Runnable command) {
 		pool.execute(command);
 		return this;
@@ -35,7 +79,7 @@ public class ExecutorHelper implements Disposable {
 	public <T>Future<T> add(Callable<T> task) {
 		return pool.submit(task);
 	}
-	
+
 	/**
 	 * 等待子线程都结束
 	 * <p>
