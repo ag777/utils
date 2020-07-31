@@ -1,42 +1,19 @@
 package com.ag777.util.lang.thread;
 
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import com.ag777.util.lang.Console;
-import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.interf.Disposable;
 
 /**
  * 回调线程池CompletionService辅助类
  * 
  * @author ag777
- * @version  create on 2018年08月03日,last modify at 2018年08月21日
+ * @version  create on 2018年08月03日,last modify at 2020年07月31日
  */
 public class CompletionServiceHelper<T> implements Disposable {
 	private ExecutorService pool;
 	private CompletionService<T> completionService;
-	private long taskCount = 0;
-	
-	/**
-	 * 执行任务返回任务结果列表
-	 * @param taskList 任务列表
-	 * @param poolSize 同时执行的任务数量
-	 * @param errHandler 异常捕获
-	 * @return
-	 */
-	public static <T>List<T> task(List<Callable<T>> taskList, int poolSize, ErrHandler<T> errHandler) {
-		CompletionServiceHelper<T> helper = new CompletionServiceHelper<>(poolSize);
-		List<T> list = helper.addAll(taskList).takeAll(errHandler);
-		helper.waitForDispose();
-		return list;
-	}
 	
 	
 	public CompletionServiceHelper(int poolSize) {
@@ -44,91 +21,57 @@ public class CompletionServiceHelper<T> implements Disposable {
 		completionService = new ExecutorCompletionService<T>(pool);
 	}
 	
+	public CompletionServiceHelper(ExecutorService pool) {
+		this.pool = pool;
+		completionService = new ExecutorCompletionService<T>(pool);
+	}
+	
+	public ExecutorService getExecutorService() {
+		return pool;
+	}
+
+
+	public CompletionService<T> getCompletionService() {
+		return completionService;
+	}
+
+
 	public CompletionServiceHelper<T> add(Callable<T> task) {
 		completionService.submit(task);
-		taskCount++;
 		return this;
 	}
-	
-	public CompletionServiceHelper<T> addAll(List<Callable<T>> taskList) {
-		if(ListUtils.isEmpty(taskList)) {
-			return this;
-		}
-		for (Callable<T> task : taskList) {
-			add(task);
-		}
+
+	public CompletionServiceHelper<T> add(Runnable task, T result) {
+		completionService.submit(task, result);
 		return this;
 	}
-	
-	public boolean hasNext() {
-		return taskCount>0;
-	}
-	
+
 	/**
-	 * 获取所有结果
-	 * <p>
-	 * 如果单个任务异常用handler捕获,并将返回添加至结果列表
-	 * </p>
-	 * @param errHandler
-	 * @return
+	 * <p>阻塞线程，直至获取到结果
+	 * @return 一个执行完成的任务
+	 * @throws InterruptedException 等待中断
 	 */
-	public synchronized List<T> takeAll(ErrHandler<T> errHandler) {
-		List<T> list = ListUtils.newArrayList();
-		for(;taskCount>0;) {
-			T result = null;
-			try {
-				result = completionService.take().get();
-			} catch (InterruptedException | ExecutionException e) {
-				if(errHandler != null) {
-					result = errHandler.onErr(e, list.size());	//这里取巧,当前列表大小(未加上新元素)就是新元素下标
-				}
-			} finally {
-				taskCount--;
-				list.add(result);
-			}
-			
-		}
-		taskCount = 0;
-		return list;
+	public Future<T> take() throws InterruptedException {
+		return completionService.take();
 	}
-	
+
 	/**
-	 * 获取所有结果
-	 * @return
-	 * @throws InterruptedException
-	 * @throws ExecutionException
+	 * <p>不会阻塞线程，如果当前没有任务结束，则返回null
+	 * @return 一个执行完成的任务
 	 */
-	public synchronized List<T> takeAllWithException() throws InterruptedException, ExecutionException {
-		List<T> list = ListUtils.newArrayList();
-		for(;taskCount>0;) {
-			try {
-				T result = completionService.take().get();
-				list.add(result);
-			} finally {
-				taskCount--;
-			}
-		}
-		taskCount = 0;
-		return list;
+	public Future<T> poll() {
+		return completionService.poll();
 	}
-	
+
 	/**
-	 * 获取1个执行完成的结果
-	 * @return
-	 * @throws InterruptedException
-	 * @throws ExecutionException
+	 * <p>阻塞线程一段时间，如果当前没有任务结束，则返回null
+	 * @param timeout 等待时间
+	 * @param timeunit 等待的时间单位
+	 * @return 一个执行完成的任务
+	 * @throws InterruptedException 等待中断
 	 */
-	public synchronized T take() throws InterruptedException, ExecutionException {
-		if(taskCount==0) {
-			return null;
-		}
-		try {
-			T result = completionService.take().get();
-			return result;
-		} finally {
-			taskCount--;
-		}
-		
+	public Future<T> poll(long timeout, TimeUnit timeunit) throws InterruptedException {
+		return completionService.poll(timeout, timeunit);
 	}
 	
 	/**
@@ -162,15 +105,14 @@ public class CompletionServiceHelper<T> implements Disposable {
 	/**
 	 * 等待任务执行结束并且关闭线程池
 	 */
-	public void waitForDisposeWithException() {
+	public void waitForDisposeWithException() throws InterruptedException {
 		if(pool == null) {
 			return;
 		}
 		try {
 			waitFor();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			dispose();
 		}
@@ -191,8 +133,6 @@ public class CompletionServiceHelper<T> implements Disposable {
 			while(!pool.awaitTermination(timeout, unit)) {	//如果结束则关闭线程池
 			}
 		} catch (InterruptedException e) {
-//			e.printStackTrace();
-			Console.err("等待线程池关闭失败");
 			throw e;
 		}
 	}
@@ -207,8 +147,44 @@ public class CompletionServiceHelper<T> implements Disposable {
 	private void waitFor() throws InterruptedException {
 		waitFor(100, TimeUnit.MILLISECONDS);
 	}
-	
-	public static interface ErrHandler<T> {
-		public T onErr(Throwable throwable, int index);
+
+	/**
+	 * 详见线程池的使用方法
+	 */
+	public void shutdown() {
+		if(pool != null) {
+			pool.shutdown();
+		}
+	}
+
+	/**
+	 * 详见线程池的使用方法
+	 */
+	public void shutdownNow() {
+		if(pool != null) {
+			pool.shutdownNow();
+		}
+	}
+
+	/**
+	 * 详见线程池的使用方法
+	 * @return 是否执行过shutdown
+	 */
+	public boolean isshutdown() {
+		if(pool != null) {
+			return pool.isShutdown();
+		}
+		return true;
+	}
+
+	/**
+	 * 详见线程池的使用方法
+	 * @return 是否完全停止
+	 */
+	public boolean isTerminated() {
+		if(pool != null) {
+			return pool.isTerminated();
+		}
+		return true;
 	}
 }
