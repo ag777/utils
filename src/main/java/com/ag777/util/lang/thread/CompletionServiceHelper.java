@@ -9,7 +9,7 @@ import com.ag777.util.lang.interf.Disposable;
  * 回调线程池CompletionService辅助类
  * 
  * @author ag777
- * @version  create on 2018年08月03日,last modify at 2020年07月31日
+ * @version  create on 2018年08月03日,last modify at 2020年08月03日
  */
 public class CompletionServiceHelper<T> implements Disposable {
 	private ExecutorService pool;
@@ -84,6 +84,7 @@ public class CompletionServiceHelper<T> implements Disposable {
 		}
 		pool.shutdownNow();
 		pool = null;
+		completionService = null;
 	}
 	
 	/**
