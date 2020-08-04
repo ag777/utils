@@ -43,7 +43,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2017年04月25日,last modify at 2019年12月30日
+ * @version create on 2020年08月04日,last modify at 2020年08月04日
  */
 public class FileUtils {
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
@@ -387,9 +387,9 @@ public class FileUtils {
     public static void replaceByWhole(String filePath, String regex, String replacement, boolean isReplaceAll) throws IOException {
     	String content = readText(filePath, SystemUtils.lineSeparator());
     	if(isReplaceAll) {
-    		content.replaceAll(regex, replacement);
+			content = content.replaceAll(regex, replacement);
     	} else {
-    		content.replaceFirst(regex, replacement);
+			content = content.replaceFirst(regex, replacement);
     	}
     	write(filePath,content, null);
     }
