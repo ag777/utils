@@ -1,34 +1,21 @@
 package com.ag777.util.gson;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.ag777.util.gson.model.TypeFactory;
 import com.ag777.util.lang.exception.model.JsonSyntaxException;
 import com.ag777.util.lang.interf.JsonUtilsInterf;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
+import com.google.gson.*;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * gson统一管理类，全局保持一个gson对象
@@ -40,7 +27,7 @@ import java.lang.reflect.Type;
  * GSON更新日志:https://github.com/google/gson/blob/master/CHANGELOG.md
  * 
  * @author ag777
- * @version create on 2017年05月27日,last modify at 2019年11月25日
+ * @version create on 2017年05月27日,last modify at 2020年08月18日
  */
 public class GsonUtils implements JsonUtilsInterf{
 	
@@ -220,8 +207,7 @@ public class GsonUtils implements JsonUtilsInterf{
 			JsonReader reader = new JsonReader(new StringReader(src));
 			reader.setLenient(true);
 			JsonElement jsonEl = JsonParser.parseReader(reader);
-			String prettyJson = prettyPrinting().toJson(jsonEl);
-			return prettyJson;
+			return toPrettyJson(jsonEl);
 		} catch(Exception ex) {
 			throw new JsonSyntaxException(ex);
 		}
@@ -238,6 +224,23 @@ public class GsonUtils implements JsonUtilsInterf{
 			return null;
 		}
 		return gson().toJson(obj);
+	}
+
+	/**
+	 *
+	 * @param obj 任意对象
+	 * @return 格式化的json串
+	 * @throws JsonSyntaxException
+	 */
+	public String toPrettyJson(Object obj) throws JsonSyntaxException {
+		if (obj == null) {
+			return null;
+		}
+		try {
+			return prettyPrinting().toJson(obj);
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
 	}
 	
 	/**
@@ -499,8 +502,8 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/*=================测试(示例)方法============*/
 	public static void main(String[] args) throws Exception {
-//		String json = "{\"success\":true, \"a\":20, \"b\":20.0, \"c\":20.1}";
-//		Map<String, Object> map = GsonUtils.get().fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
+		String json = "{\"success\":true, \"a\":20, \"b\":20.0, \"c\":20.1}";
+		Map<String, Object> map = GsonUtils.get().fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
 //		System.out.println(
 //				map.get("a").getClass().getName()+"||"+
 //				map.get("b").getClass().getName()+"||"+
@@ -520,8 +523,10 @@ public class GsonUtils implements JsonUtilsInterf{
 //				GsonUtils.getDefaultBuilder()
 //					.setDateFormat("yyyy_MM")
 //				).toJson(map));
-		System.out.println(GsonUtils.get().toMapWithException(null));
-		System.out.println(GsonUtils.get().prettyFormat("{\"a\":1"));
+//		System.out.println(GsonUtils.get().toMapWithException(null));
+//		System.out.println(GsonUtils.get().prettyFormat("{\"a\":1"));
+
+		System.out.println(GsonUtils.get().toPrettyJson(map));
 	}
 	
 }
