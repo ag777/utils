@@ -17,7 +17,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2018年11月22日
+ * @version last modify at 2020年08月20日
  */
 public class StringUtils {
 
@@ -425,7 +425,7 @@ public class StringUtils {
 	 * 	其余情况返回null
 	 * </p>
 	 * 
-	 * @param src
+	 * @param src 源字符串
 	 * @return
 	 */
 	public static Boolean toBoolean(String src) {
@@ -438,6 +438,16 @@ public class StringUtils {
 		}
 		
 		return null;
+	}
+
+	/**
+	 * 字符串转Boolean
+	 * @param src 源字符串
+	 * @param defaultValue 默认值
+	 * @return
+	 */
+	public static boolean toBoolean(String src, boolean defaultValue) {
+		return ObjectUtils.getOrDefault(toBoolean(src), defaultValue);
 	}
 	
 	/**
