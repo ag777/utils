@@ -3,6 +3,7 @@ package com.ag777.util.lang.socket;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collection;
 import java.util.Map;
 
 import com.ag777.util.lang.IOUtils;
@@ -26,7 +27,8 @@ public class SocketServer implements Disposable {
 	private boolean isRunning;
 	
 	private Map<String, Session> sessionMap;
-	
+	private ThreadGroup tg;
+
 	public ServerSocket getServer() {
 		return server;
 	}
@@ -39,6 +41,7 @@ public class SocketServer implements Disposable {
 		return sessionMap;
 	}
 
+
 	/**
 	 * 停止监听客户端请求
 	 * 
@@ -48,9 +51,13 @@ public class SocketServer implements Disposable {
 		isRunning = false;
 		try {
 			server.close();
+			tg.interrupt();
 		} catch (IOException e) {
 //			e.printStackTrace();
 		}
+
+
+
 	}
 	
 	public SocketServer(ServerSocket server, Handler handler) {
@@ -59,13 +66,13 @@ public class SocketServer implements Disposable {
 		sessionMap = MapUtils.newConcurrentHashMap();
 		isRunning = true;
 		handler.onSeverCreate(port);
+		tg = new ThreadGroup("socket-server");
 		
 		while(isRunning){
 			try {
 	            Socket socket = server.accept();
 	            String sessionId = StringUtils.uuid();
 	            Session session = new Session(sessionId, socket);
-	            sessionMap.put(session.getId(), session);
 	            /*
 	             *连接建立判断是否需要断开连接 
 	             */
@@ -73,31 +80,29 @@ public class SocketServer implements Disposable {
 	            	IOUtils.close(socket);
 	            	continue;
 	            }
-	            
+
 	            /*
 	             * 连接建立后执行
 	             */
 	            handler.onConnect(socket, sessionId);
-	            
+
 	            /*
 	             * 允许本次连接新建线程执行处理客户端传来的信息
 	             */
-	            Thread sessionThread = new Thread(new Runnable() {
-					
-					@Override
-					public void run() {
-						try {
-							session.handle(handler);
-						} catch (IOException ex) {
-							handler.onErr(socket, sessionId, ex);
-						} catch(Exception ex) {
-							handler.onErr(socket, sessionId, ex);
-						} finally {
-							sessionMap.remove(sessionId);
-							handler.onDisConnect(socket, sessionId);
-						}
+	            Thread sessionThread = new Thread(tg, () -> {
+					try {
+						session.handle(handler);
+					} catch(InterruptedException ex) {
+						//中断
+					} catch (Throwable ex) {
+						handler.onErr(socket, sessionId, ex);
+					} finally {
+						sessionMap.remove(sessionId);
+						handler.onDisConnect(socket, sessionId);
 					}
 				});
+
+				sessionMap.put(session.getId(), session);
 	            sessionThread.start();
 	            
 			} catch(Exception ex) {

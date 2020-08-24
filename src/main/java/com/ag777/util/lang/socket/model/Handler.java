@@ -82,10 +82,10 @@ public abstract class Handler {
 	 * 当捕获到异常时执行
 	 * @param socket
 	 * @param sessionId
-	 * @param ex
+	 * @param t
 	 */
-	public void onErr(Socket socket, String sessionId, Exception ex) {
-		ex.printStackTrace();
+	public void onErr(Socket socket, String sessionId, Throwable t) {
+		t.printStackTrace();
 	}
 	
 	/**
@@ -111,5 +111,5 @@ public abstract class Handler {
 	 * @param sessionId 当前对话的session编号
 	 * @return
 	 */
-	public abstract String handler(String msg, String sessionId);
+	public abstract String handler(String msg, String sessionId) throws InterruptedException ;
 }

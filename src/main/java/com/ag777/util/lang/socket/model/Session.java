@@ -33,7 +33,7 @@ public class Session {
 		return socket;
 	}
 
-	public void handle(Handler handler) throws IOException {
+	public void handle(Handler handler) throws IOException, InterruptedException {
 		BufferedReader in = null;
 		PrintWriter out = null;
 		try {
