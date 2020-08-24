@@ -111,5 +111,5 @@ public abstract class Handler {
 	 * @param sessionId 当前对话的session编号
 	 * @return
 	 */
-	public abstract String handler(String msg, String sessionId) throws InterruptedException ;
+	public abstract String handle(String msg, String sessionId) throws InterruptedException ;
 }

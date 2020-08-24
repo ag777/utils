@@ -140,7 +140,7 @@ public class SocketServer implements Disposable {
 			}
 			
 			@Override
-			public String handler(String msg, String sessionId) {
+			public String handle(String msg, String sessionId) {
 				return "得到的消息"+msg;
 			}
 			

@@ -44,7 +44,7 @@ public class Session {
 	        	if(msg == null) {
 	        		break;
 	        	}
-        		String outMsg = handler.handler(msg, id);	//准备回复的信息
+        		String outMsg = handler.handle(msg, id);	//准备回复的信息
         		out.println(outMsg);
         		out.flush();
         		if(!handler.hasNext(msg)) {
