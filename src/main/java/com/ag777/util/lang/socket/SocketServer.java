@@ -1,6 +1,7 @@
 package com.ag777.util.lang.socket;
 
 import java.io.IOException;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Collection;
@@ -18,7 +19,7 @@ import com.ag777.util.lang.socket.model.Session;
  * 
  * 
  * @author ag777
- * @version create on 2018年05月30日,last modify at 2018年11月22日
+ * @version create on 2018年05月30日,last modify at 2020年08月25日
  */
 public class SocketServer implements Disposable {
 
@@ -113,8 +114,16 @@ public class SocketServer implements Disposable {
 		IOUtils.close(server);
 		handler.onServerDispose(port);
 	}
-	
-	public static SocketServer build(int port, Handler handler) throws IOException {
+
+	/**
+	 *
+	 * @param port 端口号
+	 * @param handler 处理器
+	 * @return
+	 * @throws BindException Address already in use: JVM_Bind
+	 * @throws IOException IOException
+	 */
+	public static SocketServer build(int port, Handler handler) throws BindException, IOException {
 		ServerSocket server=new ServerSocket(port);
 		return new SocketServer(server, handler);
 	}

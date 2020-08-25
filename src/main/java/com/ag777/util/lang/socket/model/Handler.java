@@ -10,7 +10,7 @@ import java.net.Socket;
  * 
  * 
  * @author ag777
- * @version create on 2018年05月30日,last modify at 2018年05月30日
+ * @version create on 2018年05月30日,last modify at 2020年08月25日
  */
 public abstract class Handler {
 
@@ -109,7 +109,7 @@ public abstract class Handler {
 	 * 
 	 * @param msg 客户端发上来的消息
 	 * @param sessionId 当前对话的session编号
-	 * @return
+	 * @return 返回信息
 	 */
 	public abstract String handle(String msg, String sessionId) throws InterruptedException ;
 }

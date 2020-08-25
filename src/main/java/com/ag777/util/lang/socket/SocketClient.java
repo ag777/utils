@@ -17,7 +17,7 @@ import com.ag777.util.lang.interf.Disposable;
  * 
  * 
  * @author ag777
- * @version create on 2018年05月30日,last modify at 2018年08月08日
+ * @version create on 2018年05月30日,last modify at 2020年08月25日
  */
 public class SocketClient implements Disposable {
 

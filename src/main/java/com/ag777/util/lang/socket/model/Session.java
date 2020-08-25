@@ -13,7 +13,7 @@ import com.ag777.util.lang.IOUtils;
  * 
  * 
  * @author ag777
- * @version create on 2018年05月30日,last modify at 2018年05月30日
+ * @version create on 2018年05月30日,last modify at 2020年08月25日
  */
 public class Session {
 
