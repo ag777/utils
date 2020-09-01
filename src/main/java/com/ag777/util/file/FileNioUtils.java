@@ -9,15 +9,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileVisitOption;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import com.ag777.util.file.model.DeleteDirectory;
@@ -36,7 +32,7 @@ import com.ag777.util.lang.model.Charsets;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年04月18日,last modify at 2018年05月17日
+ * @version create on 2018年04月18日,last modify at 2020年09月01日
  */
 public class FileNioUtils {
 
@@ -483,6 +479,25 @@ public class FileNioUtils {
     	makeDir(path);	//创建父路径
     	return Files.newOutputStream(path, StandardOpenOption.CREATE);
     }
+
+	/**
+	 * 遍历文件数
+	 * @param path path
+	 * @param consumer 访问每个文件(夹)时的操作
+	 * @throws IOException io异常
+	 */
+    public static void walkFileTree(Path path, BiConsumer<Path, BasicFileAttributes> consumer) throws IOException {
+    	if(consumer == null) {
+    		return;
+		}
+    	Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				consumer.accept(path, attrs);
+				return FileVisitResult.CONTINUE; // 没找到继续找
+			}
+		});
+	}
 
     //-读
     /**
