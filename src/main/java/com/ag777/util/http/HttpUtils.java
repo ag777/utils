@@ -8,6 +8,8 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.net.ConnectException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
@@ -63,7 +65,7 @@ import okhttp3.Response;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2020年05月21日
+ * @version last modify at 2020年09月16日
  */
 public class HttpUtils {
 	
@@ -207,7 +209,23 @@ public class HttpUtils {
 		}
 		return builder.cookieJar(new MyCookieJar());
 	}
-	
+
+	/**
+	 * 构造带代理的okhttpBuilder
+	 * @param builder
+	 * @param ip
+	 * @param port
+	 * @return
+	 */
+	public static OkHttpClient.Builder builderWithProxy(OkHttpClient.Builder builder, String ip, int port) {
+		if(builder == null) {
+			builder = client().newBuilder();
+		}
+		return builder.proxy(
+				new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip, port))
+		);
+	}
+
 	/**
 	 * 构建带进度监听的okhttpBuilder
 	 * @param builder
