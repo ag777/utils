@@ -143,15 +143,16 @@ public class StringUtils {
 		if(src == null || limit<=0) {
 			return "";
 		}
+		if(src.length()<=limit) {
+			return src;
+		}
 		ellipsis = StringUtils.emptyIfNull(ellipsis);
 		int end = limit-ellipsis.length();
-		if(end>src.length()) {
-			return src+ellipsis;
-		} else if(end > 0) {
+		if(end > 0) {	//加上省略号超长
 			return src.substring(0, end)+ellipsis;
-		} else if(end == 0) {
+		} else if(end == 0) {	//限制数刚好等于省略号长度
 			return ellipsis;
-		} else {
+		} else {	//限制数小于省略号长度
 			return ellipsis.substring(0, limit);
 		}
 	}
