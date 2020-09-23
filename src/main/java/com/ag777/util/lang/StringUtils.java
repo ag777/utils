@@ -17,7 +17,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 字符串处理工具类
  * 
  * @author ag777
- * @version last modify at 2020年08月20日
+ * @version last modify at 2020年09月23日
  */
 public class StringUtils {
 
@@ -127,7 +127,35 @@ public class StringUtils {
 		}
 		return sb.toString();
 	}
-	
+
+	/**
+	 * {@code
+	 *  summary("aaa",5,"..."); => "aa..."
+	 *  summary("aaa",2,"..."); => ".."
+	 *  summary("aaa",7,"..."); => "aaa..."
+	 * }
+	 * @param src 原文字
+	 * @param limit 限制长度
+	 * @param ellipsis 省略号
+	 * @return 文字摘要
+	 */
+	public static String summary(String src, int limit, String ellipsis) {
+		if(src == null || limit<=0) {
+			return "";
+		}
+		ellipsis = StringUtils.emptyIfNull(ellipsis);
+		int end = limit-ellipsis.length();
+		if(end>src.length()) {
+			return src+ellipsis;
+		} else if(end > 0) {
+			return src.substring(0, end)+ellipsis;
+		} else if(end == 0) {
+			return ellipsis;
+		} else {
+			return ellipsis.substring(0, limit);
+		}
+	}
+
 	/**
 	 * 利用StringBuilder替换起止位置的字符串
 	 * 
