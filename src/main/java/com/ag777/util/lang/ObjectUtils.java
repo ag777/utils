@@ -316,5 +316,40 @@ public class ObjectUtils {
 		}
 		return true;
 	}
+
+	/**
+	 * 简化switch-case
+	 * <p>内部没做参数判断，并且相比switch可能会牺牲一些效率，请理解后再使用
+	 * {@code
+	 * switchCase("a", null, "a", 1, "b", 2) => 1
+	 * switchCase("a", 9, "b", 2) => 9
+	 * switchCase(null, 9, "b", 2) => null
+	 * }
+	 * @param target 目标
+	 * @param defaultValue 默认返回
+	 * @param key1 键1
+	 * @param val1 值1
+	 * @param otherMappings 键值对，参数数量为2N个:键2,值2,键3,值3...
+	 * @param <T> 键的类型
+	 * @param <V> 值的类型
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T, V>V switchCase(T target, V defaultValue, T key1, V val1, Object... otherMappings) {
+		if(target == null) {
+			return null;
+		}
+		if(target == key1) {
+			return val1;
+		}
+		for (int i = 0; i < otherMappings.length;) {
+			T key = (T) otherMappings[i];
+			if(target == key) {
+				return (V) otherMappings[i+1];
+			}
+			i+=2;
+		}
+		return defaultValue;
+	}
 	
 }
