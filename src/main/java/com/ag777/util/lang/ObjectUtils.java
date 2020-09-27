@@ -339,12 +339,12 @@ public class ObjectUtils {
 		if(target == null) {
 			return null;
 		}
-		if(target == key1) {
+		if(target.equals(key1)) {
 			return val1;
 		}
 		for (int i = 0; i < otherMappings.length;) {
 			T key = (T) otherMappings[i];
-			if(target == key) {
+			if(target.equals(key)) {
 				return (V) otherMappings[i+1];
 			}
 			i+=2;
