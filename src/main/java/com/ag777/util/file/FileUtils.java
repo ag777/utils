@@ -872,7 +872,7 @@ public class FileUtils {
 	 * @param fileName
 	 * @return 替换后的文件名
 	 */
-	public static String replaceNotSupportedChar(String fileName) {
+	public static String replaceUnSupportedChar(String fileName) {
 		if(StringUtils.isBlank(fileName)) {
 			return fileName;
 		}
