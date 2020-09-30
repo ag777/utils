@@ -868,6 +868,18 @@ public class FileUtils {
     	return delete(new File(path));
     }
 
+	/**	过滤掉字符串中的非法字符，以符合文件名规范，非法字符以下划线替换
+	 * @param fileName
+	 * @return 替换后的文件名
+	 */
+	public static String replaceNotSupportedChar(String fileName) {
+		if(StringUtils.isBlank(fileName)) {
+			return fileName;
+		}
+		Pattern FilePattern = Pattern.compile("[\\\\/:*?\"<>|]");
+		return FilePattern.matcher(fileName).replaceAll("_");
+	}
+
 	/**
 	 * 替换文件名
 	 * <p><pre>{@code
