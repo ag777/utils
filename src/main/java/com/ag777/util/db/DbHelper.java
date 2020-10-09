@@ -47,7 +47,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
 public class DbHelper implements Disposable, Closeable {
 	
 	//控制控制台输出开关
-	private static boolean MODE_DEBUG = true;
+	private static boolean MODE_DEBUG = false;
 	//执行完sql后关闭数据库连接,一旦开启则该工具类不可重复使用(连接不存在了)
 	private static boolean MODE_CLOSE_AFTER_EXECUTE = false;
 
@@ -72,14 +72,14 @@ public class DbHelper implements Disposable, Closeable {
 	 * <p>
 	 * 	默认连接mysql
 	 * <p>
-	 * @param ip
-	 * @param port
-	 * @param dbName
-	 * @param user
-	 * @param password
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @param ip ip
+	 * @param port 端口
+	 * @param dbName 数据库名称
+	 * @param user 用户名
+	 * @param password 密码
+	 * @return DbHelper
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static DbHelper connectDB(String ip, int port, String dbName, String user, String password) throws ClassNotFoundException, SQLException {
 		return connectMysql(ip, port, dbName, user, password);
@@ -135,9 +135,9 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param password
 	 * @param driver
 	 * @param props
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @return Connection
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection getConnection(String url, String user, String password, DbDriver driver, Properties props) throws ClassNotFoundException, SQLException {
 		if(props == null) {
@@ -174,7 +174,7 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param sqlType 字段的数据类型
 	 * @param size 字段长度
 	 * @param typeName 请使用ColumnPojo里的typeName
-	 * @return
+	 * @return java类型
 	 */
 	public static Class<?> toPojoType(int sqlType, int size, String typeName) {
 		Class<?> clazz = null;
@@ -253,9 +253,8 @@ public class DbHelper implements Disposable, Closeable {
 	}
 	
 	/**
-	 * 获取字段类型最大长度(不准确)
 	 * @param sqlType
-	 * @return
+	 * @return 字段类型最大长度(不准确)
 	 */
 	@Deprecated
 	public static Integer getMaxSize(int sqlType) {
@@ -270,9 +269,8 @@ public class DbHelper implements Disposable, Closeable {
 	}
 	
 	/**
-	 * 判断数据库类型是否为字符串类型
 	 * @param sqlType
-	 * @return
+	 * @return 数据库类型是否为字符串类型
 	 */
 	public static boolean isSqlTypeVarchar(int sqlType) {
 		switch(sqlType) {
@@ -289,9 +287,8 @@ public class DbHelper implements Disposable, Closeable {
 	}
 	
 	/**
-	 * 判断数据库类型是否为日期类型
 	 * @param sqlType
-	 * @return
+	 * @return 数据库类型是否为日期类型
 	 */
 	public static boolean isSqlTypeDate(int sqlType) {
 		switch(sqlType) {
@@ -307,7 +304,7 @@ public class DbHelper implements Disposable, Closeable {
 	/**
 	 * java类型转数据库类型(不全，只列出常用的，不在范围内返回varchar)
 	 * @param clazz
-	 * @return
+	 * @return 数据库类型
 	 */
 	public static Integer toSqlType(Class<?> clazz) {
 		if(ReflectionUtils.isNumberType(clazz)) {
@@ -340,7 +337,7 @@ public class DbHelper implements Disposable, Closeable {
 	//--非静态方法
 	/**
 	 * 获取连接
-	 * @return
+	 * @return Connection
 	 */
 	public Connection getConn() {
 		return conn;
@@ -349,7 +346,7 @@ public class DbHelper implements Disposable, Closeable {
 	/**
 	 * 测试连接
 	 * @param timeoutSeconds
-	 * @return
+	 * @return 是否成功
 	 */
 	public boolean test(int timeoutSeconds) {
 		Statement stmt = null;
@@ -372,8 +369,8 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 执行数据库事务
-	 * @param task
-	 * @return
+	 * @param task 事务
+	 * @return 是否成功,由DBTransactionInterf返回
 	 * @throws Exception
 	 */
 	public boolean doTransaction(DBTransactionInterf task) throws Exception {
@@ -393,24 +390,21 @@ public class DbHelper implements Disposable, Closeable {
 	}
 	
 	/**
-	 * 是否为mysql数据库连接
-	 * @return
+	 * @return 是否为mysql数据库连接
 	 */
 	public boolean isMysql() {
 		return DbPojo.TYPE_MYSQL.equals(dbType);
 	}
 	
 	/**
-	 * 判断是否为sqlite数据库连接
-	 * @return
+	 * @return 是否为sqlite数据库连接
 	 */
 	public boolean isSqlite() {
 		return DbPojo.TYPE_SQLITE.equals(dbType);
 	}
 	
 	/**
-	 * 判断是否为oracle数据库连接
-	 * @return
+	 * @return 是否为oracle数据库连接
 	 */
 	public boolean isOracle() {
 		return DbPojo.TYPE_ORACLE.equals(dbType);
@@ -423,8 +417,8 @@ public class DbHelper implements Disposable, Closeable {
 	 *  对其他数据库执行该方法会抛出Runtime异常
 	 * </p>
 	 * 
-	 * @param src
-	 * @param to
+	 * @param src 原表名
+	 * @param to 目标表名
 	 */
 	public void reNameTable(String src, String to) {
 		if(isMysql()) {
@@ -438,9 +432,9 @@ public class DbHelper implements Disposable, Closeable {
 	}
 	
 	/**
-	 * 根据sql获取结果集
-	 * @param sql
-	 * @return
+	 * @see #getResultSetWithException(String)
+	 * @param sql sql
+	 * @return ResultSet
 	 */
 	public ResultSet getResultSet(String sql) {
     	try {
@@ -453,93 +447,174 @@ public class DbHelper implements Disposable, Closeable {
 		}
     	return null;
 	}
-	
+
 	/**
-	 * 根据sql和参数获取结果集，如果参数数组为空或者为null，则调通过Statement获取结果集，反之通过PreparedStatement获取
-	 * @param sql
+	 * 根据sql获取结果集
+	 * @param sql sql
+	 * @return ResultSet
+	 * @throws SQLException SQLException
+	 */
+	public ResultSet getResultSetWithException(String sql) throws SQLException {
+		try {
+			Statement stmt = conn.createStatement();
+			return stmt.executeQuery(sql);
+		} finally {
+			closeAfterExecute();
+		}
+	}
+
+	/**
+	 * @see #getResultSetWithException(String, Object[])
+	 * @param sql sql
 	 * @param params 参数列表，按顺序写入sql
-	 * @return
+	 * @return ResultSet
 	 */
 	public ResultSet getResultSet(String sql, Object[] params) {
+		try {
+			return getResultSetWithException(sql, params);
+		} catch (SQLException e) {
+			err(e);
+		} finally {
+			closeAfterExecute();
+		}
+		return null;
+	}
+
+
+	/**
+	 * 根据sql和参数获取结果集，如果参数数组为空或者为null，则调通过Statement获取结果集，反之通过PreparedStatement获取
+	 * @param sql sql
+	 * @param params 参数列表，按顺序写入sql
+	 * @return ResultSet
+	 * @throws SQLException sql执行异常
+	 */
+	public ResultSet getResultSetWithException(String sql, Object[] params) throws SQLException {
 		if(isNullOrEmpty(params)) {
 			return getResultSet(sql);
 		}
 		try {
 			PreparedStatement ps = getPreparedStatement(sql, params);
 			return ps.executeQuery();
-		} catch (SQLException e) {
-			e.printStackTrace();
 		} finally {
 			closeAfterExecute();
 		}
-		return null;
 	}
 	
 	/**
-	 * 查询多行, 通过Statement执行
-	 * @param sql
-	 * @return
+	 * @see #queryList(String)
+	 * @param sql sql
+	 * @return list
 	 */
 	public List<Map<String, Object>> queryList(String sql) {
     	try {
-	    	ResultSet rs = getResultSet(sql);
-	    	return convert2List(rs);
+	    	return queryListWithException(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
     	return null;
     }
+
+	/**
+	 * 查询多行记录, 通过Statement执行
+	 * @param sql sql
+	 * @return list
+	 * @throws SQLException SQLException
+	 */
+	public List<Map<String, Object>> queryListWithException(String sql) throws SQLException {
+		ResultSet rs = getResultSet(sql);
+		return convert2List(rs);
+	}
 	
 	/**
-	 * 查询多行，带参数，通过PreparedStatement执行
-	 * @param sql
-	 * @param params
-	 * @return
+	 * @see #queryList(String, Object[])
+	 * @param sql sql
+	 * @param params 参数
+	 * @return list
 	 */
 	public List<Map<String, Object>> queryList(String sql, Object[] params) {
 		try {
-			ResultSet rs =getResultSet(sql, params);
-			return convert2List(rs);
+			return queryListWithException(sql, params);
 		} catch (SQLException e) {
-			e.printStackTrace();
+			err(e);
 		} 
 		return null;
+	}
+
+	/**
+	 * 查询多行记录，带参数，通过PreparedStatement执行
+	 * @param sql sql
+	 * @param params 参数
+	 * @return list
+	 * @throws SQLException SQLException
+	 */
+	public List<Map<String, Object>> queryListWithException(String sql, Object[] params) throws SQLException {
+		ResultSet rs = getResultSetWithException(sql, params);
+		return convert2List(rs);
 	}
 	
 	/**
 	 * 
-	 * @param sql
-	 * @param params
-	 * @return
+	 * @param sql sql
+	 * @param params 参数
+	 * @return 数据列表
 	 */
 	@SuppressWarnings("unchecked")
 	public <T>List<T> queryObjectList(String sql, Object[] params, Class<T> clazz) {
-		
 		try {
-			List<T> list = null;
-			ResultSet rs =getResultSet(sql, params);
-			if(isBasicClass(clazz)){
-				list = new ArrayList<>();
-				while(rs.next()) {
-					list.add((T) rs.getObject(1));
-				}
-			} else {
-				list = convert2List(rs, clazz);
-			}
-			return list;
+			return queryObjectListWithException(sql, params, clazz);
 		} catch(Exception ex) {
 			err(ex);
 		} 
 		return null;
 	}
+
+	/**
+	 * 获取指定类型的数据列表
+	 * @param sql sql
+	 * @param params 参数
+	 * @param clazz 类型
+	 * @param <T> 类型T
+	 * @return list
+	 * @throws SQLException SQLException
+	 */
+	@SuppressWarnings("unchecked")
+	public <T>List<T> queryObjectListWithException(String sql, Object[] params, Class<T> clazz) throws SQLException {
+
+		List<T> list = null;
+		ResultSet rs = getResultSetWithException(sql, params);
+		if(isBasicClass(clazz)){
+			list = new ArrayList<>();
+			while(rs.next()) {
+				list.add((T) rs.getObject(1));
+			}
+		} else {
+			list = convert2List(rs, clazz);
+		}
+		return list;
+
+	}
 	
 	/**
-	 * 查询单行, 通过Statement执行
-	 * @param sql
-	 * @return
+	 * @see #getMapWithException(String)
+	 * @param sql sql
+	 * @return map
 	 */
 	public Map<String, Object> getMap(String sql) {
-		List<Map<String, Object>> list = queryList(sql);
+		try {
+			return getMapWithException(sql);
+		} catch (SQLException e) {
+			err(e);
+		}
+		return null;
+	}
+
+	/**
+	 * 查询单行, 通过Statement执行
+	 * @param sql sql
+	 * @return map
+	 */
+	public Map<String, Object> getMapWithException(String sql) throws SQLException {
+		List<Map<String, Object>> list = queryListWithException(sql);
 		if(list == null || list.isEmpty()) {
 			return null;
 		}
@@ -547,16 +622,32 @@ public class DbHelper implements Disposable, Closeable {
 	}
 	
 	/**
-	 * 查询单行,带参数，通过PreparedStatement执行
-	 * @param sql
-	 * @param params
-	 * @return
+	 * @see #getMapWithException(String, Object[])
+	 * @param sql sql
+	 * @param params 参数
+	 * @return map
 	 */
 	public Map<String, Object> getMap(String sql, Object[] params) {
-		if(isNullOrEmpty(params)) {
-			return getMap(sql);
+		try {
+			return getMapWithException(sql, params);
+		} catch (SQLException e) {
+			err(e);
 		}
-		List<Map<String, Object>> list = queryList(sql, params);
+		return null;
+	}
+
+	/**
+	 * 查询单行,带参数，通过PreparedStatement执行
+	 * @param sql sql
+	 * @param params 参数
+	 * @return map
+	 * @throws SQLException SQLException
+	 */
+	public Map<String, Object> getMapWithException(String sql, Object[] params) throws SQLException {
+		if(isNullOrEmpty(params)) {
+			return getMapWithException(sql);
+		}
+		List<Map<String, Object>> list = queryListWithException(sql, params);
 		if(list == null || list.isEmpty()) {
 			return null;
 		}
@@ -565,121 +656,151 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 获取第一条记录的第一个值(待测)
-	 * @param sql
-	 * @param params
-	 * @param clazz
-	 * @return
+	 * @param sql sql
+	 * @param params 参数
+	 * @param clazz 类型
+	 * @return map
 	 */
 	@SuppressWarnings("unchecked")
 	public <T>T getObject(String sql, Object[] params, Class<T> clazz) {
 		try{
-			ResultSet rs =getResultSet(sql, params);
-			if(rs.next()) {
-				if(isBasicClass(clazz)) {
-					return (T) rs.getObject(1);
-				} else {
-					List<T> list = convert2List(rs, clazz);
-					if(list != null && !list.isEmpty()) {
-						return list.get(0);
-					}
-				}
-			}
+			return getObjectWitchException(sql, params, clazz);
 		} catch(Exception ex) {
 			err(ex);
 		} 
 		
 		return null;
 	}
+
 	/**
-	 * 获取int类型的结果
-	 * @param sql
-	 * @return
+	 * 获取第一条记录的第一个值(待测)
+	 * @param sql sql
+	 * @param params 参数
+	 * @param clazz 类型
+	 * @param <T> 类型T
+	 * @return 查询结果
+	 * @throws SQLException SQLException
+	 */
+	@SuppressWarnings("unchecked")
+	public <T>T getObjectWitchException(String sql, Object[] params, Class<T> clazz) throws SQLException {
+		ResultSet rs = getResultSetWithException(sql, params);
+		if(rs.next()) {
+			if(isBasicClass(clazz)) {
+				return (T) rs.getObject(1);
+			} else if(clazz == Object.class) {
+				return (T) rs.getObject(1);
+			} else {
+				List<T> list = convert2List(rs, clazz);
+				if(!list.isEmpty()) {
+					return list.get(0);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @see #getIntWitchException(String, Object[])
+	 * @param sql sql
+	 * @param params 参数
+	 * @return Integer
 	 */
 	public Integer getInt(String sql, Object[] params) {
 		try {
-			Map<String, Object> resultMap = getMap(sql, params);
-			if(resultMap != null) {
-				Iterator<String> itor = resultMap.keySet().iterator();
-				if(itor.hasNext()) {
-					Object value = resultMap.get(itor.next());
-					if(value != null) {
-						
-						if(value instanceof Integer) {
-							return (Integer) value;
-						} else {
-							return Integer.parseInt(value.toString());
-						}
-						
-					}
-				}
-			}
+			return getIntWitchException(sql, params);
 		} catch(Exception ex) {
 			err(ex);
 		} 
 		return null;
 	}
+
+	/**
+	 * 获取int类型的结果
+	 * @param sql sql
+	 * @param params 参数
+	 * @return Integer
+	 * @throws SQLException SQLException
+	 */
+	public Integer getIntWitchException(String sql, Object[] params) throws SQLException {
+		Object value = getObjectWitchException(sql, params, Object.class);
+		if(value != null) {
+			if(value instanceof Integer) {
+				return (Integer) value;
+			} else {
+				return Integer.parseInt(value.toString());
+			}
+		}
+		return null;
+	}
 	
 	/**
-	 * 获取double类型的返回
-	 * @param sql
-	 * @param params
-	 * @return
+	 * @see #getDoubleWitchException(String, Object[])
+	 * @param sql sql
+	 * @param params 参数
+	 * @return Double
 	 */
 	public Double getDouble(String sql, Object[] params) {
 		try {
-			Map<String, Object> resultMap = getMap(sql, params);
-			if(resultMap != null) {
-				Iterator<String> itor = resultMap.keySet().iterator();
-				if(itor.hasNext()) {
-					Object value = resultMap.get(itor.next());
-					if(value != null) {
-						
-						if(value instanceof Double) {
-							return (Double) value;
-						} else {
-							return Double.parseDouble(value.toString());
-						}
-						
-					}
-				}
-			}
+			return getDoubleWitchException(sql, params);
 		} catch(Exception ex) {
 			err(ex);
 		} 
 		return null;
 	}
-	
+
 	/**
-	 * 获取字符串类型的返回
-	 * @param sql
-	 * @param params
-	 * @return
+	 * 获取Double类型的结果
+	 * @param sql sql
+	 * @param params 参数
+	 * @return Double
+	 * @throws SQLException SQLException
+	 */
+	public Double getDoubleWitchException(String sql, Object[] params) throws SQLException {
+		Object value = getObjectWitchException(sql, params, Object.class);
+		if(value != null) {
+			if(value instanceof Double) {
+				return (Double) value;
+			} else {
+				return Double.parseDouble(value.toString());
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @see #getStrWitchException(String, Object[])
+	 * @param sql sql
+	 * @param params 参数
+	 * @return String
 	 */
 	public String getStr(String sql, Object[] params) {
 		try {
-			Map<String, Object> resultMap = getMap(sql, params);
-			if(resultMap != null) {
-				if(resultMap != null) {
-					Iterator<String> itor = resultMap.keySet().iterator();
-					if(itor.hasNext()) {
-						Object value = resultMap.get(itor.next());
-						if(value != null) {
-							return value.toString();
-						}
-					}
-					
-				}
-			}
+			return getStrWitchException(sql, params);
 		} catch(Exception ex) {
 			err(ex);
 		} 
+		return null;
+	}
+
+	/**
+	 * 获取String类型的结果
+	 * @param sql sql
+	 * @param params 参数
+	 * @return String
+	 * @throws SQLException SQLException
+	 */
+	public String getStrWitchException(String sql, Object[] params) throws SQLException {
+		Object value = getObjectWitchException(sql, params, Object.class);
+		if(value != null) {
+			return value.toString();
+		}
 		return null;
 	}
 	
 	/**
 	 * update语句
-	 * @param sql
-	 * @return
+	 * @param sql sql
+	 * @return int
 	 */
 	public int update(String sql) {
     	try {
@@ -689,9 +810,12 @@ public class DbHelper implements Disposable, Closeable {
 		}
     	return -1;
     }
-	
+
 	/**
 	 * update语句
+	 * @param sql sql
+	 * @return 影响记录数
+	 * @throws SQLException SQLException
 	 */
 	public int updateWithException(String sql) throws SQLException {
     	Statement stmt = null;
@@ -710,9 +834,9 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * update语句(带参数)
-	 * @param sql
-	 * @param params
-	 * @return
+	 * @param sql sql
+	 * @param params 参数
+	 * @return 影响记录数
 	 */
 	public int update(String sql, Object[] params) {
 		try {
@@ -725,10 +849,10 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * update语句(带参数)
-	 * @param sql
-	 * @param params
-	 * @return
-	 * @throws SQLException
+	 * @param sql sql
+	 * @param params 参数
+	 * @return 影响记录数
+	 * @throws SQLException SQLException
 	 */
 	public int updateWithException(String sql, Object[] params) throws SQLException {
 		if(isNullOrEmpty(params)) {
@@ -746,8 +870,8 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 清空表数据(注意这个是ddl操作，不能回滚)
-	 * @param tableName
-	 * @return
+	 * @param tableName 表名
+	 * @return 是否成功?
 	 */
 	public boolean truncate(String tableName) {
 		String sql = "TRUNCATE TABLE "+tableName;
@@ -756,9 +880,9 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 插入一条数据并获取对应的主键(自增长),如果失败，返回-1
-	 * @param sql
-	 * @param params
-	 * @return
+	 * @param sql sql
+	 * @param params 参数
+	 * @return 影响记录数
 	 */
 	public int insertAndGetKey(String sql, Object[] params) {
     	try {
@@ -768,7 +892,14 @@ public class DbHelper implements Disposable, Closeable {
 		}
     	return -1;
 	}
-	
+
+	/**
+	 * 插入并获取自增的主键
+	 * @param sql sql
+	 * @param params 参数
+	 * @return 主键
+	 * @throws SQLException SQLException
+	 */
 	public int insertAndGetKeyWithException(String sql, Object[] params) throws SQLException {
     	try {
 	    	PreparedStatement pstmt = getPreparedStatement(sql, params, Statement.RETURN_GENERATED_KEYS);
@@ -786,9 +917,9 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 批量update(sync方法)
-	 * @param sql
-	 * @param paramsList
-	 * @return
+	 * @param sql sql
+	 * @param paramsList 参数列表
+	 * @return 执行结果
 	 */
 	public int[] batchUpdate(String sql, List<Object[]> paramsList) {
 		try {
@@ -801,9 +932,9 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 批量update(sync方法)
-	 * @param sql
-	 * @param paramsList
-	 * @return
+	 * @param sql sql
+	 * @param paramsList 参数列表
+	 * @return 执行结果
 	 * @throws SQLException
 	 */
 	public synchronized int[] batchUpdateWithException(String sql, List<Object[]> paramsList) throws SQLException {
@@ -836,7 +967,7 @@ public class DbHelper implements Disposable, Closeable {
 	 * 通过sql和参数列表获取PreparedStatement(批量)
 	 * @param sql sql语句
 	 * @param paramsList 参数列表
-	 * @return
+	 * @return PreparedStatement
 	 * @throws SQLException sql异常
 	 */
 	public PreparedStatement getBatchPreparedStatement(String sql, List<Object[]> paramsList) throws SQLException {
@@ -855,7 +986,7 @@ public class DbHelper implements Disposable, Closeable {
 	 * 
 	 * @param sql sql语句
 	 * @param params 参数数组
-	 * @return
+	 * @return PreparedStatement
 	 * @throws SQLException sql异常
 	 */
 	public PreparedStatement getPreparedStatement(String sql, Object[] params) throws SQLException {
@@ -881,47 +1012,14 @@ public class DbHelper implements Disposable, Closeable {
 	}
 	
 	/**
-	 * 批量执行sql语句,这里记得只能执行dml语句(针对数据的语句),执行ddl语句(表结构操作)时会立即触发commit导致无法回滚
-	 * @param sqlList
-	 * @return
-	 */
-	public boolean batchExcute(List<String> sqlList) {
-		try {
-			conn.setAutoCommit(false);
-			Statement stmt = conn.createStatement();
-			for (String sql : sqlList) {
-				try {
-					stmt.executeUpdate(sql);
-				} catch(SQLException ex) {
-					throw ex;
-				}
-			}
-			conn.commit();
-			return true;
-		} catch(Exception ex) {
-			try {
-				conn.rollback();
-			} catch (SQLException e) {
-			}
-		} finally {
-			try {
-				conn.setAutoCommit(true);
-			} catch (SQLException e) {
-			}
-			closeAfterExecute();
-		}
-		return false;
-	}
-	
-	/**
 	 * 将resultset转化为List&lt;Map&lt;String, Object&gt;&gt;
 	 * <p>
 	 * 171021改获取字段名称的方法getColumnName(i)为<br>
 	 * 获取别名getColumnLabel(i) 以免sql里写的别名不生效
 	 * 
-	 * @param rs
-	 * @return
-	 * @throws SQLException
+	 * @param rs ResultSet
+	 * @return list
+	 * @throws SQLException SQLException
 	 */
 	public static List<Map<String, Object>> convert2List(ResultSet rs) throws SQLException {
 
@@ -948,10 +1046,10 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 将resultSet转化为对象列表(方法有待验证及优化)
-	 * @param rs
-	 * @param clazz
-	 * @return
-	 * @throws SQLException
+	 * @param rs ResultSet
+	 * @param clazz 类型
+	 * @return list
+	 * @throws SQLException SQLException
 	 */
 	public static <T>List<T> convert2List(ResultSet rs, Class<T> clazz) throws SQLException {
 		try {
@@ -1002,7 +1100,7 @@ public class DbHelper implements Disposable, Closeable {
 	 * 参考:http://blog.csdn.net/anxinliu2011/article/details/7560511
 	 * </p>
 	 * 
-	 * @return
+	 * @return DbPojo
 	 */
 	public DbPojo dbInfo() {
 		try {
@@ -1022,7 +1120,7 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 获取所有表的名称列表
-	 * @return
+	 * @return list
 	 */
 	public List<String> tableNameList() {
 		try {
@@ -1065,8 +1163,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * 	参考:http://blog.sina.com.cn/s/blog_707a9f0601014y1y.html
 	 * </p>
 	 * 
-	 * @param tableName
-	 * @return
+	 * @param tableName 表名
+	 * @return list
 	 */
 	public List<ColumnPojo> columnList(String tableName) {
 		List<ColumnPojo> columns = new ArrayList<>();
@@ -1119,8 +1217,8 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 通过表名获取所有主键
-	 * @param tableName
-	 * @return
+	 * @param tableName 表名
+	 * @return list
 	 */
 	public List<String> primaryKeyList(String tableName) {
 		List<String> list = new ArrayList<>();
@@ -1136,12 +1234,12 @@ public class DbHelper implements Disposable, Closeable {
 	}
 	
 	/**
-	 * 获取类型列表
+	 * 获取字段类型列表
 	 * <p>
 	 * 	包含类型/自增/主键等信息
 	 * </p>
-	 * @param tableName
-	 * @return
+	 * @param tableName 表名
+	 * @return map
 	 */
 	public Map<String, TypePojo> typeMap(String tableName) {
 		switch(dbType) {
@@ -1154,7 +1252,12 @@ public class DbHelper implements Disposable, Closeable {
 				return new HashMap<>();
 		}
 	}
-	
+
+	/**
+	 *
+	 * @param tableName 表名
+	 * @return 字段类型列表(mysql)
+	 */
 	private Map<String, TypePojo> typeMap_Mysql(String tableName) {
 		Map<String, TypePojo> typeMap = new HashMap<>();
 		List<Map<String, Object>> typeList = queryList("SHOW COLUMNS FROM `"+tableName+"`");	//有些表名带关键字会报错
@@ -1168,7 +1271,12 @@ public class DbHelper implements Disposable, Closeable {
 		}
 		return typeMap;
 	}
-	
+
+	/**
+	 *
+	 * @param tableName 表名
+	 * @return 字段类型列表(mysql)
+	 */
 	private Map<String, TypePojo> typeMap_Sqlite(String tableName) {
 		Map<String, TypePojo> typeMap = new HashMap<>();
 		List<Map<String, Object>> typeList = queryList("pragma table_info( "+tableName+");");
@@ -1185,7 +1293,7 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 获取所有表结构
-	 * @return
+	 * @return 字段类型列表
 	 */
 	public Map<String, List<ColumnPojo>> tableColumnMap() {
 		return tableNameList().stream()
@@ -1199,8 +1307,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * 	参考:http://blog.csdn.net/uikoo9/article/details/39926687
 	 * </p>
 	 * 
-	 * @param tableName
-	 * @return
+	 * @param tableName 表名
+	 * @return list
 	 */
 	public List<DBIPojo> dbiList(String tableName) {
 		List<DBIPojo> dbiList = new  ArrayList<>();
@@ -1256,9 +1364,8 @@ public class DbHelper implements Disposable, Closeable {
 	}
 	
 	/**
-	 * 判断数据库里是否存在某张表
-	 * @param tableName
-	 * @return
+	 * @param tableName 表名
+	 * @return 数据库里是否存在某张表
 	 * @throws SQLException	可能是连接数据库异常,所以不能确定是否存在表
 	 */
 	public boolean isTableExisted(String tableName) throws SQLException {
@@ -1273,18 +1380,16 @@ public class DbHelper implements Disposable, Closeable {
 	/*----内部工具方法------*/
 	
 	/**
-	 * 是否为空指针或空字符串
-	 * @param params
-	 * @return
+	 * @param params 参数
+	 * @return 是否为空指针或空字符串
 	 */
 	private boolean isNullOrEmpty(Object[] params) {
 		return params == null || params.length == 0;
 	}
 	
 	/**
-	 * 判断一个类是否为基础类型
-	 * @param clazz
-	 * @return
+	 * @param clazz 类型
+	 * @return 一个类是否为基础类型
 	 */
 	private static boolean isBasicClass(Class<?> clazz) {
 		return ReflectionUtils.isBasicClass(clazz);
