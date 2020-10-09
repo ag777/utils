@@ -2,7 +2,15 @@ package com.ag777.util.db.model;
 
 public enum DbDriver {
 
+	//mysql-connector-java 6
 	MYSQL {
+		@Override
+		public String getName() {
+			return "com.mysql.cj.jdbc.Driver";
+		}
+	},
+	//mysql-connector-java 5
+	MYSQL_OLD {
 		@Override
 		public String getName() {
 			return "com.mysql.jdbc.Driver";
