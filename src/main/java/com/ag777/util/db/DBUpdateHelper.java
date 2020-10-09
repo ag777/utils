@@ -14,6 +14,7 @@ import com.ag777.util.lang.Console;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.exception.ExceptionHelper;
+import com.ag777.util.lang.exception.ExceptionUtils;
 import com.ag777.util.lang.interf.Disposable;
 
 /**
@@ -24,7 +25,7 @@ import com.ag777.util.lang.interf.Disposable;
  * </p>
  * 
  * @author ag777
- * @version create on 2017年09月06日,last modify at 2020年03月23日
+ * @version create on 2017年09月06日,last modify at 2020年10月09日
  */
 public abstract class DBUpdateHelper implements Disposable {
 
@@ -97,8 +98,7 @@ public abstract class DBUpdateHelper implements Disposable {
 	/**
 	 * 补充每个版本的sql
 	 * @param index	版本号角标
-	 * @param versionCodeOld
-	 * @param versionCodeNew
+	 * @param versionCodeNew 将要变成的版本号
 	 * @param dmlList	dml语句列表
 	 */
 	private void additionalSql(int index, String versionCodeNew, List<String> dmlList) {
@@ -110,12 +110,12 @@ public abstract class DBUpdateHelper implements Disposable {
 	
 	/**
 	 * 如果当前sql是执行方法获得，执行方法取得sql
-	 * @param src
-	 * @param conn
-	 * @param stmt
-	 * @param versionCodeNew
-	 * @return
-	 * @throws SQLException
+	 * @param src src
+	 * @param conn conn
+	 * @param stmt stmt
+	 * @param versionCodeNew 将要变成的版本号
+	 * @return sql
+	 * @throws SQLException SQLException
 	 */
 	private static String toSql(String src, Connection conn, Statement stmt, String versionCodeNew) throws SQLException {
 		if(src.startsWith("[method]")) {
@@ -124,11 +124,11 @@ public abstract class DBUpdateHelper implements Disposable {
 				throw new SQLException("数据库升级异常:方法路径配置不正确:["+src+"]请正确配置获取sql的方法(格式为类路径.方法名,例:com.test.A.dosth)");
 			}
 			String classPath = null;
-			String methodName = null;
+			String methodName;
 			try {
 				/*开始拆分字符串获取类路径及方法名*/
 				int lastIndexOfDot = src.lastIndexOf('.');
-				methodName = src.substring(lastIndexOfDot+1, src.length());
+				methodName = src.substring(lastIndexOfDot+1);
 				classPath = src.substring(0, lastIndexOfDot);
 				/*根据类路径和方法名执行方法*/
 				Class<?> clazz = Class.forName(classPath);
@@ -148,15 +148,15 @@ public abstract class DBUpdateHelper implements Disposable {
 			} catch (IllegalAccessException e) {
 				throw new SQLException("数据库升级异常:执行方法获取sql失败["+src+"]", e);
 			} catch (IllegalArgumentException e) {
-				throw new SQLException("数据库升级异常:执行方法获取sql失败["+src+"]", e);
+				throw new SQLException("数据库升级异常:参数异常["+src+"]", e);
 			} catch (InvocationTargetException e) {
 				//方法本身抛出的异常
 				e.printStackTrace();
 //				System.out.println(e.getCause().getClass().getName());	//真正的抛出的异常
-				throw new SQLException("数据库升级异常:执行方法["+src+"]抛出异常:"+ExceptionHelper.getErrMsg(e, "", ListUtils.of("java")), e);
+				throw new SQLException("数据库升级异常:执行方法["+src+"]抛出异常:"+ExceptionUtils.getErrMsg(e, "", ListUtils.of("java")), e);
 			} catch(Exception ex) {
 				ex.printStackTrace();
-				throw new SQLException("数据库升级异常:发生未知异常:"+ExceptionHelper.getErrMsg(ex, "", ListUtils.of("java")), ex);
+				throw new SQLException("数据库升级异常:发生未知异常:"+ ExceptionUtils.getErrMsg(ex, "", ListUtils.of("java")), ex);
 			}
 		}
 		return src;
@@ -164,10 +164,10 @@ public abstract class DBUpdateHelper implements Disposable {
 	
 	/**
 	 * 执行ddl语句
-	 * @param ddlList
-	 * @param conn
-	 * @param versionCodeNew
-	 * @throws SQLException
+	 * @param ddlList ddlList
+	 * @param conn conn
+	 * @param versionCodeNew versionCodeNew
+	 * @throws SQLException SQLException
 	 */
 	private void executeDdlList(List<DdlListBean> ddlList, Connection conn, String versionCodeNew) throws SQLException {
 		conn.setAutoCommit(true);
@@ -194,10 +194,10 @@ public abstract class DBUpdateHelper implements Disposable {
 	
 	/**
 	 * 执行dml语句(事务)
-	 * @param dmlList
-	 * @param conn
-	 * @param versionCodeNew
-	 * @throws SQLException
+	 * @param dmlList dmlList
+	 * @param conn conn
+	 * @param versionCodeNew versionCodeNew
+	 * @throws SQLException SQLException
 	 */
 	private void executeDmlList(List<String> dmlList, Connection conn, String versionCodeNew) throws SQLException {
 		try {
@@ -225,10 +225,9 @@ public abstract class DBUpdateHelper implements Disposable {
 	}
 	
 	/**
-	 * 判断旧版本号是否小于新版本号
-	 * @param versionCodeOld
-	 * @param versionCodeNew
-	 * @return
+	 * @param versionCodeOld versionCodeOld
+	 * @param versionCodeNew versionCodeNew
+	 * @return 旧版本号是否小于新版本号
 	 */
 	private static boolean isBefore(String versionCodeOld, String versionCodeNew) {
 		return StringUtils.isVersionBefore(versionCodeOld, versionCodeNew);
@@ -236,9 +235,9 @@ public abstract class DBUpdateHelper implements Disposable {
 	
 	/**
 	 * 统一错误信息的格式
-	 * @param sql
-	 * @param ex
-	 * @return
+	 * @param sql sql
+	 * @param ex 异常
+	 * @return 异常信息
 	 */
 	private static String getErrMsg(String sql, SQLException ex) {
 		return new StringBuilder()
@@ -251,7 +250,7 @@ public abstract class DBUpdateHelper implements Disposable {
 	
 	/**
 	 * 统一打印出口
-	 * @param msg
+	 * @param msg 信息
 	 */
 	private void log(String msg) {
 		if(mode_debug) {

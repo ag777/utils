@@ -42,7 +42,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2019年10月21日
+ * @version create on 2017年07月28日,last modify at 2020年10月09日
  */
 public class DbHelper implements Disposable, Closeable {
 	
