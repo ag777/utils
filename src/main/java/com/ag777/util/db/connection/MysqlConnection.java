@@ -17,50 +17,77 @@ import com.ag777.util.db.model.DbDriver;
  * 
  * 
  * @author ag777
- * @version create on 2018年04月24日,last modify at 2019年08月20日
+ * @version create on 2018年04月24日,last modify at 2020年10月09日
  */
 public class MysqlConnection extends BaseDbConnectionUtils {
 
+	private static DbDriver DRIVER_DEFAULT = DbDriver.MYSQL_OLD;
+
 	private MysqlConnection() {}
+
+	public static void driver(DbDriver driver) {
+		MysqlConnection.DRIVER_DEFAULT = driver;
+	}
+
+	public static void setToNewDriver() {
+		driver(DbDriver.MYSQL);
+	}
 	
 	/**
 	 * 
-	 * @param ip
-	 * @param port
-	 * @param user
-	 * @param password
-	 * @param dbName
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @param ip ip
+	 * @param port port
+	 * @param user user
+	 * @param password password
+	 * @param dbName dbName
+	 * @return Connection
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connect(String ip, int port, String user, String password, String dbName) throws ClassNotFoundException, SQLException {
 		return connect(ip, port, user, password, dbName, null);
 	}
 	
 	/**
-	 * 连接mysql数据库
-	 * <p>
-	 * ipv4 Driver URL: 
-	 *		jdbc:mysql://127.0.0.1:3306/database
-	 *	ipv6 Driver URL:
-	 *		jdbc:mysql://address=(protocol=tcp)(host=2001:470:23:13::6)(port=3306)/database 
-	 *
-	 *  Deiver package version 5.1.31 以上
-	 * 
-	 * <p>这方法里ipV4和V6都采用ipV6的url
-	 * 
-	 * @param ip
-	 * @param port
-	 * @param user
-	 * @param password
-	 * @param dbName
-	 * @param propMap
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @see #connect(DbDriver, String, int, String, String, String, Map)
+	 * @param ip ip
+	 * @param port port
+	 * @param user user
+	 * @param password password
+	 * @param dbName dbName
+	 * @param propMap propMap
+	 * @return Connection
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connect(String ip, int port, String user, String password, String dbName, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
+		return connect(DRIVER_DEFAULT, ip, port, user, password, dbName, propMap);
+	}
+
+	/**
+	 * 连接mysql数据库
+	 * <p>
+	 * ipv4 Driver URL:
+	 *		jdbc:mysql://127.0.0.1:3306/database
+	 *	ipv6 Driver URL:
+	 *		jdbc:mysql://address=(protocol=tcp)(host=2001:470:23:13::6)(port=3306)/database
+	 *
+	 *  Deiver package version 5.1.31 以上
+	 *
+	 * <p>这方法里ipV4和V6都采用ipV6的url
+	 *
+	 * @param driver 驱动
+	 * @param ip ip
+	 * @param port port
+	 * @param user user
+	 * @param password password
+	 * @param dbName dbName
+	 * @param propMap propMap
+	 * @return Connection
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
+	 */
+	public static Connection connect(DbDriver driver, String ip, int port, String user, String password, String dbName, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
 		/*这种写法同时支持ipV4和V6*/
 		StringBuilder url = new StringBuilder("jdbc:mysql://address=")
 				.append("(protocol=tcp)")
@@ -72,23 +99,38 @@ public class MysqlConnection extends BaseDbConnectionUtils {
 		if(dbName != null) {
 			url.append(dbName);
 		}
-		
-		return connect(url.toString(), user, password, propMap);
+
+		return connect(driver, url.toString(), user, password, propMap);
 	}
-	
+
 	/**
 	 * 
-	 * @param url
-	 * @param user
-	 * @param password
-	 * @param propMap
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @param url url
+	 * @param user user
+	 * @param password password
+	 * @param propMap propMap
+	 * @return Connection
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connect(String url, String user, String password, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
+		return connect(DRIVER_DEFAULT, url, user, password, propMap);
+	}
+
+	/**
+	 *
+	 * @param driver 驱动
+	 * @param url url
+	 * @param user user
+	 * @param password password
+	 * @param propMap propMap
+	 * @return Connection
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
+	 */
+	public static Connection connect(DbDriver driver, String url, String user, String password, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
 		Properties props = getProperties(propMap);
-		return DbHelper.getConnection(url, user, password, DbDriver.MYSQL, props);
+		return DbHelper.getConnection(url, user, password, driver, props);
 	}
 
 	@Override
@@ -99,8 +141,8 @@ public class MysqlConnection extends BaseDbConnectionUtils {
 	
 	/**
 	 * 将java类型转为数据库字段类型，返回对应的字符串
-	 * @param clazz
-	 * @return
+	 * @param clazz clazz
+	 * @return String
 	 */
 	public static String toSqlTypeStr(Class<?> clazz) {
 		Integer sqlType = DbHelper.toSqlType(clazz);
@@ -112,8 +154,8 @@ public class MysqlConnection extends BaseDbConnectionUtils {
 	
 	/**
 	 * 数据库类型转名称
-	 * @param sqlType
-	 * @return
+	 * @param sqlType sqlType
+	 * @return String
 	 */
 	private static String toString(int sqlType) {
 		return toString(sqlType, 0);
@@ -121,9 +163,9 @@ public class MysqlConnection extends BaseDbConnectionUtils {
 	
 	/**
 	 * int型的type对应mysql数据库的类型名称(不全，只列出常用的，不在范围内返回null)
-	 * @param sqlType
-	 * @param size
-	 * @return
+	 * @param sqlType sqlType
+	 * @param size size
+	 * @return String
 	 */
 	public static String toString(int sqlType, int size) {
 		switch(sqlType) {
