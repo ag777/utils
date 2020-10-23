@@ -85,7 +85,7 @@ public class ExecutorHelper implements Disposable {
 	 * <p>
 	 * 	调用此方法后线程池不再接受新的任务,之后每100毫秒检查一次子线程是否都完成（阻塞当前线程）,如果任务均完成则可以继续执行后续代码
 	 * </p>
-	 * @throws InterruptedException
+	 * @throws InterruptedException InterruptedException
 	 */
 	public void waitFor() throws InterruptedException {
 		waitFor(100, TimeUnit.MILLISECONDS);
@@ -96,9 +96,9 @@ public class ExecutorHelper implements Disposable {
 	 * <p>
 	 * 	调用此方法后线程池不再接受新的任务,之后每根据参数指定的时间间隔检查一次子线程是否都完成（阻塞当前线程）,如果任务均完成则可以继续执行后续代码
 	 * </p>
-	 * @param timeout
-	 * @param unit
-	 * @throws InterruptedException
+	 * @param timeout timeout
+	 * @param unit unit
+	 * @throws InterruptedException InterruptedException
 	 */
 	public void waitFor(long timeout, TimeUnit unit) throws InterruptedException {
 		pool.shutdown();
@@ -167,10 +167,10 @@ public class ExecutorHelper implements Disposable {
 	 * 这个方法有两个参数，一个是timeout即超时时间，另一个是unit即时间单位。
 	 * 这个方法会使线程等待timeout时长，当超过timeout时间后，会监测ExecutorService是否已经关闭，
 	 * 若关闭则返回true，否则返回false。一般情况下会和shutdown方法组合使用。
-	 * @param timeout
-	 * @param unit
+	 * @param timeout timeout
+	 * @param unit unit
 	 * @return 
-	 * @throws InterruptedException
+	 * @throws InterruptedException InterruptedException
 	 */
 	public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
 		if(pool == null) {

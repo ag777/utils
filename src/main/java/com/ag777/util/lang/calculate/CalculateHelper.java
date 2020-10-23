@@ -86,7 +86,7 @@ public class CalculateHelper {
 	 * <p>
 	 * 	将参数转换为BigDecimal类型再进行计算转化失败抛出runtime异常
 	 * </p>
-	 * @param augend
+	 * @param augend augend
 	 * @return
 	 */
 	public CalculateHelper add(Object augend) {
@@ -101,7 +101,7 @@ public class CalculateHelper {
 	 * 	将参数转换为BigDecimal类型再进行计算转化失败抛出runtime异常
 	 * </p>
 	 * 
-	 * @param subtrahend
+	 * @param subtrahend subtrahend
 	 * @return
 	 */
 	public CalculateHelper subtract(Object subtrahend) {
@@ -115,7 +115,7 @@ public class CalculateHelper {
 	 * <p>
 	 * 	将参数转换为BigDecimal类型再进行计算转化失败抛出runtime异常<br>
 	 * 
-	 * @param multiplicand
+	 * @param multiplicand multiplicand
 	 * @return
 	 */
 	public CalculateHelper multiply(Object multiplicand) {
@@ -131,7 +131,7 @@ public class CalculateHelper {
 	 * 结果保留10位，四舍五入<br>
 	 * 除数为0不做任何处理
 	 * 
-	 * @param divisor
+	 * @param divisor divisor
 	 * @return
 	 */
 	public CalculateHelper divide(Object divisor) {
@@ -149,9 +149,9 @@ public class CalculateHelper {
 	 * 除数为0抛出异常
 	 * </p>
 	 * 
-	 * @param divisor
+	 * @param divisor divisor
 	 * @return
-	 * @throws DivisorIsZeroException 
+	 * @throws DivisorIsZeroException DivisorIsZeroException
 	 */
 	public CalculateHelper divideWithException(Object divisor) throws DivisorIsZeroException {
 		if(divisor.equals(0)) {
@@ -179,7 +179,7 @@ public class CalculateHelper {
 	
 	/**
 	 * 将任意类型转换为BigCecimal,转化失败抛出runtime异常
-	 * @param obj
+	 * @param obj obj
 	 * @return
 	 */
 	public static BigDecimal valueOfWithException(Object obj) {
@@ -194,7 +194,7 @@ public class CalculateHelper {
 	
 	/**
 	 * 将任意类型转换为BigCecimal
-	 * @param obj
+	 * @param obj obj
 	 * @return
 	 */
 	public static Optional<BigDecimal> valueOf(Object obj) {

@@ -78,7 +78,7 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 判断是否存在键
-	 * @param key
+	 * @param key key
 	 * @return
 	 */
 	public boolean containKey(String key) {
@@ -87,7 +87,7 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 获取key对应值
-	 * @param key
+	 * @param key key
 	 * @return
 	 */
 	public Optional<String> getValue(String key) {
@@ -109,7 +109,7 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 获取key对应值并转为Long型
-	 * @param key
+	 * @param key key
 	 * @return
 	 */
 	public Optional<Long> getLongValue(String key) {
@@ -131,7 +131,7 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 获取key对应值并转为Integer型
-	 * @param key
+	 * @param key key
 	 * @return
 	 */
 	public Optional<Integer> getIntValue(String key) {
@@ -153,7 +153,7 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 获取key对应值并转为Float型
-	 * @param key
+	 * @param key key
 	 * @return
 	 */
 	public Optional<Float> getFloatValue(String key) {
@@ -175,7 +175,7 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 获取key对应值并转为Double型
-	 * @param key
+	 * @param key key
 	 * @return
 	 */
 	public Optional<Double> getDoubleValue(String key) {
@@ -197,7 +197,7 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 获取key对应值并转为Boolean型
-	 * @param key
+	 * @param key key
 	 * @return
 	 */
 	public Optional<Boolean> getBooleanValue(String key) {
@@ -219,7 +219,7 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 获取key对应值并转为java.util.Date型
-	 * @param key
+	 * @param key key
 	 * @return
 	 */
 	public Optional<java.util.Date> getDateValue(String key) {
@@ -241,7 +241,7 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 通过key获取对应的值，不存在抛出RuntimeException异常
-	 * @param key
+	 * @param key key
 	 * @return
 	 */
 	public KeyValue value(String key) {
@@ -256,8 +256,8 @@ public class PropertyHelper implements Disposable {
 	//--修改
 	/**
 	 * 插入或更新
-	 * @param key
-	 * @param value
+	 * @param key key
+	 * @param value value
 	 * @return
 	 */
 	public PropertyHelper addOrUpdate(String key, Object value) {
@@ -272,9 +272,9 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 插入或更新(带注释)
-	 * @param key
-	 * @param value
-	 * @param noteList
+	 * @param key key
+	 * @param value value
+	 * @param noteList noteList
 	 * @return
 	 */
 	public PropertyHelper addOrUpdate(String key, Object value, List<String> noteList) {
@@ -289,8 +289,8 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 更新值，如果键不存在则不作操作
-	 * @param key
-	 * @param value
+	 * @param key key
+	 * @param value value
 	 * @return
 	 */
 	public PropertyHelper update(String key, String value) {
@@ -311,7 +311,7 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 删除key(包括上方的注释)
-	 * @param key
+	 * @param key key
 	 * @return
 	 */
 	public PropertyHelper remove(String key) {
@@ -347,7 +347,7 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 转化为iniHelper
-	 * @param defaultSection
+	 * @param defaultSection defaultSection
 	 * @return
 	 */
 	public IniHelper toIniHelper(String defaultSection) {
@@ -380,9 +380,9 @@ public class PropertyHelper implements Disposable {
 	//--输出
 	/**
 	 * 保存到文件
-	 * @param filePath
-	 * @param charset
-	 * @throws IOException
+	 * @param filePath filePath
+	 * @param charset charset
+	 * @throws IOException IOException
 	 */
 	public void save(String filePath, Charset charset) throws IOException {
 		FileUtils.write(filePath, toLines(), charset);
@@ -390,8 +390,8 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 保存到文件
-	 * @param filePath
-	 * @throws IOException
+	 * @param filePath filePath
+	 * @throws IOException IOException
 	 */
 	public void save(String filePath) throws IOException {
 		save(filePath, Charsets.UTF_8);
@@ -399,8 +399,8 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 将内容写出到io流
-	 * @param os
-	 * @throws IOException
+	 * @param os os
+	 * @throws IOException IOException
 	 */
 	public void save(OutputStream os) throws IOException {
 		save(os, Charsets.UTF_8);
@@ -408,8 +408,8 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 将内容写出到io流
-	 * @param os
-	 * @throws IOException
+	 * @param os os
+	 * @throws IOException IOException
 	 */
 	public void save(OutputStream os, Charset charset) throws IOException {
 		IOUtils.write(toLines(), os, charset, IOUtils.BUFFSIZE);
@@ -417,9 +417,9 @@ public class PropertyHelper implements Disposable {
 	
 	/**
 	 * 保存到相对src的位置下
-	 * @param path
-	 * @param clazz
-	 * @throws IOException
+	 * @param path path
+	 * @param clazz clazz
+	 * @throws IOException IOException
 	 */
 	public void saveBaseSrcPath(String path, Class<?> clazz) throws IOException {
 		FileUtils.write(PathUtils.srcPath(clazz)+path, toLines(), Charsets.UTF_8);
@@ -429,7 +429,7 @@ public class PropertyHelper implements Disposable {
 	//--内部方法
 	/**
 	 * 通过内容行来初始化property工具类对象
-	 * @param lines
+	 * @param lines lines
 	 */
 	private void initByLine(List<String> lines) {
 		if(lines == null) {

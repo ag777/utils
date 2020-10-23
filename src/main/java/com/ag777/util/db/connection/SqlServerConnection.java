@@ -24,14 +24,14 @@ public class SqlServerConnection extends BaseDbConnectionUtils{
 	
 	/**
 	 * 
-	 * @param ip
-	 * @param port
-	 * @param user
-	 * @param password
-	 * @param dbName
+	 * @param ip ip
+	 * @param port port
+	 * @param user user
+	 * @param password password
+	 * @param dbName dbName
 	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connect(String ip, int port, String user, String password, String dbName) throws ClassNotFoundException, SQLException {
 		return connect(ip, port, user, password, dbName, null);
@@ -46,15 +46,15 @@ public class SqlServerConnection extends BaseDbConnectionUtils{
 	 *	ipv6 Driver URL:
 	 *		jdbc:sqlserver://
 	 * 
-	 * @param ip
-	 * @param port
-	 * @param user
-	 * @param password
-	 * @param dbName
-	 * @param propMap
+	 * @param ip ip
+	 * @param port port
+	 * @param user user
+	 * @param password password
+	 * @param dbName dbName
+	 * @param propMap propMap
 	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connect(String ip, int port, String user, String password, String dbName, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
 		StringBuilder url = new StringBuilder()
@@ -83,13 +83,13 @@ public class SqlServerConnection extends BaseDbConnectionUtils{
 	
 	/**
 	 * 
-	 * @param url
-	 * @param user
-	 * @param password
-	 * @param propMap
+	 * @param url url
+	 * @param user user
+	 * @param password password
+	 * @param propMap propMap
 	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connect(String url, String user, String password, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
 		Properties props = getProperties(propMap);

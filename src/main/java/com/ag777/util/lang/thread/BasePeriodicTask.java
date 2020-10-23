@@ -95,7 +95,7 @@ public abstract class BasePeriodicTask {
 	 * 	返回true:将任务状态置为【已停止】并立即终止周期任务的执行
 	 * </p>
 	 * 
-	 * @param ex
+	 * @param ex ex
 	 * @return
 	 */
 	protected boolean onInterrupt(InterruptedException ex) {
@@ -133,7 +133,7 @@ public abstract class BasePeriodicTask {
 	
 	/**
 	 * 配置最长单次睡眠间隔(如果睡眠大于该时间会被拆分)
-	 * @param interval
+	 * @param interval interval
 	 * @return
 	 */
 	public BasePeriodicTask setIntervalSleep(long interval) {
@@ -397,7 +397,7 @@ public abstract class BasePeriodicTask {
 	 *  所以该方法改为除非在周期任务末尾调用，外部依然调用Thread.sleep()方法进行睡眠,需要单纯改变状态请调用toPause()<br>
 	 *  加一句,只有调用这句才能保证在sleep时改变状态实时生效,所以请务必在轮询末尾或者在onErr中使用该方法睡眠线程
 	 *  
-	 * @param time
+	 * @param time time
 	 */
 	@Deprecated
 	public void sleep(long time) throws InterruptedException{
@@ -439,16 +439,16 @@ public abstract class BasePeriodicTask {
 	
 	/**
 	 * 该线程的具体业务
-	 * @throws Throwable
-	 * @throws InterruptedException
+	 * @throws Throwable Throwable
+	 * @throws InterruptedException InterruptedException
 	 */
 	public abstract void task() throws Throwable, InterruptedException;
 	
 	/**
 	 * 程序发生错误时执行。如果这个方法返回true则直接终止该线程
-	 * @param ex
+	 * @param ex ex
 	 * @return
-	 * @throws InterruptedException
+	 * @throws InterruptedException InterruptedException
 	 */
 	public abstract boolean onError(Throwable ex) throws InterruptedException;
 }

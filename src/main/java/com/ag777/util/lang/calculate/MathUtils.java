@@ -13,8 +13,8 @@ public class MathUtils {
 	
 	/**
 	 * 除(保留小数点后两位,尾数四舍五入)
-	 * @param a
-	 * @param b
+	 * @param a a
+	 * @param b b
 	 * @return
 	 */
 	public static BigDecimal divide(double a, double b) {
@@ -23,8 +23,8 @@ public class MathUtils {
 	
 	/**
 	 * 除(尾数四舍五入)
-	 * @param a
-	 * @param b
+	 * @param a a
+	 * @param b b
 	 * @param scale 保留小数点后几位
 	 * @return
 	 */
@@ -34,8 +34,8 @@ public class MathUtils {
 	
 	/**
 	 * 除
-	 * @param a
-	 * @param b
+	 * @param a a
+	 * @param b b
 	 * @param scale 保留小数点后几位
 	 * @param roundingMode 如<br>
 	 * <pre>{@code
@@ -57,8 +57,8 @@ public class MathUtils {
 	
 	 /**
 	  * 使用欧几里得算法求解数m和数n最大公约数
-	  * @param m
-	  * @param n
+	  * @param m m
+	  * @param n n
 	  * @return
 	  */
    public static int getGcd(int m,int n){
@@ -72,8 +72,8 @@ public class MathUtils {
    
   /**
    * 求两个数的最小公倍数
-   * @param m
-   * @param n
+   * @param m m
+   * @param n n
    * @return
    */
    public static int getLcm(int m,int n){
@@ -84,9 +84,9 @@ public class MathUtils {
    
    /**
     * 求n个数的最小公倍数
-    * @param m
-    * @param n
-    * @param others
+    * @param m m
+    * @param n n
+    * @param others others
     * @return
     */
    public static int getLcm(int m, int n, int... others) {

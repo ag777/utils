@@ -130,11 +130,11 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 获取数据库连接
-	 * @param url
-	 * @param user
-	 * @param password
-	 * @param driver
-	 * @param props
+	 * @param url url
+	 * @param user user
+	 * @param password password
+	 * @param driver driver
+	 * @param props props
 	 * @return Connection
 	 * @throws ClassNotFoundException ClassNotFoundException
 	 * @throws SQLException SQLException
@@ -253,7 +253,7 @@ public class DbHelper implements Disposable, Closeable {
 	}
 	
 	/**
-	 * @param sqlType
+	 * @param sqlType sqlType
 	 * @return 字段类型最大长度(不准确)
 	 */
 	@Deprecated
@@ -269,7 +269,7 @@ public class DbHelper implements Disposable, Closeable {
 	}
 	
 	/**
-	 * @param sqlType
+	 * @param sqlType sqlType
 	 * @return 数据库类型是否为字符串类型
 	 */
 	public static boolean isSqlTypeVarchar(int sqlType) {
@@ -287,7 +287,7 @@ public class DbHelper implements Disposable, Closeable {
 	}
 	
 	/**
-	 * @param sqlType
+	 * @param sqlType sqlType
 	 * @return 数据库类型是否为日期类型
 	 */
 	public static boolean isSqlTypeDate(int sqlType) {
@@ -303,7 +303,7 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * java类型转数据库类型(不全，只列出常用的，不在范围内返回varchar)
-	 * @param clazz
+	 * @param clazz clazz
 	 * @return 数据库类型
 	 */
 	public static Integer toSqlType(Class<?> clazz) {
@@ -345,7 +345,7 @@ public class DbHelper implements Disposable, Closeable {
 	
 	/**
 	 * 测试连接
-	 * @param timeoutSeconds
+	 * @param timeoutSeconds timeoutSeconds
 	 * @return 是否成功
 	 */
 	public boolean test(int timeoutSeconds) {
@@ -371,7 +371,7 @@ public class DbHelper implements Disposable, Closeable {
 	 * 执行数据库事务
 	 * @param task 事务
 	 * @return 是否成功,由DBTransactionInterf返回
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	public boolean doTransaction(DBTransactionInterf task) throws Exception {
 		synchronized (this) {		//加锁
@@ -935,7 +935,7 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param sql sql
 	 * @param paramsList 参数列表
 	 * @return 执行结果
-	 * @throws SQLException
+	 * @throws SQLException SQLException
 	 */
 	public synchronized int[] batchUpdateWithException(String sql, List<Object[]> paramsList) throws SQLException {
 		if(paramsList == null || paramsList.isEmpty()) {

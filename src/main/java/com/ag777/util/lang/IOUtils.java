@@ -41,7 +41,7 @@ public class IOUtils {
 	 * jdk1.7引入了资源自动关闭的接口AutoCloseable。一些资源也实现了该接口，如preparedStatement、Connection、InputStream、outputStream等等资源接口。在使用的时候只需要把资源在try块中用小括号括起来就可以了。<br>
 	 * 看了示例后感觉不够灵活
 	 * </p>
-	 * @param closeable
+	 * @param closeable closeable
 	 */
 	public static void close(AutoCloseable closeable) {
 		try{
@@ -58,7 +58,7 @@ public class IOUtils {
 	
 	/**
 	 * 关闭流或连接(批量)
-	 * @param closeables
+	 * @param closeables closeables
 	 */
 	public static void close(AutoCloseable... closeables) {
 		for (AutoCloseable closeable : closeables) {
@@ -70,11 +70,11 @@ public class IOUtils {
 	
 	/**
 	 * 从流中读取文本
-	 * @param in
-	 * @param lineSparator
-	 * @param encoding
+	 * @param in in
+	 * @param lineSparator lineSparator
+	 * @param encoding encoding
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static String readText(InputStream in, String lineSparator, String encoding) throws IOException {
 		return readText(in, lineSparator, Charset.forName(encoding));
@@ -82,11 +82,11 @@ public class IOUtils {
 	
 	/**
 	 * 从流中读取文本
-	 * @param in
-	 * @param lineSparator
-	 * @param encoding
+	 * @param in in
+	 * @param lineSparator lineSparator
+	 * @param encoding encoding
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 */
 	public static String readText(InputStream in, String lineSparator, Charset encoding) throws IOException {
 		
@@ -113,10 +113,10 @@ public class IOUtils {
 	
 	/**
 	 * 读取所有行
-	 * @param in
-	 * @param encoding
+	 * @param in in
+	 * @param encoding encoding
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static List<String> readLines(InputStream in, String encoding) throws IOException {
 		return readLines(in,Charset.forName(encoding));
@@ -124,10 +124,10 @@ public class IOUtils {
 	
 	/**
 	 * 读取所有行
-	 * @param in
-	 * @param charset
+	 * @param in in
+	 * @param charset charset
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 */
 	public static List<String> readLines(InputStream in, Charset charset) throws IOException {
 		
@@ -214,12 +214,12 @@ public class IOUtils {
 	
 	/**
 	 * 从流中寻找所有匹配串
-	 * @param in
-	 * @param regex
-	 * @param replacement
-	 * @param charset
+	 * @param in in
+	 * @param regex regex
+	 * @param replacement replacement
+	 * @param charset charset
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 */
 	public static List<String> findAll(InputStream in, String regex, String replacement, Charset charset) throws IOException {
 		return findAll(in, Pattern.compile(regex), replacement, charset);
@@ -227,12 +227,12 @@ public class IOUtils {
 	
 	/**
 	 * 从流中寻找所有匹配串
-	 * @param in
-	 * @param pattern
-	 * @param replacement
-	 * @param charset
+	 * @param in in
+	 * @param pattern pattern
+	 * @param replacement replacement
+	 * @param charset charset
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static List<String> findAll(InputStream in, Pattern pattern, String replacement, Charset charset) throws IOException {
 		try{
@@ -252,12 +252,12 @@ public class IOUtils {
 	
 	/**
 	 * 从流中寻找所有Long型匹配串
-	 * @param in
-	 * @param regex
-	 * @param replacement
-	 * @param charset
+	 * @param in in
+	 * @param regex regex
+	 * @param replacement replacement
+	 * @param charset charset
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 */
 	public static List<Long> findAllLong(InputStream in, String regex, String replacement, Charset charset) throws IOException {
 		return findAllLong(in, Pattern.compile(regex), replacement, charset);
@@ -265,12 +265,12 @@ public class IOUtils {
 	
 	/**
 	 * 从流中寻找所有Long型匹配串
-	 * @param in
-	 * @param pattern
-	 * @param replacement
-	 * @param charset
+	 * @param in in
+	 * @param pattern pattern
+	 * @param replacement replacement
+	 * @param charset charset
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static List<Long> findAllLong(InputStream in, Pattern pattern, String replacement, Charset charset) throws IOException {
 		try{
@@ -294,7 +294,7 @@ public class IOUtils {
 	 * @param finder 返回null则说明不需要该值，继续遍历下一行
 	 * @param charset 字符编码
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static <T>T find(InputStream in, Function<String, T> finder, Charset charset) throws IOException {
 		try{
@@ -320,7 +320,7 @@ public class IOUtils {
 	 * @param finder 返回null则说明不需要该值，继续遍历下一行
 	 * @param charset 字符编码
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static <T>List<T> findAll(InputStream in, Function<String, T> finder, Charset charset) throws IOException {
 		try{
@@ -343,12 +343,12 @@ public class IOUtils {
 	
 	/**
 	 * 从流中寻找匹配串,找到一个立即返回
-	 * @param in
-	 * @param regex
-	 * @param replacement
-	 * @param charset
+	 * @param in in
+	 * @param regex regex
+	 * @param replacement replacement
+	 * @param charset charset
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 */
 	public static String find(InputStream in, String regex, String replacement, Charset charset) throws IOException {	
 		return find(in, Pattern.compile(regex), replacement, charset);
@@ -356,12 +356,12 @@ public class IOUtils {
 	
 	/**
 	 * 从流中寻找匹配串,找到一个立即返回
-	 * @param in
-	 * @param pattern
-	 * @param replacement
-	 * @param charset
+	 * @param in in
+	 * @param pattern pattern
+	 * @param replacement replacement
+	 * @param charset charset
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static String find(InputStream in, Pattern pattern, String replacement, Charset charset) throws IOException {
 		try{
@@ -384,12 +384,12 @@ public class IOUtils {
 	
 	/**
 	 * 从流中寻找匹配串,找到一个立即返回
-	 * @param in
-	 * @param regex
-	 * @param replacement
-	 * @param charset
+	 * @param in in
+	 * @param regex regex
+	 * @param replacement replacement
+	 * @param charset charset
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 */
 	public static Long findLong(InputStream in, String regex, String replacement, Charset charset) throws IOException {
 		return findLong(in, Pattern.compile(regex), replacement, charset);
@@ -397,12 +397,12 @@ public class IOUtils {
 	
 	/**
 	 * 从流中寻找匹配串,找到一个立即返回
-	 * @param in
-	 * @param pattern
-	 * @param replacement
-	 * @param charset
+	 * @param in in
+	 * @param pattern pattern
+	 * @param replacement replacement
+	 * @param charset charset
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static Long findLong(InputStream in, Pattern pattern, String replacement, Charset charset) throws IOException {
 		try{
@@ -426,10 +426,10 @@ public class IOUtils {
 	/*--------------写入--------------------*/
 	/**
 	 * 将输入流写入输出流
-	 * @param in
-	 * @param out
-	 * @param buffSize
-	 * @throws IOException
+	 * @param in in
+	 * @param out out
+	 * @param buffSize buffSize
+	 * @throws IOException IOException
 	 */
 	public static void write(InputStream in, OutputStream out, int buffSize) throws IOException {
 		try { 
@@ -449,11 +449,11 @@ public class IOUtils {
 	
 	/**
 	 * 将输入流写入输出流(带进度监听)
-	 * @param in
-	 * @param out
-	 * @param buffSize
-	 * @param listener
-	 * @throws IOException
+	 * @param in in
+	 * @param out out
+	 * @param buffSize buffSize
+	 * @param listener listener
+	 * @throws IOException IOException
 	 */
 	public static void write(InputStream in, OutputStream out, int buffSize, ProgressListener listener)
 			throws IOException {
@@ -486,11 +486,11 @@ public class IOUtils {
 	
 	/**
 	 * 将内容转化为ByteArrayInputStream写出到输出流
-	 * @param content
-	 * @param out
-	 * @param charset
-	 * @param buffSize
-	 * @throws IOException
+	 * @param content content
+	 * @param out out
+	 * @param charset charset
+	 * @param buffSize buffSize
+	 * @throws IOException IOException
 	 */
 	public static void write(String content, OutputStream out, Charset charset, int buffSize) throws IOException {
 		write(
@@ -499,11 +499,11 @@ public class IOUtils {
 	
 	/**
 	 * 拼接每一行并转化为ByteArrayInputStream写出到输出流
-	 * @param lines
-	 * @param out
-	 * @param charset
-	 * @param buffSize
-	 * @throws IOException
+	 * @param lines lines
+	 * @param out out
+	 * @param charset charset
+	 * @param buffSize buffSize
+	 * @throws IOException IOException
 	 */
 	public static void write(List<String> lines, OutputStream out, Charset charset, int buffSize) throws IOException {
 		write(ListUtils.toString(lines, SystemUtils.lineSeparator()), out, charset, buffSize);

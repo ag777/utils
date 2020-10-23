@@ -22,9 +22,9 @@ public abstract class Handler {
 	/*====子类选择重写部分=============*/
 	/**
 	 * 从消息流中读取一条消息,默认一行为一条消息
-	 * @param in
+	 * @param in in
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public String readMsg(BufferedReader in) throws IOException {
 		return in.readLine();
@@ -32,7 +32,7 @@ public abstract class Handler {
 	
 	/**
 	 * 接收消息后会继续等待下一个消息
-	 * @param msg
+	 * @param msg msg
 	 * @return
 	 */
 	public boolean hasNext(String msg) {
@@ -41,14 +41,14 @@ public abstract class Handler {
 	
 	/**
 	 * 服务端建立时执行
-	 * @param port
+	 * @param port port
 	 */
 	public void onSeverCreate(int port) {
 	}
 	
 	/**
 	 * 服务端销毁时执行
-	 * @param port
+	 * @param port port
 	 */
 	public void onServerDispose(int port) {
 	}
@@ -59,8 +59,8 @@ public abstract class Handler {
 	 * 如果需要立即关闭连接,return false;
 	 * </p>
 	 * 
-	 * @param socket
-	 * @param sessionId
+	 * @param socket socket
+	 * @param sessionId sessionId
 	 * @return
 	 */
 	public boolean onPreConnect(Socket socket, String sessionId) {
@@ -72,17 +72,17 @@ public abstract class Handler {
 	 * <p>
 	 * 该方法后于onPreConnect()方法执行
 	 * </p>
-	 * @param socket
-	 * @param sessionId
+	 * @param socket socket
+	 * @param sessionId sessionId
 	 */
 	public void onConnect(Socket socket, String sessionId) {
 	}
 	
 	/**
 	 * 当捕获到异常时执行
-	 * @param socket
-	 * @param sessionId
-	 * @param t
+	 * @param socket socket
+	 * @param sessionId sessionId
+	 * @param t t
 	 */
 	public void onErr(Socket socket, String sessionId, Throwable t) {
 		t.printStackTrace();
@@ -90,7 +90,7 @@ public abstract class Handler {
 	
 	/**
 	 * 服务端本身发生异常时执行
-	 * @param ex
+	 * @param ex ex
 	 */
 	public void onServerErr(Exception ex) {
 		ex.printStackTrace();
@@ -98,8 +98,8 @@ public abstract class Handler {
 	
 	/**
 	 * 断开连接时执行
-	 * @param socket
-	 * @param sessionId
+	 * @param socket socket
+	 * @param sessionId sessionId
 	 */
 	public void onDisConnect(Socket socket, String sessionId) {
 	}

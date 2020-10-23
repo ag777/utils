@@ -25,7 +25,7 @@ public class Console {
 	
 	/**
 	 * 控制是否打印日志, 默认为true
-	 * @param devMode
+	 * @param devMode devMode
 	 */
 	public static void setDevMode(boolean devMode) {
 		Console.devMode = devMode;
@@ -36,7 +36,7 @@ public class Console {
 	
 	/**
 	 * 控制是否在输出时显示调用源方法,默认为false
-	 * @param showSourceMethod
+	 * @param showSourceMethod showSourceMethod
 	 */
 	public static void showSourceMethod(boolean showSourceMethod) {
 		Console.showSourceMethod = showSourceMethod;
@@ -47,7 +47,7 @@ public class Console {
 	
 	/**
 	 * 控制台打印格式化信息
-	 * @param obj
+	 * @param obj obj
 	 * @return
 	 */
 	public static String prettyLog(Object obj) {
@@ -68,7 +68,7 @@ public class Console {
 	
 	/**
 	 * 控制台打印信息
-	 * @param obj
+	 * @param obj obj
 	 * @return
 	 */
 	public static String log(Object obj) {
@@ -90,7 +90,7 @@ public class Console {
 	/**
 	 * 将传入参数转为list并进行格式化输出
 	 * 
-	 * @param objs
+	 * @param objs objs
 	 * @return
 	 */
 	public static String prettyLog(Object obj, Object... objs) {
@@ -112,7 +112,7 @@ public class Console {
 	
 	/**
 	 * 将传入参数转为list并进行输出
-	 * @param objs
+	 * @param objs objs
 	 * @return
 	 */
 	public static String log(Object obj, Object... objs) {
@@ -138,8 +138,8 @@ public class Console {
 	
 	/**
 	 * 控制台打印异常信息
-	 * @param throwable
-	 * @param helper
+	 * @param throwable throwable
+	 * @param helper helper
 	 * @return
 	 */
 //	public static String err(Throwable throwable, ExceptionHelper helper) {
@@ -153,7 +153,7 @@ public class Console {
 	
 	/**
 	 * 打印错误栈信息(效果差不多等于)
-	 * @param throwable
+	 * @param throwable throwable
 	 */
 	public static void err(Throwable throwable) {
 		String msg = ExceptionUtils.getErrMsg(throwable);
@@ -189,7 +189,7 @@ public class Console {
 	 * <p>
 	 *  先转json后格式化，效率会低一些，建议只在调试的时候用
 	 * </p>
-	 * @param obj
+	 * @param obj obj
 	 * @return
 	 */
 	private static String toJson(Object obj, boolean formatMode) {

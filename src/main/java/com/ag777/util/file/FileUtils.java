@@ -83,9 +83,9 @@ public class FileUtils {
     
     /**
      * 读取文件为字节数组
-     * @param filePath
+     * @param filePath filePath
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static byte[] readBytes(String filePath) throws IOException {
     	try {
@@ -103,7 +103,7 @@ public class FileUtils {
      * @param filePath 文件路径
      * @param lineSparator 换行时插入的字符
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static String readText(String filePath, String lineSparator) throws IOException {
        return readText(filePath, lineSparator, FILE_READING_CHARSET);
@@ -113,9 +113,9 @@ public class FileUtils {
      * 读取文件内容
      * @param filePath 文件路径
      * @param lineSparator 换行时插入的字符
-     * @param charset
+     * @param charset charset
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static String readText(String filePath, String lineSparator, Charset charset) throws IOException {
 
@@ -136,7 +136,7 @@ public class FileUtils {
      * 读取文件中的所有行
      * @param filePath 文件路径
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static List<String> readLines(String filePath) throws IOException {
     	return readLines(filePath, FILE_READING_CHARSET);
@@ -144,10 +144,10 @@ public class FileUtils {
     
     /**
      * 从io流中读取行,去除bom头,防止影响外部解析文件内容
-     * @param in
-     * @param encoding
+     * @param in in
+     * @param encoding encoding
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static List<String> readLines(InputStream in,  Charset encoding) throws IOException {
     	List<String> lines = IOUtils.readLines(in, encoding);
@@ -159,10 +159,10 @@ public class FileUtils {
     
     /**
      * 读取文件中的所有行
-     * @param filePath
-     * @param encoding
+     * @param filePath filePath
+     * @param encoding encoding
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static List<String> readLines(String filePath, String encoding) throws IOException {
     	return readLines(filePath, Charset.forName(encoding));
@@ -170,10 +170,10 @@ public class FileUtils {
     
     /**
      * 读取文件中的所有行
-     * @param filePath
-     * @param charset
+     * @param filePath filePath
+     * @param charset charset
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static List<String> readLines(String filePath, Charset charset) throws IOException {
     	 try {
@@ -191,10 +191,10 @@ public class FileUtils {
     
     /**
      * 大文件逐行读取
-     * @param filePath
-     * @param filter 
-     * @param charset
-     * @throws IOException
+     * @param filePath filePath
+     * @param filter filter
+     * @param charset charset
+     * @throws IOException IOException
      */
     public static void readLinesByScaner(String filePath, Consumer<String> filter, Charset charset) throws IOException {
 		FileInputStream in = null;
@@ -219,7 +219,7 @@ public class FileUtils {
      * 读取文件中的所有行(排除注释和空行)
      * @param filePath 文件路径
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static List<String> readLinesWithoutAnnotation(String filePath, FileAnnotation[] annotations) throws IOException {
     	List<String> resultList = new ArrayList<>(); 
@@ -290,7 +290,7 @@ public class FileUtils {
      * 逐行替换文件中的内容
      * @param filePath 文件路径
      * @param filter 参数为当前行内容,结果返回null则删除该行，其余则替换掉源内容
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static void replaceAllByLines(String filePath, Function<String, String> filter) throws IOException {
     	replaceAllByLines(filePath, filePath, filter);
@@ -301,7 +301,7 @@ public class FileUtils {
      * @param srcPath 源路径
      * @param targetPath 目标路径
      * @param filter 参数为当前行内容,结果返回null则删除该行，其余则替换掉源内容
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static void replaceAllByLines(String srcPath, String targetPath, Function<String, String> filter) throws IOException {
     	List<String> newLines = ListUtils.newArrayList();
@@ -328,7 +328,7 @@ public class FileUtils {
      * @param pattern 正则
      * @param replacement 替换式
      * @param isReplaceAll 是否替换全部匹配
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static void replaceByLines(String filePath, Pattern pattern, String replacement, boolean isReplaceAll) throws IOException {
     	if(StringUtils.isBlank(filePath)) {
@@ -357,7 +357,7 @@ public class FileUtils {
      * @param filePath 文件路径
      * @param regex 正则
      * @param replacement 替换式
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static void replaceAllByLines(String filePath, String regex, String replacement) throws IOException {
     	Pattern pattern = Pattern.compile(regex);
@@ -369,7 +369,7 @@ public class FileUtils {
      * @param filePath 文件路径
      * @param regex 正则
      * @param replacement 替换式
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static void replaceFirstByLines(String filePath, String regex, String replacement) throws IOException {
     	Pattern pattern = Pattern.compile(regex);
@@ -378,11 +378,11 @@ public class FileUtils {
     
     /**
      * 替换文件的内容(全文档，包括换行符)
-     * @param filePath
-     * @param regex
-     * @param replacement
-     * @param isReplaceAll
-     * @throws IOException
+     * @param filePath filePath
+     * @param regex regex
+     * @param replacement replacement
+     * @param isReplaceAll isReplaceAll
+     * @throws IOException IOException
      */
     public static void replaceByWhole(String filePath, String regex, String replacement, boolean isReplaceAll) throws IOException {
     	String content = readText(filePath, SystemUtils.lineSeparator());
@@ -396,10 +396,10 @@ public class FileUtils {
     
     /**
      * 替换文件中所有匹配的内容(全文档，包括换行符)
-     * @param filePath
-     * @param regex
-     * @param replacement
-     * @throws IOException
+     * @param filePath filePath
+     * @param regex regex
+     * @param replacement replacement
+     * @throws IOException IOException
      */
     public static void replaceAllByWhole(String filePath, String regex, String replacement) throws IOException {
     	replaceByWhole(filePath, regex, replacement, true);
@@ -407,10 +407,10 @@ public class FileUtils {
     
     /**
      * 替换文件中第一处匹配的内容(全文档，包括换行符)
-     * @param filePath
-     * @param regex
-     * @param replacement
-     * @throws IOException
+     * @param filePath filePath
+     * @param regex regex
+     * @param replacement replacement
+     * @throws IOException IOException
      */
     public static void replaceFirstByWhole(String filePath, String regex, String replacement) throws IOException {
     	replaceByWhole(filePath, regex, replacement, false);
@@ -421,7 +421,7 @@ public class FileUtils {
      * @param filePath 文件路径
      * @param finder 返回null则说明不需要该值，继续遍历下一行
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static <T>T find(String filePath, Function<String, T> finder) throws IOException {
     	return find(filePath, finder, FILE_READING_CHARSET);
@@ -433,7 +433,7 @@ public class FileUtils {
      * @param finder 返回null则说明不需要该值，继续遍历下一行
      * @param charset 字符编码
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static <T>T find(String filePath, Function<String, T> finder, Charset charset) throws IOException {
     	try {
@@ -451,7 +451,7 @@ public class FileUtils {
      * @param filePath 文件路径
      * @param finder 返回null则说明不需要该值，继续遍历下一行
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static <T>List<T> findAll(String filePath, Function<String, T> finder) throws IOException {
     	return findAll(filePath, finder, FILE_READING_CHARSET);
@@ -463,7 +463,7 @@ public class FileUtils {
      * @param finder 返回null则说明不需要该值，继续遍历下一行
      * @param charset 字符编码
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static <T>List<T> findAll(String filePath, Function<String, T> finder, Charset charset) throws IOException {
     	try {
@@ -482,7 +482,7 @@ public class FileUtils {
      * @param regex 匹配用的正则表达式
      * @param replacement 替换式
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static String findText(String filePath,String regex, String replacement) throws IOException {
     	
@@ -498,11 +498,11 @@ public class FileUtils {
     
     /**
      * 查找文件中所有匹配的字符串
-     * @param filePath
-     * @param regex
-     * @param replacement
+     * @param filePath filePath
+     * @param regex regex
+     * @param replacement replacement
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static List<String> findAllText(String filePath,String regex, String replacement) throws IOException {
     	
@@ -518,11 +518,11 @@ public class FileUtils {
     
     /**
      * 将内容写入文件
-     * @param filePath
-     * @param content
-     * @param charset
+     * @param filePath filePath
+     * @param content content
+     * @param charset charset
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static File write(String filePath, String content, Charset charset) throws IOException {
         if (charset == null) {
@@ -534,11 +534,11 @@ public class FileUtils {
     
     /**
      * 将所有行写入文件
-     * @param filePath
-     * @param lines
-     * @param charset
+     * @param filePath filePath
+     * @param lines lines
+     * @param charset charset
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static File write(String filePath, List<String> lines, Charset charset) throws IOException {
     	String content = ListUtils.toString(lines, SystemUtils.lineSeparator());
@@ -575,8 +575,8 @@ public class FileUtils {
      * <p>
      * 	使用RandomAccessFile实现
      * </p>
-     * @param filePath
-     * @param lines
+     * @param filePath filePath
+     * @param lines lines
      * @return 
      */
     public static boolean appendFileContent(String filePath, List<String> lines) {
@@ -586,10 +586,10 @@ public class FileUtils {
     
     /**
      * 将流写文件(写)
-     * @param in
-     * @param filePath
+     * @param in in
+     * @param filePath filePath
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static File write(InputStream in, String filePath) throws IOException {
     	OutputStream out = null;
@@ -613,9 +613,9 @@ public class FileUtils {
      * 	该方法会帮忙创建文件父路径
      * </p>
      * 
-     * @param filePath
+     * @param filePath filePath
      * @return
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     public static BufferedOutputStream getBufferedOutputStream(String filePath) throws FileNotFoundException {
     	return new BufferedOutputStream(getOutputStream(filePath));
@@ -627,9 +627,9 @@ public class FileUtils {
      * 	该方法会帮忙创建文件父路径
      * </p>
      * 
-     * @param file
+     * @param file file
      * @return
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     public static BufferedOutputStream getBufferedOutputStream(File file) throws FileNotFoundException {
     	return new BufferedOutputStream(getOutputStream(file));
@@ -641,9 +641,9 @@ public class FileUtils {
      * 	该方法会帮忙创建文件父路径
      * </p>
      * 
-     * @param filePath
+     * @param filePath filePath
      * @return
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     public static FileOutputStream getOutputStream(String filePath) throws FileNotFoundException {
     	return getOutputStream(new File(filePath));
@@ -655,9 +655,9 @@ public class FileUtils {
      * 	该方法会帮忙创建文件父路径
      * </p>
      * 
-     * @param file
+     * @param file file
      * @return
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     public static FileOutputStream getOutputStream(File file) throws FileNotFoundException {
     	makeDir(file.getParent(), true);	//创建父路径
@@ -666,10 +666,10 @@ public class FileUtils {
 
     /**
      * 获取BufferedReader(读)
-     * @param filePath
-     * @param charset
+     * @param filePath filePath
+     * @param charset charset
      * @return
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     public static BufferedReader getBufferedReader(String filePath, Charset charset) throws FileNotFoundException {
     	if(charset != null) {
@@ -682,9 +682,9 @@ public class FileUtils {
     /**
      * 获取文件输入流(读)
      * 
-     * @param filePath
+     * @param filePath filePath
      * @return
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     public static BufferedInputStream getBufferedInputStream(String filePath) throws FileNotFoundException {
     	return new BufferedInputStream(getInputStream(filePath));
@@ -693,9 +693,9 @@ public class FileUtils {
     /**
      * 获取文件输入流(读)
      * 
-     * @param file
+     * @param file file
      * @return
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     public static BufferedInputStream getBufferedInputStream(File file) throws FileNotFoundException {
     	return new BufferedInputStream(getInputStream(file));
@@ -704,9 +704,9 @@ public class FileUtils {
     /**
      * 获取文件输入流(读)
      * 
-     * @param filePath
+     * @param filePath filePath
      * @return
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     public static FileInputStream getInputStream(String filePath) throws FileNotFoundException {
     	return getInputStream(new File(filePath));
@@ -715,9 +715,9 @@ public class FileUtils {
     /**
      * 获取文件输入流(读)
      * 
-     * @param file
+     * @param file file
      * @return
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException FileNotFoundException
      */
     public static FileInputStream getInputStream(File file) throws FileNotFoundException {
     	return new FileInputStream(file);
@@ -736,8 +736,8 @@ public class FileUtils {
 	 * 相对的，用Files包下的方法就没这种问题,对应本工具包的FileNioUtils中的move方法
 	 * </p>
 	 * 
-     * @param source
-     * @param target
+     * @param source source
+     * @param target target
      * @return
      * @throws IllegalArgumentException 文件路径为空
      * @throws NoSuchFileException 源文件不存在
@@ -761,9 +761,9 @@ public class FileUtils {
 	 * 实质是复制文件到对应的位置,成功后删除源文件
 	 * </p>
 	 * 
-	 * @param source
-	 * @param target
-	 * @param listener
+	 * @param source source
+	 * @param target target
+	 * @param listener listener
 	 * @return
 	 * @throws IllegalArgumentException 文件路径为空
 	 * @throws NoSuchFileException 源文件不存在，源文件不是个文件(可能是文件夹)
@@ -778,11 +778,11 @@ public class FileUtils {
 	
 	/**
 	 * 复制文件或文件夹
-	 * @param source
-	 * @param target
+	 * @param source source
+	 * @param target target
 	 * @return
 	 * @throws IllegalArgumentException 文件路径为空,源文件不存在
-	 * @throws NoSuchFileException 
+	 * @throws NoSuchFileException NoSuchFileException
 	 */
 	public static boolean copy(String source, String target) throws IllegalArgumentException, NoSuchFileException {
 		Assert.notBlank(source, "源文件路径不能为空");
@@ -803,9 +803,9 @@ public class FileUtils {
 	 * 进度监听参数传null则单做普通的单个文件复制使用，不如直接调用copy方法
 	 * </p>
 	 * 
-	 * @param source
-	 * @param target
-	 * @param listener
+	 * @param source source
+	 * @param target target
+	 * @param listener listener
 	 * @return
 	 * @throws IllegalArgumentException 文件路径为空
 	 * @throws NoSuchFileException 源文件不存在，源文件不是个文件(可能是文件夹)
@@ -869,7 +869,7 @@ public class FileUtils {
     }
 
 	/**	过滤掉字符串中的非法字符，以符合文件名规范，非法字符以下划线替换
-	 * @param fileName
+	 * @param fileName fileName
 	 * @return 替换后的文件名
 	 */
 	public static String replaceUnSupportedChar(String fileName) {
@@ -886,8 +886,8 @@ public class FileUtils {
 	 * replaceName("a.tar.gz", "b")=>"b.gz"
 	 * }</pre>
 	 * 
-	 * @param wholeFileName
-	 * @param newName
+	 * @param wholeFileName wholeFileName
+	 * @param newName newName
 	 * @return
 	 */
     public static String replaceName(String wholeFileName, String newName) {
@@ -899,8 +899,8 @@ public class FileUtils {
      * <p><pre>{@code
      * replaceNameWithLongSuffix("a.tar.gz", "b")=>"b.tar.gz"
      * }</pre>
-     * @param wholeFileName
-     * @param newName
+     * @param wholeFileName wholeFileName
+     * @param newName newName
      * @return
      */
     public static String replaceNameWithLongSuffix(String wholeFileName, String newName) {
@@ -926,7 +926,7 @@ public class FileUtils {
 	 * 比如a.tar.gz获取到的是tar.gz
 	 * </p>
 	 * 
-	 * @param filePath
+	 * @param filePath filePath
 	 * @return
 	 */
 	public static String getFileLongSuffix(String filePath) {
@@ -988,7 +988,7 @@ public class FileUtils {
 
     /**
      * 判断文件是否存在
-     * @param filePath
+     * @param filePath filePath
      * @return
      */
     public static boolean fileExists(String filePath) {
@@ -1025,9 +1025,9 @@ public class FileUtils {
 	 * 
 	 * @param source	源文件路径
 	 * @param target	目标路径
-     * @throws IllegalArgumentException 
-     * @throws NoSuchFileException 
-	 * @throws IOException
+     * @throws IllegalArgumentException IllegalArgumentException
+     * @throws NoSuchFileException NoSuchFileException
+	 * @throws IOException IOException
 	 */
 	private static boolean moveFile(String source, String target) throws NoSuchFileException, IllegalArgumentException {
 		if(moveFileWithProgress(source, target, null)) {
@@ -1045,9 +1045,9 @@ public class FileUtils {
 	 * 
 	 * @param source 源文件夹,如: d:/tmp
 	 * @param target 目标文件夹,如: e:/tmp
-	 * @throws IllegalArgumentException 
-	 * @throws NoSuchFileException 
-	 * @throws IOException
+	 * @throws IllegalArgumentException IllegalArgumentException
+	 * @throws NoSuchFileException NoSuchFileException
+	 * @throws IOException IOException
 	 */
 	private static boolean moveFolder(String source, String target) throws NoSuchFileException, IllegalArgumentException {
 		File f1 = new File(source);
@@ -1084,9 +1084,9 @@ public class FileUtils {
 	 * 
 	 * @param source	源文件路径
 	 * @param target	目标路径
-	 * @throws IllegalArgumentException 
-	 * @throws NoSuchFileException 
-	 * @throws IOException
+	 * @throws IllegalArgumentException IllegalArgumentException
+	 * @throws NoSuchFileException NoSuchFileException
+	 * @throws IOException IOException
 	 */
 	private static boolean copyFile(String source, String target) throws NoSuchFileException, IllegalArgumentException {
 		return copyFileWithProgress(source, target, null);
@@ -1097,9 +1097,9 @@ public class FileUtils {
 	 * 
 	 * @param source 源文件夹,如: d:/tmp
 	 * @param target 目标文件夹,如: e:/tmp
-	 * @throws IllegalArgumentException 
-	 * @throws NoSuchFileException 
-	 * @throws IOException
+	 * @throws IllegalArgumentException IllegalArgumentException
+	 * @throws NoSuchFileException NoSuchFileException
+	 * @throws IOException IOException
 	 */
 	private static boolean copyFolder(String source, String target) throws NoSuchFileException, IllegalArgumentException {
 		
@@ -1154,10 +1154,10 @@ public class FileUtils {
 	
 	/**
 	 * 获取文件md5值
-	 * @param filePath
+	 * @param filePath filePath
 	 * @return
-	 * @throws IOException
-	 * @throws NoSuchAlgorithmException
+	 * @throws IOException IOException
+	 * @throws NoSuchAlgorithmException NoSuchAlgorithmException
 	 */
 	public static String md5(String filePath) throws IOException, NoSuchAlgorithmException {
         InputStream fis = null;

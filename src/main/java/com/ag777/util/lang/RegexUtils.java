@@ -38,8 +38,8 @@ public class RegexUtils {
 	/**
 	 * 字符串是否匹配正则,多做了一步非空判断
 	 * 
-	 * @param src
-	 * @param regex
+	 * @param src src
+	 * @param regex regex
 	 * @return
 	 */
 	public static boolean match(String src, String regex) {
@@ -52,9 +52,9 @@ public class RegexUtils {
 	/**
 	 * 替换
 	 * 
-	 * @param src
-	 * @param regex
-	 * @param replacement
+	 * @param src src
+	 * @param regex regex
+	 * @param replacement replacement
 	 * @return
 	 */
 	public static String replaceAll(String src, String regex, String replacement) {
@@ -67,9 +67,9 @@ public class RegexUtils {
 	/**
 	 * 替换
 	 * 
-	 * @param src
-	 * @param pattern
-	 * @param replacement
+	 * @param src src
+	 * @param pattern pattern
+	 * @param replacement replacement
 	 * @return
 	 */
 	public static String replaceAll(String src, Pattern pattern, String replacement) {
@@ -82,8 +82,8 @@ public class RegexUtils {
 	/**
 	 * 统计出现次数
 	 * 
-	 * @param src
-	 * @param regex
+	 * @param src src
+	 * @param regex regex
 	 * @return
 	 */
 	public static long count(String src, String regex) {
@@ -93,8 +93,8 @@ public class RegexUtils {
 	/**
 	 * 统计出现次数
 	 * 
-	 * @param src
-	 * @param pattern
+	 * @param src src
+	 * @param pattern pattern
 	 * @return
 	 */
 	public static long count(String src, Pattern pattern) {
@@ -138,8 +138,8 @@ public class RegexUtils {
 	/**
 	 * 从字符串中找到第一个匹配的字符串
 	 * 
-	 * @param src
-	 * @param regex
+	 * @param src src
+	 * @param regex regex
 	 * @return
 	 */
 	public static String find(String src, String regex) {
@@ -149,8 +149,8 @@ public class RegexUtils {
 	/**
 	 * 从字符串中找到第一个匹配的字符串
 	 * 
-	 * @param src
-	 * @param pattern
+	 * @param src src
+	 * @param pattern pattern
 	 * @return
 	 */
 	public static String find(String src, Pattern pattern) {
@@ -163,8 +163,8 @@ public class RegexUtils {
 	
 	/**
 	 * 查询符合条件的第一组数据
-	 * @param src
-	 * @param regex
+	 * @param src src
+	 * @param regex regex
 	 * @return
 	 */
 	public static List<String> findGroups(String src, String regex) {
@@ -173,8 +173,8 @@ public class RegexUtils {
 	
 	/**
 	 * 查询符合条件的第一组数据
-	 * @param src
-	 * @param pattern
+	 * @param src src
+	 * @param pattern pattern
 	 * @return
 	 */
 	public static List<String> findGroups(String src, Pattern pattern) {
@@ -196,8 +196,8 @@ public class RegexUtils {
 	
 	/**
 	 * 查询符合条件的所有数据
-	 * @param src
-	 * @param regex
+	 * @param src src
+	 * @param regex regex
 	 * @return
 	 */
 	public static List<List<String>> findAllGroups(String src, String regex) {
@@ -206,8 +206,8 @@ public class RegexUtils {
 	
 	/**
 	 * 查询符合条件的所有数据
-	 * @param src
-	 * @param pattern
+	 * @param src src
+	 * @param pattern pattern
 	 * @return
 	 */
 	public static List<List<String>> findAllGroups(String src, Pattern pattern) {
@@ -229,8 +229,8 @@ public class RegexUtils {
 	/**
 	 * 从字符串中找到第一个匹配的字符串并转为Long型
 	 * 
-	 * @param src
-	 * @param regex
+	 * @param src src
+	 * @param regex regex
 	 * @return
 	 */
 	public static Long findLong(String src, String regex) {
@@ -267,8 +267,8 @@ public class RegexUtils {
 	/**
 	 * 从字符串中查找所有正则匹配的字符串列表
 	 * 
-	 * @param src
-	 * @param pattern
+	 * @param src src
+	 * @param pattern pattern
 	 * @return
 	 */
 	public static List<String> findAll(String src, Pattern pattern) {
@@ -294,8 +294,8 @@ public class RegexUtils {
 	/**
 	 * 从字符串中查找所有正则匹配的int型数字列表
 	 * 
-	 * @param src
-	 * @param pattern
+	 * @param src src
+	 * @param pattern pattern
 	 * @return
 	 */
 	public static List<Integer> findAllInt(String src, Pattern pattern) {
@@ -324,8 +324,8 @@ public class RegexUtils {
 	/**
 	 * 从字符串中查找所有正则匹配的long型数字列表
 	 * 
-	 * @param src
-	 * @param pattern
+	 * @param src src
+	 * @param pattern pattern
 	 * @return
 	 */
 	public static List<Long> findAllLong(String src, Pattern pattern) {
@@ -355,8 +355,8 @@ public class RegexUtils {
 	/**
 	 * 从字符串中查找所有正则匹配的double型数字列表
 	 * 
-	 * @param src
-	 * @param pattern
+	 * @param src src
+	 * @param pattern pattern
 	 * @return
 	 */
 	public static List<Double> findAllDouble(String src, Pattern pattern) {
@@ -385,8 +385,8 @@ public class RegexUtils {
 	/**
 	 * 从字符串中查找所有正则匹配的boolean型数字列表
 	 * 
-	 * @param src
-	 * @param pattern
+	 * @param src src
+	 * @param pattern pattern
 	 * @return
 	 */
 	public static List<Boolean> findAllBoolean(String src, Pattern pattern) {
@@ -420,9 +420,9 @@ public class RegexUtils {
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(借鉴某爬虫app的github开源代码，这是真心好用)
 	 * 
-	 * @param src
-	 * @param pattern
-	 * @param replacement
+	 * @param src src
+	 * @param pattern pattern
+	 * @param replacement replacement
 	 * @return
 	 */
 	public static String find(String src, Pattern pattern, String replacement) {
@@ -446,9 +446,9 @@ public class RegexUtils {
 	 * 若获取值为null则返回默认值
 	 * </p>
 	 * 
-	 * @param src
-	 * @param regex
-	 * @param replacement
+	 * @param src src
+	 * @param regex regex
+	 * @param replacement replacement
 	 * @param defaultValue 默认值
 	 * @return
 	 */
@@ -466,10 +466,10 @@ public class RegexUtils {
 	 * 若获取值为null则返回默认值
 	 * </p>
 	 * 
-	 * @param src
-	 * @param pattern
-	 * @param replacement
-	 * @param defaultValue
+	 * @param src src
+	 * @param pattern pattern
+	 * @param replacement replacement
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public static String find(String src, Pattern pattern, String replacement, String defaultValue) {
@@ -495,9 +495,9 @@ public class RegexUtils {
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回
 	 * 
-	 * @param src
-	 * @param pattern
-	 * @param replacement
+	 * @param src src
+	 * @param pattern pattern
+	 * @param replacement replacement
 	 * @return
 	 */
 	public static Integer findInt(String src, Pattern pattern, String replacement) {
@@ -531,9 +531,9 @@ public class RegexUtils {
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回
 	 * 
-	 * @param src
-	 * @param pattern
-	 * @param replacement
+	 * @param src src
+	 * @param pattern pattern
+	 * @param replacement replacement
 	 * @return
 	 */
 	public static Long findLong(String src, Pattern pattern, String replacement) {
@@ -567,9 +567,9 @@ public class RegexUtils {
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回
 	 * 
-	 * @param src
-	 * @param pattern
-	 * @param replacement
+	 * @param src src
+	 * @param pattern pattern
+	 * @param replacement replacement
 	 * @return
 	 */
 	public static Double findDouble(String src, Pattern pattern, String replacement) {
@@ -605,9 +605,9 @@ public class RegexUtils {
 	/**
 	 * 根据正则和替换表达式提取字符串中有用的部分以期望的格式返回(列表)
 	 * 
-	 * @param src
-	 * @param pattern
-	 * @param replacement
+	 * @param src src
+	 * @param pattern pattern
+	 * @param replacement replacement
 	 * @return
 	 */
 	public static List<String> findAll(String src, Pattern pattern, String replacement) {
@@ -641,9 +641,9 @@ public class RegexUtils {
 	/**
 	 * 查找字符串中所有匹配的内容，并转化为Integer型
 	 * 
-	 * @param src
-	 * @param pattern
-	 * @param replacement
+	 * @param src src
+	 * @param pattern pattern
+	 * @param replacement replacement
 	 * @return
 	 */
 	public static List<Integer> findAllInteger(String src, Pattern pattern, String replacement) {
@@ -681,9 +681,9 @@ public class RegexUtils {
 	/**
 	 * 查找字符串中所有匹配的内容，并转化为Long型
 	 * 
-	 * @param src
-	 * @param pattern
-	 * @param replacement
+	 * @param src src
+	 * @param pattern pattern
+	 * @param replacement replacement
 	 * @return
 	 */
 	public static List<Long> findAllLong(String src, Pattern pattern, String replacement) {
@@ -708,9 +708,9 @@ public class RegexUtils {
 	/**
 	 * 查找字符串中所有匹配的内容，并转化为Double型
 	 * 
-	 * @param src
-	 * @param regex
-	 * @param replacement
+	 * @param src src
+	 * @param regex regex
+	 * @param replacement replacement
 	 * @return
 	 */
 	public static List<Double> findAllDouble(String src, String regex, String replacement) {
@@ -720,9 +720,9 @@ public class RegexUtils {
 	/**
 	 * 查找字符串中所有匹配的内容，并转化为Double型
 	 * 
-	 * @param src
-	 * @param pattern
-	 * @param replacement
+	 * @param src src
+	 * @param pattern pattern
+	 * @param replacement replacement
 	 * @return
 	 */
 	public static List<Double> findAllDouble(String src, Pattern pattern, String replacement) {

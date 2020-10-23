@@ -17,7 +17,7 @@ public class Base64Utils {
 	/**
 	 * base64加密<pre>{@code (String -> String)  }</pre>
 	 *  
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static String encode(String src) {
@@ -28,7 +28,7 @@ public class Base64Utils {
 	/**
 	 * base64加密<pre>{@code (byte[] -> byte[]) }</pre>
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static byte[] encode(byte[] src) {
@@ -45,9 +45,9 @@ public class Base64Utils {
 	 * 输入"啊是":Illegal base64 character 3f
 	 * </p>
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
-	 * @throws IllegalArgumentException
+	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public static String decode(String src) throws IllegalArgumentException {
 		Base64.Decoder decoder = Base64.getDecoder();
@@ -57,9 +57,9 @@ public class Base64Utils {
 	/**
 	 * base64解密<pre>{@code (byte[] -> byte[]) }</pre>
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
-	 * @throws IllegalArgumentException
+	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public static byte[] decode(byte[] src) throws IllegalArgumentException {
 		Base64.Decoder decoder = Base64.getDecoder();
@@ -74,7 +74,7 @@ public class Base64Utils {
 	 * 但是感觉不够准确,比如我用"12"作为参数,解密再加密"77+9"明显和"12"不一样
 	 * </p>
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	@Deprecated

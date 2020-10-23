@@ -46,11 +46,11 @@ public class SocketClient implements Disposable {
 	
 	/**
 	 * 创建套接字
-	 * @param ip
-	 * @param port
+	 * @param ip ip
+	 * @param port port
 	 * @return
-	 * @throws UnknownHostException
-	 * @throws IOException
+	 * @throws UnknownHostException UnknownHostException
+	 * @throws IOException IOException
 	 */
 	public static SocketClient build(String ip, int port) throws UnknownHostException, IOException {
 		Socket s = new Socket(ip, port);
@@ -60,7 +60,7 @@ public class SocketClient implements Disposable {
 	/**
 	 * 接收消息(行)
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public String readLine() throws IOException {
 		return in.readLine();
@@ -68,8 +68,8 @@ public class SocketClient implements Disposable {
 	
 	/**
 	 * 发送消息
-	 * @param msg
-	 * @throws IOException
+	 * @param msg msg
+	 * @throws IOException IOException
 	 */
 	public void sendMsg(String msg) throws IOException {
 		out.println(msg);
@@ -78,9 +78,9 @@ public class SocketClient implements Disposable {
 	
 	/**
 	 * 发送一条消息，返回紧接着接收到的下一条消息
-	 * @param msg
+	 * @param msg msg
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public String sendMsgForReply(String msg) throws IOException {
 		sendMsg(msg);

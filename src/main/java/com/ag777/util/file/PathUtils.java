@@ -16,8 +16,8 @@ public class PathUtils {
 	
 	/**
 	 * 获取resource文件夹下资源文件的io流
-	 * @param clazz
-	 * @param filePath
+	 * @param clazz clazz
+	 * @param filePath filePath
 	 * @return
 	 */
 	public static InputStream getAsStream(String filePath, Class<?> clazz) {
@@ -33,7 +33,7 @@ public class PathUtils {
 	 * 	返回结果如:/D:/tools/programming/eclipse_neon/Utils-Java/bin/
 	 * </p>
 	 * 
-	 * @param clazz
+	 * @param clazz clazz
 	 * @return
 	 */
 	public static String srcPath(Class<?> clazz) {
@@ -60,8 +60,8 @@ public class PathUtils {
 	 * 	srcPath(PathUtils.class, "config/") 得到xxx/src/config/
 	 * </p>
 	 * 
-	 * @param clazz
-	 * @param subPath
+	 * @param clazz clazz
+	 * @param subPath subPath
 	 * @return
 	 */
 	public static String srcPath(Class<?> clazz, String subPath) {

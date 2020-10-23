@@ -41,8 +41,8 @@ public class StringUtils {
 	/**
 	 * 获得字符串长度<br>
 	 * 实现原理:String.getBytes(charset).length
-	 * @param src
-	 * @param charset
+	 * @param src src
+	 * @param charset charset
 	 * @return
 	 */
 	public static int getLength(String src, Charset charset) {
@@ -55,7 +55,7 @@ public class StringUtils {
 	/**
 	 * 字符串是否为null或者长度为0
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static boolean isEmpty(String src) {
@@ -68,7 +68,7 @@ public class StringUtils {
 	/**
 	 * 判断字符串是否为null获取为空字符串(最多只含制表符 \t ('\u0009'),换行符 \n ('\u000A'),回车符 \r ('\u000D')，换页符 \f ('\u000C')以及半角/全角空格)
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static boolean isBlank(String src) {
@@ -81,7 +81,7 @@ public class StringUtils {
 	/**
 	 * 如果字符串为null则返回空字符串
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static String emptyIfNull(Object src) {
@@ -97,7 +97,7 @@ public class StringUtils {
 	 * java原生的trim有不完善的地方,无法去除特定的空格
 	 * 该实现为正则"[\\u00A0\\s　]+"首尾匹配出的空格替换为空字符串
 	 * </p>
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static String trim(String src) {
@@ -160,10 +160,10 @@ public class StringUtils {
 	/**
 	 * 利用StringBuilder替换起止位置的字符串
 	 * 
-	 * @param src
-	 * @param start
-	 * @param end
-	 * @param newStr
+	 * @param src src
+	 * @param start start
+	 * @param end end
+	 * @param newStr newStr
 	 * @return
 	 */
 	public static String replace(String src, int start, int end, String newStr) {
@@ -181,8 +181,8 @@ public class StringUtils {
 	 * splitStr("abc",4)=>["abc"]
 	 * }</pre>
 	 * 
-	 * @param src
-	 * @param length
+	 * @param src src
+	 * @param length length
 	 * @return
 	 */
 	public static List<String> splitStr(String src, int length) {
@@ -244,7 +244,7 @@ public class StringUtils {
 	/**
 	 * 利用StringBuilder倒置字符串
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static String reverse(String src) {
@@ -303,7 +303,7 @@ public class StringUtils {
 	/**
 	 * 格式化数字,保留decimalPlaces位小数
 	 * 
-	 * @param num
+	 * @param num num
 	 * @param decimalPlaces 保留小数位数
 	 * @return
 	 */
@@ -328,8 +328,8 @@ public class StringUtils {
 	 * 	支持任意多节点的版本号比较
 	 * </p>
 	 * 
-	 * @param versionCodeOld
-	 * @param versionCodeNew
+	 * @param versionCodeOld versionCodeOld
+	 * @param versionCodeNew versionCodeNew
 	 * @return
 	 */
 	public static boolean isVersionBefore(String versionCodeOld, String versionCodeNew) {
@@ -372,9 +372,9 @@ public class StringUtils {
 	/**
 	 * 将url字符串转化成java.net.URL对象
 	 * 
-	 * @param urlStr
+	 * @param urlStr urlStr
 	 * @return
-	 * @throws MalformedURLException
+	 * @throws MalformedURLException MalformedURLException
 	 */
 	public static java.net.URL toURL(String urlStr) throws MalformedURLException {
 		if(urlStr == null) {
@@ -390,7 +390,7 @@ public class StringUtils {
 	/**
 	 * 字符串转Double
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static Double toDouble(String src) {
@@ -405,7 +405,7 @@ public class StringUtils {
 	/**
 	 * 字符串转Float
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static Float toFloat(String src) {
@@ -420,7 +420,7 @@ public class StringUtils {
 	/**
 	 * 字符串转Integer
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static Integer toInt(String src) {
@@ -434,7 +434,7 @@ public class StringUtils {
 	
 	/**
 	 * 字符串转Long
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static Long toLong(String src) {
@@ -496,7 +496,7 @@ public class StringUtils {
 				计算得出所有用int类型接收10位时间戳的程序都将在2038-01-19 11:14:07后报错,尽量用long型接收
 	 * </p>
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static java.util.Date toDate(String src) {
@@ -524,7 +524,7 @@ public class StringUtils {
 	 * <p>
 	 * 	对应的拆分正则为(\r)?\n
 	 * </p>
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static List<String> toLineList(String src) {
@@ -536,7 +536,7 @@ public class StringUtils {
 	
 	/**
 	 * 汉字转Unicode字符串
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static String toUnicode(String src) {
@@ -557,7 +557,7 @@ public class StringUtils {
 	 * 通过\\\\u分隔
 	 * </p>
 	 * 
-	 * @param unicode
+	 * @param unicode unicode
 	 * @return
 	 */
 	public static String unicode2String(String unicode) {
@@ -581,8 +581,8 @@ public class StringUtils {
 	 * 函数命名参考游戏minecraft创世神插件的函数名
 	 * }</pre>
 	 * 
-	 * @param src
-	 * @param times
+	 * @param src src
+	 * @param times times
 	 * @return
 	 */
 	public static String stack(String src, int times) {
@@ -603,7 +603,7 @@ public class StringUtils {
 	 * decimal2Binary("0xAA");=>"10101010"
 	 * }</pre>
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static String decimal2Binary(String src) {
@@ -680,7 +680,7 @@ public class StringUtils {
 	 * 	外层嵌套CDATA法
 	 * </p>
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static String escapeXmlByCDATA(String src) {
@@ -701,7 +701,7 @@ public class StringUtils {
 	 * "->&quot;
 	 * }</pre>
 	 * 
-	 * @param src
+	 * @param src src
 	 * @return
 	 */
 	public static String escapeXmlByReplace(String src) {

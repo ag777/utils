@@ -24,10 +24,10 @@ public class PropertyUtils extends java.util.Properties{
 	 *  默认utf-8编码
 	 * </p>
 	 * 
-	 * @param filePath
+	 * @param filePath filePath
 	 * @return
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @throws FileNotFoundException FileNotFoundException
+	 * @throws IOException IOException
 	 */
 	public PropertyUtils load(String filePath) throws FileNotFoundException, IOException {
 		return load(filePath, StandardCharsets.UTF_8);
@@ -35,11 +35,11 @@ public class PropertyUtils extends java.util.Properties{
 	
 	/**
 	 * 加载文件
-	 * @param filePath
-	 * @param charset
+	 * @param filePath filePath
+	 * @param charset charset
 	 * @return
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @throws FileNotFoundException FileNotFoundException
+	 * @throws IOException IOException
 	 */
 	public PropertyUtils load(String filePath, Charset charset) throws FileNotFoundException, IOException {
 		BufferedReader reader = null;

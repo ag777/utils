@@ -24,8 +24,8 @@ public abstract class BaseExcelHelper {
 
 	/**
 	 * 验证并获取数据列表
-	 * @param path
-	 * @param index
+	 * @param path path
+	 * @param index index
 	 * @return
 	 * @throws Exception e.getMessage() 即错误提示信息
 	 */
@@ -56,7 +56,7 @@ public abstract class BaseExcelHelper {
 
 	/**
 	 * 处理从excel中解析出的数据,List<Map<String, String>> list代表一页的数据,Map<String, String>为一行的
-	 * @param list
+	 * @param list list
 	 */
 	private List<Map<String, Object>> handleList(List<Map<String, String>> list, List<String> titles) throws Exception{
 		List<Map<String, Object>> result = new ArrayList<>();

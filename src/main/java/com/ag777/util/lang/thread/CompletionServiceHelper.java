@@ -124,9 +124,9 @@ public class CompletionServiceHelper<T> implements Disposable {
 	 * <p>
 	 * 	调用此方法后线程池不再接受新的任务,之后每根据参数指定的时间间隔检查一次子线程是否都完成（阻塞当前线程）,如果任务均完成则可以继续执行后续代码
 	 * </p>
-	 * @param timeout
-	 * @param unit
-	 * @throws InterruptedException
+	 * @param timeout timeout
+	 * @param unit unit
+	 * @throws InterruptedException InterruptedException
 	 */
 	private void waitFor(long timeout, TimeUnit unit) throws InterruptedException {
 		pool.shutdown();
@@ -143,7 +143,7 @@ public class CompletionServiceHelper<T> implements Disposable {
 	 * <p>
 	 * 	调用此方法后线程池不再接受新的任务,之后每100毫秒检查一次子线程是否都完成（阻塞当前线程）,如果任务均完成则可以继续执行后续代码
 	 * </p>
-	 * @throws InterruptedException
+	 * @throws InterruptedException InterruptedException
 	 */
 	private void waitFor() throws InterruptedException {
 		waitFor(100, TimeUnit.MILLISECONDS);

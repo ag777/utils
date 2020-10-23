@@ -32,8 +32,8 @@ public class CollectionAndMapUtils {
 	 * 		CollectionAndMapUtils.newArray(int.class, 3) = [0,0,0];
 	 * }</pre>
 	 * 
-	 * @param clazz
-	 * @param length
+	 * @param clazz clazz
+	 * @param length length
 	 * @return
 	 */
 	public static Object newArray(Class<?> clazz, int length) {

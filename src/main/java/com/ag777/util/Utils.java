@@ -55,7 +55,7 @@ public class Utils {
 	}
 	/**
 	 * 定制json转换工具,工具包内部的所有json转换都会变成传入的这个
-	 * @param JsonUtils
+	 * @param JsonUtils JsonUtils
 	 */
 	public static void jsonUtils(JsonUtilsInterf JsonUtils) {
 		Utils.jsonUtil = JsonUtils;
@@ -87,7 +87,7 @@ public class Utils {
 	/*=============内部方法==================*/
 	/**
 	 * 获取类对应包名
-	 * @param clazz
+	 * @param clazz clazz
 	 * @return
 	 */
 	private static String getPageName(Class<?> clazz) {
@@ -100,8 +100,8 @@ public class Utils {
 	}
 	/**
 	 * 获取父包路径
-	 * @param clazz
-	 * @return
+	 * @param clazz clazz
+	 * @return String
 	 */
 	public static String getParentPackageName(Class<?> clazz) {
 		return getParentPackageName(getPageName(clazz));
@@ -109,8 +109,8 @@ public class Utils {
 	
 	/**
 	 * 获取父包路径
-	 * @param packageName
-	 * @return
+	 * @param packageName packageName
+	 * @return String
 	 */
 	public static String getParentPackageName(String packageName) {
 		return packageName.replaceFirst("\\.[^\\.]+$", "");

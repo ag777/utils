@@ -21,7 +21,7 @@ public class ReflectionUtils {
 	
 	/**
 	 * 判断一个类是否是数值类型,不能直接用Number.class.isAssignableFrom(clazz)判断
-	 * @param clazz
+	 * @param clazz clazz
 	 * @return
 	 */
 	public static boolean isNumberType(Class<?> clazz) {
@@ -38,7 +38,7 @@ public class ReflectionUtils {
 	
 	/**
 	 * 判断一个类是否为基础类型
-	 * @param clazz
+	 * @param clazz clazz
 	 * @return
 	 */
 	public static boolean isBasicClass(Class<?> clazz) {
@@ -55,7 +55,7 @@ public class ReflectionUtils {
 	
 	/**
 	 * 通过注释获取变量列表
-	 * @param annotationClass
+	 * @param annotationClass annotationClass
 	 * @return
 	 */
 	public static List<Field> getFieldListByAnnotation(Class<?> clazz,Class<? extends Annotation> annotationClass) {
@@ -71,7 +71,7 @@ public class ReflectionUtils {
 	
 	/**
 	 * 通过注释获取方法列表
-	 * @param annotationClass
+	 * @param annotationClass annotationClass
 	 * @return
 	 */
 	public static List<Method> getMethodListByAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
@@ -87,8 +87,8 @@ public class ReflectionUtils {
 	
 	/**
 	 * 获取成员变量对应的值
-	 * @param obj
-	 * @param fieldName
+	 * @param obj obj
+	 * @param fieldName fieldName
 	 * @return
 	 */
 	public static Object getFieldValue(Object obj, String fieldName) {
@@ -105,8 +105,8 @@ public class ReflectionUtils {
 	 * <p>
 	 * 	通过String.startsWith()函数判断
 	 * </p>
-	 * @param clazz
-	 * @param packageName
+	 * @param clazz clazz
+	 * @param packageName packageName
 	 * @return
 	 */
 	public static boolean inPackage(Class<?> clazz, String packageName) {
@@ -122,11 +122,11 @@ public class ReflectionUtils {
 	/**
 	 * 实例化class对象,支持内部类
 	 * @return
-	 * @throws InvocationTargetException 
-	 * @throws IllegalArgumentException 
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 * @throws ClassNotFoundException 
+	 * @throws InvocationTargetException InvocationTargetException
+	 * @throws IllegalArgumentException IllegalArgumentException
+	 * @throws IllegalAccessException IllegalAccessException
+	 * @throws InstantiationException InstantiationException
+	 * @throws ClassNotFoundException ClassNotFoundException
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T>T newInstace(Class<T> clazz) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
@@ -154,9 +154,9 @@ public class ReflectionUtils {
 	
 	/**
 	 * 获取内部类的外包类
-	 * @param clazz
+	 * @param clazz clazz
 	 * @return
-	 * @throws ClassNotFoundException
+	 * @throws ClassNotFoundException ClassNotFoundException
 	 */
 	private static <T>Class<?> getOuterClass(Class<T> clazz) throws ClassNotFoundException {
 		String className = clazz.getName();

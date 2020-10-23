@@ -69,8 +69,8 @@ public class ListUtils {
 	 * 详见Arrays.copyOf(T[] original, int newLength)方法
 	 * </p>
 	 * 
-	 * @param original
-	 * @param newLength
+	 * @param original original
+	 * @param newLength newLength
 	 * @return
 	 */
 	public static <T>T[] copyArray(T[] original, int newLength) {
@@ -91,7 +91,7 @@ public class ListUtils {
 	 * 如果对象为null,则返回false
 	 * </p>
 	 * 
-	 * @param obj
+	 * @param obj obj
 	 * @return
 	 */
 	public boolean isArray(Object obj) {
@@ -128,8 +128,8 @@ public class ListUtils {
 	
 	/**
 	 * 拆分字符串组成数组
-	 * @param src
-	 * @param separator
+	 * @param src src
+	 * @param separator separator
 	 * @return
 	 */
 	public static String[] ofArray(String src, String separator) {
@@ -313,8 +313,8 @@ public class ListUtils {
 	
 	/**
 	 * 根据分隔符拆分数组获取字符串
-	 * @param array
-	 * @param separator
+	 * @param array array
+	 * @param separator separator
 	 * @return
 	 */
 	public static <T>String toString(T[] array, String separator) {
@@ -323,8 +323,8 @@ public class ListUtils {
 	
 	/**
 	 * 根据分隔符拆分数组获取字符串(支持基础类型数据比如int[]的转换)
-	 * @param array
-	 * @param separator
+	 * @param array array
+	 * @param separator separator
 	 * @return
 	 */
 	public static String toStringForArray(Object array, String separator) {
@@ -358,7 +358,7 @@ public class ListUtils {
 	 * toCountMap(of("a","b","a"))=>{"a":2,"b":1}
 	 * }</pre>
 	 * 
-	 * @param list
+	 * @param list list
 	 * @return
 	 */
 	public <T>Map<T, Long> toCountMap(List<T> list) {
@@ -471,8 +471,8 @@ public class ListUtils {
 	 * 	和splitList方法区别的区别是构造出来的子list都是arrayList而不是subList {@link #splitList(List, int)}<br>
 	 * 	这样做可以避免对源列表的依赖关系，但是需要新建很多列表对象
 	 * </p>
-	 * @param list
-	 * @param limit
+	 * @param list list
+	 * @param limit limit
 	 * @return
 	 */
 	public static <T>List<List<T>> splitList2(List<T> list, int limit) {
@@ -511,8 +511,8 @@ public class ListUtils {
 	
 	/**
 	 * 拆分数组
-	 * @param array
-	 * @param limit
+	 * @param array array
+	 * @param limit limit
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -560,9 +560,9 @@ public class ListUtils {
      * ListUtils.subArray(new Integer[]{1}, 1, 3)=>[]
      * }</pre>
 	 * 
-	 * @param array
-	 * @param begin
-	 * @param limit
+	 * @param array array
+	 * @param begin begin
+	 * @param limit limit
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -660,9 +660,9 @@ public class ListUtils {
 	
 	/**
 	 * 深拷贝(原理是序列化和反序列化)
-	 * @param src
+	 * @param src src
 	 * @return
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	public static <T extends Serializable> List<T> deepCopy(List<T> src) throws Exception {
 		try {
@@ -707,8 +707,8 @@ public class ListUtils {
 	/**
 	 * 判断字符串在数组中的位置,无视大小写
 	 * 
-	 * @param list
-	 * @param item
+	 * @param list list
+	 * @param item item
 	 * @return
 	 */
 	public static Optional<Integer> inListIgnoreCase(List<String> list, String item) {
@@ -728,8 +728,8 @@ public class ListUtils {
 	 * <p>
 	 * 	用equals实现比较<br>
 	 * 	通过调用isPresent()方法直接获取是否在数组中,不需要判断值是否大于-1
-	 * @param array
-	 * @param item
+	 * @param array array
+	 * @param item item
 	 * @return
 	 */
 	public static <T>Optional<Integer> inArray(T[] array, Object item) {
@@ -746,8 +746,8 @@ public class ListUtils {
 	
 	/**
 	 * 获取字符串在字符串数组里的位置,大小写无视
-	 * @param array
-	 * @param item
+	 * @param array array
+	 * @param item item
 	 * @return
 	 */
 	public static Optional<Integer> inArrayIgnoreCase(String[] array, String item) {
@@ -790,8 +790,8 @@ public class ListUtils {
 	 * 	用equals实现比较<br>
 	 * 	通过调用isPresent()方法直接获取是否在数组中,不需要判断值是否大于-1
 	 * 
-	 * @param target
-	 * @param objs
+	 * @param target target
+	 * @param objs objs
 	 * @return
 	 */
 	public static Optional<Integer> inIgnoreCase(String target, String... objs) {
@@ -809,7 +809,7 @@ public class ListUtils {
 	
 	/**
 	 * 获取数组类型
-	 * @param array
+	 * @param array array
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -823,8 +823,8 @@ public class ListUtils {
 	//--获取
 	/**
 	 * 获取列表第index项的值，避免空指针
-	 * @param list
-	 * @param index
+	 * @param list list
+	 * @param index index
 	 * @return
 	 */
 	public static <T>T get(List<T> list, int index) {
@@ -836,8 +836,8 @@ public class ListUtils {
 	
 	/**
 	 * 获取数组第index项的值，避免空指针
-	 * @param arrays
-	 * @param index
+	 * @param arrays arrays
+	 * @param index index
 	 * @return
 	 */
 	public static <T>T get(T[] arrays, int index) {
@@ -907,7 +907,7 @@ public class ListUtils {
 	/*----内部方法----*/
 	/**
 	 * 获取镜像的空列表，支持arrayList,vector和linklist
-	 * @param list
+	 * @param list list
 	 * @return
 	 */
 //	private static <T>List<T> emptyToCopy(List<T> list) {
@@ -927,7 +927,7 @@ public class ListUtils {
 	
 	/**
 	 * 获取一个类型对应的数组类型
-	 * @param clazz
+	 * @param clazz clazz
 	 * @return
 	 */
 	private static Class<?> getArrayClass(Class<?> clazz) {

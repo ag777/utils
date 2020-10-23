@@ -65,7 +65,7 @@ public class HttpHelper {
 	
 	/**
 	 * 返回自定义tag的HttpHelper
-	 * @param tag
+	 * @param tag tag
 	 * @return
 	 */
 	public static HttpHelper tag(Object tag) {
@@ -98,8 +98,8 @@ public class HttpHelper {
 	
 	/**
 	 * get请求
-	 * @param url
-	 * @param headers
+	 * @param url url
+	 * @param headers headers
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -122,9 +122,9 @@ public class HttpHelper {
 	
 	/**
 	 * post请求
-	 * @param url
-	 * @param body
-	 * @param headers
+	 * @param url url
+	 * @param body body
+	 * @param headers headers
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -136,11 +136,11 @@ public class HttpHelper {
 	/**===================DELETE请求===========================*/
 	/**
 	 * delete请求
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
+	 * @param url url
+	 * @param paramMap paramMap
+	 * @param headerMap headerMap
 	 * @return
-	 * @throws IllegalArgumentException
+	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public <K,V>MyCall delete(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.deleteByClient(client, url, paramMap, headerMap, tag);
@@ -150,11 +150,11 @@ public class HttpHelper {
 	/**===================PUT请求===========================*/
 	/**
 	 * put请求
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
+	 * @param url url
+	 * @param paramMap paramMap
+	 * @param headerMap headerMap
 	 * @return
-	 * @throws IllegalArgumentException
+	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public <K,V>MyCall put(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.putByClient(client, url, paramMap, headerMap, tag);
@@ -164,11 +164,11 @@ public class HttpHelper {
 	/**===================HEAD请求===========================*/
 	/**
 	 * head请求
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
+	 * @param url url
+	 * @param paramMap paramMap
+	 * @param headerMap headerMap
 	 * @return
-	 * @throws IllegalArgumentException
+	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public <K,V>MyCall head(String url, Map<K, V> paramMap, Map<K, V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.headByClient(client, url, paramMap, headerMap, tag);
@@ -179,10 +179,10 @@ public class HttpHelper {
 	
 	/**
 	 * 带进度条的文件下载
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
-	 * @param listener
+	 * @param url url
+	 * @param paramMap paramMap
+	 * @param headerMap headerMap
+	 * @param listener listener
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -194,13 +194,13 @@ public class HttpHelper {
 	
 	/**
 	 * post请求带附件
-	 * @param url
-	 * @param files
-	 * @param params
-	 * @param headerMap
+	 * @param url url
+	 * @param files files
+	 * @param params params
+	 * @param headerMap headerMap
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException FileNotFoundException
 	 */
 	public <K, V>MyCall postMultiFiles(String url, File[] files, Map<K, V> params, Map<K, V> headerMap) throws IllegalArgumentException, FileNotFoundException {
 		Call call = HttpUtils.postMultiFilesByClient(client, url, files, params, headerMap, tag);
@@ -209,14 +209,14 @@ public class HttpHelper {
 	
 	/**
 	 * post请求带附件
-	 * @param url
+	 * @param url url
 	 * @param fileMap 文件及其上传名称对应map
 	 * @param fileKey 请求体里对应的key
-	 * @param params
-	 * @param headerMap
+	 * @param params params
+	 * @param headerMap headerMap
 	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws FileNotFoundException
+	 * @throws IllegalArgumentException IllegalArgumentException
+	 * @throws FileNotFoundException FileNotFoundException
 	 */
 	public <K, V>MyCall postMultiFiles(String url, Map<File, String> fileMap, String fileKey, Map<K, V> params, Map<K, V> headerMap) throws IllegalArgumentException, FileNotFoundException {
 		Call call = HttpUtils.postMultiFilesByClient(client, url, fileMap, fileKey, params, headerMap, tag);

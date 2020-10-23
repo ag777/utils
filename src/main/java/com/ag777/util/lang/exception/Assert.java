@@ -22,9 +22,9 @@ public class Assert {
 	//--notNull
 	/**
 	 * 判断obj是否为null,是的话抛出IllegalArgumentException异常
-	 * @param obj
-	 * @param errMsg
-	 * @throws IllegalArgumentException
+	 * @param obj obj
+	 * @param errMsg errMsg
+	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public static void notNull(Object obj, String errMsg) throws IllegalArgumentException {
 		if(obj == null) {
@@ -34,10 +34,10 @@ public class Assert {
 	
 	/**
 	 * 判断obj是否为null,是的话抛出异常
-	 * @param obj
+	 * @param obj obj
 	 * @param clazz 集成与Throwable
-	 * @param errMsg
-	 * @throws T
+	 * @param errMsg errMsg
+	 * @throws T T
 	 */
 	public static <T extends Throwable>void notNull(Object obj, Class<T> clazz, String errMsg) throws T {
 		if(obj == null) {
@@ -48,9 +48,9 @@ public class Assert {
 	//-notEmpty
 	/**
 	 * 判断字符串是否为null或者为空,是的话抛出异常
-	 * @param str
-	 * @param errMsg
-	 * @throws IllegalArgumentException
+	 * @param str str
+	 * @param errMsg errMsg
+	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public static void notEmpty(String str, String errMsg) throws IllegalArgumentException {
 		if(StringUtils.isEmpty(str)) {
@@ -60,10 +60,10 @@ public class Assert {
 	
 	/**
 	 * 判断字符串是否为null或者为空,是的话抛出异常
-	 * @param str
-	 * @param clazz 
-	 * @param errMsg
-	 * @throws T
+	 * @param str str
+	 * @param clazz clazz
+	 * @param errMsg errMsg
+	 * @throws T T
 	 */
 	public static <T extends Throwable>void notEmpty(String str, Class<T> clazz, String errMsg) throws T {
 		if(StringUtils.isEmpty(str)) {
@@ -73,9 +73,9 @@ public class Assert {
 	
 	/**
 	 * 判断Collection是否为null或者为空,是的话抛出异常
-	 * @param collection
-	 * @param errMsg
-	 * @throws IllegalArgumentException
+	 * @param collection collection
+	 * @param errMsg errMsg
+	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public static void notEmpty(Collection<?> collection, String errMsg) throws IllegalArgumentException {
 		if(CollectionAndMapUtils.isEmpty(collection)) {
@@ -85,10 +85,10 @@ public class Assert {
 	
 	/**
 	 * 判断Collection是否为null或者为空,是的话抛出异常
-	 * @param collection
-	 * @param clazz 
-	 * @param errMsg
-	 * @throws T
+	 * @param collection collection
+	 * @param clazz clazz
+	 * @param errMsg errMsg
+	 * @throws T T
 	 */
 	public static <T extends Throwable>void notEmpty(Collection<?> collection, Class<T> clazz, String errMsg) throws T {
 		if(CollectionAndMapUtils.isEmpty(collection)) {
@@ -98,9 +98,9 @@ public class Assert {
 	
 	/**
 	 * 判断数组是否为null或者为空,是的话抛出异常
-	 * @param array
-	 * @param errMsg
-	 * @throws IllegalArgumentException
+	 * @param array array
+	 * @param errMsg errMsg
+	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public static <T>void notEmpty(T[] array, String errMsg) throws IllegalArgumentException {
 		if(CollectionAndMapUtils.isEmpty(array)) {
@@ -110,10 +110,10 @@ public class Assert {
 	
 	/**
 	 * 判断数组是否为null或者为空,是的话抛出异常
-	 * @param array
-	 * @param clazz 
-	 * @param errMsg
-	 * @throws T
+	 * @param array array
+	 * @param clazz clazz
+	 * @param errMsg errMsg
+	 * @throws T T
 	 */
 	public static <T extends Throwable, V>void notEmpty(V[] array, Class<T> clazz, String errMsg) throws T {
 		if(CollectionAndMapUtils.isEmpty(array)) {
@@ -123,9 +123,9 @@ public class Assert {
 	
 	/**
 	 * 判断map是否为null或者为空,是的话抛出异常
-	 * @param map
-	 * @param errMsg
-	 * @throws IllegalArgumentException
+	 * @param map map
+	 * @param errMsg errMsg
+	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public static <K, V>void notEmpty(Map<K,V> map, String errMsg) throws IllegalArgumentException {
 		if(CollectionAndMapUtils.isEmpty(map)) {
@@ -135,10 +135,10 @@ public class Assert {
 	
 	/**
 	 * 判断map是否为null或者为空,是的话抛出异常
-	 * @param map
-	 * @param clazz 
-	 * @param errMsg
-	 * @throws T
+	 * @param map map
+	 * @param clazz clazz
+	 * @param errMsg errMsg
+	 * @throws T T
 	 */
 	public static <T extends Throwable, K, V>void notEmpty(Map<K,V> map, Class<T> clazz, String errMsg) throws T {
 		if(CollectionAndMapUtils.isEmpty(map)) {
@@ -149,9 +149,9 @@ public class Assert {
 	//--notBlank
 	/**
 	 * 判断字符串是否为null或者只含空格,是的话抛出异常
-	 * @param str
-	 * @param errMsg
-	 * @throws IllegalArgumentException
+	 * @param str str
+	 * @param errMsg errMsg
+	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public static void notBlank(String str, String errMsg) throws IllegalArgumentException {
 		if(StringUtils.isBlank(str)) {
@@ -161,10 +161,10 @@ public class Assert {
 	
 	/**
 	 * 判断字符串是否为null或者只含空格,是的话抛出异常
-	 * @param str
-	 * @param clazz 
-	 * @param errMsg
-	 * @throws T
+	 * @param str str
+	 * @param clazz clazz
+	 * @param errMsg errMsg
+	 * @throws T T
 	 */
 	public static <T extends Throwable>void notBlank(String str, Class<T> clazz, String errMsg) throws T {
 		if(StringUtils.isBlank(str)) {
@@ -175,9 +175,9 @@ public class Assert {
 	//--notExisted
 	/**
 	 * 判断文件是否文件是否存在,不存在的话抛出异常
-	 * @param filePath
-	 * @param errMsg
-	 * @throws IllegalArgumentException
+	 * @param filePath filePath
+	 * @param errMsg errMsg
+	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public static void notExisted(String filePath, String errMsg) throws IllegalArgumentException {
 		if(!FileUtils.fileExists(filePath)) {
@@ -187,10 +187,10 @@ public class Assert {
 	
 	/**
 	 * 判断文件是否文件是否存在,不存在的话抛出异常
-	 * @param filePath
-	 * @param clazz 
-	 * @param errMsg
-	 * @throws T
+	 * @param filePath filePath
+	 * @param clazz clazz
+	 * @param errMsg errMsg
+	 * @throws T T
 	 */
 	public static <T extends Throwable>void notExisted(String filePath, Class<T> clazz, String errMsg) throws T {
 		if(!FileUtils.fileExists(filePath)) {
@@ -200,9 +200,9 @@ public class Assert {
 	
 	/**
 	 * 判断文件是否文件是否存在,不存在的话抛出异常
-	 * @param file
-	 * @param errMsg
-	 * @throws IllegalArgumentException
+	 * @param file file
+	 * @param errMsg errMsg
+	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public static void notExisted(File file, String errMsg) throws IllegalArgumentException {
 		if(file == null || !file.exists()) {
@@ -226,9 +226,9 @@ public class Assert {
 	/*=======================内部方法======================*/
 	/**
 	 * 实例化异常并抛出
-	 * @param clazz
-	 * @param errMsg
-	 * @throws T
+	 * @param clazz clazz
+	 * @param errMsg errMsg
+	 * @throws T T
 	 */
 	private static <T extends Throwable>void throwable(Class<T> clazz, String errMsg) throws T {
 		try {

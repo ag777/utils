@@ -68,8 +68,8 @@ public class GsonUtils implements JsonUtilsInterf{
 	}
 	/**
 	 * 自定义构建gson
-	 * @param builder
-	 * @return
+	 * @param builder builder
+	 * @return GsonUtils
 	 */
 	public static GsonUtils custom(GsonBuilder builder) {
 		return new GsonUtils(builder);
@@ -78,8 +78,8 @@ public class GsonUtils implements JsonUtilsInterf{
 	/*==================下面添加配置(可拓展)========================*/
 	/**
 	 * 定制时间格式
-	 * @param pattern
-	 * @return
+	 * @param pattern pattern
+	 * @return GsonUtils
 	 */
 	public GsonUtils dateFormat(String pattern) {
 		return new GsonUtils(builder.setDateFormat(pattern));
@@ -111,9 +111,9 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 自定义实现序列化方法
-	 * @param baseType
-	 * @param typeAdapter
-	 * @return
+	 * @param baseType baseType
+	 * @param typeAdapter typeAdapter
+	 * @return GsonUtils
 	 */
 	public GsonUtils registerTypeAdapter(Class<?> baseType, Object typeAdapter) {
 		return new GsonUtils(builder.registerTypeHierarchyAdapter(baseType, typeAdapter));
@@ -121,9 +121,9 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 自定义实现序列化方法
-	 * @param type
-	 * @param typeAdapter
-	 * @return
+	 * @param type type
+	 * @param typeAdapter typeAdapter
+	 * @return GsonUtils
 	 */
 	public GsonUtils registerTypeAdapter(Type type, Object typeAdapter) {
 		return new GsonUtils(builder.registerTypeAdapter(type, typeAdapter));
@@ -131,8 +131,8 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 自定义实现序列化方法
-	 * @param factory
-	 * @return
+	 * @param factory factory
+	 * @return GsonUtils
 	 */
 	public GsonUtils registerTypeAdapterFactory(TypeAdapterFactory factory) {
 		return new GsonUtils(builder.registerTypeAdapterFactory(factory));
@@ -173,8 +173,8 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 转换json串为JsonObject
-	 * @param json
-	 * @return
+	 * @param json json
+	 * @return JsonObject
 	 */
 	public static JsonObject toJsonObject(String json) {
 		/*源码说明(下同):No need to instantiate this class, use the static methods instead.*/
@@ -183,8 +183,8 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 转换json对象为JsonArray
-	 * @param json
-	 * @return
+	 * @param json json
+	 * @return JsonArray
 	 */
 	public static JsonArray toJsonArray(String json) {
 		return JsonParser.parseString(json).getAsJsonArray();
@@ -195,8 +195,8 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * <p>
 	 * 每次都new一个用于格式化的新gson
 	 * </p>
-	 * @param src
-	 * @return
+	 * @param src src
+	 * @return String
 	 */
 	@Override
 	public String prettyFormat(String src) throws JsonSyntaxException {
@@ -215,7 +215,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 转换任意类为json串（类型不支持会报错，这里不做捕获也不做抛出, 就当业务有问题应当报错,免得写try-catch）
-	 * @param obj
+	 * @param obj obj
 	 * @return json串，当obj为null的时候返回null
 	 */
 	@Override
@@ -230,7 +230,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	 *
 	 * @param obj 任意对象
 	 * @return 格式化的json串
-	 * @throws JsonSyntaxException
+	 * @throws JsonSyntaxException JsonSyntaxException
 	 */
 	public String toPrettyJson(Object obj) throws JsonSyntaxException {
 		if (obj == null) {
@@ -245,7 +245,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 转化json串为map
-	 * @param json
+	 * @param json json
 	 * @return 返回null则表示json转换失败
 	 */
 	@Override
@@ -286,8 +286,8 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 转化json为对象列表
-	 * @param json
-	 * @param classOfT
+	 * @param json json
+	 * @param classOfT classOfT
 	 * @return
 	 */
 	@Override
@@ -305,10 +305,10 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * 利用ParameterizedType类获取对应List<T>的Type作为转化媒介
 	 * }</pre>
 	 * 
-	 * @param json
-	 * @param classOfT
+	 * @param json json
+	 * @param classOfT classOfT
 	 * @return
-	 * @throws JsonSyntaxException
+	 * @throws JsonSyntaxException JsonSyntaxException
 	 */
 	@Override
 	public <T>List<T> toListWithException(String json, Class<T> classOfT) throws JsonSyntaxException {
@@ -322,7 +322,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	/**
 	 * 转换对象为JsonElement
 	 * 
-	 * @param obj
+	 * @param obj obj
 	 * @return
 	 */
 	public JsonElement toJsonTree(Object obj) {
@@ -335,9 +335,9 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 转换对象为JsonElement
-	 * @param obj
+	 * @param obj obj
 	 * @return
-	 * @throws JsonSyntaxException
+	 * @throws JsonSyntaxException JsonSyntaxException
 	 */
 	public JsonElement toJsonTreeWithException(Object obj)  throws JsonSyntaxException {
 		try {
@@ -350,8 +350,8 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 转化json串为javaBean,效率低
-	 * @param json
-	 * @param classOfT
+	 * @param json json
+	 * @param classOfT classOfT
 	 * @return 返回null则表示json转换失败
 	 */
 	@Override
@@ -375,7 +375,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 转化json串为javaBean，类型不支持时会报错
-	 * @param json
+	 * @param json json
 	 * @param type 例:<pre>{@code new TypeToken<Map<String, Object>>() {}.getType() }</pre>
 	 * @return 返回null则表示json转换失败
 	 */

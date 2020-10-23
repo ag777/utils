@@ -65,9 +65,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 加载src路径下的配置文件，抛出RuntimeException异常
-	 * @param path
-	 * @param clazz
-	 * @return
+	 * @param path path path
+	 * @param clazz clazz clazz
+	 * @return IniHelper
 	 */
 	public static IniHelper loadBaseSrc(String path, Class<?> clazz) {
 		try {
@@ -107,8 +107,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 判断标签是否存在
-	 * @param sectionKey
-	 * @return
+	 * @param sectionKey sectionKey
+	 * @return boolean
 	 */
 	public boolean containSection(String sectionKey) {
 		return sectionMap.containsKey(sectionKey);
@@ -116,9 +116,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 判断键是否存在
-	 * @param sectionKey
-	 * @param valueKey
-	 * @return
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
+	 * @return boolean
 	 */
 	public boolean containValueKey(String sectionKey, String valueKey) {
 		if(sectionMap.containsKey(sectionKey)) {
@@ -133,8 +133,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	 * <p>
 	 * 至少存在一个返回true
 	 * </p>
-	 * @param valueKey
-	 * @return
+	 * @param valueKey valueKey
+	 * @return boolean
 	 */
 	public boolean containKey(String valueKey) {
 		Iterator<String> itor = sectionMap.keySet().iterator();
@@ -150,8 +150,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取某个标签下所有键
-	 * @param sectionKey
-	 * @return
+	 * @param sectionKey sectionKey
+	 * @return List<String>
 	 */
 	public List<String> getKeyList(String sectionKey) {
 		Section section = MapUtils.get(sectionMap, sectionKey);
@@ -164,8 +164,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值
-	 * @param sectionKey
-	 * @param valueKey
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
 	 * @return
 	 */
 	public Optional<String> getValue(String sectionKey, String valueKey) {
@@ -179,9 +179,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值
-	 * @param sectionKey
-	 * @param valueKey
-	 * @param defaultValue
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public String getValue(String sectionKey, String valueKey, String defaultValue) {
@@ -194,8 +194,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值并转换为Integer类型
-	 * @param sectionKey
-	 * @param valueKey
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
 	 * @return
 	 */
 	public Optional<Integer> getIntValue(String sectionKey, String valueKey) {
@@ -209,9 +209,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值并转换为Integer类型
-	 * @param sectionKey
-	 * @param valueKey
-	 * @param defaultValue
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public Integer getIntValue(String sectionKey, String valueKey, Integer defaultValue) {
@@ -224,8 +224,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值并转化为Long类型
-	 * @param sectionKey
-	 * @param valueKey
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
 	 * @return
 	 */
 	public Optional<Long> getLongValue(String sectionKey, String valueKey) {
@@ -239,9 +239,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值并转化为Long类型
-	 * @param sectionKey
-	 * @param valueKey
-	 * @param defaultValue
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public Long getLongValue(String sectionKey, String valueKey, Long defaultValue) {
@@ -254,8 +254,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值并转化为Float类型
-	 * @param sectionKey
-	 * @param valueKey
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
 	 * @return
 	 */
 	public Optional<Float> getFloatValue(String sectionKey, String valueKey) {
@@ -269,9 +269,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值并转化为Float类型
-	 * @param sectionKey
-	 * @param valueKey
-	 * @param defaultValue
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public Float getFloatValue(String sectionKey, String valueKey, Float defaultValue) {
@@ -284,8 +284,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值并转化为Double类型
-	 * @param sectionKey
-	 * @param valueKey
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
 	 * @return
 	 */
 	public Optional<Double> getDoubleValue(String sectionKey, String valueKey) {
@@ -299,9 +299,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值并转化为Double类型
-	 * @param sectionKey
-	 * @param valueKey
-	 * @param defaultValue
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public Double getDoubleValue(String sectionKey, String valueKey, Double defaultValue) {
@@ -314,8 +314,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值并转化为Boolean类型
-	 * @param sectionKey
-	 * @param valueKey
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
 	 * @return
 	 */
 	public Optional<Boolean> getBooleanValue(String sectionKey, String valueKey) {
@@ -329,9 +329,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值并转化为Boolean类型
-	 * @param sectionKey
-	 * @param valueKey
-	 * @param defaultValue
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public Boolean getBooleanValue(String sectionKey, String valueKey, Boolean defaultValue) {
@@ -344,8 +344,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值并转化为Date类型
-	 * @param sectionKey
-	 * @param valueKey
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
 	 * @return
 	 */
 	public Optional<Date> getDateValue(String sectionKey, String valueKey) {
@@ -359,9 +359,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 获取值并转化为Double类型
-	 * @param sectionKey
-	 * @param valueKey
-	 * @param defaultValue
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public Date getDateValue(String sectionKey, String valueKey, Date defaultValue) {
@@ -374,9 +374,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 通过标签名获取对应标签，不存在抛出异常
-	 * @param section
+	 * @param section section
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception Exception
 	 */
 	public Section section(String section) throws Exception {
 		Section result = MapUtils.get(sectionMap, section);
@@ -390,7 +390,7 @@ public class IniHelper implements Disposable,Iterable<String> {
 	//--修改
 	/**
 	 * 插入新section(标签),旧的同名标签会被顶替
-	 * @param section
+	 * @param section section
 	 * @return
 	 */
 	public IniHelper addSection(Section section) {
@@ -400,9 +400,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 替换原有的值,不存在则不作操作
-	 * @param sectionKey
-	 * @param valueKey
-	 * @param value
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
+	 * @param value value
 	 * @return
 	 */
 	public IniHelper update(String sectionKey, String valueKey, Object value) {
@@ -421,9 +421,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 不存在则新建，存在则替换
-	 * @param sectionKey
-	 * @param valueKey
-	 * @param value
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
+	 * @param value value
 	 * @return
 	 */
 	public IniHelper addOrUpadate(String sectionKey, String valueKey, Object value) {
@@ -441,8 +441,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 删除某个标签下的键
-	 * @param sectionKey
-	 * @param valueKey
+	 * @param sectionKey sectionKey
+	 * @param valueKey valueKey
 	 * @return
 	 */
 	public IniHelper removeKey(String sectionKey, String valueKey) {
@@ -455,7 +455,7 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 删除某个标签
-	 * @param sectionKey
+	 * @param sectionKey sectionKey
 	 * @return
 	 */
 	public IniHelper removeSection(String sectionKey) {
@@ -468,7 +468,7 @@ public class IniHelper implements Disposable,Iterable<String> {
 	//--builder
 	/**
 	 * 创建section(内部类只能这么创建)
-	 * @param sectionKey
+	 * @param sectionKey sectionKey
 	 * @return
 	 */
 	public Section newSection(String sectionKey) {
@@ -477,8 +477,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 创建section(内部类只能这么创建)
-	 * @param sectionKey
-	 * @param noteList
+	 * @param sectionKey sectionKey
+	 * @param noteList noteList
 	 * @return
 	 */
 	public Section newSection(String sectionKey, List<String> noteList) {
@@ -594,9 +594,9 @@ public class IniHelper implements Disposable,Iterable<String> {
 	//--输出
 	/**
 	 * 保存到文件
-	 * @param filePath
-	 * @param charset
-	 * @throws IOException
+	 * @param filePath filePath
+	 * @param charset charset
+	 * @throws IOException IOException
 	 */
 	public void save(String filePath, Charset charset) throws IOException {
 		FileUtils.write(filePath, toLines(), charset);
@@ -604,8 +604,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 保存到文件
-	 * @param filePath
-	 * @throws IOException
+	 * @param filePath filePath
+	 * @throws IOException IOException
 	 */
 	public void save(String filePath) throws IOException {
 		save(filePath, Charsets.UTF_8);
@@ -613,8 +613,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 将内容写出到io流
-	 * @param os
-	 * @throws IOException
+	 * @param os os
+	 * @throws IOException IOException
 	 */
 	public void save(OutputStream os) throws IOException {
 		save(os, Charsets.UTF_8);
@@ -622,8 +622,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	
 	/**
 	 * 将内容写出到io流
-	 * @param os
-	 * @throws IOException
+	 * @param os os
+	 * @throws IOException IOException
 	 */
 	public void save(OutputStream os, Charset charset) throws IOException {
 		IOUtils.write(toLines(), os, charset, IOUtils.BUFFSIZE);
@@ -632,8 +632,8 @@ public class IniHelper implements Disposable,Iterable<String> {
 	/**
 	 * 保存到src路径下
 	 * @param path	相对于src路径
-	 * @param clazz
-	 * @throws IOException 
+	 * @param clazz clazz
+	 * @throws IOException IOException
 	 */
 	public void saveBaseSrcPath(String path, Class<?> clazz) throws IOException {
 		FileUtils.write(PathUtils.srcPath(clazz)+path, toLines(), Charsets.UTF_8);
@@ -642,7 +642,7 @@ public class IniHelper implements Disposable,Iterable<String> {
 	//--内部方法
 	/**
 	 * 通过内容行来初始化ini工具类对象
-	 * @param lines
+	 * @param lines lines
 	 */
 	private void initByLines(List<String> lines) {
 		if(lines == null) {
@@ -766,7 +766,7 @@ public class IniHelper implements Disposable,Iterable<String> {
 		
 		/**
 		 * 通过键获取对应的值，不存在抛出异常
-		 * @param key
+		 * @param key key
 		 * @return
 		 */
 		public Value value(String key) {

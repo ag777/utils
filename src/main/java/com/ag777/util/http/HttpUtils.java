@@ -112,9 +112,9 @@ public class HttpUtils {
 	
 	/**
 	 * 定制读取超时时间
-	 * @param builder
-	 * @param timeout
-	 * @param unit
+	 * @param builder builder
+	 * @param timeout timeout
+	 * @param unit unit
 	 * @return
 	 */
 	public static OkHttpClient.Builder readTimeout(OkHttpClient.Builder builder, long timeout,  TimeUnit unit) {
@@ -135,8 +135,8 @@ public class HttpUtils {
 		只关心request的原始意图，而不用关心额外添加的Header信息如If-None-Match
 	 * </p>
 	 * 
-	 * @param builder
-	 * @param interceptors
+	 * @param builder builder
+	 * @param interceptors interceptors
 	 * @return
 	 */
 	public static OkHttpClient.Builder builderWithInterceptor(OkHttpClient.Builder builder, Interceptor... interceptors) {
@@ -154,14 +154,14 @@ public class HttpUtils {
 	
 	/**
 	 * 导入https证书
-	 * @param builder
-	 * @param certificates
+	 * @param builder builder
+	 * @param certificates certificates
 	 * @return
-	 * @throws KeyManagementException
-	 * @throws KeyStoreException
-	 * @throws CertificateException
-	 * @throws NoSuchAlgorithmException
-	 * @throws IOException
+	 * @throws KeyManagementException KeyManagementException
+	 * @throws KeyStoreException KeyStoreException
+	 * @throws CertificateException CertificateException
+	 * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+	 * @throws IOException IOException
 	 */
 	@SuppressWarnings("deprecation")
 	public static OkHttpClient.Builder builderWithHttpCertificate(OkHttpClient.Builder builder, InputStream... certificates) throws KeyManagementException, KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
@@ -181,8 +181,8 @@ public class HttpUtils {
 		监测整个网络访问过程中的数据流向。
 	 * </p>
 	 * 
-	 * @param builder
-	 * @param interceptors
+	 * @param builder builder
+	 * @param interceptors interceptors
 	 * @return
 	 */
 	public static OkHttpClient.Builder builderWithNetWorkInterceptor(OkHttpClient.Builder builder, Interceptor... interceptors) {
@@ -200,7 +200,7 @@ public class HttpUtils {
 	
 	/**
 	 * 构造带cookie持久化的okhttpBuilder
-	 * @param builder
+	 * @param builder builder
 	 * @return
 	 */
 	public static OkHttpClient.Builder builderWithCookie(OkHttpClient.Builder builder) {
@@ -212,9 +212,9 @@ public class HttpUtils {
 
 	/**
 	 * 构造带代理的okhttpBuilder
-	 * @param builder
-	 * @param ip
-	 * @param port
+	 * @param builder builder
+	 * @param ip ip
+	 * @param port port
 	 * @return
 	 */
 	public static OkHttpClient.Builder builderWithProxy(OkHttpClient.Builder builder, String ip, int port) {
@@ -228,8 +228,8 @@ public class HttpUtils {
 
 	/**
 	 * 构建带进度监听的okhttpBuilder
-	 * @param builder
-	 * @param listener
+	 * @param builder builder
+	 * @param listener listener
 	 * @return
 	 */
 	public static OkHttpClient.Builder builderWithProgress(OkHttpClient.Builder builder, ProgressResponseBody.ProgressListener listener) {
@@ -256,7 +256,7 @@ public class HttpUtils {
 	/**===================GET请求===========================*/
 	/**
 	 * 取消所有请求
-	 * @param client
+	 * @param client client
 	 */
 	public static void cancelAll(OkHttpClient client) {
 		if(client != null) {
@@ -269,8 +269,8 @@ public class HttpUtils {
 	 * 来源:https://www.zhihu.com/question/46147227
 	 * </p>
 	 * 
-	 * @param client
-	 * @param tag
+	 * @param client client
+	 * @param tag tag
 	 */
 	public static void cancelAll(OkHttpClient client, Object tag) {
 		if(tag == null) {
@@ -295,11 +295,11 @@ public class HttpUtils {
 	
 	/**
 	 * get请求
-	 * @param client
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
-	 * @param tag
+	 * @param client client
+	 * @param url url
+	 * @param paramMap paramMap
+	 * @param headerMap headerMap
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -309,10 +309,10 @@ public class HttpUtils {
 	
 	/**
 	 * get请求
-	 * @param client
-	 * @param url
-	 * @param headers
-	 * @param tag
+	 * @param client client
+	 * @param url url
+	 * @param headers headers
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -326,12 +326,12 @@ public class HttpUtils {
 	
 	/**
 	 * post请求
-	 * @param client
-	 * @param url
-	 * @param json
+	 * @param client client
+	 * @param url url
+	 * @param json json
 	 * @param paramMap 放在url里的参数
-	 * @param headerMap
-	 * @param tag
+	 * @param headerMap headerMap
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -342,11 +342,11 @@ public class HttpUtils {
 	
 	/**
 	 * post请求
-	 * @param client
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
-	 * @param tag
+	 * @param client client
+	 * @param url url
+	 * @param paramMap paramMap
+	 * @param headerMap headerMap
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -356,11 +356,11 @@ public class HttpUtils {
 	
 	/**
 	 * post请求
-	 * @param client
-	 * @param url
-	 * @param body
-	 * @param headers
-	 * @param tag
+	 * @param client client
+	 * @param url url
+	 * @param body body
+	 * @param headers headers
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -374,15 +374,15 @@ public class HttpUtils {
 	
 	/**
 	 * post请求带附件
-	 * @param client
-	 * @param url
-	 * @param files
-	 * @param paramMap
-	 * @param headerMap
-	 * @param tag
+	 * @param client client
+	 * @param url url
+	 * @param files files
+	 * @param paramMap paramMap
+	 * @param headerMap headerMap
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException FileNotFoundException
 	 */
 	public static <K, V>Call postMultiFilesByClient(OkHttpClient client, String url, File[] files, Map<K, V> paramMap, Map<K, V> headerMap, Object tag) throws IllegalArgumentException, FileNotFoundException {
 		return postByClient(client, url, getRequestBody(files, paramMap), getHeaders(headerMap), tag);
@@ -390,16 +390,16 @@ public class HttpUtils {
 	
 	/**
 	 * post请求带附件
-	 * @param client
-	 * @param url
-	 * @param fileMap
-	 * @param fileKey
-	 * @param paramMap
-	 * @param headerMap
-	 * @param tag
+	 * @param client client
+	 * @param url url
+	 * @param fileMap fileMap
+	 * @param fileKey fileKey
+	 * @param paramMap paramMap
+	 * @param headerMap headerMap
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException FileNotFoundException
 	 */
 	public static <K, V>Call postMultiFilesByClient(OkHttpClient client, String url, Map<File, String> fileMap, String fileKey, Map<K, V> paramMap, Map<K, V> headerMap, Object tag) throws IllegalArgumentException, FileNotFoundException {
 		return postByClient(client, url, getRequestBody(fileMap, fileKey, paramMap), getHeaders(headerMap), tag);
@@ -409,11 +409,11 @@ public class HttpUtils {
 	
 	/**
 	 * delete请求
-	 * @param client
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
-	 * @param tag
+	 * @param client client
+	 * @param url url
+	 * @param paramMap paramMap
+	 * @param headerMap headerMap
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -423,10 +423,10 @@ public class HttpUtils {
 	
 	/**
 	 * delete请求
-	 * @param client
-	 * @param url
-	 * @param headers
-	 * @param tag
+	 * @param client client
+	 * @param url url
+	 * @param headers headers
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -439,11 +439,11 @@ public class HttpUtils {
 	/**===================put===========================*/
 	/**
 	 * put请求
-	 * @param client
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
-	 * @param tag
+	 * @param client client
+	 * @param url url
+	 * @param paramMap paramMap
+	 * @param headerMap headerMap
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -453,11 +453,11 @@ public class HttpUtils {
 	
 	/**
 	 * put请求
-	 * @param client
-	 * @param url
-	 * @param body
-	 * @param headers
-	 * @param tag
+	 * @param client client
+	 * @param url url
+	 * @param body body
+	 * @param headers headers
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -471,11 +471,11 @@ public class HttpUtils {
 	
 	/**
 	 * head请求
-	 * @param client
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
-	 * @param tag
+	 * @param client client
+	 * @param url url
+	 * @param paramMap paramMap
+	 * @param headerMap headerMap
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -485,10 +485,10 @@ public class HttpUtils {
 	
 	/**
 	 * delete请求
-	 * @param client
-	 * @param url
-	 * @param headers
-	 * @param tag
+	 * @param client client
+	 * @param url url
+	 * @param headers headers
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -502,7 +502,7 @@ public class HttpUtils {
 	
 	/**
 	 * 发送请求并得到返回
-	 * @param call
+	 * @param call call
 	 * @return
 	 * @throws ConnectException 一般为连不上接口
 	 * @throws IOException 其他异常
@@ -513,7 +513,7 @@ public class HttpUtils {
 	
 	/**
 	 * 从返回体重获取返回码
-	 * @param response
+	 * @param response response
 	 * @return
 	 */
 	public static Integer responseCode(Response response) {
@@ -529,9 +529,9 @@ public class HttpUtils {
 	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
 	 * </p>
 	 * 
-	 * @param response
+	 * @param response response
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 */
 	public static Optional<String> responseStr(Response response) throws IOException{
 		if(response == null) {
@@ -549,9 +549,9 @@ public class HttpUtils {
 	 *  不论返回什么强制获取字符串
 	 * </p>
 	 * 
-	 * @param response
+	 * @param response response
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static Optional<String> responseStrForce(Response response) throws IOException{
 		if(response == null) {
@@ -566,9 +566,9 @@ public class HttpUtils {
 	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
 	 * </p>
 	 * 
-	 * @param response
+	 * @param response response
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 */
 	public static Optional<Map<String, Object>> responseMap(Response response) throws IOException {
 		if(response == null) {
@@ -587,9 +587,9 @@ public class HttpUtils {
 	 *  不论返回什么强制转化为map
 	 * </p>
 	 * 
-	 * @param response
+	 * @param response response
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static Optional<Map<String, Object>> responseMapForce(Response response) throws IOException{
 		if(response == null) {
@@ -609,10 +609,10 @@ public class HttpUtils {
 	 * 	转化失败会也会抛出异常
 	 * </p>
 	 * 
-	 * @param response
-	 * @param clazz
+	 * @param response response
+	 * @param clazz clazz
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
 	public static <T>Optional<T> responseObj(Response response, Class<T> clazz) throws IOException, JsonSyntaxException {
@@ -633,10 +633,10 @@ public class HttpUtils {
 	 * 	转化失败会也会抛出异常
 	 * </p>
 	 * 
-	 * @param response
-	 * @param clazz
+	 * @param response response
+	 * @param clazz clazz
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
 	public static <T>Optional<T> responseObjForce(Response response, Class<T> clazz) throws IOException, JsonSyntaxException {
@@ -657,10 +657,10 @@ public class HttpUtils {
 	 * 	转化失败会也会抛出异常
 	 * </p>
 	 * 
-	 * @param response
-	 * @param type
+	 * @param response response
+	 * @param type type
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
 	public static <T>Optional<T> responseObj(Response response, Type type) throws IOException, JsonSyntaxException {
@@ -681,10 +681,10 @@ public class HttpUtils {
 	 * 	转化失败会也会抛出异常
 	 * </p>
 	 * 
-	 * @param response
-	 * @param type
+	 * @param response response
+	 * @param type type
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
 	public static <T>Optional<T> responseObjForce(Response response, Type type) throws IOException, JsonSyntaxException {
@@ -704,9 +704,9 @@ public class HttpUtils {
 	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
 	 * </p>
 	 * 
-	 * @param response
+	 * @param response response
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 */
 	public static Optional<InputStream> responseInputStream(Response response) throws IOException  {
 		if(response == null) {
@@ -724,10 +724,10 @@ public class HttpUtils {
 	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
 	 * </p>
 	 * 
-	 * @param response
-	 * @param targetPath
+	 * @param response response
+	 * @param targetPath targetPath
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException IOException
 	 */
 	public static Optional<File> responseFile(Response response, String targetPath) throws IOException {
 		if(response == null) {
@@ -749,7 +749,7 @@ public class HttpUtils {
 	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
 	 * </p>
 	 * 
-	 * @param headerMap
+	 * @param headerMap headerMap
 	 * @return
 	 */
 	public static <K,V>Headers getHeaders(Map<K, V> headerMap) {
@@ -769,8 +769,8 @@ public class HttpUtils {
 	
 	/**
 	 * 请求并获取结果字符串(同步请求)
-	 * @param request
-	 * @param client
+	 * @param request request
+	 * @param client client
 	 * @return
 	 */
 	public static Call call(Request request, OkHttpClient client) {
@@ -785,8 +785,8 @@ public class HttpUtils {
 	
 	/**
 	 * 拼接get请求的url及参数
-	 * @param url
-	 * @param params
+	 * @param url url
+	 * @param params params
 	 * @return
 	 */
 	private static <K, V>String getGetUrl(String url, Map<K, V> params) {
@@ -803,9 +803,9 @@ public class HttpUtils {
 	
 	/**
 	 * 根据参数,请求头等数据构造request
-	 * @param url
-	 * @param headers
-	 * @param tag
+	 * @param url url
+	 * @param headers headers
+	 * @param tag tag
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
@@ -830,7 +830,7 @@ public class HttpUtils {
 	 * 不能用add方法，不然会中文乱码，目前只发现这种写法能解决
 	 * </p>
 	 * 
-	 * @param params
+	 * @param params params
 	 * @return
 	 */
 	private static <K,V> RequestBody getRequestBody(Map<K, V> params) {
@@ -848,9 +848,9 @@ public class HttpUtils {
 	 * 	请事先对附件的存在性进行验证
 	 * </p>
 	 * 
-	 * @param params
+	 * @param params params
 	 * @return
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException FileNotFoundException
 	 */
 	private static <K,V> RequestBody getRequestBody(File[] files, Map<K, V> params) throws FileNotFoundException {
 		Map<File, String> fileMap = null;
@@ -871,7 +871,7 @@ public class HttpUtils {
 	 * @param fileKey 上传文件对应的key
 	 * @param params 其它参数
 	 * @return
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException FileNotFoundException
 	 */
 	private static <K,V> RequestBody getRequestBody(Map<File, String> fileMap, String fileKey, Map<K, V> params) throws FileNotFoundException {
 		okhttp3.MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
@@ -904,7 +904,7 @@ public class HttpUtils {
 	 * @param builder 请求体构造器
 	 * @param fileMap 文件及其上传名称对应map
 	 * @param fileKey 上传文件对应的key
-	 * @throws FileNotFoundException
+	 * @throws FileNotFoundException FileNotFoundException
 	 */
 	private static void addFiles2Form(okhttp3.MultipartBody.Builder builder,Map<File, String> fileMap, String fileKey) throws FileNotFoundException {
 		if(!MapUtils.isEmpty(fileMap)) {

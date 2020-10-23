@@ -25,8 +25,8 @@ public class SetUtils {
 	
 	/**
 	 * 根据分隔符拆分Set获取字符串
-	 * @param set
-	 * @param separator
+	 * @param set set
+	 * @param separator separator
 	 * @return
 	 */
 	public static <T>String toString(Set<T> set, String separator) {
@@ -53,8 +53,8 @@ public class SetUtils {
 	
 	/**
 	 * 求两个集合的交集
-	 * @param set1
-	 * @param set2
+	 * @param set1 set1
+	 * @param set2 set2
 	 * @return
 	 */
 	public static <T>Set<T> intersection(Set<T> set1, Set<T> set2) {
@@ -66,8 +66,8 @@ public class SetUtils {
 	
 	/**
 	 * 求两个集合的并集
-	 * @param set1
-	 * @param set2
+	 * @param set1 set1
+	 * @param set2 set2
 	 * @return
 	 */
 	public static <T>Set<T> union(Set<T> set1, Set<T> set2) {
@@ -79,8 +79,8 @@ public class SetUtils {
 	
 	/**
 	 * 求两个集合的补集(差集)
-	 * @param set1
-	 * @param set2
+	 * @param set1 set1
+	 * @param set2 set2
 	 * @return
 	 */
 	public static <T>Set<T> complement(Set<T> set1, Set<T> set2) {

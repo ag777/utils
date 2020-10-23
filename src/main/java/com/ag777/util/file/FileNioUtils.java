@@ -42,7 +42,7 @@ public class FileNioUtils {
 	
 	/**
 	 * 判断文件是否存在
-	 * @param filePath
+	 * @param filePath filePath
 	 * @return
 	 */
 	public static boolean exists(String filePath) {
@@ -51,7 +51,7 @@ public class FileNioUtils {
 	
 	/**
 	 * 判断文件是否存在
-	 * @param path
+	 * @param path path
 	 * @return
 	 */
 	public static boolean exists(Path path) {
@@ -64,7 +64,7 @@ public class FileNioUtils {
 	 *  文件不存在也返回false
 	 * </p>
 	 * 
-	 * @param path
+	 * @param path path
 	 * @return
 	 */
 	public static boolean isDirectory(Path path) {
@@ -77,9 +77,9 @@ public class FileNioUtils {
 	 * 如果不存在或者是文件则返回空列表
 	 * </p>
 	 * 
-	 * @param dirPath
+	 * @param dirPath dirPath
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static List<Path> subPaths(String dirPath) throws IOException {
 		Path path = getPath(dirPath);
@@ -95,10 +95,10 @@ public class FileNioUtils {
 	//--读写
 	/**
 	 * 读取所有行
-	 * @param filePath
-	 * @param charset
+	 * @param filePath filePath
+	 * @param charset charset
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static Stream<String> lines(String filePath, Charset charset) throws IOException {
 		if(charset == null) {
@@ -111,10 +111,10 @@ public class FileNioUtils {
 	/**
 	 * 读取文件所有行
 	 * 
-	 * @param filePath
-	 * @param charset
+	 * @param filePath filePath
+	 * @param charset charset
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static List<String> readLines(String filePath, Charset charset) throws IOException {
 		if(charset == null) {
@@ -131,11 +131,11 @@ public class FileNioUtils {
 	 * StandardOpenOption.TRUNCATE_EXISTING:文件存在时先清空文件内容
 	 * </p>
 	 * 
-	 * @param filePath
-	 * @param lines
-	 * @param charset
+	 * @param filePath filePath
+	 * @param lines lines
+	 * @param charset charset
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static Path write(String filePath, List<String> lines, Charset charset) throws IOException {
 		if(charset == null) {
@@ -148,10 +148,10 @@ public class FileNioUtils {
 	
 	/**
 	 * 在文件末尾追加字符串
-	 * @param filePath
-	 * @param str
-	 * @param charset
-	 * @throws IOException
+	 * @param filePath filePath
+	 * @param str str
+	 * @param charset charset
+	 * @throws IOException IOException
 	 */
 	public static void append(String filePath, String str, Charset charset) throws IOException {
 		if(charset == null) {
@@ -175,10 +175,10 @@ public class FileNioUtils {
 	
 	/**
 	 * 在文件末尾追加新行
-	 * @param filePath
-	 * @param lines
-	 * @param charset
-	 * @throws IOException
+	 * @param filePath filePath
+	 * @param lines lines
+	 * @param charset charset
+	 * @throws IOException IOException
 	 */
 	public static void append(String filePath, List<String> lines, Charset charset) throws IOException {
 		if(charset == null) {
@@ -208,7 +208,7 @@ public class FileNioUtils {
 	
 	/**
 	 * 创建父目录
-	 * @param path
+	 * @param path path
 	 * @return
 	 */
 	public static boolean makeDir(Path path) {
@@ -240,7 +240,7 @@ public class FileNioUtils {
 	 * 遇到删除不了的文件则停止删除
 	 * </p>
 	 * 
-	 * @param filePath
+	 * @param filePath filePath
 	 * @return
 	 */
 	public static boolean delete(String filePath) {
@@ -254,7 +254,7 @@ public class FileNioUtils {
 	 * 遇到删除不了的文件则停止删除
 	 * </p>
 	 * 
-	 * @param path
+	 * @param path path
 	 * @return
 	 */
 	public static boolean delete(Path path) {
@@ -267,7 +267,7 @@ public class FileNioUtils {
 	 * 文件不存在返回true
 	 * </p>
 	 * 
-	 * @param filePath
+	 * @param filePath filePath
 	 * @param skipOnErr 在遇到删不掉的文件时是否跳过
 	 * @return
 	 */
@@ -282,7 +282,7 @@ public class FileNioUtils {
 	 * 文件不存在返回true
 	 * </p>
 	 * 
-	 * @param path
+	 * @param path path
 	 * @param skipOnErr 在遇到删不掉的文件时是否跳过
 	 * @return
 	 */
@@ -325,8 +325,8 @@ public class FileNioUtils {
      * 比如C盘是NTFS格式,E盘是FAT32格式，在这两个盘移动文件就会返回false<br>
      * 用Files类下的move方法不存在该问题
      * 
-	 * @param source
-	 * @param target
+	 * @param source source
+	 * @param target target
 	 * @return
 	 * @throws IllegalArgumentException 文件路径为空
 	 * @throws NoSuchFileException 源文件不存在
@@ -356,8 +356,8 @@ public class FileNioUtils {
 	 * StandardCopyOption.REPLACE_EXISTING:如果存在则覆盖
 	 * </p>
 	 * 
-	 * @param source
-	 * @param target
+	 * @param source source
+	 * @param target target
 	 * @return
 	 * @throws IllegalArgumentException 文件路径为空
 	 * @throws NoSuchFileException 源文件不存在
@@ -387,11 +387,11 @@ public class FileNioUtils {
 	 * StandardOpenOption.APPEND 向文件末尾追加内容
 	 * </p>
 	 * 
-	 * @param path
-	 * @param charset
-	 * @param isAppend
+	 * @param path path
+	 * @param charset charset
+	 * @param isAppend isAppend
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public static BufferedWriter getBufferedWriter(Path path, Charset charset, boolean isAppend) throws IOException {
 		if(charset == null) {
@@ -411,10 +411,10 @@ public class FileNioUtils {
      * StandardOpenOption.TRUNCATE_EXISTING:文件存在时清空文件
      * </p>
      * 
-	 * @param path
-	 * @param charset
+	 * @param path path
+	 * @param charset charset
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
     public static BufferedWriter getBufferedWriter(Path path, Charset charset) throws IOException {
     	if(charset == null) {
@@ -429,9 +429,9 @@ public class FileNioUtils {
      * 	该方法会帮忙创建文件父路径
      * </p>
      * 
-     * @param filePath
+     * @param filePath filePath
      * @return
-     * @throws IOException 
+     * @throws IOException IOException
      */
     public static BufferedOutputStream getBufferedOutputStream(String filePath) throws IOException {
     	return new BufferedOutputStream(getOutputStream(filePath));
@@ -443,9 +443,9 @@ public class FileNioUtils {
      * 	该方法会帮忙创建文件父路径
      * </p>
      * 
-     * @param path
+     * @param path path
      * @return
-     * @throws IOException 
+     * @throws IOException IOException
      */
     public static BufferedOutputStream getBufferedOutputStream(Path path) throws IOException {
     	return new BufferedOutputStream(getOutputStream(path));
@@ -457,9 +457,9 @@ public class FileNioUtils {
      * 	该方法会帮忙创建文件父路径
      * </p>
      * 
-     * @param filePath
+     * @param filePath filePath
      * @return
-     * @throws IOException 
+     * @throws IOException IOException
      */
     public static OutputStream getOutputStream(String filePath) throws IOException {
     	return getOutputStream(getPath(filePath));
@@ -471,9 +471,9 @@ public class FileNioUtils {
      * 	该方法会帮忙创建文件父路径
      * </p>
      * 
-     * @param path
+     * @param path path
      * @return
-     * @throws IOException 
+     * @throws IOException IOException
      */
     public static OutputStream getOutputStream(Path path) throws IOException {
     	makeDir(path);	//创建父路径
@@ -502,10 +502,10 @@ public class FileNioUtils {
     //-读
     /**
      * 获取读取器
-     * @param path
-     * @param charset
+     * @param path path
+     * @param charset charset
      * @return
-     * @throws IOException
+     * @throws IOException IOException
      */
     public static BufferedReader getBufferedReader(Path path, Charset charset) throws IOException {
     	if(charset == null) {
@@ -517,9 +517,9 @@ public class FileNioUtils {
     /**
      * 获取文件输入流(读)
      * 
-     * @param filePath
+     * @param filePath filePath
      * @return
-     * @throws IOException 
+     * @throws IOException IOException
      */
     public static BufferedInputStream getBufferedInputStream(String filePath) throws IOException {
     	return new BufferedInputStream(getInputStream(filePath));
@@ -528,9 +528,9 @@ public class FileNioUtils {
     /**
      * 获取文件输入流(读)
      * 
-     * @param path
+     * @param path path
      * @return
-     * @throws IOException 
+     * @throws IOException IOException
      */
     public static BufferedInputStream getBufferedInputStream(Path path) throws IOException {
     	return new BufferedInputStream(getInputStream(path));
@@ -539,9 +539,9 @@ public class FileNioUtils {
     /**
      * 获取文件输入流(读)
      * 
-     * @param filePath
+     * @param filePath filePath
      * @return
-     * @throws IOException 
+     * @throws IOException IOException
      */
     public static InputStream getInputStream(String filePath) throws IOException {
     	return getInputStream(getPath(filePath));
@@ -550,9 +550,9 @@ public class FileNioUtils {
     /**
      * 获取文件输入流(读)
      * 
-     * @param path
+     * @param path path
      * @return
-     * @throws IOException 
+     * @throws IOException IOException
      */
     public static InputStream getInputStream(Path path) throws IOException {
     	return Files.newInputStream(path, StandardOpenOption.READ);
@@ -565,8 +565,8 @@ public class FileNioUtils {
      * StandardCopyOption.REPLACE_EXISTING:如果存在则覆盖
      * </p>
      * 
-     * @param source
-     * @param target
+     * @param source source
+     * @param target target
      * @return
      */
     private static boolean moveFile(Path source, Path target) {
@@ -581,8 +581,8 @@ public class FileNioUtils {
     /**
      * 移动文件夹
      * 
-     * @param source
-     * @param target
+     * @param source source
+     * @param target target
      * @return
      */
     private static boolean moveFolder(Path source, Path target) {
@@ -626,7 +626,7 @@ public class FileNioUtils {
 	 * 
 	 * @param source	源文件路径
 	 * @param target	目标路径
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	private static boolean copyFile(Path source, Path target) {
 		try {
@@ -643,7 +643,7 @@ public class FileNioUtils {
 	 * 
 	 * @param source 源文件夹,如: d:/tmp
 	 * @param target 目标文件夹,如: e:/tmp
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	private static boolean copyFolder(Path source, Path target) {
 		boolean flag = false;
@@ -674,7 +674,7 @@ public class FileNioUtils {
     /**
 	 * 根据文件路径获取Path
 	 * 
-	 * @param filePath
+	 * @param filePath filePath
 	 * @return
 	 */
 	private static Path getPath(String filePath) {

@@ -31,7 +31,7 @@ public class CmdUtils extends AbstractCmdUtils {
 
 	/**
 	 * windows系统请设置编码为GBK
-	 * @param charset
+	 * @param charset charset
 	 */
 	public CmdUtils(Charset charset) {
 		super(charset);

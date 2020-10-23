@@ -32,15 +32,15 @@ public class OracleConnection extends BaseDbConnectionUtils{
 	
 	/**
 	 * 
-	 * @param ip
-	 * @param port
-	 * @param user
-	 * @param password
-	 * @param dbName
-	 * @param role
+	 * @param ip ip
+	 * @param port port
+	 * @param user user
+	 * @param password password
+	 * @param dbName dbName
+	 * @param role role
 	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connect(String ip, int port, String user, String password, String dbName, OracleRole role) throws ClassNotFoundException, SQLException {
 		return connect(ip, port, user, password, dbName, role, null);
@@ -48,16 +48,16 @@ public class OracleConnection extends BaseDbConnectionUtils{
 	
 	/**
 	 * 
-	 * @param ip
-	 * @param port
-	 * @param user
-	 * @param password
-	 * @param dbName
-	 * @param role
-	 * @param propMap
+	 * @param ip ip
+	 * @param port port
+	 * @param user user
+	 * @param password password
+	 * @param dbName dbName
+	 * @param role role
+	 * @param propMap propMap
 	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connect(String ip, int port, String user, String password, String dbName, OracleRole role, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
 		return connect(ip, port, user, password, null, dbName, role, propMap);
@@ -65,15 +65,15 @@ public class OracleConnection extends BaseDbConnectionUtils{
 	
 	/**
 	 * 
-	 * @param ip
-	 * @param port
-	 * @param user
-	 * @param password
-	 * @param sid
-	 * @param role
+	 * @param ip ip
+	 * @param port port
+	 * @param user user
+	 * @param password password
+	 * @param sid sid
+	 * @param role role
 	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connectBySid(String ip, int port, String user, String password, String sid, OracleRole role) throws ClassNotFoundException, SQLException {
 		return connectBySid(ip, port, user, password, sid, role, null);
@@ -81,16 +81,16 @@ public class OracleConnection extends BaseDbConnectionUtils{
 	
 	/**
 	 * 
-	 * @param ip
-	 * @param port
-	 * @param user
-	 * @param password
-	 * @param sid
-	 * @param role
-	 * @param propMap
+	 * @param ip ip
+	 * @param port port
+	 * @param user user
+	 * @param password password
+	 * @param sid sid
+	 * @param role role
+	 * @param propMap propMap
 	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connectBySid(String ip, int port, String user, String password, String sid, OracleRole role, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
 		return connect(ip, port, user, password, sid, null, role, propMap);
@@ -144,8 +144,8 @@ public class OracleConnection extends BaseDbConnectionUtils{
 	 * @param role 角色normal/sysdba/sysoper
 	 * @param propMap 其它参数
 	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connect(String ip, int port, String user, String password, String sid, String dbName,
 			OracleRole role, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
@@ -175,14 +175,14 @@ public class OracleConnection extends BaseDbConnectionUtils{
 	
 	/**
 	 * 
-	 * @param url
-	 * @param user
-	 * @param password
-	 * @param role
-	 * @param propMap
+	 * @param url url
+	 * @param user user
+	 * @param password password
+	 * @param role role
+	 * @param propMap propMap
 	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connect(String url, String user, String password, OracleRole role, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
 		Properties props = getProperties(propMap);

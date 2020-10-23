@@ -50,10 +50,10 @@ public abstract class AbstractCmdUtils {
 	 * 使用反射机制获取进程的pid
 	 * @param pro 进程
 	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws NoSuchFieldException
-	 * @throws SecurityException
+	 * @throws IllegalArgumentException IllegalArgumentException
+	 * @throws IllegalAccessException IllegalAccessException
+	 * @throws NoSuchFieldException NoSuchFieldException
+	 * @throws SecurityException SecurityException
 	 */
 	public int getPid(Process pro) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
 		Class<?> cProcessImpl = pro.getClass();
@@ -66,12 +66,12 @@ public abstract class AbstractCmdUtils {
 	
 	/**
 	 * 
-	 * @param cmd
-	 * @param baseDir
-	 * @param regex
-	 * @param replacement
+	 * @param cmd cmd
+	 * @param baseDir baseDir
+	 * @param regex regex
+	 * @param replacement replacement
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public String find(String cmd, String baseDir, String regex, String replacement) throws IOException {
 		return find(cmd, baseDir, Pattern.compile(regex), replacement);
@@ -79,12 +79,12 @@ public abstract class AbstractCmdUtils {
 	
 	/**
 	 * 
-	 * @param cmd
-	 * @param baseDir
-	 * @param pattern
-	 * @param replacement
+	 * @param cmd cmd
+	 * @param baseDir baseDir
+	 * @param pattern pattern
+	 * @param replacement replacement
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public String find(String cmd, String baseDir, Pattern pattern, String replacement) throws IOException {
 		Process pro = getProcess(cmd, baseDir);
@@ -99,12 +99,12 @@ public abstract class AbstractCmdUtils {
 	
 	/**
 	 * 
-	 * @param cmd
-	 * @param baseDir
-	 * @param regex
-	 * @param replacement
+	 * @param cmd cmd
+	 * @param baseDir baseDir
+	 * @param regex regex
+	 * @param replacement replacement
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public Long findLong(String cmd, String baseDir, String regex, String replacement) throws IOException {
 		return findLong(cmd, baseDir, Pattern.compile(regex), replacement);
@@ -112,12 +112,12 @@ public abstract class AbstractCmdUtils {
 	
 	/**
 	 * 
-	 * @param cmd
-	 * @param baseDir
-	 * @param pattern
-	 * @param replacement
+	 * @param cmd cmd
+	 * @param baseDir baseDir
+	 * @param pattern pattern
+	 * @param replacement replacement
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public Long findLong(String cmd, String baseDir, Pattern pattern, String replacement) throws IOException {
 		Process pro = getProcess(cmd, baseDir);
@@ -132,12 +132,12 @@ public abstract class AbstractCmdUtils {
 	
 	/**
 	 * 
-	 * @param cmd
-	 * @param baseDir
-	 * @param regex
-	 * @param replacement
+	 * @param cmd cmd
+	 * @param baseDir baseDir
+	 * @param regex regex
+	 * @param replacement replacement
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public List<String> findAll(String cmd, String baseDir, String regex, String replacement) throws IOException {
 		return findAll(cmd, baseDir, Pattern.compile(regex), replacement);
@@ -145,12 +145,12 @@ public abstract class AbstractCmdUtils {
 	
 	/**
 	 * 
-	 * @param cmd
-	 * @param baseDir
-	 * @param pattern
-	 * @param replacement
+	 * @param cmd cmd
+	 * @param baseDir baseDir
+	 * @param pattern pattern
+	 * @param replacement replacement
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public List<String> findAll(String cmd, String baseDir, Pattern pattern, String replacement) throws IOException {
 		Process pro = getProcess(cmd, baseDir);
@@ -169,10 +169,10 @@ public abstract class AbstractCmdUtils {
 	 * 要小心
 	 * 所有读取内容的方法都有可能导致卡死，原因是某些shell命令读取inputSteam时判断不了何时读取结束
 	 * </p>
-	 * @param cmd
-	 * @param baseDir
+	 * @param cmd cmd
+	 * @param baseDir baseDir
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public List<String> readLines(String cmd, String baseDir) throws IOException {
 		Process pro = getProcess(cmd, baseDir);
@@ -191,10 +191,10 @@ public abstract class AbstractCmdUtils {
 	 * 要小心
 	 * 所有读取内容的方法都有可能导致卡死，原因是某些shell命令读取inputSteam时判断不了何时读取结束
 	 * </p>
-	 * @param cmd
-	 * @param baseDir
+	 * @param cmd cmd
+	 * @param baseDir baseDir
 	 * @param consumer 消费行的内容，尽量不要在内部做耗时操作
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public void readLines(String cmd, String baseDir, java.util.function.Consumer<String> consumer) throws IOException {
 		Process pro = getProcess(cmd, baseDir);
@@ -218,10 +218,10 @@ public abstract class AbstractCmdUtils {
 	 * 要小心
 	 * 所有读取内容的方法都有可能导致卡死，原因是某些shell命令读取inputSteam时判断不了何时读取结束
 	 * </p>
-	 * @param cmd
-	 * @param baseDir
+	 * @param cmd cmd
+	 * @param baseDir baseDir
 	 * @param consumer 消费行的内容，尽量不要在内部做耗时操作
-	 * @throws Throwable
+	 * @throws Throwable Throwable
 	 */
 	public void readLinesWithException(String cmd, String baseDir, ConsumerE<String> consumer) throws Throwable {
 		Process pro = getProcess(cmd, baseDir);
@@ -242,11 +242,11 @@ public abstract class AbstractCmdUtils {
 	/**
 	 * 执行cmd命令获取返回
 	 * 
-	 * @param cmd
-	 * @param baseDir
+	 * @param cmd cmd
+	 * @param baseDir baseDir
 	 * @param lineSparator 行分隔符
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	public String readText(String cmd, String baseDir, String lineSparator) throws IOException {
 		Process pro = getProcess(cmd, baseDir);
@@ -264,10 +264,10 @@ public abstract class AbstractCmdUtils {
 	 * <p>
 	 * 该方法未关闭process,请慎用
 	 * </p>
-	 * @param cmd
-	 * @param baseDir
+	 * @param cmd cmd
+	 * @param baseDir baseDir
 	 * @return
-	 * @throws IOException
+	 * @throws IOException IOException
 	 */
 	@Deprecated
 	public InputStream execForStream(String cmd, String baseDir) throws IOException {
@@ -278,8 +278,8 @@ public abstract class AbstractCmdUtils {
 	
 	/**
 	 * 执行cmd命令(防进程挂起),只关心成功与否,不关心返回
-	 * @param cmd
-	 * @param baseDir
+	 * @param cmd cmd
+	 * @param baseDir baseDir
 	 * @return
 	 */
 	public  boolean exec(String cmd, String baseDir) {
@@ -293,11 +293,11 @@ public abstract class AbstractCmdUtils {
 	
 	/**
 	 * 执行cmd命令(防进程挂起),只关心成功与否,不关心返回
-	 * @param cmd
-	 * @param baseDir
+	 * @param cmd cmd
+	 * @param baseDir baseDir
 	 * @return
-	 * @throws IOException
-	 * @throws InterruptedException
+	 * @throws IOException IOException
+	 * @throws InterruptedException InterruptedException
 	 */
 	public  boolean execWithException(String cmd, String baseDir) throws IOException, InterruptedException {
 		Process shellPro = getProcess(cmd, baseDir);
@@ -314,7 +314,7 @@ public abstract class AbstractCmdUtils {
 	
 	/**
 	 * 执行命令并得到返回流
-	 * @param pro
+	 * @param pro pro
 	 * @return
 	 */
 	public InputStream execByProcess(Process pro) {
@@ -330,7 +330,7 @@ public abstract class AbstractCmdUtils {
 		</p>
 		
 	 * 参考文章:http://xiaohuafyle.iteye.com/blog/1562786
-	 * @param pro
+	 * @param pro pro
 	 */
 	public static void pre(Process pro) {
 		closeOutput(pro);
@@ -349,7 +349,7 @@ public abstract class AbstractCmdUtils {
 	/**
 	 * 关闭输出流
 	 * 
-	 * @param pro
+	 * @param pro pro
 	 */
 	protected static void closeOutput(Process pro) {
 		try {
@@ -380,7 +380,7 @@ public abstract class AbstractCmdUtils {
 	
 	/**
 	 * 子线程读取输出流
-	 * @param pro
+	 * @param pro pro
 	 */
 	protected static void readOutput(Process pro) {
 		try {

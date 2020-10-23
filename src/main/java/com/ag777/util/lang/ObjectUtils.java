@@ -30,7 +30,7 @@ public class ObjectUtils {
 	
 	/**
 	 * 释放对象内存
-	 * @param obj
+	 * @param obj obj
 	 */
 	public static void dispose(Disposable obj) {
 		if(obj != null) {
@@ -168,8 +168,8 @@ public class ObjectUtils {
 	//其它
 	/**
 	 * 如果obj为null则返回默认值
-	 * @param obj
-	 * @param defaultValue
+	 * @param obj obj
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public static <T>T getOrDefault(T obj, T defaultValue) {
@@ -237,9 +237,9 @@ public class ObjectUtils {
 	//--判断
 	/**
 	 * 判断对象是否为数值类型
-	 * @param obj
+	 * @param obj obj
 	 * @return
-	 * @throws Exception
+	 * @throws Exception Exception
 	 */
 	public static boolean isNumber(Object obj) throws Exception {
 		if(obj == null) {
@@ -249,7 +249,7 @@ public class ObjectUtils {
 	}
 	
 	/**
-	 * @param obj
+	 * @param obj obj
 	 * @return 是否为数组
 	 */
 	public static boolean isArray(Object obj) {
@@ -260,7 +260,7 @@ public class ObjectUtils {
 	}
 	
 	/**
-	 * @param obj
+	 * @param obj obj
 	 * @return 是否为collection
 	 */
 	public static boolean isCollection(Object obj) {
@@ -272,7 +272,7 @@ public class ObjectUtils {
 	
 	/**
 	 * 判断Boolean变量是否为true，防止控指针异常
-	 * @param bool
+	 * @param bool bool
 	 * @return
 	 */
 	public static boolean isBooleanTrue(Boolean bool) {
@@ -288,8 +288,8 @@ public class ObjectUtils {
 	 * 	参数中其中一个为null则返回false
 	 * </p>
 	 * 
-	 * @param a
-	 * @param b
+	 * @param a a
+	 * @param b b
 	 * @return
 	 */
 	public static boolean equals(Object a, Object b) {
@@ -301,8 +301,8 @@ public class ObjectUtils {
 	
 	/**
 	 * 都为null时返回true
-	 * @param a
-	 * @param b
+	 * @param a a
+	 * @param b b
 	 * @return
 	 */
 	public static boolean bothNull(Object a, Object... b) {

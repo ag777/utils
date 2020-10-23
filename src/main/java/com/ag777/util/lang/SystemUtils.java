@@ -35,7 +35,7 @@ public class SystemUtils {
 	/**
 	 * 将控制台输出重定向到文件
 	 * 
-	 * @param filePath
+	 * @param filePath filePath
 	 * @return
 	 */
 	public static boolean setSystemOut(String filePath) {
@@ -51,7 +51,7 @@ public class SystemUtils {
 	/**
 	 * 将控制台输出(错误)重定向到文件
 	 * 
-	 * @param filePath
+	 * @param filePath filePath
 	 * @return
 	 */
 	public static boolean setErrOut(String filePath) {
@@ -99,7 +99,7 @@ public class SystemUtils {
 	/**
 	 * 获取本地ip地址
 	 * @return
-	 * @throws UnknownHostException 
+	 * @throws UnknownHostException UnknownHostException
 	 */
 	public static String getLocalHost() throws UnknownHostException {
 		return InetAddress.getLocalHost().getHostAddress();
@@ -163,7 +163,7 @@ public class SystemUtils {
 	/**
 	 * 移除jvm关闭时的钩子
 	 * 
-	 * @param hook
+	 * @param hook hook
 	 */
 	public static void removeShutdownHook(Thread hook) {
 		Runtime.getRuntime().removeShutdownHook(hook);

@@ -57,7 +57,7 @@ public class MapUtils {
 	
 	/**
 	 * 相当于新建一个map并执行putAll，用于深度拷贝map
-	 * @param map
+	 * @param map map
 	 * @return
 	 */
 	public static <K, V>Map<K, V> of(Map<K, V> map) {
@@ -291,9 +291,9 @@ public class MapUtils {
 	
 	/**
 	 * 往map里插入任意多的键值对,采用了强转的方式实现,请自行保证参数类型正确性(others长度为偶数)
-	 * @param map
+	 * @param map map
 	 * @param predicate 返回true则插入
-	 * @param others
+	 * @param others others
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -369,7 +369,7 @@ public class MapUtils {
 	 * 	注意分割服都是正则(注意转义问题)<br>
 	 * key-value分割符无法拆分的项会被略过,不会报错
 	 * 
-	 * @param src
+	 * @param src src
 	 * @param separatorItem 分割map每一项的分隔符
 	 * @param separatorKeyValue	分割每一项key-value的分隔符
 	 * @return linkedHashMap 保留先后顺序
@@ -391,9 +391,9 @@ public class MapUtils {
 	
 	/**
 	 * 空指针安全put
-	 * @param map
-	 * @param key
-	 * @param value
+	 * @param map map
+	 * @param key key
+	 * @param value value
 	 * @return
 	 */
 	public static <K,V>Map<K, V> put(Map<K, V> map, K key, V value) {
@@ -406,8 +406,8 @@ public class MapUtils {
 	
 	/**
 	 * 空指针安全putAll
-	 * @param map
-	 * @param extendMap
+	 * @param map map
+	 * @param extendMap extendMap
 	 * @return
 	 */
 	public static <K,V>Map<K, V> putAll(Map<K, V> map, Map<K, V> extendMap) {
@@ -467,8 +467,8 @@ public class MapUtils {
 	
 	/**
 	 * 获取String
-	 * @param map
-	 * @param key
+	 * @param map map
+	 * @param key key
 	 * @return
 	 */
 	public static <K,V>String getStr(Map<K, V> map, K key) {
@@ -478,9 +478,9 @@ public class MapUtils {
 	
 	/**
 	 * 获取String
-	 * @param map
-	 * @param key
-	 * @param defaultValue
+	 * @param map map
+	 * @param key key
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public static <K,V>String getStr(Map<K, V> map, K key, String defaultValue) {
@@ -490,8 +490,8 @@ public class MapUtils {
 	
 	/**
 	 * 获取Double
-	 * @param map
-	 * @param key
+	 * @param map map
+	 * @param key key
 	 * @return
 	 */
 	public static <K,V>Double getDouble(Map<K, V> map, K key) {
@@ -501,9 +501,9 @@ public class MapUtils {
 	
 	/**
 	 * 获取double
-	 * @param map
-	 * @param key
-	 * @param defaultValue
+	 * @param map map
+	 * @param key key
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public static <K,V>double getDouble(Map<K, V> map, K key, double defaultValue) {
@@ -513,8 +513,8 @@ public class MapUtils {
 	
 	/**
 	 * 获取Float
-	 * @param map
-	 * @param key
+	 * @param map map
+	 * @param key key
 	 * @return
 	 */
 	public static <K,V>Float getFloat(Map<K, V> map, K key) {
@@ -524,9 +524,9 @@ public class MapUtils {
 	
 	/**
 	 * 获取float
-	 * @param map
-	 * @param key
-	 * @param defaultValue
+	 * @param map map
+	 * @param key key
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public static <K,V>float getFloat(Map<K, V> map, K key, float defaultValue) {
@@ -536,8 +536,8 @@ public class MapUtils {
 	
 	/**
 	 * 获取Integer
-	 * @param map
-	 * @param key
+	 * @param map map
+	 * @param key key
 	 * @return
 	 */
 	public static <K,V>Integer getInt(Map<K, V> map, K key) {
@@ -547,9 +547,9 @@ public class MapUtils {
 	
 	/**
 	 * 获取int
-	 * @param map
-	 * @param key
-	 * @param defaultValue
+	 * @param map map
+	 * @param key key
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public static <K,V>int getInt(Map<K, V> map, K key, int defaultValue) {
@@ -559,8 +559,8 @@ public class MapUtils {
 	
 	/**
 	 * 获取Long
-	 * @param map
-	 * @param key
+	 * @param map map
+	 * @param key key
 	 * @return
 	 */
 	public static <K,V>Long getLong(Map<K, V> map, K key) {
@@ -570,9 +570,9 @@ public class MapUtils {
 	
 	/**
 	 * 获取Long
-	 * @param map
-	 * @param key
-	 * @param defaultValue
+	 * @param map map
+	 * @param key key
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public static <K,V>long getLong(Map<K, V> map, K key, long defaultValue) {
@@ -588,8 +588,8 @@ public class MapUtils {
 	 * 	其余情况返回null
 	 * </p>
 	 * 
-	 * @param map
-	 * @param key
+	 * @param map map
+	 * @param key key
 	 * @return
 	 */
 	public static <K,V>Boolean getBoolean(Map<K, V> map, K key) {
@@ -605,9 +605,9 @@ public class MapUtils {
 	 * 	其余情况返回null
 	 * </p>
 	 * 
-	 * @param map
-	 * @param key
-	 * @param defaultValue
+	 * @param map map
+	 * @param key key
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public static <K,V>boolean getBoolean(Map<K, V> map, K key, boolean defaultValue) {
@@ -625,8 +625,8 @@ public class MapUtils {
 	 * 	HH:mm:ss
 	 * </p>
 	 * 
-	 * @param map
-	 * @param key
+	 * @param map map
+	 * @param key key
 	 * @return
 	 */
 	public static <K,V>Date getDate(Map<K, V> map, K key) {
@@ -643,9 +643,9 @@ public class MapUtils {
 	 * 	HH:mm:ss
 	 * </p>
 	 * 
-	 * @param map
-	 * @param key
-	 * @param defaultValue
+	 * @param map map
+	 * @param key key
+	 * @param defaultValue defaultValue
 	 * @return
 	 */
 	public static <K,V>Date getDate(Map<K, V> map, K key, Date defaultValue) {
@@ -664,7 +664,7 @@ public class MapUtils {
 	/**
 	 * 转换map中的key
 	 * 
-	 * @param src
+	 * @param src src
 	 * @param convertMap 源key和转换的目标key的对应map
 	 * @return
 	 */
@@ -684,9 +684,9 @@ public class MapUtils {
 	 * 	流程:判断源map中是否有键key1,保存key2及key1对应的值，删除键key1，返回源map
 	 * </p>
 	 * 
-	 * @param src
-	 * @param key1
-	 * @param key2
+	 * @param src src
+	 * @param key1 key1
+	 * @param key2 key2
 	 * @return
 	 */
 	public static <K,V>Map<K,V> convertKey(Map<K,V> src, K key1, K key2) {
@@ -702,9 +702,9 @@ public class MapUtils {
 	
 	/**
 	 * 格式化map为字符串
-	 * @param map
-	 * @param separatorItem
-	 * @param separatorKeyValue
+	 * @param map map
+	 * @param separatorItem separatorItem
+	 * @param separatorKeyValue separatorKeyValue
 	 * @return
 	 */
 	public static <K,V>String toString(Map<K,V> map, String separatorItem, String separatorKeyValue) {
@@ -735,8 +735,8 @@ public class MapUtils {
 	 * <p>
 	 * 参考:https://blog.csdn.net/qq997404392/article/details/73333215
 	 * </p>
-	 * @param src
-	 * @param comparator
+	 * @param src src
+	 * @param comparator comparator
 	 * @return
 	 */
 	public static <K,V>Map<K,V> sort(LinkedHashMap<K,V> src, Comparator<Map.Entry<K, V>> comparator) {

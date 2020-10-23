@@ -36,7 +36,7 @@ public class EmojiUtils {
 
     /**
      * 非emoji表情字符判断
-     * @param codePoint
+     * @param codePoint codePoint
      * @return
      */
     private static boolean notisEmojiCharacter(char codePoint) {

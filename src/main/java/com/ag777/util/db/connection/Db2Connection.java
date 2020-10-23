@@ -30,15 +30,15 @@ public class Db2Connection extends BaseDbConnectionUtils {
 	 * 改用db2jcc4.jar(原来使用db2jcc.jar,两个包的区别大概是协议/标准不同),v11.5 FP0 (GA)	4.26.14
 	 * 唯一指定下载地址:https://www-01.ibm.com/support/docview.wss?uid=swg21363866(需翻墙)
 	 * 
-	 * @param ip
-	 * @param port
-	 * @param user
-	 * @param password
-	 * @param dbName
-	 * @param propMap
+	 * @param ip ip
+	 * @param port port
+	 * @param user user
+	 * @param password password
+	 * @param dbName dbName
+	 * @param propMap propMap
 	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connect(String ip, String port, String user, String password, Object dbName,
 			Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
@@ -56,13 +56,13 @@ public class Db2Connection extends BaseDbConnectionUtils {
 	
 	/**
 	 * 
-	 * @param url
-	 * @param user
-	 * @param password
-	 * @param propMap
+	 * @param url url
+	 * @param user user
+	 * @param password password
+	 * @param propMap propMap
 	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
+	 * @throws ClassNotFoundException ClassNotFoundException
+	 * @throws SQLException SQLException
 	 */
 	public static Connection connect(String url, String user, String password, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
 		Properties props = getProperties(propMap);

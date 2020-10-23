@@ -44,13 +44,13 @@ public class SSLSocketClient {
     
     /**
      * 导入ssl证书
-     * @param certificates
+     * @param certificates certificates
      * @return
-     * @throws KeyStoreException
-     * @throws CertificateException
-     * @throws NoSuchAlgorithmException
-     * @throws IOException
-     * @throws KeyManagementException
+     * @throws KeyStoreException KeyStoreException
+     * @throws CertificateException CertificateException
+     * @throws NoSuchAlgorithmException NoSuchAlgorithmException
+     * @throws IOException IOException
+     * @throws KeyManagementException KeyManagementException
      */
     public static SSLSocketFactory getSSLSocketFactory(InputStream... certificates) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");

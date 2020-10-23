@@ -57,7 +57,7 @@ public class Timer {
 	
 	/**
 	 * 打印当前操作用时和总操作用时
-	 * @param operate
+	 * @param operate operate
 	 */
 	public void sign(String operate) {	
 		System.out.println(signStr(operate));
@@ -65,7 +65,7 @@ public class Timer {
 	
 	/**
 	 * 获取拼接好的当前操作用时字符串
-	 * @param operate
+	 * @param operate operate
 	 */
 	public String signStr(String operate) {
 		String[] times = cutinStr();

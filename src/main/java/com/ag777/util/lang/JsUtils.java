@@ -30,9 +30,9 @@ public class JsUtils {
 	
 	/**
 	 * 预编译脚本
-	 * @param formula
+	 * @param formula formula
 	 * @return
-	 * @throws ScriptException 
+	 * @throws ScriptException ScriptException
 	 */
 	public static CompiledScript compile(String formula) throws ScriptException {
 		ScriptEngine engine = getEngine();
@@ -54,7 +54,7 @@ public class JsUtils {
 	 * @param formula 公式
 	 * @param params 变量键值对
 	 * @return
-	 * @throws ScriptException
+	 * @throws ScriptException ScriptException
 	 */
 	public static <K, V>Object eval(String formula, Map<K, V> params) throws ScriptException {
 	    return eval(formula, getBindings(params));
@@ -62,10 +62,10 @@ public class JsUtils {
 	
 	/**
 	 * 传入公式，调用js获取结果
-	 * @param formula
-	 * @param bindings
+	 * @param formula formula
+	 * @param bindings bindings
 	 * @return
-	 * @throws ScriptException
+	 * @throws ScriptException ScriptException
 	 */
 	public static <K, V>Object eval(String formula, Bindings bindings) throws ScriptException {
 		ScriptEngine engine = getEngine();
@@ -78,7 +78,7 @@ public class JsUtils {
 	 * @param bindings 变量,可以传一个SimpleBindings,可以为null
 	 * @param engine 引擎
 	 * @return
-	 * @throws ScriptException
+	 * @throws ScriptException ScriptException
 	 */
 	public static Object eval(String formula, Bindings bindings, ScriptEngine engine) throws ScriptException {
 		if(engine instanceof Compilable) {	//预编译，其实这里(公式和变量都是一次性的)是没啥用的，只是举个例子
@@ -94,7 +94,7 @@ public class JsUtils {
 	 * @param script 预编译好的js脚本
 	 * @param params 变量键值对
 	 * @return
-	 * @throws ScriptException
+	 * @throws ScriptException ScriptException
 	 */
 	public static <K, V>Object eval(CompiledScript script, Map<K, V> params) throws ScriptException {
 		return eval(script, getBindings(params));
@@ -105,15 +105,17 @@ public class JsUtils {
 	 * @param script 预编译好的脚本
 	 * @param bindings 构造好的变量键值对
 	 * @return
-	 * @throws ScriptException
+	 * @throws ScriptException ScriptException
 	 */
 	public static Object eval(CompiledScript script, Bindings bindings) throws ScriptException {
 		return script.eval(bindings);
 	}
-	
+
 	/**
 	 * 通过键值对构造bindings
-	 * @param params
+	 * @param params params
+	 * @param <K> K
+	 * @param <V> V
 	 * @return
 	 */
 	private static <K,V>Bindings getBindings(Map<K, V> params) {

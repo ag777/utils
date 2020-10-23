@@ -16,21 +16,21 @@ public interface JsonUtilsInterf {
 
 	/**
 	 * 格式化json串
-	 * @param str
+	 * @param str str
 	 * @return
 	 */
 	public String prettyFormat(String str)  throws JsonSyntaxException;
 	
 	/**
 	 * 对象转json
-	 * @param obj
+	 * @param obj obj
 	 * @return
 	 */
 	public String toJson(Object obj);
 	
 	/**
 	 * json转<pre>{@code Map<String, Object> }</pre>
-	 * @param json
+	 * @param json json
 	 * @return
 	 */
 	public Map<String, Object> toMap(String json);
@@ -39,7 +39,7 @@ public interface JsonUtilsInterf {
 	
 	/**
 	 * json转<pre>{@code List<T> }</pre>
-	 * @param json
+	 * @param json json
 	 * @return
 	 */
 	public <T>List<T> toList(String json, Class<T> classOfT);
@@ -48,7 +48,7 @@ public interface JsonUtilsInterf {
 	
 	/**
 	 * json转<pre>{@code List<Map<String, Object>> }</pre>
-	 * @param json
+	 * @param json json
 	 * @return
 	 */
 	public List<Map<String, Object>> toListMap(String json);
@@ -57,8 +57,8 @@ public interface JsonUtilsInterf {
 	
 	/**
 	 * json转任意对象
-	 * @param json
-	 * @param classOfT
+	 * @param json json
+	 * @param classOfT classOfT
 	 * @return
 	 */
 	public <T>T fromJson(String json, Class<T> classOfT);
@@ -67,8 +67,8 @@ public interface JsonUtilsInterf {
 	
 	/**
 	 * json转任意对象
-	 * @param json
-	 * @param type
+	 * @param json json
+	 * @param type type
 	 * @return
 	 */
 	public <T>T fromJson(String json, Type type);

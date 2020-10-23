@@ -88,8 +88,8 @@ public class MyCall implements Disposable, AutoCloseable {
 	/**
 	 * 发送请求并获取返回的封装
 	 * @return
-	 * @throws ConnectException
-	 * @throws IOException
+	 * @throws ConnectException ConnectException
+	 * @throws IOException IOException
 	 */
 	public Response executeForResponse() throws ConnectException, IOException {
 		response = HttpUtils.execute(call);
@@ -99,8 +99,8 @@ public class MyCall implements Disposable, AutoCloseable {
 	/**
 	 * 请求并获取返回码
 	 * @return
-	 * @throws ConnectException
-	 * @throws IOException
+	 * @throws ConnectException ConnectException
+	 * @throws IOException IOException
 	 */
 	public Integer executeForCode() throws ConnectException, IOException {
 		executeForResponse();
@@ -110,8 +110,8 @@ public class MyCall implements Disposable, AutoCloseable {
 	/**
 	 * 发送请求并得到返回字符串
 	 * @return
-	 * @throws ConnectException
-	 * @throws IOException
+	 * @throws ConnectException ConnectException
+	 * @throws IOException IOException
 	 */
 	public Optional<String> executeForStr() throws ConnectException, IOException{
 		executeForResponse();
@@ -170,10 +170,10 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * 	转化失败会也会抛出异常
 	 * </p>
 	 * 
-	 * @param clazz
+	 * @param clazz clazz
 	 * @return
-	 * @throws ConnectException 
-	 * @throws IOException 
+	 * @throws ConnectException ConnectException
+	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
 	public <T>Optional<T> executeForObj(Class<T> clazz) throws ConnectException, IOException, JsonSyntaxException  {
@@ -188,10 +188,10 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * 	转化失败会也会抛出异常
 	 * </p>
 	 * 
-	 * @param clazz
+	 * @param clazz clazz
 	 * @return
-	 * @throws ConnectException 
-	 * @throws IOException 
+	 * @throws ConnectException ConnectException
+	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
 	public <T>Optional<T> executeForObjForce(Class<T> clazz) throws ConnectException, IOException, JsonSyntaxException  {
@@ -206,10 +206,10 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * 	转化失败会也会抛出异常
 	 * </p>
 	 * 
-	 * @param type
+	 * @param type type
 	 * @return
-	 * @throws ConnectException 
-	 * @throws IOException 
+	 * @throws ConnectException ConnectException
+	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
 	public <T>Optional<T> executeForObj(Type type) throws ConnectException, IOException, JsonSyntaxException {
@@ -224,10 +224,10 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * 	转化失败会也会抛出异常
 	 * </p>
 	 * 
-	 * @param type
+	 * @param type type
 	 * @return
-	 * @throws ConnectException 
-	 * @throws IOException 
+	 * @throws ConnectException ConnectException
+	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
 	public <T>Optional<T> executeForObjForce(Type type) throws ConnectException, IOException, JsonSyntaxException  {
@@ -256,7 +256,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
 	 * </p>
 	 * 
-	 * @param targetPath
+	 * @param targetPath targetPath
 	 * @return
 	 * @throws ConnectException 一般为连不上接口
 	 * @throws IOException 其他异常

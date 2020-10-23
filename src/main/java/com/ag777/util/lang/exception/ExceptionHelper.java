@@ -21,8 +21,8 @@ public class ExceptionHelper {
 	 * 	遍历堆栈如果错误信息由clazz抛出，则拼接错误信息并返回
 	 * </p>
 	 * 
-	 * @param throwable
-	 * @param clazz
+	 * @param throwable throwable
+	 * @param clazz clazz
 	 * @return
 	 */
 	public static String getErrMsg(Throwable throwable, Class<?> clazz) {
@@ -46,7 +46,7 @@ public class ExceptionHelper {
 	
 	/**
 	 * 从抛出的一场中提取错误信息(工作目录为app中的目录)
-	 * @param throwable
+	 * @param throwable throwable
 	 * @param shouldExcludeUtilsPackage 是否排除该工具包的路径,如果不传这个参数则默认为true
 	 * @return
 	 */
@@ -62,7 +62,7 @@ public class ExceptionHelper {
 	
 	/**
 	 * 从抛出的一场中提取错误信息(工作目录为app中的目录，排除目录包含Utils类中的目录)
-	 * @param throwable
+	 * @param throwable throwable
 	 * @return
 	 */
 	public static String getErrMsg(Throwable throwable) {

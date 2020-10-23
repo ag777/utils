@@ -60,9 +60,9 @@ public class ImageUtils {
 	 * 获取图片格式
 	 * @param in 用完会关闭流
 	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws ImageNotSupportException
-	 * @throws IOException
+	 * @throws IllegalArgumentException IllegalArgumentException
+	 * @throws ImageNotSupportException ImageNotSupportException
+	 * @throws IOException IOException
 	 */
 	public static String getType(ImageInputStream in)  throws IllegalArgumentException, ImageNotSupportException, IOException {
 		try {
@@ -87,7 +87,7 @@ public class ImageUtils {
 	/**
 	 * 获取图片格式
 	 * 
-	 * @param filePath
+	 * @param filePath filePath
 	 * @return
 	 * @throws IllegalArgumentException 文件不存在等异常
 	 * @throws ImageNotSupportException 图片文件格式不支持异常(一般文件就不是图片)
@@ -110,11 +110,11 @@ public class ImageUtils {
 	
 	/**
 	 * 获取图片宽高
-	 * @param bi
+	 * @param bi bi
 	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws ImageNotSupportException
-	 * @throws IOException
+	 * @throws IllegalArgumentException IllegalArgumentException
+	 * @throws ImageNotSupportException ImageNotSupportException
+	 * @throws IOException IOException
 	 */
 	public static int[] getWidthAndHeight(BufferedImage bi) throws IllegalArgumentException, ImageNotSupportException, IOException {
        int width = bi.getWidth();
@@ -128,7 +128,7 @@ public class ImageUtils {
 	 * 数组第一个值使宽度，第二个值是高度
 	 * </p>
 	 * 
-	 * @param filePath
+	 * @param filePath filePath
 	 * @return
 	 * @throws IllegalArgumentException 文件不存在等异常
 	 * @throws ImageNotSupportException 图片文件格式不支持异常(一般文件就不是图片)
@@ -156,9 +156,9 @@ public class ImageUtils {
 	/**
 	 * 转换图片格式
 	 * 
-	 * @param srcPath
-	 * @param destPath
-	 * @param type
+	 * @param srcPath srcPath
+	 * @param destPath destPath
+	 * @param type type
 	 * @return 
 	 * @throws IllegalArgumentException 文件不存在等异常
 	 * @throws ImageNotSupportException 图片文件格式不支持异常(一般文件就不是图片)
@@ -191,13 +191,13 @@ public class ImageUtils {
      * 为了利用API的高级特性，应用程序应当直接使用类ImageReader和 ImageWriter读写图片  
 	 * </p>
 	 * 
-	 * @param srcPath
-	 * @param destPath
-	 * @param imgType
-	 * @param helper
-	 * @throws IllegalArgumentException
-	 * @throws ImageNotSupportException
-	 * @throws IOException
+	 * @param srcPath srcPath
+	 * @param destPath destPath
+	 * @param imgType imgType
+	 * @param helper helper
+	 * @throws IllegalArgumentException IllegalArgumentException
+	 * @throws ImageNotSupportException ImageNotSupportException
+	 * @throws IOException IOException
 	 */
     public static File complexRWImage(String srcPath, String destPath, String imgType, ComplexHelper helper) throws IllegalArgumentException, ImageNotSupportException, IOException {  
     	ImageInputStream is = null;
@@ -256,13 +256,13 @@ public class ImageUtils {
      * 宽高不能同时为0，其中一项为0代表该项为按比例缩放
      * </p>
      * 
-     * @param srcPath
-     * @param destPath
+     * @param srcPath srcPath
+     * @param destPath destPath
      * @param w 传0则需要固定高度,等比缩放
      * @param h 传0则需要固定宽度,等比缩放
-     * @throws IllegalArgumentException
-     * @throws ImageNotSupportException 
-     * @throws IOException 
+     * @throws IllegalArgumentException IllegalArgumentException
+     * @throws ImageNotSupportException ImageNotSupportException
+     * @throws IOException IOException
      */
     public static void scare(String srcPath, String destPath, int w, int h)  throws IllegalArgumentException, ImageNotSupportException, IOException {
         
@@ -307,10 +307,10 @@ public class ImageUtils {
      * 代码地址:http://www.ibooker.cc/article/109/detail
      * </p>
      * 
-     * @param bufferedImage
-     * @param targetPath
-     * @param quality
-     * @throws IOException
+     * @param bufferedImage bufferedImage
+     * @param targetPath targetPath
+     * @param quality quality
+     * @throws IOException IOException
      */
     public static void zoomBufferedImageByQuality(BufferedImage bufferedImage, String targetPath, float quality) throws IOException {
 		// 得到指定Format图片的writer
@@ -350,10 +350,10 @@ public class ImageUtils {
 	 * <p>
 	 * 实测导出的图片会失真
 	 * </p>
-	 * @param gifPath
-	 * @param targetDir
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @param gifPath gifPath
+	 * @param targetDir targetDir
+	 * @throws FileNotFoundException FileNotFoundException
+	 * @throws IOException IOException
 	 */
     @Deprecated
 	public static void splitGif(String gifPath, String targetDir) throws FileNotFoundException, IOException {
@@ -365,10 +365,10 @@ public class ImageUtils {
 	 * <p>
 	 * 实测导出的图片会失真
 	 * </p>
-	 * @param in
-	 * @param targetDir
-	 * @throws FileNotFoundException
-	 * @throws IOException
+	 * @param in in
+	 * @param targetDir targetDir
+	 * @throws FileNotFoundException FileNotFoundException
+	 * @throws IOException IOException
 	 */
 	@Deprecated
 	public static void splitGif(FileImageInputStream in, String targetDir) throws FileNotFoundException, IOException {
@@ -410,10 +410,10 @@ public class ImageUtils {
 	 * <p>
 	 * 参考文章:https://zhoupuyue.iteye.com/blog/780315
 	 * </p>
-	 * @param img
+	 * @param img img
 	 * @return
-	 * @throws ImageFormatException
-	 * @throws IOException
+	 * @throws ImageFormatException ImageFormatException
+	 * @throws IOException IOException
 	 */
 	public static byte[] toBytes(BufferedImage img) throws ImageFormatException, IOException {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();  
