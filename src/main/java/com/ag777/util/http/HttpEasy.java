@@ -19,13 +19,13 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2018年05月21日
+ * @version create on 2018年03月30日,last modify at 2020年10月23日
  */
 public class HttpEasy {
 	
 	private HttpEasy() {}
 	
-	/**===================GET请求===========================*/
+	//===================GET请求===========================*/
 	
 	/**
 	 * 发送get请求
@@ -33,10 +33,10 @@ public class HttpEasy {
 	 * 	不论接口返回是否是200都去获取返回字符串
 	 * </p>
 	 * 
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
-	 * @return
+	 * @param url url
+	 * @param paramMap 放在请求头里的参数
+	 * @param headerMap 请求头
+	 * @return String
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K, V>Optional<String> get(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException  {
@@ -51,10 +51,10 @@ public class HttpEasy {
 	 * 	不论接口返回是否是200都去获取返回字符串
 	 * </p>
 	 * 
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
-	 * @return
+	 * @param url url
+	 * @param paramMap 放在请求头里的参数
+	 * @param headerMap 请求头
+	 * @return map
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K, V>Optional<Map<String, Object>> getForMap(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException  {
@@ -62,19 +62,19 @@ public class HttpEasy {
 		return callForMapForce(call);
 	}
 	
-	/**===================POST请求===========================*/
+	//===================POST请求===========================*/
 	
 	/**
 	 * post请求向服务端发送json串
 	 * <p>
 	 * 	不论接口返回是否是200都去获取返回字符串
 	 * </p>
-	 * 
-	 * @param url
-	 * @param json
-	 * @param paramMap 放在url里的参数
-	 * @param headerMap
-	 * @return
+	 *
+	 * @param url url
+	 * @param json json
+	 * @param paramMap 放在请求头里的参数
+	 * @param headerMap 请求头
+	 * @return 字符串
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K, V>Optional<String> postJson(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
@@ -87,11 +87,11 @@ public class HttpEasy {
 	 * <p>
 	 * 	不论接口返回是否是200都去获取返回字符串
 	 * </p>
-	 * 
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
-	 * @return
+	 *
+	 * @param url url
+	 * @param paramMap 请求参数
+	 * @param headerMap 请求头
+	 * @return 字符串
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K, V>Optional<String> post(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
@@ -106,11 +106,11 @@ public class HttpEasy {
 	 * 	不论接口返回是否是200都去获取返回字符串
 	 * </p>
 	 * 
-	 * @param url
-	 * @param json
+	 * @param url url
+	 * @param json json
 	 * @param paramMap 放在请求头里的参数
-	 * @param headerMap
-	 * @return
+	 * @param headerMap 请求头
+	 * @return map对象
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K, V>Optional<Map<String, Object>> postJsonForMap(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
@@ -123,19 +123,74 @@ public class HttpEasy {
 	 * <p>
 	 * 	不论接口返回是否是200都去获取返回字符串
 	 * </p>
-	 * 
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
-	 * @return
+	 *
+	 * @param url url
+	 * @param paramMap 请求参数
+	 * @param headerMap 请求头
+	 * @return map对象
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K, V>Optional<Map<String, Object>> postForMap(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.postByClient(null, url, paramMap, headerMap, null);
 		return callForMapForce(call);
 	}
+
+
+	//===================DELETE请求===========================
+	/**
+	 * delete请求
+	 * @param url url
+	 * @param paramMap 请求参数
+	 * @param headerMap 请求头
+	 * @return 字符串
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K,V> Optional<String> delete(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.deleteByClient(null, url, paramMap, headerMap, null);
+		return callForStrForce(call);
+	}
+
+	/**
+	 * delete请求
+	 * @param url url
+	 * @param paramMap 请求参数
+	 * @param headerMap 请求头
+	 * @return map对象
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K,V> Optional<Map<String, Object>> deleteForMap(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.deleteByClient(null, url, paramMap, headerMap, null);
+		return callForMapForce(call);
+	}
+
+	//===================PUT请求===========================*/
+	/**
+	 * put请求
+	 * @param url url
+	 * @param paramMap 请求参数
+	 * @param headerMap 请求头
+	 * @return 字符串
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K,V>Optional<String> put(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.putByClient(null, url, paramMap, headerMap, null);
+		return callForStrForce(call);
+	}
+
+	/**
+	 * put请求
+	 * @param url url
+	 * @param paramMap 请求参数
+	 * @param headerMap 请求头
+	 * @return map对象
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K,V> Optional<Map<String, Object>> putForMap(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.putByClient(null, url, paramMap, headerMap, null);
+		return callForMapForce(call);
+	}
 	
-	/**===================上传/下载文件===========================*/
+	//===================上传/下载文件===========================*/
 	
 	/**
 	 * 向接口提交表单并附带文件(支持一次多个)
@@ -143,13 +198,13 @@ public class HttpEasy {
 	 * 	不论接口返回是否是200都去获取返回字符串
 	 * </p>
 	 * 
-	 * @param url
-	 * @param files
-	 * @param paramMap
-	 * @param headerMap
-	 * @return
+	 * @param url url
+	 * @param files 文件
+	 * @param paramMap 请求参数
+	 * @param headerMap 请求头
+	 * @return string
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException 找不到文件
 	 */
 	public static <K, V>Optional<String> postMultiFiles(String url, File[] files, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException, FileNotFoundException  {
 		Call call = HttpUtils.postMultiFilesByClient(null, url, files, paramMap, headerMap, null);
@@ -158,14 +213,14 @@ public class HttpEasy {
 	
 	/**
 	 * 
-	 * @param url
+	 * @param url url
 	 * @param fileMap 文件及其上传名称对应map
 	 * @param fileKey 请求体里对应的key
-	 * @param paramMap
-	 * @param headerMap
-	 * @return
-	 * @throws IllegalArgumentException
-	 * @throws FileNotFoundException
+	 * @param paramMap 请求参数
+	 * @param headerMap 请求头
+	 * @return string
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 * @throws FileNotFoundException 找不到文件
 	 */
 	public static <K, V>Optional<String> postMultiFiles(String url, Map<File, String> fileMap, String fileKey, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException, FileNotFoundException  {
 		Call call = HttpUtils.postMultiFilesByClient(null, url, fileMap, fileKey, paramMap, headerMap, null);
@@ -178,15 +233,14 @@ public class HttpEasy {
 	 * 	只有在接口返回200时获取返回流
 	 * </p>
 	 * 
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
-	 * @param targetPath
-	 * @param listener
-	 * @return
+	 * @param url url
+	 * @param paramMap 请求参数
+	 * @param headerMap 请求头
+	 * @param listener 进度监听
+	 * @return io流,请自行实现读取操作
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static <K, V>Optional<InputStream> downLoadForStream(String url, Map<K, V> paramMap, Map<K,V> headerMap, String targetPath, ProgressResponseBody.ProgressListener listener) throws IllegalArgumentException {
+	public static <K, V>Optional<InputStream> downLoadForStream(String url, Map<K, V> paramMap, Map<K,V> headerMap, ProgressResponseBody.ProgressListener listener) throws IllegalArgumentException {
 		OkHttpClient client = HttpUtils.builderWithProgress(null, listener).build();
 		Call call = HttpUtils.getByClient(client, url, paramMap, headerMap, null);
 		return callForInputStream(call);
@@ -199,12 +253,12 @@ public class HttpEasy {
 	 * 保存后回去判断文件是否存在，不存在时返回Optional.empty()
 	 * </p>
 	 * 
-	 * @param url
-	 * @param paramMap
-	 * @param headerMap
-	 * @param targetPath
-	 * @param listener
-	 * @return
+	 * @param url url
+	 * @param paramMap 请求参数
+	 * @param headerMap 请求头
+	 * @param targetPath 本地用来存放文件的路径
+	 * @param listener 进度监听
+	 * @return 文件对象
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K, V>Optional<File> downLoad(String url, Map<K, V> paramMap, Map<K,V> headerMap, String targetPath, ProgressResponseBody.ProgressListener listener) throws IllegalArgumentException {
@@ -213,12 +267,12 @@ public class HttpEasy {
 		return callForFile(call, targetPath);
 	}
 	
-	/**===================内部方法===========================*/
+	//===================内部方法===========================
 	/**
 	 * 从结果中强制获取字符串
 	 * 
-	 * @param call
-	 * @return
+	 * @param call call
+	 * @return Optional<String>
 	 */
 	private static Optional<String> callForStrForce(Call call)  {
 		try {
@@ -232,8 +286,8 @@ public class HttpEasy {
 	/**
 	 * 从结果中强制获取字符串并转成map
 	 * 
-	 * @param call
-	 * @return
+	 * @param call call
+	 * @return Optional<Map<String, Object>>
 	 */
 	private static Optional<Map<String, Object>> callForMapForce(Call call)  {
 		try {
@@ -247,8 +301,8 @@ public class HttpEasy {
 	/**
 	 * 从结果中获取流
 	 * 
-	 * @param call
-	 * @return
+	 * @param call call
+	 * @return Optional<InputStream>
 	 */
 	private static Optional<InputStream> callForInputStream(Call call)  {
 		try {
@@ -265,9 +319,9 @@ public class HttpEasy {
 	 * 	保存失败时返回Optional.empty()
 	 * </p>
 	 * 
-	 * @param call
-	 * @param targetPath
-	 * @return
+	 * @param call call
+	 * @param targetPath 本地用来存放文件的路径
+	 * @return Optional<File>
 	 */
 	private static Optional<File> callForFile(Call call, String targetPath)  {
 		try {
