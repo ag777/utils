@@ -199,18 +199,15 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * @return String
 	 */
 	@Override
-	public String prettyFormat(String src) throws JsonSyntaxException {
+	public String prettyFormat(String src) {
 		if (src == null || src.isEmpty()) {
 			return src;
 		}
-		try {
-			JsonReader reader = new JsonReader(new StringReader(src));
-			reader.setLenient(true);
-			JsonElement jsonEl = JsonParser.parseReader(reader);
-			return toPrettyJson(jsonEl);
-		} catch(Exception ex) {
-			throw new JsonSyntaxException(ex);
-		}
+		JsonReader reader = new JsonReader(new StringReader(src));
+		reader.setLenient(true);
+		JsonElement jsonEl = JsonParser.parseReader(reader);
+		return toPrettyJson(jsonEl);
+
 	}
 	
 	/**
@@ -230,17 +227,13 @@ public class GsonUtils implements JsonUtilsInterf{
 	 *
 	 * @param obj 任意对象
 	 * @return 格式化的json串
-	 * @throws JsonSyntaxException JsonSyntaxException
 	 */
-	public String toPrettyJson(Object obj) throws JsonSyntaxException {
+	public String toPrettyJson(Object obj)  {
 		if (obj == null) {
 			return null;
 		}
-		try {
-			return prettyPrinting().toJson(obj);
-		} catch(Exception ex) {
-			throw new JsonSyntaxException(ex);
-		}
+		return prettyPrinting().toJson(obj);
+
 	}
 	
 	/**
