@@ -1,14 +1,15 @@
 package com.ag777.util.http;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Map;
 import com.ag777.util.http.model.MyCall;
 import com.ag777.util.http.model.ProgressResponseBody;
 import okhttp3.Call;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Map;
 
 /**
  * 有关http请求的方法类(二次封装okhttp3)
@@ -17,7 +18,7 @@ import okhttp3.RequestBody;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2018年05月21日
+ * @version create on 2018年03月30日,last modify at 2020年11月25日
  */
 public class HttpHelper {
 	
@@ -87,11 +88,11 @@ public class HttpHelper {
 		return get(url, null, null);
 	}
 	
-	public <K, V>MyCall get(String url, Map<K, V> paramMap) throws IllegalArgumentException {
+	public <K, V> MyCall get(String url, Map<K, V> paramMap) throws IllegalArgumentException {
 		return get(url, paramMap, null);
 	}
 	
-	public <K, V>MyCall get(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+	public <K, V> MyCall get(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.getByClient(client, url, paramMap, headerMap, tag);
 		return new MyCall(call);
 	}
@@ -103,19 +104,19 @@ public class HttpHelper {
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public <K,V>MyCall get(String url, Headers headers) throws IllegalArgumentException {
+	public <K,V> MyCall get(String url, Headers headers) throws IllegalArgumentException {
 		Call call = HttpUtils.getByClient(client, url, headers, tag);
 		return new MyCall(call);
 	}
 	
 	/**===================POST请求===========================*/
 	
-	public <K,V>MyCall postJson(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+	public <K,V> MyCall postJson(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.postJsonByClient(client, url, json, paramMap, headerMap, tag);
 		return new MyCall(call);
 	}
 	
-	public <K,V>MyCall post(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+	public <K,V> MyCall post(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.postByClient(client, url, paramMap, headerMap, tag);
 		return new MyCall(call);
 	}
@@ -142,12 +143,18 @@ public class HttpHelper {
 	 * @return
 	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
-	public <K,V>MyCall delete(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+	public <K,V> MyCall delete(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.deleteByClient(client, url, paramMap, headerMap, tag);
 		return new MyCall(call);
 	}
 	
 	/**===================PUT请求===========================*/
+
+	public <K,V> MyCall putJson(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.putJsonByClient(client, url, json, paramMap, headerMap, tag);
+		return new MyCall(call);
+	}
+
 	/**
 	 * put请求
 	 * @param url url
@@ -156,7 +163,7 @@ public class HttpHelper {
 	 * @return
 	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
-	public <K,V>MyCall put(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+	public <K,V> MyCall put(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.putByClient(client, url, paramMap, headerMap, tag);
 		return new MyCall(call);
 	}
@@ -170,7 +177,7 @@ public class HttpHelper {
 	 * @return
 	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
-	public <K,V>MyCall head(String url, Map<K, V> paramMap, Map<K, V> headerMap) throws IllegalArgumentException {
+	public <K,V> MyCall head(String url, Map<K, V> paramMap, Map<K, V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.headByClient(client, url, paramMap, headerMap, tag);
 		return new MyCall(call);
 	}
@@ -186,7 +193,7 @@ public class HttpHelper {
 	 * @return
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public <K, V>MyCall downLoad(String url, Map<K, V> paramMap, Map<K,V> headerMap,  ProgressResponseBody.ProgressListener listener) throws IllegalArgumentException {
+	public <K, V> MyCall downLoad(String url, Map<K, V> paramMap, Map<K,V> headerMap, ProgressResponseBody.ProgressListener listener) throws IllegalArgumentException {
 		OkHttpClient client = HttpUtils.builderWithProgress(this.client.newBuilder(), listener).build();
 		Call call = HttpUtils.getByClient(client, url, paramMap, headerMap, tag);
 		return new MyCall(call);
@@ -202,7 +209,7 @@ public class HttpHelper {
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 * @throws FileNotFoundException FileNotFoundException
 	 */
-	public <K, V>MyCall postMultiFiles(String url, File[] files, Map<K, V> params, Map<K, V> headerMap) throws IllegalArgumentException, FileNotFoundException {
+	public <K, V> MyCall postMultiFiles(String url, File[] files, Map<K, V> params, Map<K, V> headerMap) throws IllegalArgumentException, FileNotFoundException {
 		Call call = HttpUtils.postMultiFilesByClient(client, url, files, params, headerMap, tag);
 		return new MyCall(call);
 	}
@@ -218,7 +225,7 @@ public class HttpHelper {
 	 * @throws IllegalArgumentException IllegalArgumentException
 	 * @throws FileNotFoundException FileNotFoundException
 	 */
-	public <K, V>MyCall postMultiFiles(String url, Map<File, String> fileMap, String fileKey, Map<K, V> params, Map<K, V> headerMap) throws IllegalArgumentException, FileNotFoundException {
+	public <K, V> MyCall postMultiFiles(String url, Map<File, String> fileMap, String fileKey, Map<K, V> params, Map<K, V> headerMap) throws IllegalArgumentException, FileNotFoundException {
 		Call call = HttpUtils.postMultiFilesByClient(client, url, fileMap, fileKey, params, headerMap, tag);
 		return new MyCall(call);
 	}

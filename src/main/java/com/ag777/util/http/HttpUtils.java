@@ -1,10 +1,19 @@
 package com.ag777.util.http;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import com.ag777.util.Utils;
+import com.ag777.util.file.FileUtils;
+import com.ag777.util.http.model.MyCookieJar;
+import com.ag777.util.http.model.ProgressResponseBody;
+import com.ag777.util.http.model.SSLSocketClient;
+import com.ag777.util.lang.ObjectUtils;
+import com.ag777.util.lang.StringUtils;
+import com.ag777.util.lang.collection.ListUtils;
+import com.ag777.util.lang.collection.MapUtils;
+import com.ag777.util.lang.exception.model.JsonSyntaxException;
+import okhttp3.*;
+import okhttp3.Request.Builder;
+
+import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.net.ConnectException;
@@ -21,29 +30,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
-import com.ag777.util.Utils;
-import com.ag777.util.file.FileUtils;
-import com.ag777.util.http.model.MyCookieJar;
-import com.ag777.util.http.model.ProgressResponseBody;
-import com.ag777.util.http.model.SSLSocketClient;
-import com.ag777.util.lang.ObjectUtils;
-import com.ag777.util.lang.StringUtils;
-import com.ag777.util.lang.collection.ListUtils;
-import com.ag777.util.lang.collection.MapUtils;
-import com.ag777.util.lang.exception.model.JsonSyntaxException;
-import okhttp3.Call;
-import okhttp3.Dispatcher;
-import okhttp3.FormBody;
-import okhttp3.Headers;
-import okhttp3.Interceptor;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Request.Builder;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * 有关http请求的方法类(二次封装okhttp3)
@@ -65,7 +51,7 @@ import okhttp3.Response;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2020年09月16日
+ * @version last modify at 2020年11月25日
  */
 public class HttpUtils {
 	
@@ -106,7 +92,7 @@ public class HttpUtils {
 	         .connectTimeout(15, TimeUnit.SECONDS)  
 	         .readTimeout(15, TimeUnit.SECONDS)  	//读取超时
 	         .writeTimeout(15, TimeUnit.SECONDS)  
-	         .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())  
+	         .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())
 	         .hostnameVerifier(SSLSocketClient.getHostnameVerifier());
 	}
 	
@@ -437,6 +423,22 @@ public class HttpUtils {
 	}
 	
 	/**===================put===========================*/
+
+	/**
+	 * put请求
+	 * @param client client
+	 * @param url url
+	 * @param json json
+	 * @param paramMap 放在url里的参数
+	 * @param headerMap headerMap
+	 * @param tag tag
+	 * @return
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K,V>Call putJsonByClient(OkHttpClient client, String url, String json, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
+		RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
+		return putByClient(client, getGetUrl(url, paramMap), requestBody, getHeaders(headerMap), tag);
+	}
 	/**
 	 * put请求
 	 * @param client client
@@ -756,7 +758,7 @@ public class HttpUtils {
 		if(headerMap == null || headerMap.isEmpty()) {
 			return null;
 		}
-		okhttp3.Headers.Builder builder = new Headers.Builder();
+		Headers.Builder builder = new Headers.Builder();
 		Iterator<K> itor = headerMap.keySet().iterator();
 		while(itor.hasNext()) {
 			K key = itor.next();
@@ -765,8 +767,8 @@ public class HttpUtils {
 		}
 		return builder.build();
 	}
-	
-	
+
+
 	/**
 	 * 请求并获取结果字符串(同步请求)
 	 * @param request request
@@ -777,12 +779,12 @@ public class HttpUtils {
 		if(client == null) {
 			client = client();
 		}
-		return client.newCall(request); 
+		return client.newCall(request);
 	}
-	
-	
+
+
 	/**===================内部方法===========================*/
-	
+
 	/**
 	 * 拼接get请求的url及参数
 	 * @param url url
@@ -794,13 +796,13 @@ public class HttpUtils {
 			return url;
 		}
 		String paramStr = getParamStr(params, false);	//get请求不错encode测试也没出现问题
-		
+
 		if(!paramStr.isEmpty()) {
 			 return url+"?"+paramStr;
 		}
 		return url;
 	}
-	
+
 	/**
 	 * 根据参数,请求头等数据构造request
 	 * @param url url
@@ -810,26 +812,26 @@ public class HttpUtils {
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	private static Builder getRequest(String url, Headers headers, Object tag) throws IllegalArgumentException {
-		Request.Builder builder = new Request.Builder()
+		Builder builder = new Builder()
 															.url(url);
-		
+
 		if(headers != null) {
 			builder.headers(headers);
 		}
-		
+
 		if(tag != null) {
 			builder.tag(tag);
 		}
 		return builder;
 	}
-	
+
 	/**
 	 * 通过参数构建请求体
 	 * <p>
 	 * 注意:值为null的键值对不传输
 	 * 不能用add方法，不然会中文乱码，目前只发现这种写法能解决
 	 * </p>
-	 * 
+	 *
 	 * @param params params
 	 * @return
 	 */
@@ -840,14 +842,14 @@ public class HttpUtils {
 		 }
 		 return  new FormBody.Builder().build();
 	}
-	
+
 	/**
 	 * 通过参数构建请求体
-	 * 
+	 *
 	 * <p>
 	 * 	请事先对附件的存在性进行验证
 	 * </p>
-	 * 
+	 *
 	 * @param params params
 	 * @return
 	 * @throws FileNotFoundException FileNotFoundException
@@ -861,10 +863,10 @@ public class HttpUtils {
 				fileMap.put(file, file.getName());
 			}
 		}
-		
+
 		return  getRequestBody(fileMap, "file", params);
 	}
-	
+
 	/**
 	 * 通过参数构建请求
 	 * @param fileMap 文件及其上传名称对应map
@@ -874,10 +876,10 @@ public class HttpUtils {
 	 * @throws FileNotFoundException FileNotFoundException
 	 */
 	private static <K,V> RequestBody getRequestBody(Map<File, String> fileMap, String fileKey, Map<K, V> params) throws FileNotFoundException {
-		okhttp3.MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
+		MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 		/*附件部分*/
 		addFiles2Form(builder, fileMap, fileKey);
-		
+
 		/*表单部分*/
 		if(!MapUtils.isEmpty(params)) {
 			Iterator<K> itor = params.keySet().iterator();
@@ -886,7 +888,7 @@ public class HttpUtils {
 				 V value = params.get(key);
 				 builder.addFormDataPart(key.toString(), value==null?null:value.toString());
 			}
-			
+
 			/*不能这么写，这样写jfinal只能通过getPara("params")获得到参数，还得自己解析
 			 * if(!MapUtils.isEmpty(params)) {
 				builder.addPart(Headers.of(
@@ -895,10 +897,10 @@ public class HttpUtils {
 						getRequestBody(params));
 			}*/
 		}
-		
+
 		return  builder.build();
 	}
-	
+
 	/**
 	 * 将附件塞进请求体中
 	 * @param builder 请求体构造器
@@ -906,7 +908,7 @@ public class HttpUtils {
 	 * @param fileKey 上传文件对应的key
 	 * @throws FileNotFoundException FileNotFoundException
 	 */
-	private static void addFiles2Form(okhttp3.MultipartBody.Builder builder,Map<File, String> fileMap, String fileKey) throws FileNotFoundException {
+	private static void addFiles2Form(MultipartBody.Builder builder, Map<File, String> fileMap, String fileKey) throws FileNotFoundException {
 		if(!MapUtils.isEmpty(fileMap)) {
 			Iterator<File> itor = fileMap.keySet().iterator();
 			while(itor.hasNext()) {

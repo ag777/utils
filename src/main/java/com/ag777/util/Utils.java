@@ -72,15 +72,15 @@ public class Utils {
 	public static Map<String, Object> infoMap() {
 		PropertyUtils pu = new PropertyUtils();
 		try {
-			
-			pu.load(Utils.class.getResourceAsStream("/resource/utils.properties"));
+
+			pu.load(Utils.class.getResourceAsStream("/utils.properties"));
 			Map<String, Object> infoMap = new HashMap<String, Object>();
 			infoMap.put("version", pu.get("versionName"));
 			infoMap.put("last_release_date", pu.get("last_release_date"));
 			return infoMap;
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
+		}
 		return null;
 	}
 	
@@ -115,4 +115,5 @@ public class Utils {
 	public static String getParentPackageName(String packageName) {
 		return packageName.replaceFirst("\\.[^\\.]+$", "");
 	}
+
 }

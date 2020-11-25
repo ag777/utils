@@ -6,7 +6,7 @@
 
     <groupId>com.ag777</groupId>
     <artifactId>utils</artifactId>
-    <version>1.2.64</version>
+    <version>1.2.65</version>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -58,72 +58,18 @@
         </profile>
     </profiles>
     <build>
-        <finalName>${project.artifactId}-${project.version}</finalName><!---${project.version}-${maven.build.timestamp}.${maven.build.timestamp}--><resources>
-        <resource>
-            <directory>src/main/java</directory>
-            <includes>
-                <include>**/*.stl</include>
-            </includes>
-            <filtering>true</filtering>
-        </resource>
-        <resource>
-            <directory>${basedir}/src/main/resources/${project.active}</directory>
-        </resource>
-    </resources>
-<!--        <plugins>-->
-<!--            &lt;!&ndash;配置生成Javadoc包&ndash;&gt;-->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-javadoc-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <encoding>UTF-8</encoding>-->
-<!--                    <aggregate>true</aggregate>-->
-<!--                    <charset>UTF-8</charset>-->
-<!--                    <docencoding>UTF-8</docencoding>-->
-<!--                    <additionalparam>${javadoc.opts}</additionalparam>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>attach-javadocs</id>-->
-<!--                        <goals>-->
-<!--                            <goal>jar</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <additionalparam>${javadoc.opts}</additionalparam>-->
-<!--                            <additionalOptions>${javadoc.opts}</additionalOptions>-->
-<!--                            <additionalJOption>${javadoc.opts}</additionalJOption>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-<!--            &lt;!&ndash;配置生成源码包&ndash;&gt;-->
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-source-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <attach>true</attach>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>attach-sources</id>-->
-<!--                        <goals>-->
-<!--                            <goal>jar</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
+        <finalName>${project.artifactId}-${project.version}</finalName><!---${project.version}-${maven.build.timestamp}.${maven.build.timestamp}-->
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources/</directory>
+            </resource>
+        </resources>
         <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
             <plugins>
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>3.0.0</version>
                 </plugin>
-                <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging -->
-                <!--<plugin>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.0.2</version>
-                </plugin>-->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>

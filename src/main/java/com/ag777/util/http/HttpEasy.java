@@ -1,16 +1,15 @@
 package com.ag777.util.http;
 
+import com.ag777.util.http.model.ProgressResponseBody;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Optional;
-
-import com.ag777.util.http.model.ProgressResponseBody;
-
-import okhttp3.Call;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
 
 /**
  * 简单的http请求工具类(二次封装okhttp3)
@@ -19,7 +18,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2020年10月23日
+ * @version create on 2018年03月30日,last modify at 2020年11月25日
  */
 public class HttpEasy {
 	
@@ -164,6 +163,24 @@ public class HttpEasy {
 	}
 
 	//===================PUT请求===========================*/
+	/**
+	 * put请求向服务端发送json串
+	 * <p>
+	 * 	不论接口返回是否是200都去获取返回字符串
+	 * </p>
+	 *
+	 * @param url url
+	 * @param json json
+	 * @param paramMap 放在请求头里的参数
+	 * @param headerMap 请求头
+	 * @return 字符串
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K, V>Optional<String> putJson(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.putJsonByClient(null, url, json, paramMap, headerMap, null);
+		return callForStrForce(call);
+	}
+
 	/**
 	 * put请求
 	 * @param url url
