@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 
 import com.ag777.util.lang.IOUtils;
@@ -31,6 +33,32 @@ public class SocketClient implements Disposable {
 		this.in = new BufferedReader(new InputStreamReader(in));
 	}
 
+	public Socket getSocket() {
+		return socket;
+	}
+
+	/**
+	 * 重连
+	 * @throws IOException 连接异常
+	 */
+	public void reconnect() throws IOException {
+		reconnect(0);
+	}
+
+	/**
+	 * 重连
+	 * @param timeout 连接超时
+	 * @throws IOException 连接异常
+	 */
+	public void reconnect(int timeout) throws IOException {
+		IOUtils.close(socket);
+		Socket socketTemp = new Socket();
+		socketTemp.connect(socket.getRemoteSocketAddress());
+		this.socket = socketTemp;
+		this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		this.out = new PrintWriter(socket.getOutputStream());
+	}
+
 	/**
 	 * 关闭连接,释放资源
 	 */
@@ -48,12 +76,27 @@ public class SocketClient implements Disposable {
 	 * 创建套接字
 	 * @param ip ip
 	 * @param port port
-	 * @return
+	 * @return SocketClient
 	 * @throws UnknownHostException UnknownHostException
 	 * @throws IOException IOException
 	 */
 	public static SocketClient build(String ip, int port) throws UnknownHostException, IOException {
-		Socket s = new Socket(ip, port);
+		return build(ip, port, 0);
+	}
+
+	/**
+	 *
+	 * @param ip ip
+	 * @param port port
+	 * @param timeout 超时
+	 * @return SocketClient
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
+	public static SocketClient build(String ip, int port, int timeout) throws UnknownHostException, IOException {
+		Socket s = new Socket();
+		SocketAddress endpoint = new InetSocketAddress(ip, port);
+		s.connect(endpoint, timeout);
 		return new SocketClient(s, s.getOutputStream(), s.getInputStream());
 	}
 	

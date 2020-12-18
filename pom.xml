@@ -6,8 +6,15 @@
 
     <groupId>com.ag777</groupId>
     <artifactId>utils</artifactId>
-    <version>1.2.65</version>
+    <version>1.2.66</version>
     <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -38,25 +45,25 @@
         </dependency>-->
 
     </dependencies>
-    <profiles>
-        <profile>
-            <id>dev</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <project.active>dev</project.active>
-                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-            </properties>
-        </profile>
-        <profile>
-            <id>pro</id>
-            <properties>
-                <project.active>pro</project.active>
-                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-            </properties>
-        </profile>
-    </profiles>
+<!--    <profiles>-->
+<!--        <profile>-->
+<!--            <id>dev</id>-->
+<!--            <activation>-->
+<!--                <activeByDefault>true</activeByDefault>-->
+<!--            </activation>-->
+<!--            <properties>-->
+<!--                <project.active>dev</project.active>-->
+<!--                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
+<!--            </properties>-->
+<!--        </profile>-->
+<!--        <profile>-->
+<!--            <id>pro</id>-->
+<!--            <properties>-->
+<!--                <project.active>pro</project.active>-->
+<!--                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
+<!--            </properties>-->
+<!--        </profile>-->
+<!--    </profiles>-->
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName><!---${project.version}-${maven.build.timestamp}.${maven.build.timestamp}-->
         <resources>
