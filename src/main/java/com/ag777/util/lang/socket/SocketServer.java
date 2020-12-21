@@ -1,25 +1,24 @@
 package com.ag777.util.lang.socket;
 
-import java.io.IOException;
-import java.net.BindException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Collection;
-import java.util.Map;
-
 import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.collection.MapUtils;
 import com.ag777.util.lang.interf.Disposable;
 import com.ag777.util.lang.socket.model.Handler;
 import com.ag777.util.lang.socket.model.Session;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.BindException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Map;
 
 /**
  * socket服务端工具类
  * 
  * 
  * @author ag777
- * @version create on 2018年05月30日,last modify at 2020年08月25日
+ * @version create on 2018年05月30日,last modify at 2020年12月21日
  */
 public class SocketServer implements Disposable {
 
@@ -73,7 +72,7 @@ public class SocketServer implements Disposable {
 			try {
 	            Socket socket = server.accept();
 	            String sessionId = StringUtils.uuid();
-	            Session session = new Session(sessionId, socket);
+	            Session session = new Session(sessionId, socket, handler.getCharset());
 	            /*
 	             *连接建立判断是否需要断开连接 
 	             */
@@ -149,7 +148,7 @@ public class SocketServer implements Disposable {
 			}
 			
 			@Override
-			public String handle(String msg, String sessionId) {
+			public String handle(String msg, String sessionId, PrintWriter out) {
 				return "得到的消息"+msg;
 			}
 			

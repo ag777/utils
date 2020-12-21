@@ -4,13 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 客户端请求处理类,socket服务端配套
  * 
  * 
  * @author ag777
- * @version create on 2018年05月30日,last modify at 2020年08月25日
+ * @version create on 2018年05月30日,last modify at 2020年12月21日
  */
 public abstract class Handler {
 
@@ -20,6 +22,10 @@ public abstract class Handler {
 	}
 	
 	/*====子类选择重写部分=============*/
+	public Charset getCharset() {
+		return StandardCharsets.UTF_8;
+	}
+
 	/**
 	 * 从消息流中读取一条消息,默认一行为一条消息
 	 * @param in in
@@ -111,5 +117,5 @@ public abstract class Handler {
 	 * @param sessionId 当前对话的session编号
 	 * @return 返回信息
 	 */
-	public abstract String handle(String msg, String sessionId) throws InterruptedException ;
+	public abstract String handle(String msg, String sessionId, PrintWriter out) throws InterruptedException ;
 }
