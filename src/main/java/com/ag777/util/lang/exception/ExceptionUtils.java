@@ -53,7 +53,7 @@ public class ExceptionUtils {
 	 * @return
 	 */
 	public static Map<String, Object> getErrMap(Throwable throwable, String workingPackage, List<String> excludePackageList) {
-		boolean hasWorkingPackage = StringUtils.isEmpty(workingPackage);
+		boolean hasWorkingPackage = !StringUtils.isEmpty(workingPackage);
 		boolean hasExculdePackage = !ListUtils.isEmpty(excludePackageList);
 		return getErrMap(throwable, (stackTraceElement)->{
 			if(!hasWorkingPackage) {	//不包含工作路径返回第一个
@@ -67,10 +67,8 @@ public class ExceptionUtils {
 					}
 				}
 			}
-			if(workingPackage!=null && clazzName.startsWith(workingPackage)) {	//在工作包下
-				return true;
-			}
-			return true;
+			//在工作包下
+			return clazzName.startsWith(workingPackage);
 		});
 	}
 	
