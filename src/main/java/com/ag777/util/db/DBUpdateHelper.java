@@ -33,15 +33,15 @@ public abstract class DBUpdateHelper implements Disposable {
 	public void debugMode(boolean isDebugMode) {
 		mode_debug = isDebugMode;
 	}
-	
+
 	private static Pattern p_classPath = Pattern.compile("^([\\w\\d_]+\\.)+[\\w\\d_]+$");
-	
+
 	private List<VersionSqlPojo> versionSqlPojoList;	//版本号及对应sql列表
-	
+
 	public DBUpdateHelper(List<VersionSqlPojo> versionSqlPojoList) {
 		this.versionSqlPojoList = versionSqlPojoList;
 	}
-	
+
 	/**
 	 * 根据版本号和对应的sql列表升级数据库 
 	 * @param versionCodeOld 当前版本号(支持多级，如33或1.25.345)
@@ -49,52 +49,48 @@ public abstract class DBUpdateHelper implements Disposable {
 	 * @throws SQLException	主要抛出sql执行异常,其他异常也包装成SQLException,通过getMessage()方法获取错误信息
 	 */
 	public void update(String versionCodeOld, Connection conn) throws SQLException {
-		
+
 		for (int i = 0; i < versionSqlPojoList.size(); i++) {
 			VersionSqlPojo verionSql = versionSqlPojoList.get(i);
 			String versionCodeNew = verionSql.getCode();
 			if(isBefore(versionCodeOld, versionCodeNew)) {
-				Console.log(
-						new StringBuilder()
-							.append("数据库版本")
-							.append(versionCodeOld)
-							.append("->")
-							.append(versionCodeNew)
-							.toString());
+				// 日志打印
+				logVersionUpgrade(versionCodeOld, versionCodeNew);
+
 				List<DdlListBean> ddlList = verionSql.getDdlList();
 				List<String> dmlList = verionSql.getDmlList();
-				
+
 				additionalSql(i, versionCodeNew, dmlList);
-				
+
 				try {
 					executeDdlList(ddlList, conn, versionCodeNew);
 					executeDmlList(dmlList, conn, versionCodeNew);	//这里面带上了数据库版本号的更新
 					versionCodeOld = versionCodeNew;
 				} catch(SQLException ex) {
 					String errMsg = new StringBuilder()
-										.append("升级版本")
-										.append(versionCodeNew)
-										.append("失败:")
-										.append('[')
-										.append(ex.getMessage())
-										.append(']')
-										.toString();
+							.append("升级版本")
+							.append(versionCodeNew)
+							.append("失败:")
+							.append('[')
+							.append(ex.getMessage())
+							.append(']')
+							.toString();
 					throw new SQLException(errMsg);
 				}
 			}
 		}
-		
-		
+
+
 	}
-	
+
 	/**
 	 * 需要提供升级数据库版本的sql,在版本升级sql都执行完后将版本写进数据库（业务默认数据库版本独立放在数据库里，可以简单改造该类，改为其他方式存储,以现有方式升级数据库版本操作会融入事务）
 	 * @param versionCodeNew 将要变成的版本号
-	 * @param isFirstVerion 	是否为第一个版本(有可能第一个版本数据库里还没存放版本号,视情况使用)
+	 * @param isFirstVersion 	是否为第一个版本(有可能第一个版本数据库里还没存放版本号,视情况使用)
 	 * @return 返回null则什么都不执行
 	 */
-	public abstract String dbVersionUpdateSql(String versionCodeNew, boolean isFirstVerion);
-	
+	public abstract String dbVersionUpdateSql(String versionCodeNew, boolean isFirstVersion);
+
 	/**
 	 * 补充每个版本的sql
 	 * @param index	版本号角标
@@ -107,7 +103,7 @@ public abstract class DBUpdateHelper implements Disposable {
 			dmlList.add(sql);
 		}
 	}
-	
+
 	/**
 	 * 如果当前sql是执行方法获得，执行方法取得sql
 	 * @param src src
@@ -153,7 +149,7 @@ public abstract class DBUpdateHelper implements Disposable {
 				//方法本身抛出的异常
 				e.printStackTrace();
 //				System.out.println(e.getCause().getClass().getName());	//真正的抛出的异常
-				throw new SQLException("数据库升级异常:执行方法["+src+"]抛出异常:"+ExceptionUtils.getErrMsg(e, "", ListUtils.of("java")), e);
+				throw new SQLException("数据库升级异常:执行方法["+src+"]抛出异常:"+ ExceptionUtils.getErrMsg(e, "", ListUtils.of("java")), e);
 			} catch(Exception ex) {
 				ex.printStackTrace();
 				throw new SQLException("数据库升级异常:发生未知异常:"+ ExceptionUtils.getErrMsg(ex, "", ListUtils.of("java")), ex);
@@ -161,7 +157,7 @@ public abstract class DBUpdateHelper implements Disposable {
 		}
 		return src;
 	}
-	
+
 	/**
 	 * 执行ddl语句
 	 * @param ddlList ddlList
@@ -178,10 +174,10 @@ public abstract class DBUpdateHelper implements Disposable {
 				continue;
 			}
 			try {
-				log("执行ddl:"+ddl.getSql());
+				logSql("ddl", ddl.getSql());
 				stmt.executeUpdate(ddl.getSql());
 			} catch(SQLException ex) {
-				
+
 				if(ddl.getRollback() != null && !ddl.getRollback().isEmpty()) {	//执行回滚语句
 					stmt.execute(ddl.getRollback());
 				}
@@ -191,7 +187,7 @@ public abstract class DBUpdateHelper implements Disposable {
 			}
 		}
 	}
-	
+
 	/**
 	 * 执行dml语句(事务)
 	 * @param dmlList dmlList
@@ -209,7 +205,7 @@ public abstract class DBUpdateHelper implements Disposable {
 					continue;
 				}
 				try {
-					log("执行dml:"+sql);
+					logSql("dml", sql);
 					stmt.executeUpdate(sql);
 				} catch(SQLException ex) {
 					throw new SQLException(getErrMsg(sql, ex));
@@ -223,7 +219,7 @@ public abstract class DBUpdateHelper implements Disposable {
 			conn.setAutoCommit(true);
 		}
 	}
-	
+
 	/**
 	 * @param versionCodeOld versionCodeOld
 	 * @param versionCodeNew versionCodeNew
@@ -232,7 +228,7 @@ public abstract class DBUpdateHelper implements Disposable {
 	private static boolean isBefore(String versionCodeOld, String versionCodeNew) {
 		return StringUtils.isVersionBefore(versionCodeOld, versionCodeNew);
 	}
-	
+
 	/**
 	 * 统一错误信息的格式
 	 * @param sql sql
@@ -241,23 +237,50 @@ public abstract class DBUpdateHelper implements Disposable {
 	 */
 	private static String getErrMsg(String sql, SQLException ex) {
 		return new StringBuilder()
-			.append("执行sql失败:")
-			.append(sql)
-			.append(",原因:")
-			.append(ex.getMessage())
-			.toString();
+				.append("执行sql失败:")
+				.append(sql)
+				.append(",原因:")
+				.append(ex.getMessage())
+				.toString();
 	}
-	
+
+
 	/**
-	 * 统一打印出口
+	 * 准备升级时，打印版本号
+	 * @param versionCodeOld 旧版本号
+	 * @param versionCodeNew 新版本号
+	 */
+	protected void logVersionUpgrade(String versionCodeOld, String versionCodeNew) {
+		log(new StringBuilder()
+				.append("[version]")
+				.append(versionCodeOld)
+				.append("->")
+				.append(versionCodeNew)
+				.toString());
+	}
+
+	/**
+	 * 打印执行的sql,子类重写
+	 * @param type dml or ddl
+	 * @param sql sql
+	 */
+	protected void logSql(String type, String sql) {
+		if (type != null) {
+			sql = '['+type+']'+sql;
+		}
+		log(sql);
+	}
+
+	/**
+	 * 统一打印出口, 子类重写
 	 * @param msg 信息
 	 */
-	private void log(String msg) {
+	protected void log(String msg) {
 		if(mode_debug) {
-			Console.log(msg);
+			System.out.println(msg);
 		}
 	}
-	
+
 	@Override
 	public void dispose() {
 		p_classPath = null;
