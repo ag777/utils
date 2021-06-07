@@ -36,13 +36,7 @@ public class ThreadPoolUtils {
      */
     public static void waitFor(ExecutorService pool, long timeout, TimeUnit unit) throws InterruptedException {
         pool.shutdown();
-        try {
-            while(!pool.awaitTermination(timeout, unit)) {	//如果结束则关闭线程池
-            }
-        } catch (InterruptedException e) {
-//			e.printStackTrace();
-            Console.err("等待线程池关闭失败");
-            throw e;
+        while(!pool.awaitTermination(timeout, unit)) {	//如果结束则关闭线程池
         }
     }
 
