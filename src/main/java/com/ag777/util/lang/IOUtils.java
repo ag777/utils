@@ -24,6 +24,7 @@ import com.ag777.util.lang.interf.ProgressListener;
  * <p>
  * 		有很多操作，比如文件，cmd命令，都是通过操作流来完成目的，为了避免重复及统一代码新建此类
  * </p>
+ * <p>讲IO的文章:https://www.zhihu.com/question/382972191</>
  * @author ag777
  * @version create on 2017年06月16日,last modify at 2020年07月20日
  */
@@ -51,7 +52,7 @@ public class IOUtils {
 				}
 				closeable.close();
 			}
-		} catch(Exception ex) {
+		} catch(Exception ignored) {
 		}
 		
 	}
@@ -73,7 +74,7 @@ public class IOUtils {
 	 * @param in in
 	 * @param lineSparator lineSparator
 	 * @param encoding encoding
-	 * @return
+	 * @return text
 	 * @throws IOException IOException
 	 */
 	public static String readText(InputStream in, String lineSparator, String encoding) throws IOException {
@@ -85,7 +86,7 @@ public class IOUtils {
 	 * @param in in
 	 * @param lineSparator lineSparator
 	 * @param encoding encoding
-	 * @return
+	 * @return text
 	 * @throws IOException IOException
 	 */
 	public static String readText(InputStream in, String lineSparator, Charset encoding) throws IOException {
@@ -93,7 +94,7 @@ public class IOUtils {
 		try{
 			StringBuilder sb = null;
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, encoding));
-			String s = null;
+			String s;
 			while((s  = procin.readLine()) !=null){
 				if(sb == null) {
 					sb = new StringBuilder();
@@ -104,8 +105,6 @@ public class IOUtils {
 				
 			}
 			return sb!=null?sb.toString():"";
-		} catch(IOException ex) {
-			throw ex;
 		} finally {
 			close(in);
 		}
@@ -115,7 +114,7 @@ public class IOUtils {
 	 * 读取所有行
 	 * @param in in
 	 * @param encoding encoding
-	 * @return
+	 * @return list
 	 * @throws IOException IOException
 	 */
 	public static List<String> readLines(InputStream in, String encoding) throws IOException {
@@ -126,7 +125,7 @@ public class IOUtils {
 	 * 读取所有行
 	 * @param in in
 	 * @param charset charset
-	 * @return
+	 * @return list
 	 * @throws IOException IOException
 	 */
 	public static List<String> readLines(InputStream in, Charset charset) throws IOException {
@@ -134,13 +133,11 @@ public class IOUtils {
 		try{
 			List<String> lines = new ArrayList<>();
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
-			String s = null;
+			String s;
 			while((s  = procin.readLine()) !=null){
 				lines.add(s);
 			}
 			return lines;
-		} catch(IOException ex) {
-			throw ex;
 		} finally {
 			close(in);
 		}
@@ -156,12 +153,10 @@ public class IOUtils {
 	public static void readLines(InputStream in, Consumer<String> consumer, Charset charset) throws IOException {
 		try{
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
-			String s = null;
+			String s;
 			while((s  = procin.readLine()) !=null){
 				consumer.accept(s);
 			}
-		} catch(IOException ex) {
-			throw ex;
 		} finally {
 			close(in);
 		}
@@ -177,12 +172,10 @@ public class IOUtils {
 	public static void readLinesWithException(InputStream in, ConsumerE<String> consumer, Charset charset) throws Throwable {
 		try{
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
-			String s = null;
+			String s;
 			while((s  = procin.readLine()) !=null){
 				consumer.accept(s);
 			}
-		} catch(IOException ex) {
-			throw ex;
 		} finally {
 			close(in);
 		}
@@ -191,7 +184,7 @@ public class IOUtils {
 	/**
 	 * 读取字节数组
 	 * @param in 输入流
-	 * @return
+	 * @return 所有字节
 	 * @throws IOException 文件找不到(FileNotFoundException)或者读取异常
 	 */
 	public static byte[] readBytes(InputStream in) throws IOException {
@@ -205,8 +198,6 @@ public class IOUtils {
 	            bout.write(buff,0,n); 
 	        }
 	        return bout.toByteArray();
-		} catch(IOException ex) {
-			throw ex;
 		} finally {
 			close(in, bout);
 		}
@@ -218,7 +209,7 @@ public class IOUtils {
 	 * @param regex regex
 	 * @param replacement replacement
 	 * @param charset charset
-	 * @return
+	 * @return list
 	 * @throws IOException IOException
 	 */
 	public static List<String> findAll(InputStream in, String regex, String replacement, Charset charset) throws IOException {
@@ -231,20 +222,18 @@ public class IOUtils {
 	 * @param pattern pattern
 	 * @param replacement replacement
 	 * @param charset charset
-	 * @return
+	 * @return list
 	 * @throws IOException IOException
 	 */
 	public static List<String> findAll(InputStream in, Pattern pattern, String replacement, Charset charset) throws IOException {
 		try{
 			List<String> result = new ArrayList<>();
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
-			String s = null;
+			String s;
 			while((s  = procin.readLine()) !=null){
 				result.addAll(RegexUtils.findAll(s, pattern, replacement));
 			}
 			return result;
-		} catch(IOException ex) {
-			throw ex;
 		} finally {
 			close(in);
 		}
@@ -256,7 +245,7 @@ public class IOUtils {
 	 * @param regex regex
 	 * @param replacement replacement
 	 * @param charset charset
-	 * @return
+	 * @return list
 	 * @throws IOException IOException
 	 */
 	public static List<Long> findAllLong(InputStream in, String regex, String replacement, Charset charset) throws IOException {
@@ -269,20 +258,18 @@ public class IOUtils {
 	 * @param pattern pattern
 	 * @param replacement replacement
 	 * @param charset charset
-	 * @return
+	 * @return list
 	 * @throws IOException IOException
 	 */
 	public static List<Long> findAllLong(InputStream in, Pattern pattern, String replacement, Charset charset) throws IOException {
 		try{
 			List<Long> result = new ArrayList<>();
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
-			String s = null;
+			String s;
 			while((s  = procin.readLine()) !=null){
 				result.addAll(RegexUtils.findAllLong(s, pattern, replacement));
 			}
 			return result;
-		} catch(IOException ex) {
-			throw ex;
 		} finally {
 			close(in);
 		}
@@ -293,21 +280,19 @@ public class IOUtils {
 	 * @param in 输入流
 	 * @param finder 返回null则说明不需要该值，继续遍历下一行
 	 * @param charset 字符编码
-	 * @return
+	 * @return 匹配结果
 	 * @throws IOException IOException
 	 */
 	public static <T>T find(InputStream in, Function<String, T> finder, Charset charset) throws IOException {
 		try{
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
-			String s = null;
+			String s;
 			while((s  = procin.readLine()) !=null){
 				T result = finder.apply(s);
 				if(result != null) {
 					return result;
 				}
 			}
-		} catch(IOException ex) {
-			throw ex;
 		} finally {
 			close(in);
 		}
@@ -319,14 +304,14 @@ public class IOUtils {
 	 * @param in 输入流
 	 * @param finder 返回null则说明不需要该值，继续遍历下一行
 	 * @param charset 字符编码
-	 * @return
+	 * @return 匹配结果
 	 * @throws IOException IOException
 	 */
 	public static <T>List<T> findAll(InputStream in, Function<String, T> finder, Charset charset) throws IOException {
 		try{
 			List<T> list = new ArrayList<>();
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
-			String s = null;
+			String s;
 			while((s  = procin.readLine()) !=null){
 				T result = finder.apply(s);
 				if(result != null) {
@@ -334,8 +319,6 @@ public class IOUtils {
 				}
 			}
 			return list;
-		} catch(IOException ex) {
-			throw ex;
 		} finally {
 			close(in);
 		}
@@ -347,7 +330,7 @@ public class IOUtils {
 	 * @param regex regex
 	 * @param replacement replacement
 	 * @param charset charset
-	 * @return
+	 * @return 匹配结果
 	 * @throws IOException IOException
 	 */
 	public static String find(InputStream in, String regex, String replacement, Charset charset) throws IOException {	
@@ -360,22 +343,20 @@ public class IOUtils {
 	 * @param pattern pattern
 	 * @param replacement replacement
 	 * @param charset charset
-	 * @return
+	 * @return 匹配结果
 	 * @throws IOException IOException
 	 */
 	public static String find(InputStream in, Pattern pattern, String replacement, Charset charset) throws IOException {
 		try{
-			String result = null;
+			String result;
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
-			String s = null;
+			String s;
 			while((s  = procin.readLine()) !=null){
 				result = RegexUtils.find(s, pattern, replacement);
 				if(result != null) {
 					return result;
 				}
 			}
-		} catch(IOException ex) {
-			throw ex;
 		} finally {
 			close(in);
 		}
@@ -388,7 +369,7 @@ public class IOUtils {
 	 * @param regex regex
 	 * @param replacement replacement
 	 * @param charset charset
-	 * @return
+	 * @return long
 	 * @throws IOException IOException
 	 */
 	public static Long findLong(InputStream in, String regex, String replacement, Charset charset) throws IOException {
@@ -401,22 +382,20 @@ public class IOUtils {
 	 * @param pattern pattern
 	 * @param replacement replacement
 	 * @param charset charset
-	 * @return
+	 * @return long
 	 * @throws IOException IOException
 	 */
 	public static Long findLong(InputStream in, Pattern pattern, String replacement, Charset charset) throws IOException {
 		try{
-			Long result = null;
+			Long result;
 			BufferedReader procin = new BufferedReader(new InputStreamReader(in, charset));
-			String s = null;
+			String s;
 			while((s  = procin.readLine()) !=null){
 				result = RegexUtils.findLong(s, pattern, replacement);
 				if(result != null) {
 					return result;
 				}
 			}
-		} catch(IOException ex) {
-			throw ex;
 		} finally {
 			close(in);
 		}
@@ -433,15 +412,13 @@ public class IOUtils {
 	 */
 	public static void write(InputStream in, OutputStream out, int buffSize) throws IOException {
 		try { 
-			int byteCount = 0;
+			int byteCount;
 			byte[] bytes = new byte[buffSize];
 
 			while ((byteCount = in.read(bytes)) != -1) {
 				out.write(bytes, 0, byteCount);
 			}
          out.flush();
-		} catch(IOException ex) {
-			throw ex;
 		} finally {
 			close(in,out);
 		}
@@ -466,7 +443,7 @@ public class IOUtils {
 			int total = in.available();
 			listener.update(cur, total, false);
 
-			int byteCount = 0;
+			int byteCount;
 			byte[] bytes = new byte[buffSize];
 
 			while ((byteCount = in.read(bytes)) != -1) {
@@ -477,8 +454,6 @@ public class IOUtils {
 
 			out.flush();
 			listener.update(cur, total, true);
-		} catch (IOException ex) {
-			throw ex;
 		} finally {
 			close(in, out);
 		}
