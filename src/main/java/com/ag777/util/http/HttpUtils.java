@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2020年11月25日
+ * @version last modify at 2021年09月09日
  */
 public class HttpUtils {
 	
