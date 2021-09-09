@@ -64,7 +64,7 @@ public class HttpUtils {
 	
 	/**
 	 * 生成并获取client对象,双锁校验
-	 * @return
+	 * @return OkHttpClient
 	 */
 	public static OkHttpClient client() {
 		if(mOkHttpClient == null) {
@@ -84,7 +84,7 @@ public class HttpUtils {
 	 * 连接超时时间为15秒,写出超时时间为15秒
 	 * 绕过https验证
 	 * </p>
-	 * @return
+	 * @return OkHttpClient.Builder
 	 */
 	@SuppressWarnings("deprecation")
 	public static OkHttpClient.Builder defaultBuilder() {
@@ -101,7 +101,7 @@ public class HttpUtils {
 	 * @param builder builder
 	 * @param timeout timeout
 	 * @param unit unit
-	 * @return
+	 * @return OkHttpClient.Builder
 	 */
 	public static OkHttpClient.Builder readTimeout(OkHttpClient.Builder builder, long timeout,  TimeUnit unit) {
 		if(builder == null) {
@@ -123,7 +123,7 @@ public class HttpUtils {
 	 * 
 	 * @param builder builder
 	 * @param interceptors interceptors
-	 * @return
+	 * @return OkHttpClient.Builder
 	 */
 	public static OkHttpClient.Builder builderWithInterceptor(OkHttpClient.Builder builder, Interceptor... interceptors) {
 		if(builder == null) {
@@ -142,7 +142,7 @@ public class HttpUtils {
 	 * 导入https证书
 	 * @param builder builder
 	 * @param certificates certificates
-	 * @return
+	 * @return OkHttpClient.Builder
 	 * @throws KeyManagementException KeyManagementException
 	 * @throws KeyStoreException KeyStoreException
 	 * @throws CertificateException CertificateException
@@ -169,7 +169,7 @@ public class HttpUtils {
 	 * 
 	 * @param builder builder
 	 * @param interceptors interceptors
-	 * @return
+	 * @return OkHttpClient.Builder
 	 */
 	public static OkHttpClient.Builder builderWithNetWorkInterceptor(OkHttpClient.Builder builder, Interceptor... interceptors) {
 		if(builder == null) {
@@ -187,7 +187,7 @@ public class HttpUtils {
 	/**
 	 * 构造带cookie持久化的okhttpBuilder
 	 * @param builder builder
-	 * @return
+	 * @return OkHttpClient.Builder
 	 */
 	public static OkHttpClient.Builder builderWithCookie(OkHttpClient.Builder builder) {
 		if(builder == null) {
@@ -201,7 +201,7 @@ public class HttpUtils {
 	 * @param builder builder
 	 * @param ip ip
 	 * @param port port
-	 * @return
+	 * @return OkHttpClient.Builder
 	 */
 	public static OkHttpClient.Builder builderWithProxy(OkHttpClient.Builder builder, String ip, int port) {
 		if(builder == null) {
@@ -216,7 +216,7 @@ public class HttpUtils {
 	 * 构建带进度监听的okhttpBuilder
 	 * @param builder builder
 	 * @param listener listener
-	 * @return
+	 * @return OkHttpClient.Builder
 	 */
 	public static OkHttpClient.Builder builderWithProgress(OkHttpClient.Builder builder, ProgressResponseBody.ProgressListener listener) {
 		if(builder == null) {
@@ -224,16 +224,13 @@ public class HttpUtils {
 		}
 		if(listener != null) {
 			return builder
-		        .addNetworkInterceptor(new Interceptor() {
-		            @Override
-		            public Response intercept(Chain chain) throws IOException {
-		                Response response = chain.proceed(chain.request());
-		                //这里将ResponseBody包装成我们的ProgressResponseBody
-		                return response.newBuilder()
-		                        .body(new ProgressResponseBody(response.body(),listener))
-		                        .build();
-		            }
-		        });
+		        .addNetworkInterceptor(chain -> {
+					Response response = chain.proceed(chain.request());
+					//这里将ResponseBody包装成我们的ProgressResponseBody
+					return response.newBuilder()
+							.body(new ProgressResponseBody(response.body(),listener))
+							.build();
+				});
 		}
 		//监听事件和builder都为null则不重构client
 		return builder;
@@ -261,10 +258,11 @@ public class HttpUtils {
 	public static void cancelAll(OkHttpClient client, Object tag) {
 		if(tag == null) {
 			cancelAll(client);
+			return;
 		}
 		if(client != null) {
 			Dispatcher dispatcher = client.dispatcher();
-		    synchronized (dispatcher){
+		    synchronized (Dispatcher.class){
 		        for (Call call : dispatcher.queuedCalls()) {
 		            if (tag.equals(call.request().tag())) {
 		                call.cancel();
@@ -286,7 +284,7 @@ public class HttpUtils {
 	 * @param paramMap paramMap
 	 * @param headerMap headerMap
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K,V>Call getByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
@@ -299,10 +297,10 @@ public class HttpUtils {
 	 * @param url url
 	 * @param headers headers
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static <K,V>Call getByClient(OkHttpClient client, String url, Headers headers, Object tag) throws IllegalArgumentException {
+	public static Call getByClient(OkHttpClient client, String url, Headers headers, Object tag) throws IllegalArgumentException {
 		return call(
 				getRequest(url, headers, tag).get().build(),
 				client);
@@ -318,7 +316,7 @@ public class HttpUtils {
 	 * @param paramMap 放在url里的参数
 	 * @param headerMap headerMap
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K,V>Call postJsonByClient(OkHttpClient client, String url, String json, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
@@ -333,7 +331,7 @@ public class HttpUtils {
 	 * @param paramMap paramMap
 	 * @param headerMap headerMap
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K,V>Call postByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
@@ -347,7 +345,7 @@ public class HttpUtils {
 	 * @param body body
 	 * @param headers headers
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static Call postByClient(OkHttpClient client, String url, RequestBody body, Headers headers, Object tag) throws IllegalArgumentException {
@@ -366,7 +364,7 @@ public class HttpUtils {
 	 * @param paramMap paramMap
 	 * @param headerMap headerMap
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 * @throws FileNotFoundException FileNotFoundException
 	 */
@@ -383,7 +381,7 @@ public class HttpUtils {
 	 * @param paramMap paramMap
 	 * @param headerMap headerMap
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 * @throws FileNotFoundException FileNotFoundException
 	 */
@@ -400,7 +398,7 @@ public class HttpUtils {
 	 * @param paramMap paramMap
 	 * @param headerMap headerMap
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K,V>Call deleteByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
@@ -413,10 +411,10 @@ public class HttpUtils {
 	 * @param url url
 	 * @param headers headers
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static <K,V>Call deleteByClient(OkHttpClient client, String url, Headers headers, Object tag) throws IllegalArgumentException {
+	public static Call deleteByClient(OkHttpClient client, String url, Headers headers, Object tag) throws IllegalArgumentException {
 		return call(
 				getRequest(url, headers, tag).delete().build(),
 				client);
@@ -432,7 +430,7 @@ public class HttpUtils {
 	 * @param paramMap 放在url里的参数
 	 * @param headerMap headerMap
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K,V>Call putJsonByClient(OkHttpClient client, String url, String json, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
@@ -446,7 +444,7 @@ public class HttpUtils {
 	 * @param paramMap paramMap
 	 * @param headerMap headerMap
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K,V>Call putByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
@@ -460,7 +458,7 @@ public class HttpUtils {
 	 * @param body body
 	 * @param headers headers
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static Call putByClient(OkHttpClient client, String url, RequestBody body, Headers headers, Object tag) throws IllegalArgumentException {
@@ -478,7 +476,7 @@ public class HttpUtils {
 	 * @param paramMap paramMap
 	 * @param headerMap headerMap
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K,V>Call headByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
@@ -491,10 +489,10 @@ public class HttpUtils {
 	 * @param url url
 	 * @param headers headers
 	 * @param tag tag
-	 * @return
+	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static <K,V>Call headByClient(OkHttpClient client, String url, Headers headers, Object tag) throws IllegalArgumentException {
+	public static Call headByClient(OkHttpClient client, String url, Headers headers, Object tag) throws IllegalArgumentException {
 		return call(
 				getRequest(url, headers, tag).head().build(),
 				client);
@@ -505,7 +503,7 @@ public class HttpUtils {
 	/**
 	 * 发送请求并得到返回
 	 * @param call call
-	 * @return
+	 * @return Response
 	 * @throws ConnectException 一般为连不上接口
 	 * @throws IOException 其他异常
 	 */
@@ -516,7 +514,7 @@ public class HttpUtils {
 	/**
 	 * 从返回体重获取返回码
 	 * @param response response
-	 * @return
+	 * @return Integer
 	 */
 	public static Integer responseCode(Response response) {
 		if(response == null) {
@@ -532,7 +530,7 @@ public class HttpUtils {
 	 * </p>
 	 * 
 	 * @param response response
-	 * @return
+	 * @return 返回字符串
 	 * @throws IOException IOException
 	 */
 	public static Optional<String> responseStr(Response response) throws IOException{
@@ -552,14 +550,17 @@ public class HttpUtils {
 	 * </p>
 	 * 
 	 * @param response response
-	 * @return
+	 * @return 返回字符串
 	 * @throws IOException IOException
 	 */
 	public static Optional<String> responseStrForce(Response response) throws IOException{
 		if(response == null) {
 			return Optional.empty();
 		}
-		return Optional.ofNullable(response.body().string());
+		if (response.body() == null) {
+			return Optional.empty();
+		}
+		return Optional.of(response.body().string());
 	}
 	
 	/**
@@ -569,7 +570,7 @@ public class HttpUtils {
 	 * </p>
 	 * 
 	 * @param response response
-	 * @return
+	 * @return 返回map
 	 * @throws IOException IOException
 	 */
 	public static Optional<Map<String, Object>> responseMap(Response response) throws IOException {
@@ -577,10 +578,7 @@ public class HttpUtils {
 			return Optional.empty();
 		}
 		Optional<String> str = responseStr(response);
-		if(str.isPresent()) {
-			return Optional.ofNullable(Utils.jsonUtils().toMap(str.get()));
-		}
-		return Optional.empty();
+		return str.map(s -> Utils.jsonUtils().toMap(s));
 	}
 	
 	/**
@@ -590,7 +588,7 @@ public class HttpUtils {
 	 * </p>
 	 * 
 	 * @param response response
-	 * @return
+	 * @return 返回map
 	 * @throws IOException IOException
 	 */
 	public static Optional<Map<String, Object>> responseMapForce(Response response) throws IOException{
@@ -598,10 +596,7 @@ public class HttpUtils {
 			return Optional.empty();
 		}
 		Optional<String> str = responseStrForce(response);
-		if(str.isPresent()) {
-			return Optional.ofNullable(Utils.jsonUtils().toMap(str.get()));
-		}
-		return Optional.empty();
+		return str.map(s -> Utils.jsonUtils().toMap(s));
 	}
 	
 	/**
@@ -613,7 +608,7 @@ public class HttpUtils {
 	 * 
 	 * @param response response
 	 * @param clazz clazz
-	 * @return
+	 * @return 返回任意类
 	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
@@ -637,7 +632,7 @@ public class HttpUtils {
 	 * 
 	 * @param response response
 	 * @param clazz clazz
-	 * @return
+	 * @return 返回任意类
 	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
@@ -661,7 +656,7 @@ public class HttpUtils {
 	 * 
 	 * @param response response
 	 * @param type type
-	 * @return
+	 * @return 返回任意类
 	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
@@ -685,7 +680,7 @@ public class HttpUtils {
 	 * 
 	 * @param response response
 	 * @param type type
-	 * @return
+	 * @return 返回任意类
 	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
@@ -707,7 +702,7 @@ public class HttpUtils {
 	 * </p>
 	 * 
 	 * @param response response
-	 * @return
+	 * @return 返回输入流
 	 * @throws IOException IOException
 	 */
 	public static Optional<InputStream> responseInputStream(Response response) throws IOException  {
@@ -715,7 +710,10 @@ public class HttpUtils {
 			return Optional.empty();
 		}
 		if(response.isSuccessful()) {
-			return Optional.ofNullable(response.body().byteStream());
+			if (response.body() == null) {
+				return Optional.empty();
+			}
+			return Optional.of(response.body().byteStream());
 		}
 		throw new IOException(response.code()+"||"+response.message());
 	}
@@ -728,7 +726,7 @@ public class HttpUtils {
 	 * 
 	 * @param response response
 	 * @param targetPath targetPath
-	 * @return
+	 * @return 返回文件
 	 * @throws IOException IOException
 	 */
 	public static Optional<File> responseFile(Response response, String targetPath) throws IOException {
@@ -739,7 +737,7 @@ public class HttpUtils {
 		if(in.isPresent()) {
 			File file = FileUtils.write(in.get(), targetPath);
 			if(file.exists() && file.isFile()) {
-				return Optional.ofNullable(file);
+				return Optional.of(file);
 			}
 		}
 		return Optional.empty();
@@ -752,18 +750,16 @@ public class HttpUtils {
 	 * </p>
 	 * 
 	 * @param headerMap headerMap
-	 * @return
+	 * @return Headers
 	 */
 	public static <K,V>Headers getHeaders(Map<K, V> headerMap) {
 		if(headerMap == null || headerMap.isEmpty()) {
 			return null;
 		}
 		Headers.Builder builder = new Headers.Builder();
-		Iterator<K> itor = headerMap.keySet().iterator();
-		while(itor.hasNext()) {
-			K key = itor.next();
+		for (K key : headerMap.keySet()) {
 			V value = headerMap.get(key);
-			builder.add(key.toString(), value!=null?value.toString():"");
+			builder.add(key.toString(), value != null ? value.toString() : "");
 		}
 		return builder.build();
 	}
@@ -773,7 +769,7 @@ public class HttpUtils {
 	 * 请求并获取结果字符串(同步请求)
 	 * @param request request
 	 * @param client client
-	 * @return
+	 * @return Call
 	 */
 	public static Call call(Request request, OkHttpClient client) {
 		if(client == null) {
@@ -789,7 +785,7 @@ public class HttpUtils {
 	 * 拼接get请求的url及参数
 	 * @param url url
 	 * @param params params
-	 * @return
+	 * @return url
 	 */
 	private static <K, V>String getGetUrl(String url, Map<K, V> params) {
 		if(params == null || StringUtils.isBlank(url)) {
@@ -808,7 +804,7 @@ public class HttpUtils {
 	 * @param url url
 	 * @param headers headers
 	 * @param tag tag
-	 * @return
+	 * @return Builder
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	private static Builder getRequest(String url, Headers headers, Object tag) throws IllegalArgumentException {
@@ -833,9 +829,9 @@ public class HttpUtils {
 	 * </p>
 	 *
 	 * @param params params
-	 * @return
+	 * @return 请求体
 	 */
-	private static <K,V> RequestBody getRequestBody(Map<K, V> params) {
+	private static <K,V>RequestBody getRequestBody(Map<K, V> params) {
 		String paramStr = getParamStr(params, true);
 		 if(!paramStr.isEmpty()) {
 			 return RequestBody.create(FORM_CONTENT_TYPE,  paramStr);
@@ -851,10 +847,10 @@ public class HttpUtils {
 	 * </p>
 	 *
 	 * @param params params
-	 * @return
+	 * @return 请求体
 	 * @throws FileNotFoundException FileNotFoundException
 	 */
-	private static <K,V> RequestBody getRequestBody(File[] files, Map<K, V> params) throws FileNotFoundException {
+	private static <K,V>RequestBody getRequestBody(File[] files, Map<K, V> params) throws FileNotFoundException {
 		Map<File, String> fileMap = null;
 		/*附件部分*/
 		if(!ListUtils.isEmpty(files)) {
@@ -872,21 +868,19 @@ public class HttpUtils {
 	 * @param fileMap 文件及其上传名称对应map
 	 * @param fileKey 上传文件对应的key
 	 * @param params 其它参数
-	 * @return
+	 * @return 请求体
 	 * @throws FileNotFoundException FileNotFoundException
 	 */
-	private static <K,V> RequestBody getRequestBody(Map<File, String> fileMap, String fileKey, Map<K, V> params) throws FileNotFoundException {
+	private static <K,V>RequestBody getRequestBody(Map<File, String> fileMap, String fileKey, Map<K, V> params) throws FileNotFoundException {
 		MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
 		/*附件部分*/
 		addFiles2Form(builder, fileMap, fileKey);
 
 		/*表单部分*/
 		if(!MapUtils.isEmpty(params)) {
-			Iterator<K> itor = params.keySet().iterator();
-			while(itor.hasNext()) {
-				 K key = itor.next();
-				 V value = params.get(key);
-				 builder.addFormDataPart(key.toString(), value==null?null:value.toString());
+			for (K key : params.keySet()) {
+				V value = params.get(key);
+				builder.addFormDataPart(key.toString(), value == null ? "" : value.toString());
 			}
 
 			/*不能这么写，这样写jfinal只能通过getPara("params")获得到参数，还得自己解析
@@ -910,27 +904,25 @@ public class HttpUtils {
 	 */
 	private static void addFiles2Form(MultipartBody.Builder builder, Map<File, String> fileMap, String fileKey) throws FileNotFoundException {
 		if(!MapUtils.isEmpty(fileMap)) {
-			Iterator<File> itor = fileMap.keySet().iterator();
-			while(itor.hasNext()) {
-				File file = itor.next();
-				if(file == null) {
+			for (File file : fileMap.keySet()) {
+				if (file == null) {
 					throw new FileNotFoundException(
-							StringUtils.concat("文件上传失败:","文件不能为空"));
+							StringUtils.concat("文件上传失败:", "文件不能为空"));
 				}
-				if(!file.exists()) {
+				if (!file.exists()) {
 					throw new FileNotFoundException(
-							StringUtils.concat("文件上传失败:","文件[",file.getPath(),"]未找到"));
+							StringUtils.concat("文件上传失败:", "文件[", file.getPath(), "]未找到"));
 				}
-				if(!file.isFile()) {
+				if (!file.isFile()) {
 					throw new FileNotFoundException(
-							StringUtils.concat("文件上传失败:","文件[",file.getPath(),"]不是个文件"));
+							StringUtils.concat("文件上传失败:", "文件[", file.getPath(), "]不是个文件"));
 				}
 				String fileName = fileMap.get(file);
-				if(fileName == null) {
+				if (fileName == null) {
 					fileName = file.getName();
 				}
 				RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), file);
-				builder = builder.addFormDataPart(fileKey!=null?fileKey:"file", fileName, fileBody);
+				builder = builder.addFormDataPart(fileKey != null ? fileKey : "file", fileName, fileBody);
 			}
 		}
 	}
@@ -945,31 +937,29 @@ public class HttpUtils {
 			return "";
 		}
 		StringBuilder sb = null;
-		Iterator<K> itor = params.keySet().iterator();
-		while (itor.hasNext()) {
+		for (K k : params.keySet()) {
 			if (sb == null) {
 				sb = new StringBuilder();
 			} else {
 				sb.append('&');
 			}
-			K key = itor.next();
-			V value = params.get(key);
+			V value = params.get(k);
 			if (value == null) {
-				sb.append(key).append('=');
+				sb.append(k).append('=');
 			} else if (ObjectUtils.isArray(value)) { // 数组
 				int length = Array.getLength(value);
 				for (int i = 0; i < length; i++) {
 					Object item = Array.get(value, i);
-					sb.append(key).append('=').append(encode(item, needEncode)).append('&');
+					sb.append(k).append('=').append(encode(item, needEncode)).append('&');
 				}
-				sb.setLength(sb.length()-1);	//不论列表是否为空都需要删除最后一个&号
+				sb.setLength(sb.length() - 1);    //不论列表是否为空都需要删除最后一个&号
 			} else if (value instanceof Collection) { // 列表
-				for(Object item:((Collection<?>) value)) {
-					sb.append(key).append('=').append(encode(item, needEncode)).append('&');
+				for (Object item : ((Collection<?>) value)) {
+					sb.append(k).append('=').append(encode(item, needEncode)).append('&');
 				}
-				sb.setLength(sb.length()-1);	//不论列表是否为空都需要删除最后一个&号
+				sb.setLength(sb.length() - 1);    //不论列表是否为空都需要删除最后一个&号
 			} else { // 其余的通通转String,后续可加分支拓展
-				sb.append(key).append('=').append(encode(value, needEncode));
+				sb.append(k).append('=').append(encode(value, needEncode));
 			}
 		}
 		return StringUtils.emptyIfNull(sb);
