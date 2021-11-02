@@ -16,7 +16,12 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -43,7 +48,7 @@ import com.ag777.util.lang.model.Charsets;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2020年08月04日,last modify at 2020年08月04日
+ * @version create on 2020年08月04日,last modify at 2021年11月02日
  */
 public class FileUtils {
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
@@ -62,7 +67,19 @@ public class FileUtils {
     public static void encodingWrite(Charset charset) {
     	FILE_WRITING_CHARSET = charset;
     }
-    
+
+
+	/**
+	 *
+	 * @param path 文件
+	 * @return 获取文件属性
+	 * @throws IOException 读取文件异常
+	 */
+	public static BasicFileAttributes getAttr(Path path) throws IOException {
+		BasicFileAttributeView basicView = Files.getFileAttributeView(path, BasicFileAttributeView.class, LinkOption.NOFOLLOW_LINKS);
+		return basicView.readAttributes();
+	}
+
     /**
      * 遍历所有子文件(夹)，寻找符合要求的文件(夹)
      * @param basePath 基础路径
