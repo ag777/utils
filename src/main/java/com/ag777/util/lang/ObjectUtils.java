@@ -2,6 +2,7 @@ package com.ag777.util.lang;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -84,14 +85,20 @@ public class ObjectUtils {
 	}
 	
 	public static Integer toInt(Object obj) {
-		if(obj != null) {
-			if(obj instanceof Integer) {
-				return (Integer) obj;
-			} else {
-				return StringUtils.toInt(obj.toString());
-			}
+		if(obj == null) {
+			return null;
 		}
-		return null;
+		if(obj instanceof Integer) {
+			return (Integer) obj;
+		} else if (obj instanceof Float) {
+			return ((Float)obj).intValue();
+		} else if (obj instanceof Double) {
+			return ((Double)obj).intValue();
+		} else if (obj instanceof BigDecimal) {
+			return ((BigDecimal) obj).intValue();
+		}
+
+		return StringUtils.toInt(obj.toString());
 	}
 	
 	public static int toInt(Object obj, int defaultValue) {
