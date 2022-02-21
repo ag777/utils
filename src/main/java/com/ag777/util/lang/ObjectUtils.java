@@ -51,39 +51,82 @@ public class ObjectUtils {
 		String result = toStr(obj);
 		return getOrDefault(result, defaultValue);
 	}
-	
+
+	/**
+	 *
+	 * @param obj obj
+	 * @return Double
+	 */
 	public static Double toDouble(Object obj) {
-		if(obj != null) {
-			if(obj instanceof Double) {
-				return (Double) obj;
-			} else {
-				return StringUtils.toDouble(obj.toString());
-			}
+		if(obj == null) {
+			return null;
 		}
-		return null;
+		if(obj instanceof Double) {
+			return (Double) obj;
+		} else if(obj instanceof Integer) {
+			return ((Integer) obj).doubleValue();
+		} else if (obj instanceof Long) {
+			return ((Long)obj).doubleValue();
+		} else if (obj instanceof Float) {
+			return ((Float)obj).doubleValue();
+		} else if (obj instanceof BigDecimal) {
+			return ((BigDecimal) obj).doubleValue();
+		}
+
+		return StringUtils.toDouble(obj.toString());
 	}
-	
+
+	/**
+	 *
+	 * @param obj obj
+	 * @param defaultValue 默认值
+	 * @return double
+	 */
 	public static double toDouble(Object obj, double defaultValue) {
 		Double result = toDouble(obj);
 		return getOrDefault(result, defaultValue);
 	}
-	
+
+	/**
+	 *
+	 * @param obj obj
+	 * @return Float
+	 */
 	public static Float toFloat(Object obj) {
-		if(obj != null) {
-			if(obj instanceof Float) {
-				return (Float) obj;
-			} else {
-				return StringUtils.toFloat(obj.toString());
-			}
+		if(obj == null) {
+			return null;
 		}
-		return null;
+		if(obj instanceof Float) {
+			return (Float) obj;
+		} else if(obj instanceof Integer) {
+			return ((Integer) obj).floatValue();
+		} else if (obj instanceof Long) {
+			return ((Long)obj).floatValue();
+		} else if (obj instanceof Double) {
+			return ((Double)obj).floatValue();
+		} else if (obj instanceof BigDecimal) {
+			return ((BigDecimal) obj).floatValue();
+		}
+
+		return StringUtils.toFloat(obj.toString());
 	}
-	
+
+	/**
+	 *
+	 * @param obj obj
+	 * @param defaultValue 默认值
+	 * @return float
+	 */
 	public static float toFloat(Object obj, float defaultValue) {
 		Float result = toFloat(obj);
 		return getOrDefault(result, defaultValue);
 	}
-	
+
+	/**
+	 *
+	 * @param obj obj
+	 * @return Integer
+	 */
 	public static Integer toInt(Object obj) {
 		if(obj == null) {
 			return null;
@@ -100,23 +143,48 @@ public class ObjectUtils {
 
 		return StringUtils.toInt(obj.toString());
 	}
-	
+
+	/**
+	 *
+	 * @param obj obj
+	 * @param defaultValue 默认值
+	 * @return int
+	 */
 	public static int toInt(Object obj, int defaultValue) {
 		Integer result = toInt(obj);
 		return getOrDefault(result, defaultValue);
 	}
-	
+
+	/**
+	 *
+	 * @param obj obj
+	 * @return Long
+	 */
 	public static Long toLong(Object obj) {
-		if(obj != null) {
-			if(obj instanceof Long) {
-				return (Long) obj;
-			} else {
-				return StringUtils.toLong(obj.toString());
-			}
+		if(obj == null) {
+			return null;
 		}
-		return null;
+		if(obj instanceof Long) {
+			return (Long) obj;
+		} else if(obj instanceof Integer) {
+			return (long) obj;
+		} else if (obj instanceof Float) {
+			return ((Float)obj).longValue();
+		} else if (obj instanceof Double) {
+			return ((Double)obj).longValue();
+		} else if (obj instanceof BigDecimal) {
+			return ((BigDecimal) obj).longValue();
+		}
+
+		return StringUtils.toLong(obj.toString());
 	}
-	
+
+	/**
+	 *
+	 * @param obj obj
+	 * @param defaultValue 默认值
+	 * @return long
+	 */
 	public static long toLong(Object obj, long defaultValue) {
 		Long result = toLong(obj);
 		return getOrDefault(result, defaultValue);
