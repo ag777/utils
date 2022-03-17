@@ -25,7 +25,7 @@ public class RandomUtils {
 	/**
 	 * 产生随机整形数值[0,max),其中max为开区间
 	 * @param max max
-	 * @return
+	 * @return 随机值
 	 */
 	public static int rInt(int max) {
 		return ThreadLocalRandom.current().nextInt(max);
@@ -35,7 +35,7 @@ public class RandomUtils {
 	 * 产生随机整形数值[min,max),其中max为开区间
 	 * @param min min
 	 * @param max max
-	 * @return
+	 * @return 随机值
 	 */
 	public static int rInt(int min, int max) {
 		return ThreadLocalRandom.current().nextInt(min, max);
@@ -44,7 +44,7 @@ public class RandomUtils {
 	/**
 	 * 产生随机Double类型数值[0,max),其中max为开区间
 	 * @param max max
-	 * @return
+	 * @return 随机值
 	 */
 	public static double rDouble(double max) {
 		return ThreadLocalRandom.current().nextDouble(max);
@@ -55,7 +55,7 @@ public class RandomUtils {
 	 * 产生随机Double类型数值[min,max),其中max为开区间
 	 * @param min min
 	 * @param max max
-	 * @return
+	 * @return 随机值
 	 */
 	public static double rDouble(double min, double max) {
 		return ThreadLocalRandom.current().nextDouble(min, max);
@@ -64,11 +64,24 @@ public class RandomUtils {
 	/**
 	 * 随机从列表里抽取一项
 	 * @param list list
-	 * @return
+	 * @return 随机项
 	 */
 	public static <T>T rList(List<T> list) {
 		int rInt = rInt(list.size());
 		return list.get(rInt);
+	}
+
+	/**
+	 * 从列表中随机抽取一项,所有项的概率平均
+	 * @param list list
+	 * @return 随机项
+	 */
+	public static <T>T draw(List<T> list) {
+		if(list == null || list.isEmpty()) {
+			return null;
+		}
+		int index = rInt(list.size());
+		return list.get(index);
 	}
 	
 	/**
@@ -77,7 +90,7 @@ public class RandomUtils {
 	 * 	每项概率介于(0,1]之间，总和应为1，提前算好
 	 * </p>
 	 * @param list list
-	 * @return
+	 * @return 随机项
 	 * @throws Exception Exception
 	 */
 	public static <T>T rListByProbability(List<Pair<T, Double>> list) throws Exception {
@@ -92,18 +105,18 @@ public class RandomUtils {
 		}
 		throw new Exception("抽奖概率异常:"+rDouble);
 	}
-	
+
 	/**
 	 * 从列表中随机抽取一项,所有项的概率平均
-	 * @param list list
-	 * @return
+	 * @param arr arr
+	 * @return 随机项
 	 */
-	public static <T>T draw(List<T> list) {
-		if(list == null || list.isEmpty()) {
+	public static <T>T draw(T[] arr) {
+		if(arr == null || arr.length == 0) {
 			return null;
 		}
-		int index = rInt(list.size());
-		return list.get(index);
+		int index = rInt(arr.length);
+		return arr[index];
 	}
 	
 	/**
@@ -115,7 +128,7 @@ public class RandomUtils {
 	 * </p>
 	 * 
 	 * @param probability probability
-	 * @return
+	 * @return 是否命中
 	 */ 
 	public static boolean draw(double probability) {
 		if(probability <= 0) {
