@@ -508,9 +508,17 @@ public class StringUtils {
 		} else if(src.matches("\\d{4}-\\d{2}-\\d{2}")) {		//yyyy-MM-dd
 			return DateUtils.toDate(src, "yyyy-MM-dd");
 		} else if(src.matches("\\d{13}")) {		//13位标准时间戳
-			return new Date(toLong(src));
+			Long timeMillis = toLong(src);
+			if (timeMillis == null) {
+				return null;
+			}
+			return new Date(timeMillis);
 		} else if(src.matches("\\d{10}")) {		//10位标准时间戳
-			return new Date(toLong(src)*1000);
+			Long timeMillis = toLong(src);
+			if (timeMillis == null) {
+				return null;
+			}
+			return new Date(timeMillis*1000);
 		} else if(src.matches("\\d{2}:\\d{2}:\\d{2}")) {	//HH:mm:ss
 			return DateUtils.toDate(src, "HH:mm:ss");
 		} else if(src.matches("\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}")) {	//yyyy-MM-dd HH:mm
