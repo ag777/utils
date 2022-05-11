@@ -17,7 +17,7 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2019年07月16日
+ * @version create on 2017年09月22日,last modify at 2022年05月11日
  */
 public class ObjectUtils {
 
@@ -41,10 +41,15 @@ public class ObjectUtils {
 	
 	//--转换
 	public static String toStr(Object obj) {
-		if(obj != null) {
-			return obj.toString();
+		if(obj == null) {
+			return null;
 		}
-		return null;
+		if (obj instanceof String) {
+			return (String) obj;
+		} else if(obj instanceof Date) {
+			return DateUtils.toString(((Date)obj), DateUtils.DEFAULT_TEMPLATE_TIME);
+		}
+		return obj.toString();
 	}
 	
 	public static String toStr(Object obj, String defaultValue) {
@@ -174,6 +179,8 @@ public class ObjectUtils {
 			return ((Double)obj).longValue();
 		} else if (obj instanceof BigDecimal) {
 			return ((BigDecimal) obj).longValue();
+		} else if(obj instanceof Date) {
+			return ((Date)obj).getTime();
 		}
 
 		return StringUtils.toLong(obj.toString());
