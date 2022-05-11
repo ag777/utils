@@ -1,78 +1,61 @@
 package com.ag777.util.lang.thread;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Vector;
-import java.util.concurrent.Callable;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * 多线程工具类(只辅助,外部靠内存共享数据实现结果处理)
  * 
  * @author ag777
- * Time: created at 2017/3/21. last modify at 2017/4/17.
+ * Time: created at 2017/3/21. last modify at 2022/05/11.
  */
-public class ThreadHelper<T> implements TaskHelperInterf<T>{
+public class ThreadHelper<T> {
 
+	private ThreadGroup threadGroup;
 	private List<Thread> threadList;
-	private List<T> result;
-	
-	public ThreadHelper(){	
-		threadList = new ArrayList<Thread>();
-		result = new Vector<T>();
+	private Map<String, FutureTask<T>> result;
+	private volatile boolean isFinish;
+
+	public ThreadHelper(String groupName){
+		threadList = new ArrayList<>();
+		threadGroup = new ThreadGroup(groupName);
+		result = new ConcurrentHashMap<>();
+		isFinish = false;
 	}
-	
+
 	/*==============添加单个任务==============*/
-	
-	@Override
-	public ThreadHelper<T> addTask(final Callable<T> callable) {
-		Thread t = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				try {
-					result.add(callable.call());
-				} catch (Exception e) {
-					//e.printStackTrace();
-				}
-			}
-		});
+
+	public ThreadHelper<T> addTask(String token, Callable<T> callable) {
+		FutureTask<T> task = new FutureTask<>(callable);
+		result.put(token, task);
+		Thread t = new Thread(threadGroup, task,threadGroup+"_"+token);
 		threadList.add(t);
 		t.start();
 		return this;
 	}
-	
-	/*==============添加多个任务==============*/
-	
-	@Override
-	public ThreadHelper<T> addTasks(List<Callable<T>> callables){
-		for (Callable<T> callable : callables) {
-			addTask(callable);
+
+
+	public Map<String, FutureTask<T>> getResult() throws InterruptedException {
+		if (!isFinish) {
+			join();
 		}
-		return this;
-	}
-	
-	private ThreadHelper<T> join() {
-		for (Thread t : threadList) {
-			try {
-				t.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		return this;
-	}
-	
-	public List<T> getResult() {
-		join();
 		return result;
 	}
-	
-	
+
+
+	private ThreadHelper<T> join() throws InterruptedException {
+		for (Thread t : threadList) {
+			t.join();
+		}
+		isFinish = true;
+		return this;
+	}
+
+
 	/*===静态方法===*/
 	public static void startThread(final Callable<Void> t) {
 		new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				try {
@@ -83,24 +66,18 @@ public class ThreadHelper<T> implements TaskHelperInterf<T>{
 			}
 		}).start();
 	}
-	
-	public static void main(String[] args) {
-		
-		List<Callable<Integer>> cs = new ArrayList<Callable<Integer>>();
-		
-		for (int i = 0; i < 20; i++) {
-			cs.add(new Callable<Integer>() {
 
-				@Override
-				public Integer call() throws Exception {
-					int j = new Random().nextBoolean()?1:5;
-					Thread.sleep(100*j);
-					System.out.println(j);
-					return j;
-				}
-			});
+	public static void main(String[] args) throws InterruptedException, ExecutionException {
+
+		ThreadHelper<String> t = new ThreadHelper<>("my-tg");
+		t.addTask("t1", () -> {
+			TimeUnit.SECONDS.sleep(1);
+			return "返回数据1";
+		});
+		t.addTask("t2", () ->  "返回数据2");
+		Map<String, FutureTask<String>> result = t.getResult();
+		for (String token : result.keySet()) {
+			System.out.println(token+": "+result.get(token).get());
 		}
-		
-		new ThreadHelper<Integer>().addTasks(cs).getResult();
 	}
 }
