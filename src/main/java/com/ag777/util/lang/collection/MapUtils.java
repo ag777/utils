@@ -271,6 +271,37 @@ public class MapUtils {
 		}
 		return map;
 	}
+
+	/**
+	 *
+	 * @param key 第一项的键
+	 * @param value 第一项的值
+	 * @param others 其它项,参数数量必须是2的倍数
+	 * @return Map<String, Object>
+	 */
+	public static Map<String, Object> ofLinked(String key, Object value, Object... others) {
+		return ofLinked(String.class, Object.class, key, value, others);
+	}
+
+	/**
+	 * 构建LinkedHashMap,采用了强转的方式实现,请自行保证参数类型正确性(others长度为偶数)
+	 * @param clazzT 键的类型
+	 * @param clazzV 值的类型
+	 * @param key1 第一项的键
+	 * @param value1 第一项的值
+	 * @param others 其它项,参数数量必须是2的倍数
+	 * @param <K> K
+	 * @param <V> V
+	 * @return Map<K, V>
+	 */
+	public static <K, V>Map<K, V> ofLinked(Class<K> clazzT, Class<V> clazzV, K key1, V value1, Object... others) {
+		int size = 1;
+		if(others != null)  {
+			size += others.length / 2;
+		}
+		Map<K, V> map = new LinkedHashMap<>(size);
+		return putAll(map, key1, value1, others);
+	}
 	
 	/**
 	 * 如果条件成立则往map里插值
