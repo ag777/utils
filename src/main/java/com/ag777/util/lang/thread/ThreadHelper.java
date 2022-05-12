@@ -89,22 +89,6 @@ public class ThreadHelper<T> implements Disposable {
 		return this;
 	}
 
-
-	/*===静态方法===*/
-	public static void startThread(final Callable<Void> t) {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					t.call();
-				} catch (Exception e) {
-					//e.printStackTrace();
-				}
-			}
-		}).start();
-	}
-
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 
 		ThreadHelper<String> t = new ThreadHelper<>("my-tg");
