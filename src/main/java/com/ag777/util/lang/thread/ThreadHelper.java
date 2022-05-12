@@ -14,21 +14,17 @@ import java.util.concurrent.*;
 public class ThreadHelper<T> implements Disposable {
 
 	private ThreadGroup threadGroup;
-	private List<Thread> threadList;
 	private Map<String, FutureTask<T>> result;
-	private volatile boolean isFinish;
 
 	public ThreadHelper(String groupName){
-		threadList = new ArrayList<>();
 		threadGroup = new ThreadGroup(groupName);
 		result = new ConcurrentHashMap<>();
-		isFinish = false;
 	}
 
 	/*==============添加单个任务==============*/
 
 	/**
-	 * 添加任务
+	 * 添加任务, 同时会在线程中开始执行任务
 	 * @param token 用于获取结果的钥匙
 	 * @param callable 任务实现
 	 * @return ThreadHelper
@@ -37,7 +33,6 @@ public class ThreadHelper<T> implements Disposable {
 		FutureTask<T> task = new FutureTask<>(callable);
 		result.put(token, task);
 		Thread t = new Thread(threadGroup, task,threadGroup+"_"+token);
-		threadList.add(t);
 		t.start();
 		return this;
 	}
@@ -48,9 +43,6 @@ public class ThreadHelper<T> implements Disposable {
 	 * @throws InterruptedException 线程中断
 	 */
 	public Map<String, FutureTask<T>> getResult() throws InterruptedException {
-		if (!isFinish) {
-			join();
-		}
 		return result;
 	}
 
@@ -63,9 +55,6 @@ public class ThreadHelper<T> implements Disposable {
 	 * @throws ExecutionException 任务执行异常
 	 */
 	public T getResult(String token) throws IllegalArgumentException, InterruptedException, ExecutionException {
-		if (!isFinish) {
-			join();
-		}
 		FutureTask<T> task = result.get(token);
 		if (task == null) {
 			throw new IllegalArgumentException("不存在的token");
@@ -74,47 +63,52 @@ public class ThreadHelper<T> implements Disposable {
 	}
 
 
-	/**
-	 * 等待所有线程执行完成
-	 * @return ThreadHelper
-	 * @throws InterruptedException 线程中断
-	 */
-	private synchronized ThreadHelper<T> join() throws InterruptedException {
-		Iterator<Thread> itor = threadList.iterator();
-		while (itor.hasNext()) {
-			itor.next().join();
-			itor.remove();
+//	/**
+//	 * 等待所有线程执行完成
+//	 * @return ThreadHelper
+//	 * @throws InterruptedException 线程中断
+//	 */
+//	private synchronized ThreadHelper<T> join() throws InterruptedException {
+//		Iterator<Thread> itor = threadList.iterator();
+//		while (itor.hasNext()) {
+//			itor.next().join();
+//			itor.remove();
+//		}
+//		isFinish = true;
+//		return this;
+//	}
+
+	@Override
+	public void dispose() {
+		if (result != null) {
+			threadGroup.interrupt();
+			threadGroup = null;
+			result = null;
 		}
-		isFinish = true;
-		return this;
+
 	}
 
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 
 		ThreadHelper<String> t = new ThreadHelper<>("my-tg");
-		t.addTask("t1", () -> {
-			TimeUnit.SECONDS.sleep(1);
-			return "返回数据1";
-		});
-		t.addTask("t2", () ->  "返回数据2");
-		t.addTask("t3", ()-> {
-			throw new Exception("aaa");
-		});
-		System.out.println(t.getResult("t2"));
-		Map<String, FutureTask<String>> result = t.getResult();
-		for (String token : result.keySet()) {
-			System.out.println(token+": "+result.get(token).get());
+		try {
+			t.addTask("t1", () -> {
+				TimeUnit.SECONDS.sleep(1);
+				return "返回数据1";
+			});
+			t.addTask("t2", () ->  "返回数据2");
+			t.addTask("t3", ()-> {
+				throw new Exception("aaa");
+			});
+			System.out.println(t.getResult("t2"));
+			Map<String, FutureTask<String>> result = t.getResult();
+			for (String token : result.keySet()) {
+				System.out.println(token+": "+result.get(token).get());
+			}
+		} finally {
+			t.dispose();
 		}
 	}
 
-	@Override
-	public void dispose() {
-		if (threadGroup != null && !isFinish) {
-			threadGroup.interrupt();
-			threadGroup = null;
-			threadList = null;
-			result = null;
-		}
 
-	}
 }
