@@ -1,7 +1,5 @@
 package com.ag777.util.lang.thread;
 
-import com.ag777.util.lang.Console;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
