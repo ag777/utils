@@ -957,6 +957,14 @@ public class DbHelper implements Disposable, Closeable {
 	 * 获取所有表的名称列表
 	 * @return list
 	 */
+	public List<String> tableNameList() throws SQLException {
+		return tableNameList(null, "%", "%");
+	}
+
+	/**
+	 * 获取所有表的名称列表
+	 * @return list
+	 */
 	public List<String> tableNameList(String catalog, String schema, String tableName) throws SQLException {
 		DatabaseMetaData dbmd = conn.getMetaData();
 
@@ -976,6 +984,20 @@ public class DbHelper implements Disposable, Closeable {
 			}
 		}
 		return tableNameList;
+	}
+
+	/**
+	 * 通过表名获取每一个字段的信息
+	 *
+	 * <p>
+	 * 	参考:http://blog.sina.com.cn/s/blog_707a9f0601014y1y.html
+	 * </p>
+	 *
+	 * @param tableName 表名
+	 * @return list
+	 */
+	public List<ColumnPojo> columnList(String tableName) throws SQLException {
+		return columnList(null, "%", tableName);
 	}
 
 	/**
