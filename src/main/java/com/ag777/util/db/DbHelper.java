@@ -1,70 +1,41 @@
 package com.ag777.util.db;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.stream.Collectors;
-
 import com.ag777.util.db.connection.MysqlConnection;
 import com.ag777.util.db.connection.OracleConnection;
 import com.ag777.util.db.connection.SqlServerConnection;
 import com.ag777.util.db.connection.SqliteConnection;
 import com.ag777.util.db.interf.DBTransactionInterf;
-import com.ag777.util.db.model.ColumnPojo;
-import com.ag777.util.db.model.DBIPojo;
-import com.ag777.util.db.model.DbDriver;
-import com.ag777.util.db.model.DbPojo;
-import com.ag777.util.db.model.DbPropertieKey;
-import com.ag777.util.db.model.OracleRole;
-import com.ag777.util.db.model.TypePojo;
+import com.ag777.util.db.model.*;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.interf.Disposable;
 import com.ag777.util.lang.reflection.ReflectionUtils;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2020年10月09日
+ * @version create on 2017年07月28日,last modify at 2022年07月26日
  */
 public class DbHelper implements Disposable, Closeable {
-	
-	//控制控制台输出开关
-	private static boolean MODE_DEBUG = false;
-	//执行完sql后关闭数据库连接,一旦开启则该工具类不可重复使用(连接不存在了)
-	private static boolean MODE_CLOSE_AFTER_EXECUTE = false;
-
-	public static void setModeDebug(boolean debugMode) {
-		DbHelper.MODE_DEBUG = debugMode;
-	}
-	
-	public static void setModeCloseAfterExecute(boolean closeAfterExecuteMode) {
-		DbHelper.MODE_CLOSE_AFTER_EXECUTE = closeAfterExecuteMode;
-	}
 	
 	private Connection conn;
 	private String dbType;	//数据库类型(mysql/oracle/sqlite等)
 	
 	public DbHelper(Connection conn) {
 		this.conn = conn;
-		dbType = dbInfo().getName();
+		try {
+			dbType = dbInfo().getName();
+		} catch (SQLException ignored) {
+		}
 	}
 	
 	/**
@@ -177,7 +148,7 @@ public class DbHelper implements Disposable, Closeable {
 	 * @return java类型
 	 */
 	public static Class<?> toPojoType(int sqlType, int size, String typeName) {
-		Class<?> clazz = null;
+		Class<?> clazz;
 		
 		boolean unsign = false;
 		if(typeName != null && typeName.toUpperCase().contains("UNSIGNED")) {
@@ -232,14 +203,10 @@ public class DbHelper implements Disposable, Closeable {
 			case Types.NUMERIC:	//2
 				clazz = BigDecimal.class;
 				break;
-			case Types.DATE:			//91
-				clazz = java.util.Date.class;	//java.sql.Date
-				break;
-			case Types.TIME:			//92
+			case Types.DATE:			//91 java.sql.Date
+			case Types.TIME:			//92 java.sql.Time.class
+			case Types.TIMESTAMP:	//93 java.sql.Timestamp.class;//java.util.Date是java.sql.Date/java.sql.Timestamp/java.sql.Time的父类
 				clazz = java.util.Date.class;//java.sql.Time.class;
-				break;
-			case Types.TIMESTAMP:	//93
-				clazz = java.util.Date.class;// java.sql.Timestamp.class;//java.util.Date是java.sql.Date/java.sql.Timestamp/java.sql.Time的父类
 				break;
 //			case Types.JAVA_OBJECT:	//2000
 //			case Types.OTHER:	//1111
@@ -300,7 +267,7 @@ public class DbHelper implements Disposable, Closeable {
 				return false;
 		}
 	}
-	
+
 	/**
 	 * java类型转数据库类型(不全，只列出常用的，不在范围内返回varchar)
 	 * @param clazz clazz
@@ -349,20 +316,11 @@ public class DbHelper implements Disposable, Closeable {
 	 * @return 是否成功
 	 */
 	public boolean test(int timeoutSeconds) {
-		Statement stmt = null;
-		try {
-			stmt = conn.createStatement();
+		try (Statement stmt = conn.createStatement()) {
 			stmt.setQueryTimeout(timeoutSeconds);//单位秒
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				if(stmt != null) {
-					stmt.close();
-				}
-			} catch (SQLException e) {
-			}
 		}
 		return false;
 	}
@@ -380,8 +338,6 @@ public class DbHelper implements Disposable, Closeable {
 				boolean result = task.doTransaction(this);
 				conn.commit();
 				return result;
-			} catch(Exception ex) {
-				throw ex;
 			} finally {
 				conn.setAutoCommit(true);
 			}
@@ -420,7 +376,7 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param src 原表名
 	 * @param to 目标表名
 	 */
-	public void reNameTable(String src, String to) {
+	public void reNameTable(String src, String to) throws SQLException {
 		if(isMysql()) {
 			update("RENAME TABLE "+src+" TO "+to+";");
 		} else if(isOracle()) {
@@ -436,16 +392,9 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param sql sql
 	 * @return ResultSet
 	 */
-	public ResultSet getResultSet(String sql) {
-    	try {
-    		Statement stmt = conn.createStatement();
-	    	return stmt.executeQuery(sql);
-		} catch (SQLException ex) {
-			err(ex);
-		} finally {
-			closeAfterExecute();
-		}
-    	return null;
+	public ResultSet getResultSet(String sql) throws SQLException {
+		Statement stmt = conn.createStatement();
+		return stmt.executeQuery(sql);
 	}
 
 	/**
@@ -455,12 +404,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @throws SQLException SQLException
 	 */
 	public ResultSet getResultSetWithException(String sql) throws SQLException {
-		try {
-			Statement stmt = conn.createStatement();
-			return stmt.executeQuery(sql);
-		} finally {
-			closeAfterExecute();
-		}
+		Statement stmt = conn.createStatement();
+		return stmt.executeQuery(sql);
 	}
 
 	/**
@@ -469,15 +414,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param params 参数列表，按顺序写入sql
 	 * @return ResultSet
 	 */
-	public ResultSet getResultSet(String sql, Object[] params) {
-		try {
-			return getResultSetWithException(sql, params);
-		} catch (SQLException e) {
-			err(e);
-		} finally {
-			closeAfterExecute();
-		}
-		return null;
+	public ResultSet getResultSet(String sql, Object[] params) throws SQLException {
+		return getResultSetWithException(sql, params);
 	}
 
 
@@ -492,12 +430,8 @@ public class DbHelper implements Disposable, Closeable {
 		if(isNullOrEmpty(params)) {
 			return getResultSet(sql);
 		}
-		try {
-			PreparedStatement ps = getPreparedStatement(sql, params);
-			return ps.executeQuery();
-		} finally {
-			closeAfterExecute();
-		}
+		PreparedStatement ps = getPreparedStatement(sql, params);
+		return ps.executeQuery();
 	}
 	
 	/**
@@ -531,13 +465,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param params 参数
 	 * @return list
 	 */
-	public List<Map<String, Object>> queryList(String sql, Object[] params) {
-		try {
-			return queryListWithException(sql, params);
-		} catch (SQLException e) {
-			err(e);
-		} 
-		return null;
+	public List<Map<String, Object>> queryList(String sql, Object[] params) throws SQLException {
+		return queryListWithException(sql, params);
 	}
 
 	/**
@@ -558,14 +487,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param params 参数
 	 * @return 数据列表
 	 */
-	@SuppressWarnings("unchecked")
-	public <T>List<T> queryObjectList(String sql, Object[] params, Class<T> clazz) {
-		try {
-			return queryObjectListWithException(sql, params, clazz);
-		} catch(Exception ex) {
-			err(ex);
-		} 
-		return null;
+	public <T>List<T> queryObjectList(String sql, Object[] params, Class<T> clazz) throws SQLException {
+		return queryObjectListWithException(sql, params, clazz);
 	}
 
 	/**
@@ -580,7 +503,7 @@ public class DbHelper implements Disposable, Closeable {
 	@SuppressWarnings("unchecked")
 	public <T>List<T> queryObjectListWithException(String sql, Object[] params, Class<T> clazz) throws SQLException {
 
-		List<T> list = null;
+		List<T> list;
 		ResultSet rs = getResultSetWithException(sql, params);
 		if(isBasicClass(clazz)){
 			list = new ArrayList<>();
@@ -599,13 +522,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param sql sql
 	 * @return map
 	 */
-	public Map<String, Object> getMap(String sql) {
-		try {
-			return getMapWithException(sql);
-		} catch (SQLException e) {
-			err(e);
-		}
-		return null;
+	public Map<String, Object> getMap(String sql) throws SQLException {
+		return getMapWithException(sql);
 	}
 
 	/**
@@ -627,13 +545,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param params 参数
 	 * @return map
 	 */
-	public Map<String, Object> getMap(String sql, Object[] params) {
-		try {
-			return getMapWithException(sql, params);
-		} catch (SQLException e) {
-			err(e);
-		}
-		return null;
+	public Map<String, Object> getMap(String sql, Object[] params) throws SQLException {
+		return getMapWithException(sql, params);
 	}
 
 	/**
@@ -661,15 +574,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param clazz 类型
 	 * @return map
 	 */
-	@SuppressWarnings("unchecked")
-	public <T>T getObject(String sql, Object[] params, Class<T> clazz) {
-		try{
-			return getObjectWitchException(sql, params, clazz);
-		} catch(Exception ex) {
-			err(ex);
-		} 
-		
-		return null;
+	public <T>T getObject(String sql, Object[] params, Class<T> clazz) throws SQLException {
+		return getObjectWitchException(sql, params, clazz);
 	}
 
 	/**
@@ -705,13 +611,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param params 参数
 	 * @return Integer
 	 */
-	public Integer getInt(String sql, Object[] params) {
-		try {
-			return getIntWitchException(sql, params);
-		} catch(Exception ex) {
-			err(ex);
-		} 
-		return null;
+	public Integer getInt(String sql, Object[] params) throws SQLException {
+		return getIntWitchException(sql, params);
 	}
 
 	/**
@@ -739,13 +640,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param params 参数
 	 * @return Double
 	 */
-	public Double getDouble(String sql, Object[] params) {
-		try {
-			return getDoubleWitchException(sql, params);
-		} catch(Exception ex) {
-			err(ex);
-		} 
-		return null;
+	public Double getDouble(String sql, Object[] params) throws SQLException {
+		return getDoubleWitchException(sql, params);
 	}
 
 	/**
@@ -773,13 +669,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param params 参数
 	 * @return String
 	 */
-	public String getStr(String sql, Object[] params) {
-		try {
-			return getStrWitchException(sql, params);
-		} catch(Exception ex) {
-			err(ex);
-		} 
-		return null;
+	public String getStr(String sql, Object[] params) throws SQLException {
+		return getStrWitchException(sql, params);
 	}
 
 	/**
@@ -802,13 +693,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param sql sql
 	 * @return int
 	 */
-	public int update(String sql) {
-    	try {
-			return updateWithException(sql);
-		} catch (SQLException ex) {
-			err(ex);
-		}
-    	return -1;
+	public int update(String sql) throws SQLException {
+		return updateWithException(sql);
     }
 
 	/**
@@ -818,18 +704,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @throws SQLException SQLException
 	 */
 	public int updateWithException(String sql) throws SQLException {
-    	Statement stmt = null;
-    	int row = -1;
-    	try {
-			stmt = conn.createStatement();
-			row = stmt.executeUpdate(sql);
-		} catch (SQLException e) {
-			throw e;
-		} finally {
-			closeAfterExecute();
-		} 
-    	
-    	return row;
+		Statement stmt = conn.createStatement();
+		return stmt.executeUpdate(sql);
     }
 	
 	/**
@@ -838,13 +714,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param params 参数
 	 * @return 影响记录数
 	 */
-	public int update(String sql, Object[] params) {
-		try {
-			return updateWithException(sql, params);
-		} catch (SQLException ex) {
-			err(ex);
-		}
-		return -1;
+	public int update(String sql, Object[] params) throws SQLException {
+		return updateWithException(sql, params);
     }
 	
 	/**
@@ -858,14 +729,8 @@ public class DbHelper implements Disposable, Closeable {
 		if(isNullOrEmpty(params)) {
 			return updateWithException(sql);
 		}
-    	try {
-	    	PreparedStatement pstmt = getPreparedStatement(sql, params);
-	    	return pstmt.executeUpdate(); 
-    	} catch (SQLException e) {
-    		throw e;
-		} finally {
-			closeAfterExecute();
-		}
+		PreparedStatement pstmt = getPreparedStatement(sql, params);
+		return pstmt.executeUpdate();
     }
 	
 	/**
@@ -873,7 +738,7 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param tableName 表名
 	 * @return 是否成功?
 	 */
-	public boolean truncate(String tableName) {
+	public boolean truncate(String tableName) throws SQLException {
 		String sql = "TRUNCATE TABLE "+tableName;
 		return update(sql) != -1;
 	}
@@ -884,13 +749,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param params 参数
 	 * @return 影响记录数
 	 */
-	public int insertAndGetKey(String sql, Object[] params) {
-    	try {
-			return insertAndGetKeyWithException(sql, params);
-		} catch (SQLException ex) {
-			err(ex);
-		}
-    	return -1;
+	public int insertAndGetKey(String sql, Object[] params) throws SQLException {
+		return insertAndGetKeyWithException(sql, params);
 	}
 
 	/**
@@ -901,18 +761,11 @@ public class DbHelper implements Disposable, Closeable {
 	 * @throws SQLException SQLException
 	 */
 	public int insertAndGetKeyWithException(String sql, Object[] params) throws SQLException {
-    	try {
-	    	PreparedStatement pstmt = getPreparedStatement(sql, params, Statement.RETURN_GENERATED_KEYS);
-	    	pstmt.executeUpdate(); 
-	    	ResultSet rs = pstmt.getGeneratedKeys();
-	        rs.next();
-	        int key = rs.getInt(1);
-	        return key;
-    	} catch (SQLException ex) {
-    		throw ex;
-		} finally {
-			closeAfterExecute();
-		}
+		PreparedStatement pstmt = getPreparedStatement(sql, params, Statement.RETURN_GENERATED_KEYS);
+		pstmt.executeUpdate();
+		ResultSet rs = pstmt.getGeneratedKeys();
+		rs.next();
+		return rs.getInt(1);
 	}
 	
 	/**
@@ -921,13 +774,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @param paramsList 参数列表
 	 * @return 执行结果
 	 */
-	public int[] batchUpdate(String sql, List<Object[]> paramsList) {
-		try {
-			return batchUpdateWithException(sql, paramsList);
-		} catch (SQLException ex) {
-			err(ex);
-		}
-		return null;
+	public int[] batchUpdate(String sql, List<Object[]> paramsList) throws SQLException {
+		return batchUpdateWithException(sql, paramsList);
     }
 	
 	/**
@@ -950,16 +798,11 @@ public class DbHelper implements Disposable, Closeable {
     	} catch (SQLException ex) {
     		try {
 				conn.rollback();
-			} catch (SQLException e1) {
+			} catch (SQLException ignored) {
 			}
     		throw ex;
 		}  finally {
-			try {
-				conn.setAutoCommit(true);
-			} catch (SQLException ex) {
-				err(ex);
-			}
-			closeAfterExecute();
+    		conn.setAutoCommit(true);
 		}
     }
 	
@@ -1023,7 +866,7 @@ public class DbHelper implements Disposable, Closeable {
 	 */
 	public static List<Map<String, Object>> convert2List(ResultSet rs) throws SQLException {
 
-		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> list = new ArrayList<>();
 
 		ResultSetMetaData md = rs.getMetaData();
 
@@ -1031,7 +874,7 @@ public class DbHelper implements Disposable, Closeable {
 
 		while (rs.next()) { // rowData = new HashMap(columnCount);
 
-			Map<String, Object> rowData = new HashMap<String, Object>();
+			Map<String, Object> rowData = new HashMap<>();
 
 			for (int i = 1; i <= columnCount; i++) {
 				rowData.put(md.getColumnLabel(i), rs.getObject(i));
@@ -1053,7 +896,7 @@ public class DbHelper implements Disposable, Closeable {
 	 */
 	public static <T>List<T> convert2List(ResultSet rs, Class<T> clazz) throws SQLException {
 		try {
-			List<T> list = new ArrayList<T>();
+			List<T> list = new ArrayList<>();
 	
 			ResultSetMetaData md = rs.getMetaData();
 	
@@ -1088,8 +931,7 @@ public class DbHelper implements Disposable, Closeable {
 			}
 			return list;
 		} catch(Exception ex) {
-			err(ex);
-			throw new SQLException("转换结果为对象列表失败");
+			throw new SQLException("转换结果为对象列表失败", ex);
 		}
 	}
 	
@@ -1102,133 +944,131 @@ public class DbHelper implements Disposable, Closeable {
 	 * 
 	 * @return DbPojo
 	 */
-	public DbPojo dbInfo() {
-		try {
-			DbPojo db = new DbPojo();
-			DatabaseMetaData dbmd = conn.getMetaData();	
-			db.setName(dbmd.getDatabaseProductName());		//MySQL
-			db.setVersion(dbmd.getDatabaseProductVersion());	//5.6.32
-			db.setDriverVersion(dbmd.getDriverVersion());			//mysql-connector-java-5.1.44 ( Revision: b3cda4f864902ffdde495b9df93937c3e20009be )
-			return db;
-		} catch(Exception ex) {
-			err(ex);
-		} finally {	//构造函数调用，所以无论如何都不关闭连接
-//			closeAfterExecute();
-		}
-		return null;
+	public DbPojo dbInfo() throws SQLException {
+		DbPojo db = new DbPojo();
+		DatabaseMetaData dbmd = conn.getMetaData();
+		db.setName(dbmd.getDatabaseProductName());		//MySQL
+		db.setVersion(dbmd.getDatabaseProductVersion());	//5.6.32
+		db.setDriverVersion(dbmd.getDriverVersion());			//mysql-connector-java-5.1.44 ( Revision: b3cda4f864902ffdde495b9df93937c3e20009be )
+		return db;
 	}
-	
+
 	/**
 	 * 获取所有表的名称列表
 	 * @return list
 	 */
-	public List<String> tableNameList() {
-		try {
-			DatabaseMetaData dbmd = conn.getMetaData();
-			
-			ArrayList<String> tableNameList = new ArrayList<>();
-	        ResultSet rs = null;
-	        String[] typeList = new String[] { "TABLE" };
-	        rs = dbmd.getTables(null, "%", "%",  typeList);
-	        for (boolean more = rs.next(); more; more = rs.next()) {
-	            String s = rs.getString("TABLE_NAME");
-	            String type = rs.getString("TABLE_TYPE");
-	            if (type.equalsIgnoreCase("table") && s.indexOf("$") == -1) {
-//	            	System.out.println(rs.getString("TABLE_CAT"));
-//	            	System.out.println(rs.getString("TABLE_SCHEM"));
-//	            	System.out.println(rs.getString("TABLE_NAME"));
-//	            	System.out.println(rs.getString("TABLE_TYPE"));
-//	            	System.out.println(rs.getString("REMARKS"));
-//	            	System.out.println(rs.getString("TYPE_CAT"));
-//	            	System.out.println(rs.getString("TYPE_SCHEM"));
-//	            	System.out.println(rs.getString("TYPE_NAME"));
-//	            	System.out.println(rs.getString("SELF_REFERENCING_COL_NAME"));
-//	            	System.out.println(rs.getString("REF_GENERATION"));
-	            	tableNameList.add(s);
-	            }
-	        }
-	        return tableNameList;
-		} catch(Exception ex) {
-			err(ex);
-		} finally {
-			closeAfterExecute();
+	public List<String> tableNameList(String catalog, String schema, String tableName) throws SQLException {
+		DatabaseMetaData dbmd = conn.getMetaData();
+
+		ArrayList<String> tableNameList = new ArrayList<>();
+		ResultSet rs;
+		String[] typeList = new String[] { "TABLE" };
+		rs = dbmd.getTables(
+				escape(catalog),
+				escape(schema),
+				escape(tableName),
+				typeList);
+		for (boolean more = rs.next(); more; more = rs.next()) {
+			String s = rs.getString("TABLE_NAME");
+			String type = rs.getString("TABLE_TYPE");
+			if (type.equalsIgnoreCase("table") && !s.contains("$")) {
+				tableNameList.add(s);
+			}
 		}
-		return null;
+		return tableNameList;
 	}
-	
+
 	/**
 	 * 通过表名获取每一个字段的信息
-	 * 
+	 *
 	 * <p>
 	 * 	参考:http://blog.sina.com.cn/s/blog_707a9f0601014y1y.html
 	 * </p>
-	 * 
+	 *
 	 * @param tableName 表名
 	 * @return list
 	 */
-	public List<ColumnPojo> columnList(String tableName) {
+	public List<ColumnPojo> columnList(String catalog, String schema, String tableName) throws SQLException {
 		List<ColumnPojo> columns = new ArrayList<>();
-		
-		try {
-			List<String> primaryKeyList = primaryKeyList(tableName);	//主键列表
-			Map<String, TypePojo> typeMap = typeMap(tableName);
-			DatabaseMetaData dbmd = conn.getMetaData();
-			ResultSet columnSet = dbmd.getColumns(null, "%", tableName, "%");
 
-			while (columnSet.next()) {
-				ColumnPojo column = new ColumnPojo();
-				String columnName = columnSet.getString("COLUMN_NAME");
-				if(primaryKeyList.contains(columnName)) {	//是否在主键列表里
-					column.isPK(true);
-				} else {
-					column.isPK(false);
-				}
-			    column.setName(columnName);
-			    column.setSqlType(columnSet.getInt("DATA_TYPE"));		//来自 java.sql.Types 的 SQL 类型
-			    column.setTypeName(columnSet.getString("TYPE_NAME"));	//数据源依赖的类型名称，对于 UDT，该类型名称是完全限定的
-			    column.setSize(columnSet.getInt("COLUMN_SIZE"));			//长度
-			    column.setDecimalDigits(columnSet.getInt("DECIMAL_DIGITS"));	//小数部分的位数。对于 DECIMAL_DIGITS 不适用的数据类型，则返回 Null
-			    column.setRemarks(columnSet.getString("REMARKS"));			//注释
-			    column.setDef(columnSet.getObject("COLUMN_DEF"));	//默认值，可以为null
-			    column.setCharOctetLength(columnSet.getInt("CHAR_OCTET_LENGTH"));	// 对于 char 类型，该长度是列中的最大字节数
-			    if(column.isPK()) {		//主键不允许为空
-			    	column.isNotNull(true);
-			    } else {
-			    	column.isNotNull(!columnSet.getBoolean("NULLABLE"));
-			    }
-			    column.isAutoIncrement(columnSet.getBoolean("IS_AUTOINCREMENT"));	//是否自增长
-			    column.setOrdinalPosition(columnSet.getInt("ORDINAL_POSITION"));		//表中的列的索引（从 1 开始）
-			    /*其他信息*/
-			    if(typeMap.containsKey(columnName)) {
-			    	column.setTypePojo(typeMap.get(columnName));
-			    }
-			    
-			    columns.add(column);
+		catalog = escape(catalog);
+		schema = escape(schema);
+		tableName = escape(tableName);
+
+		List<String> primaryKeyList = primaryKeyList(catalog, schema, tableName);	//主键列表
+		Map<String, TypePojo> typeMap = typeMap(tableName);
+		DatabaseMetaData dbmd = conn.getMetaData();
+		ResultSet columnSet = dbmd.getColumns(catalog, schema, tableName, "%");
+
+		/*
+		TABLE_CAT, DDZS
+		TABLE_SCHEM, DDZS
+		TABLE_NAME, SYSTEM_CONFIG
+		COLUMN_NAME, CONFIG_ID
+		DATA_TYPE, 4
+		TYPE_NAME, INTEGER
+		COLUMN_SIZE, 10
+		BUFFER_LENGTH, 4
+		DECIMAL_DIGITS, 0
+		NUM_PREC_RADIX, 10
+		NULLABLE, 0
+		REMARKS, null
+		COLUMN_DEF, null
+		SQL_DATA_TYPE, 0
+		SQL_DATETIME_SUB, 0
+		CHAR_OCTET_LENGTH, null
+		ORDINAL_POSITION, 1
+		IS_NULLABLE, NO
+		SCOPE_CATLOG, null
+		SCOPE_SCHEMA, null
+		SCOPE_TABLE, null
+		SOURCE_DATA_TYPE, 0
+		 */
+//			ResultSetMetaData md = columnSet.getMetaData();
+
+		while (columnSet.next()) {
+			ColumnPojo column = new ColumnPojo();
+			String columnName = columnSet.getString("COLUMN_NAME");
+			//是否在主键列表里
+			column.isPK(primaryKeyList.contains(columnName));
+			column.setName(columnName);
+			column.setSqlType(columnSet.getInt("DATA_TYPE"));		//来自 java.sql.Types 的 SQL 类型
+			column.setTypeName(columnSet.getString("TYPE_NAME"));	//数据源依赖的类型名称，对于 UDT，该类型名称是完全限定的
+			column.setSize(columnSet.getInt("COLUMN_SIZE"));			//长度
+			column.setDecimalDigits(columnSet.getInt("DECIMAL_DIGITS"));	//小数部分的位数。对于 DECIMAL_DIGITS 不适用的数据类型，则返回 Null
+			column.setRemarks(columnSet.getString("REMARKS"));			//注释
+			column.setDef(columnSet.getObject("COLUMN_DEF"));	//默认值，可以为null
+			column.setCharOctetLength(columnSet.getInt("CHAR_OCTET_LENGTH"));	// 对于 char 类型，该长度是列中的最大字节数
+			if(column.isPK()) {		//主键不允许为空
+				column.isNotNull(true);
+			} else {
+				column.isNotNull(!columnSet.getBoolean("NULLABLE"));
 			}
-			
-			return columns;
-		} catch(Exception ex) {
-			err(ex);
-		} finally {
-			closeAfterExecute();
+
+//			    column.isAutoIncrement(columnSet.getBoolean("IS_AUTOINCREMENT"));	//是否自增长
+			column.setOrdinalPosition(columnSet.getInt("ORDINAL_POSITION"));		//表中的列的索引（从 1 开始）
+			/*其他信息*/
+			if(typeMap.containsKey(columnName)) {
+				column.setTypePojo(typeMap.get(columnName));
+			}
+
+			columns.add(column);
 		}
-		return null;
+
+		return columns;
+
 	}
-	
+
 	/**
 	 * 通过表名获取所有主键
 	 * @param tableName 表名
 	 * @return list
 	 */
-	public List<String> primaryKeyList(String tableName) {
+	public List<String> primaryKeyList(String catalog, String schema, String tableName) throws SQLException {
 		List<String> list = new ArrayList<>();
-		try {
-			ResultSet rs = conn.getMetaData().getPrimaryKeys(null, null, tableName);
-			while(rs.next()) {
-				list.add(rs.getString("COLUMN_NAME"));
-			}
-		} catch (SQLException ex) {
-			err(ex);
+		ResultSet rs = conn.getMetaData().getPrimaryKeys(catalog, schema, tableName);
+		while(rs.next()) {
+			list.add(rs.getString("COLUMN_NAME"));
 		}
 		return list;
 	}
@@ -1295,9 +1135,15 @@ public class DbHelper implements Disposable, Closeable {
 	 * 获取所有表结构
 	 * @return 字段类型列表
 	 */
-	public Map<String, List<ColumnPojo>> tableColumnMap() {
-		return tableNameList().stream()
-				.collect(Collectors.toMap(tableName->tableName, tableName->columnList(tableName)));
+	public Map<String, List<ColumnPojo>> tableColumnMap(String catalog, String schema, String tableName) throws SQLException {
+		return tableNameList(catalog, schema, tableName).stream()
+				.collect(Collectors.toMap(tableName1->tableName1, tableName1-> {
+					try {
+						return columnList(catalog, schema, tableName1);
+					} catch (SQLException exception) {
+						return new ArrayList<>();
+					}
+				}));
 	}
 	
 	/**
@@ -1369,12 +1215,8 @@ public class DbHelper implements Disposable, Closeable {
 	 * @throws SQLException	可能是连接数据库异常,所以不能确定是否存在表
 	 */
 	public boolean isTableExisted(String tableName) throws SQLException {
-		ResultSet rs = conn.getMetaData().getTables(null, null, tableName, null);  
-        if (rs.next()) {  
-              return true;  
-        }else {  
-              return false;  
-        }  
+		ResultSet rs = conn.getMetaData().getTables(null, null, tableName, null);
+		return rs.next();
 	}
 	
 	/*----内部工具方法------*/
@@ -1394,21 +1236,32 @@ public class DbHelper implements Disposable, Closeable {
 	private static boolean isBasicClass(Class<?> clazz) {
 		return ReflectionUtils.isBasicClass(clazz);
 	}
-	
-	private static void err(Exception ex) {
-		if(MODE_DEBUG) {
-			ex.printStackTrace();
-		}
-	}
-	
+
 	/**
-	 * 执行完sql后关闭数据库连接
+	 * 转义通配符
+	 * @param pattern 通配符
+	 * @return 转义后的通配符,如果传null，则返回%
+	 * @throws SQLException 异常
 	 */
-	private void closeAfterExecute() {
-		if(MODE_CLOSE_AFTER_EXECUTE) {
-			dispose();
+	private String escape(String pattern) throws SQLException {
+		if (pattern == null) {
+			return "%";
 		}
-	
+		if (pattern.contains("_")) {
+			String escape = getEscape();
+			return pattern.replace("_", (escape + "_"));
+		}
+		return pattern;
+	}
+
+	/**
+	 *
+	 * @return 转义符
+	 * @throws SQLException 异常
+	 */
+	private String getEscape() throws SQLException {
+		DatabaseMetaData dbmd = conn.getMetaData();
+		return dbmd.getSearchStringEscape();
 	}
 
 	/**
