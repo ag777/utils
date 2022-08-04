@@ -1,29 +1,27 @@
 package com.ag777.util.lang.thread;
 
-import java.util.concurrent.*;
-
-import com.ag777.util.lang.Console;
 import com.ag777.util.lang.interf.Disposable;
+
+import java.util.concurrent.*;
 
 /**
  * 回调线程池CompletionService辅助类
  * 
  * @author ag777
- * @version  create on 2018年08月03日,last modify at 2020年08月03日
+ * @version  create on 2018年08月03日,last modify at 2022年08月04日
  */
 public class CompletionServiceHelper<T> implements Disposable {
 	private ExecutorService pool;
 	private CompletionService<T> completionService;
-	
-	
+
 	public CompletionServiceHelper(int poolSize) {
 		pool = Executors.newFixedThreadPool(poolSize);
-		completionService = new ExecutorCompletionService<T>(pool);
+		completionService = new ExecutorCompletionService<>(pool);
 	}
 	
 	public CompletionServiceHelper(ExecutorService pool) {
 		this.pool = pool;
-		completionService = new ExecutorCompletionService<T>(pool);
+		completionService = new ExecutorCompletionService<>(pool);
 	}
 	
 	public ExecutorService getExecutorService() {
@@ -112,8 +110,6 @@ public class CompletionServiceHelper<T> implements Disposable {
 		}
 		try {
 			waitFor();
-		} catch (InterruptedException e) {
-			throw e;
 		} finally {
 			dispose();
 		}
@@ -130,11 +126,7 @@ public class CompletionServiceHelper<T> implements Disposable {
 	 */
 	private void waitFor(long timeout, TimeUnit unit) throws InterruptedException {
 		pool.shutdown();
-		try {
-			while(!pool.awaitTermination(timeout, unit)) {	//如果结束则关闭线程池
-			}
-		} catch (InterruptedException e) {
-			throw e;
+		while(!pool.awaitTermination(timeout, unit)) {	//如果结束则关闭线程池
 		}
 	}
 	
@@ -171,7 +163,7 @@ public class CompletionServiceHelper<T> implements Disposable {
 	 * 详见线程池的使用方法
 	 * @return 是否执行过shutdown
 	 */
-	public boolean isshutdown() {
+	public boolean isShutdown() {
 		if(pool != null) {
 			return pool.isShutdown();
 		}
