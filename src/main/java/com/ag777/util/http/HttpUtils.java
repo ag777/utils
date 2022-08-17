@@ -25,10 +25,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -51,7 +48,7 @@ import java.util.concurrent.TimeUnit;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2021年09月09日
+ * @version last modify at 2022年08月17日
  */
 public class HttpUtils {
 	
@@ -742,7 +739,25 @@ public class HttpUtils {
 		}
 		return Optional.empty();
 	}
-	
+
+	/**
+	 *
+	 * @param response response
+	 * @return 响应头map
+	 */
+	public static Map<String, Object> responseHeaderMap(Response response) {
+		Headers headers = response.headers();
+		Set<String> names = headers.names();
+		if (ListUtils.isEmpty(names)) {
+			return Collections.emptyMap();
+		}
+		Map<String, Object> map = new LinkedHashMap<>(names.size());
+		for (String name : names) {
+			map.put(name, headers.get(name));
+		}
+		return map;
+	}
+
 	/**
 	 * 构造请求头
 	 * <p>
