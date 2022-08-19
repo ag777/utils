@@ -1,6 +1,6 @@
 package com.ag777.util.security;
 
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.Base64;
 
 /**
@@ -10,30 +10,41 @@ import java.util.Base64;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年05月08日,last modify at 2018年05月08日
+ * @version create on 2018年05月08日,last modify at 2018年08月19日
  */
 public class Base64Utils {
-
-	/**
-	 * base64加密<pre>{@code (String -> String)  }</pre>
-	 *  
-	 * @param src src
-	 * @return
-	 */
-	public static String encode(String src) {
-		Base64.Encoder encoder = Base64.getEncoder();
-		return encoder.encodeToString(src.getBytes(StandardCharsets.UTF_8));
-	}
 	
 	/**
 	 * base64加密<pre>{@code (byte[] -> byte[]) }</pre>
 	 * 
-	 * @param src src
-	 * @return
+	 * @param src 字符串
+	 * @return 解密结果
 	 */
 	public static byte[] encode(byte[] src) {
 		Base64.Encoder encoder = Base64.getEncoder();
 		return encoder.encode(src);
+	}
+
+	/**
+	 * base64加密<pre>{@code (String -> String)  }</pre>
+	 *
+	 * @param src 字符串
+	 * @param charset 编码
+	 * @return 加密结果base64后的字符串
+	 */
+	public static String encode2Str(String src, Charset charset) {
+		Base64.Encoder encoder = Base64.getEncoder();
+		return encoder.encodeToString(src.getBytes(charset));
+	}
+
+	/**
+	 * base64加密<pre>{@code (byte[] -> String)  }</pre>
+	 * @param src 需要被加密的数据
+	 * @param charset 编码
+	 * @return 加密结果base64后的字符串
+	 */
+	public static String encode2Str(byte[] src, Charset charset) {
+		return new String(encode(src), charset);
 	}
 	
 	/**
@@ -45,20 +56,21 @@ public class Base64Utils {
 	 * 输入"啊是":Illegal base64 character 3f
 	 * </p>
 	 * 
-	 * @param src src
-	 * @return
+	 * @param src 字符串
+	 * @param charset 编码
+	 * @return 解密结果base64后的字符串
 	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
-	public static String decode(String src) throws IllegalArgumentException {
+	public static String decode2Str(String src, Charset charset) throws IllegalArgumentException {
 		Base64.Decoder decoder = Base64.getDecoder();
-		return new String(decoder.decode(src), StandardCharsets.UTF_8);
+		return new String(decoder.decode(src), charset);
 	}
 	
 	/**
 	 * base64解密<pre>{@code (byte[] -> byte[]) }</pre>
 	 * 
-	 * @param src src
-	 * @return
+	 * @param src 需要被解密的数据
+	 * @return 解密结果
 	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public static byte[] decode(byte[] src) throws IllegalArgumentException {
@@ -74,15 +86,15 @@ public class Base64Utils {
 	 * 但是感觉不够准确,比如我用"12"作为参数,解密再加密"77+9"明显和"12"不一样
 	 * </p>
 	 * 
-	 * @param src src
-	 * @return
+	 * @param src 字符串
+	 * @return 是否是base64编码的字符串
 	 */
 	@Deprecated
-	public static boolean isBase64(String src) {
+	public static boolean isBase64(String src, Charset charset) {
 		try {
-			String temp = decode(src);
-			return src.equals(encode(temp));
-		} catch(Exception ex) {
+			String temp = decode2Str(src, charset);
+			return src.equals(encode2Str(temp, charset));
+		} catch(Exception ignored) {
 		}
 		return false;
 	}
