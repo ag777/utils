@@ -22,7 +22,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 
  * 
  * @author ag777
- * @version create on 2017年06月06日,last modify at 2018年08月28日
+ * @version create on 2017年06月06日,last modify at 2022年08月22日
  */
 public class RegexUtils {
 
@@ -741,13 +741,8 @@ public class RegexUtils {
 		}
 		return result;
 	}
-	
-	/*--------------内部方法----------------*/
-	private static Pattern getPattern(String regex) {
-		return Pattern.compile(regex);
-	}
-	
-	private static String getReplacement(Matcher matcher, String replacement) {
+
+	public static String getReplacement(Matcher matcher, String replacement) {
 		String temp = replacement;
 		if (replacement != null) {
 			for (int i = 1; i <= matcher.groupCount(); i++) {
@@ -759,4 +754,10 @@ public class RegexUtils {
 			return matcher.group(0);
 		}
 	}
+	
+	/*--------------内部方法----------------*/
+	private static Pattern getPattern(String regex) {
+		return Pattern.compile(regex);
+	}
+
 }
