@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2020年08月04日,last modify at 2022年10月18日
+ * @version create on 2020年08月04日,last modify at 2022年10月19日
  */
 public class FileUtils {
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
@@ -78,36 +78,59 @@ public class FileUtils {
 		}
 		return fileList;
 	}
-    
-    /**
-     * 读取文件为字节数组
-     * @param filePath filePath
-     * @return byte[]
-     * @throws IOException IOException
-     */
-    public static byte[] readBytes(String filePath) throws IOException {
-    	try {
-        	FileInputStream fis = new FileInputStream(filePath);
-            return IOUtils.readBytes(fis);
-        } catch (FileNotFoundException ex) {
-            throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
-        } catch (IOException ex) {
-            throw new IOException(StringUtils.concat("读取文件[",filePath,"]时发生错误!"), ex);
-        }
-    }
 
 	/**
-	 *
+	 * 读取文件为字节数组
+	 * @param filePath filePath
+	 * @return byte[]
+	 * @throws IOException IOException
+	 */
+	public static byte[] readBytes(String filePath) throws IOException {
+		return readBytes(new File(filePath));
+	}
+
+	/**
+	 * 取文件为字节数组
+	 * @param file 文件
+	 * @return byte[]
+	 * @throws IOException IOException
+	 */
+	public static byte[] readBytes(File file) throws IOException {
+		try {
+			FileInputStream fis = new FileInputStream(file);
+			return IOUtils.readBytes(fis);
+		} catch (FileNotFoundException ex) {
+			throw new IOException(StringUtils.concat("文件[", file.getAbsolutePath(), "]不存在"), ex);
+		} catch (IOException ex) {
+			throw new IOException(StringUtils.concat("读取文件[",file.getAbsolutePath(),"]时发生错误!"), ex);
+		}
+	}
+
+	/**
 	 * @param filePath filePath
 	 * @param charset charset
 	 * @return 文件内容
 	 * @throws IOException io异常
 	 */
-    public static String readText(String filePath, Charset charset) throws IOException {
+	public static String readText(String filePath, Charset charset) throws IOException {
 		if(charset == null) {
 			charset = FILE_READING_CHARSET;
 		}
 		byte[] bytes = readBytes(filePath);
+		return new String(bytes, charset);
+	}
+
+	/**
+	 * @param file 文件
+	 * @param charset charset
+	 * @return 文件内容
+	 * @throws IOException io异常
+	 */
+	public static String readText(File file, Charset charset) throws IOException {
+		if(charset == null) {
+			charset = FILE_READING_CHARSET;
+		}
+		byte[] bytes = readBytes(file);
 		return new String(bytes, charset);
 	}
 
