@@ -4,6 +4,7 @@ import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.interf.Disposable;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
@@ -48,7 +49,21 @@ public class SocketClient implements Disposable {
 	 * @throws IOException IOException
 	 */
 	public static SocketClient build(String ip, int port) throws UnknownHostException, IOException {
-		Socket s = new Socket(ip, port);
+		return build(ip, port, 0);
+	}
+
+	/**
+	 * 创建套接字
+	 * @param ip ip
+	 * @param port port
+	 * @param timeout 超时时间
+	 * @return SocketClient
+	 * @throws UnknownHostException UnknownHostException
+	 * @throws IOException IOException
+	 */
+	public static SocketClient build(String ip, int port, int timeout) throws UnknownHostException, IOException {
+		Socket s = new Socket();
+		s.connect(new InetSocketAddress(ip, port), timeout);
 		return new SocketClient(s, s.getOutputStream(), s.getInputStream());
 	}
 
