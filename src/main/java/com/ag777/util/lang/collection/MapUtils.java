@@ -1,28 +1,19 @@
 package com.ag777.util.lang.collection;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import com.ag777.util.lang.ObjectUtils;
+import com.ag777.util.lang.StringUtils;
+
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-import com.ag777.util.lang.ObjectUtils;
-import com.ag777.util.lang.StringUtils;
-
 /**
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2020年05月27日
+ * @version create on 2017年09月22日,last modify at 2022年10月25日
  */
 public class MapUtils {
 
@@ -300,7 +291,8 @@ public class MapUtils {
 			size += others.length / 2;
 		}
 		Map<K, V> map = new LinkedHashMap<>(size);
-		return putAll(map, key1, value1, others);
+		putAll(map, key1, value1);
+		return putAll(map, others);
 	}
 	
 	/**
@@ -355,8 +347,8 @@ public class MapUtils {
 			map = MapUtils.newHashMap();
 		}
 		if(others != null) {
-			for (int i = 0; i < others.length; i=i+2) {
-				map.put((K)others[i], (V)others[i+1]);
+			for (int i = 0; i < others.length; i++) {
+				map.put((K)others[i], (V)others[++i]);
 			}
 		}
 		return map;
