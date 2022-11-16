@@ -1,23 +1,24 @@
 package com.ag777.util.lang;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import com.ag777.util.gson.GsonUtils;
 import com.ag777.util.lang.collection.ListUtils;
 import com.ag777.util.lang.interf.Disposable;
 import com.ag777.util.lang.reflection.ReflectionUtils;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.time.ZoneId;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2022年05月11日
+ * @version create on 2017年09月22日,last modify at 2022年11月16日
  */
 public class ObjectUtils {
 
@@ -217,6 +218,10 @@ public class ObjectUtils {
 		if(obj != null) {
 			if(obj instanceof Date) {
 				return (Date) obj;
+			} else if (obj instanceof java.time.LocalDateTime) {
+				return Date.from(((java.time.LocalDateTime) obj).atZone(ZoneId.systemDefault()).toInstant());
+			} else if (obj instanceof java.time.LocalDate) {
+				return Date.from(((java.time.LocalDate) obj).atStartOfDay(ZoneId.systemDefault()).toInstant());
 			} else {
 				return StringUtils.toDate(obj.toString());
 			}
