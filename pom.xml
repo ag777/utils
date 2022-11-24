@@ -6,7 +6,7 @@
 
     <groupId>com.ag777</groupId>
     <artifactId>utils</artifactId>
-    <version>1.2.81</version>
+    <version>1.2.93</version>
     <packaging>jar</packaging>
 
     <properties>
