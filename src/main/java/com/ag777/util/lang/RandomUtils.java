@@ -40,7 +40,26 @@ public class RandomUtils {
 	public static int rInt(int min, int max) {
 		return ThreadLocalRandom.current().nextInt(min, max);
 	}
-	
+
+	/**
+	 * 产生随机长整形数值[min,max),其中max为开区间
+	 * @param max max
+	 * @return 随机值
+	 */
+	public static long rLong(long max) {
+		return ThreadLocalRandom.current().nextLong(max);
+	}
+
+	/**
+	 * 产生随机长整形数值[min,max),其中max为开区间
+	 * @param min min
+	 * @param max max
+	 * @return 随机值
+	 */
+	public static long rLong(long min, long max) {
+		return ThreadLocalRandom.current().nextLong(min, max);
+	}
+
 	/**
 	 * 产生随机Double类型数值[0,max),其中max为开区间
 	 * @param max max
