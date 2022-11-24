@@ -1,6 +1,7 @@
 package com.ag777.util.lang;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -22,7 +23,7 @@ import com.ag777.util.lang.collection.ListUtils;
  * 
  * 
  * @author ag777
- * @version create on 2017年06月06日,last modify at 2022年08月22日
+ * @version create on 2017年06月06日,last modify at 2022年11月24日
  */
 public class RegexUtils {
 
@@ -38,9 +39,9 @@ public class RegexUtils {
 	/**
 	 * 字符串是否匹配正则,多做了一步非空判断
 	 * 
-	 * @param src src
-	 * @param regex regex
-	 * @return
+	 * @param src src 字符串
+	 * @param regex regex 正则
+	 * @return 是否匹配
 	 */
 	public static boolean match(String src, String regex) {
 		if(src != null) {
@@ -48,14 +49,40 @@ public class RegexUtils {
 		}
 		return false;
 	}
-	
+
+	/**
+	 * 替换字符串
+	 * System.out.println(replace("ad?bc?", Pattern.compile("\\?"), (m, i)->m.group(0)+i)); => "ad?0bc?1"
+	 * @param src 字符串
+	 * @param p 正则
+	 * @param getReplacement (匹配到的部分，第几次匹配)->替换该部分的字符串
+	 * @return 替换完成的字符串
+	 */
+	public static String replace(String src, Pattern p, BiFunction<Matcher, Integer, String> getReplacement) {
+		if (StringUtils.isEmpty(src)) {
+			return src;
+		}
+		Matcher m = p.matcher(src);
+		StringBuilder sb = new StringBuilder();
+		int i = 0;
+		int index = 0;
+		while (m.find()) {
+			sb.append(src, index, m.start());
+			sb.append(getReplacement.apply(m, i));
+			index = m.end();
+			i++;
+		}
+		sb.append(src, index, src.length());
+		return sb.toString();
+	}
+
 	/**
 	 * 替换
 	 * 
 	 * @param src src
 	 * @param regex regex
 	 * @param replacement replacement
-	 * @return
+	 * @return 替换完成的字符串
 	 */
 	public static String replaceAll(String src, String regex, String replacement) {
 		if(src == null) {
@@ -70,7 +97,7 @@ public class RegexUtils {
 	 * @param src src
 	 * @param pattern pattern
 	 * @param replacement replacement
-	 * @return
+	 * @return 替换完成的字符串
 	 */
 	public static String replaceAll(String src, Pattern pattern, String replacement) {
 		if(src == null) {
@@ -84,7 +111,7 @@ public class RegexUtils {
 	 * 
 	 * @param src src
 	 * @param regex regex
-	 * @return
+	 * @return 出现次数
 	 */
 	public static long count(String src, String regex) {
 		return count(src, getPattern(regex));
@@ -95,7 +122,7 @@ public class RegexUtils {
 	 * 
 	 * @param src src
 	 * @param pattern pattern
-	 * @return
+	 * @return 出现次数
 	 */
 	public static long count(String src, Pattern pattern) {
 		long count = 0;
@@ -140,7 +167,7 @@ public class RegexUtils {
 	 * 
 	 * @param src src
 	 * @param regex regex
-	 * @return
+	 * @return 找到的字符串
 	 */
 	public static String find(String src, String regex) {
 		return find(src, getPattern(regex));
@@ -151,7 +178,7 @@ public class RegexUtils {
 	 * 
 	 * @param src src
 	 * @param pattern pattern
-	 * @return
+	 * @return 找到的字符串
 	 */
 	public static String find(String src, Pattern pattern) {
 		Matcher matcher = getMatcher(src, pattern);
@@ -165,7 +192,7 @@ public class RegexUtils {
 	 * 查询符合条件的第一组数据
 	 * @param src src
 	 * @param regex regex
-	 * @return
+	 * @return 找到的字符串列表
 	 */
 	public static List<String> findGroups(String src, String regex) {
 		return findGroups(src, getPattern(regex));
@@ -175,7 +202,7 @@ public class RegexUtils {
 	 * 查询符合条件的第一组数据
 	 * @param src src
 	 * @param pattern pattern
-	 * @return
+	 * @return 找到的字符串列表
 	 */
 	public static List<String> findGroups(String src, Pattern pattern) {
 		if(src == null) {
@@ -198,7 +225,7 @@ public class RegexUtils {
 	 * 查询符合条件的所有数据
 	 * @param src src
 	 * @param regex regex
-	 * @return
+	 * @return 匹配到的组列表
 	 */
 	public static List<List<String>> findAllGroups(String src, String regex) {
 		return findAllGroups(src, getPattern(regex));
@@ -208,7 +235,7 @@ public class RegexUtils {
 	 * 查询符合条件的所有数据
 	 * @param src src
 	 * @param pattern pattern
-	 * @return
+	 * @return 匹配到的组列表
 	 */
 	public static List<List<String>> findAllGroups(String src, Pattern pattern) {
 		List<List<String>> list = ListUtils.newArrayList();
@@ -231,7 +258,7 @@ public class RegexUtils {
 	 * 
 	 * @param src src
 	 * @param regex regex
-	 * @return
+	 * @return 匹配到的数值
 	 */
 	public static Long findLong(String src, String regex) {
 		return findLong(src, getPattern(regex));
@@ -242,7 +269,7 @@ public class RegexUtils {
 	 * 
 	 * @param src 源字符串
 	 * @param pattern 正则
-	 * @return
+	 * @return 匹配到的数值
 	 */
 	public static Long findLong(String src, Pattern pattern) {
 		Matcher matcher = getMatcher(src, pattern);
@@ -258,7 +285,7 @@ public class RegexUtils {
 	 * 
 	 * @param src 源字符串
 	 * @param regex	正则
-	 * @return
+	 * @return 匹配到字符串列表
 	 */
 	public static List<String> findAll(String src, String regex) {
 		return findAll(src, getPattern(regex));
@@ -269,7 +296,7 @@ public class RegexUtils {
 	 * 
 	 * @param src src
 	 * @param pattern pattern
-	 * @return
+	 * @return 匹配到字符串列表
 	 */
 	public static List<String> findAll(String src, Pattern pattern) {
 		List<String> list = CollectionAndMapUtils.newArrayList();
@@ -285,7 +312,7 @@ public class RegexUtils {
 	 * 
 	 * @param src 源字符串
 	 * @param regex	正则
-	 * @return
+	 * @return 匹配到数值列表
 	 */
 	public static List<Integer> findAllInt(String src, String regex) {
 		return findAllInt(src, getPattern(regex));
@@ -296,7 +323,7 @@ public class RegexUtils {
 	 * 
 	 * @param src src
 	 * @param pattern pattern
-	 * @return
+	 * @return 匹配到数值列表
 	 */
 	public static List<Integer> findAllInt(String src, Pattern pattern) {
 		List<Integer> list = CollectionAndMapUtils.newArrayList();
@@ -315,7 +342,7 @@ public class RegexUtils {
 	 * 
 	 * @param src 源字符串
 	 * @param regex	正则
-	 * @return
+	 * @return 匹配到数值列表
 	 */
 	public static List<Long> findAllLong(String src, String regex) {
 		return findAllLong(src, getPattern(regex));
@@ -326,7 +353,7 @@ public class RegexUtils {
 	 * 
 	 * @param src src
 	 * @param pattern pattern
-	 * @return
+	 * @return 匹配到数值列表
 	 */
 	public static List<Long> findAllLong(String src, Pattern pattern) {
 		List<Long> list = CollectionAndMapUtils.newArrayList();
@@ -346,7 +373,7 @@ public class RegexUtils {
 	 * 
 	 * @param src 源字符串
 	 * @param regex	正则
-	 * @return
+	 * @return 匹配到数值列表
 	 */
 	public static List<Double> findAllDouble(String src, String regex) {
 		return findAllDouble(src, getPattern(regex));
@@ -357,7 +384,7 @@ public class RegexUtils {
 	 * 
 	 * @param src src
 	 * @param pattern pattern
-	 * @return
+	 * @return 匹配到数值列表
 	 */
 	public static List<Double> findAllDouble(String src, Pattern pattern) {
 		List<Double> list = CollectionAndMapUtils.newArrayList();
@@ -376,7 +403,7 @@ public class RegexUtils {
 	 * 
 	 * @param src 源字符串
 	 * @param regex	正则
-	 * @return
+	 * @return 匹配bool列表
 	 */
 	public static List<Boolean> findAllBoolean(String src, String regex) {
 		return findAllBoolean(src, getPattern(regex));
@@ -387,7 +414,7 @@ public class RegexUtils {
 	 * 
 	 * @param src src
 	 * @param pattern pattern
-	 * @return
+	 * @return 匹配到bool列表
 	 */
 	public static List<Boolean> findAllBoolean(String src, Pattern pattern) {
 		List<Boolean> list = CollectionAndMapUtils.newArrayList();
@@ -411,7 +438,7 @@ public class RegexUtils {
 	 * @param src 源字符串
 	 * @param regex	匹配用的正则表达式
 	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
-	 * @return
+	 * @return 匹配到字符串
 	 */
 	public static String find(String src, String regex, String replacement) {
 		return find(src, getPattern(regex), replacement);
@@ -423,7 +450,7 @@ public class RegexUtils {
 	 * @param src src
 	 * @param pattern pattern
 	 * @param replacement replacement
-	 * @return
+	 * @return 匹配到字符串
 	 */
 	public static String find(String src, Pattern pattern, String replacement) {
 		if(src != null && pattern != null) {
@@ -450,7 +477,7 @@ public class RegexUtils {
 	 * @param regex regex
 	 * @param replacement replacement
 	 * @param defaultValue 默认值
-	 * @return
+	 * @return 匹配到字符串
 	 */
 	public static String find(String src, String regex, String replacement, String defaultValue) {
 		String result = find(src, regex, replacement);
@@ -470,7 +497,7 @@ public class RegexUtils {
 	 * @param pattern pattern
 	 * @param replacement replacement
 	 * @param defaultValue defaultValue
-	 * @return
+	 * @return 匹配到字符串
 	 */
 	public static String find(String src, Pattern pattern, String replacement, String defaultValue) {
 		String result = find(src, pattern, replacement);
@@ -486,7 +513,7 @@ public class RegexUtils {
 	 * @param src 源字符串
 	 * @param regex	匹配用的正则表达式
 	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
-	 * @return
+	 * @return 匹配到数值
 	 */
 	public static Integer findInt(String src, String regex, String replacement) {
 		return findInt(src, getPattern(regex), replacement);
@@ -498,7 +525,7 @@ public class RegexUtils {
 	 * @param src src
 	 * @param pattern pattern
 	 * @param replacement replacement
-	 * @return
+	 * @return 匹配到数值
 	 */
 	public static Integer findInt(String src, Pattern pattern, String replacement) {
 		if(src != null && pattern != null) {
@@ -522,7 +549,7 @@ public class RegexUtils {
 	 * @param src 源字符串
 	 * @param regex	匹配用的正则表达式
 	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
-	 * @return
+	 * @return 匹配到数值
 	 */
 	public static Long findLong(String src, String regex, String replacement) {
 		return findLong(src, getPattern(regex), replacement);
@@ -534,7 +561,7 @@ public class RegexUtils {
 	 * @param src src
 	 * @param pattern pattern
 	 * @param replacement replacement
-	 * @return
+	 * @return 匹配到数值
 	 */
 	public static Long findLong(String src, Pattern pattern, String replacement) {
 		if(src != null && pattern != null) {
@@ -558,7 +585,7 @@ public class RegexUtils {
 	 * @param src 源字符串
 	 * @param regex	匹配用的正则表达式
 	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
-	 * @return
+	 * @return 匹配到数值
 	 */
 	public static Double findDouble(String src, String regex, String replacement) {
 		return findDouble(src, getPattern(regex), replacement);
@@ -570,7 +597,7 @@ public class RegexUtils {
 	 * @param src src
 	 * @param pattern pattern
 	 * @param replacement replacement
-	 * @return
+	 * @return 匹配到数值
 	 */
 	public static Double findDouble(String src, Pattern pattern, String replacement) {
 		if(src != null && pattern != null) {
@@ -596,7 +623,7 @@ public class RegexUtils {
 	 * @param src 源字符串
 	 * @param regex	匹配用的正则表达式
 	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
-	 * @return
+	 * @return 匹配到的字符串列表
 	 */
 	public static List<String> findAll(String src, String regex, String replacement) {
 		return findAll(src, getPattern(regex), replacement);
@@ -608,7 +635,7 @@ public class RegexUtils {
 	 * @param src src
 	 * @param pattern pattern
 	 * @param replacement replacement
-	 * @return
+	 * @return 匹配到的字符串列表
 	 */
 	public static List<String> findAll(String src, Pattern pattern, String replacement) {
 		List<String> result = CollectionAndMapUtils.newArrayList();
@@ -632,7 +659,7 @@ public class RegexUtils {
 	 * @param src 源字符串
 	 * @param regex	匹配用的正则表达式
 	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
-	 * @return
+	 * @return 匹配到的数值列表
 	 */
 	public static List<Integer> findAllInteger(String src, String regex, String replacement) {
 		return findAllInteger(src, getPattern(regex), replacement);
@@ -644,7 +671,7 @@ public class RegexUtils {
 	 * @param src src
 	 * @param pattern pattern
 	 * @param replacement replacement
-	 * @return
+	 * @return 匹配到的数值列表
 	 */
 	public static List<Integer> findAllInteger(String src, Pattern pattern, String replacement) {
 		List<Integer> result = CollectionAndMapUtils.newArrayList();
@@ -672,7 +699,7 @@ public class RegexUtils {
 	 * @param src 源字符串
 	 * @param regex	匹配用的正则表达式
 	 * @param replacement	提取拼接预期结果的格式,如'$1-$2-$3 $4:$5'
-	 * @return
+	 * @return 匹配到的数值列表
 	 */
 	public static List<Long> findAllLong(String src, String regex, String replacement) {
 		return findAllLong(src, getPattern(regex), replacement);
@@ -684,7 +711,7 @@ public class RegexUtils {
 	 * @param src src
 	 * @param pattern pattern
 	 * @param replacement replacement
-	 * @return
+	 * @return 匹配到的数值列表
 	 */
 	public static List<Long> findAllLong(String src, Pattern pattern, String replacement) {
 		List<Long> result = CollectionAndMapUtils.newArrayList();
@@ -711,7 +738,7 @@ public class RegexUtils {
 	 * @param src src
 	 * @param regex regex
 	 * @param replacement replacement
-	 * @return
+	 * @return 匹配到的数值列表
 	 */
 	public static List<Double> findAllDouble(String src, String regex, String replacement) {
 		return findAllDouble(src, getPattern(regex), replacement);
@@ -723,7 +750,7 @@ public class RegexUtils {
 	 * @param src src
 	 * @param pattern pattern
 	 * @param replacement replacement
-	 * @return
+	 * @return 匹配到的数值列表
 	 */
 	public static List<Double> findAllDouble(String src, Pattern pattern, String replacement) {
 		List<Double> result = CollectionAndMapUtils.newArrayList();
