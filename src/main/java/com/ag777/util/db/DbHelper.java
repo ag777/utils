@@ -4,6 +4,7 @@ import com.ag777.util.db.connection.MysqlConnection;
 import com.ag777.util.db.connection.OracleConnection;
 import com.ag777.util.db.connection.SqlServerConnection;
 import com.ag777.util.db.connection.SqliteConnection;
+import com.ag777.util.db.interf.ColConverter;
 import com.ag777.util.db.interf.DBTransactionInterf;
 import com.ag777.util.db.model.*;
 import com.ag777.util.lang.StringUtils;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2022年07月26日
+ * @version create on 2017年07月28日,last modify at 2022年12月09日
  */
 public class DbHelper implements Disposable, Closeable {
 	
@@ -439,6 +440,39 @@ public class DbHelper implements Disposable, Closeable {
 	}
 
 	/**
+	 * 查询列表，并返回将第一列和第二列的映射map
+	 * @param sql sql
+	 * @param params 参数
+	 * @param classOfK  第一列的值类型
+	 * @param classOfV 第二列的值类型
+	 * @param <K> K
+	 * @param <V> V
+	 * @return {第一列: 第二列}
+	 * @throws SQLException SQLException
+	 */
+	public <K, V>Map<K, V> queryMap(String sql, Object[] params, Class<K> classOfK, Class<V> classOfV) throws SQLException {
+		ResultSet rs = getResultSet(sql, params);
+		return convert2Map(rs, classOfK, classOfV);
+	}
+
+	/**
+	 * 查询列表，并返回map,getKey得到key，第二列得到value
+	 * @param sql sql
+	 * @param params 参数
+	 * @param getKey 从rs中解析出键,如:rs.getString(1)
+	 * @param getVal 从rs中解析出值,如:rs.getObject(2)
+	 * @param <K> K
+	 * @param <V> V
+	 * @return {键，值}
+	 * @throws SQLException SQLException
+	 */
+	public <K, V>Map<K, V> queryMap(String sql, Object[] params, ColConverter<K> getKey, ColConverter<V> getVal) throws SQLException {
+		ResultSet rs = getResultSet(sql, params);
+		return convert2Map(rs, getKey, getVal);
+	}
+
+
+	/**
 	 * 获取指定类型的数据列表
 	 * @param sql sql
 	 * @param params 参数
@@ -449,7 +483,6 @@ public class DbHelper implements Disposable, Closeable {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T>List<T> queryObjectList(String sql, Object[] params, Class<T> clazz) throws SQLException {
-
 		List<T> list;
 		ResultSet rs = getResultSet(sql, params);
 		if(isBasicClass(clazz)){
@@ -746,20 +779,14 @@ public class DbHelper implements Disposable, Closeable {
 	public static <T>List<T> convert2List(ResultSet rs, Class<T> clazz) throws SQLException {
 		try {
 			List<T> list = new ArrayList<>();
-	
 			ResultSetMetaData md = rs.getMetaData();
-	
 			int columnCount = md.getColumnCount(); // Map rowData;
-	
 			String[] cols = new String[columnCount];
 			for (int i = 1; i <= columnCount; i++) {
 				cols[i-1] = StringUtils.underline2Camel(md.getColumnName(i), false);	//首字母大写，驼峰
 			}
-			
 			while (rs.next()) { // rowData = new HashMap(columnCount);
-				
 				T rowData = ReflectionUtils.newInstace(clazz);
-	
 				for (int i = 1; i <= columnCount; i++) {
 					Object value = rs.getObject(i);
 					Field[] fields = clazz.getDeclaredFields();
@@ -771,17 +798,51 @@ public class DbHelper implements Disposable, Closeable {
 							field.setAccessible(flag);
 						}
 					}
-					
-	
 				}
-	
 				list.add(rowData);
-	
 			}
 			return list;
 		} catch(Exception ex) {
 			throw new SQLException("转换结果为对象列表失败", ex);
 		}
+	}
+
+	/**
+	 * 转换ResultSet为map， getKey得到key，第二列得到value
+	 * @param rs 数据库返回
+	 * @param getKey 从rs中解析出键,如:rs.getString(1)
+	 * @param getVal 从rs中解析出值,如:rs.getObject(2)
+	 * @param <K> K
+	 * @param <V> V
+	 * @return {键: 值}
+	 * @throws SQLException SQLException
+	 */
+	public static <K, V>Map<K, V> convert2Map(ResultSet rs, ColConverter<K> getKey, ColConverter<V> getVal) throws SQLException {
+		Map<K, V> map = new HashMap<>();
+		while (rs.next()) {
+			K key = getKey.apply(rs);
+			if (key != null) {	// map中的key不能为空
+				V value = getVal.apply(rs);
+				map.put(key, value);
+			}
+
+		}
+		return map;
+	}
+
+	/**
+	 * 转换ResultSet为map， 第一列为key，第二列为value
+	 * <p>注意：伴随强制类型转换，请确保类型对应正确
+	 * @param rs 数据库返回
+	 * @param classOfK  第一列的值类型
+	 * @param classOfV 第二列的值类型
+	 * @param <K> K
+	 * @param <V> V
+	 * @return {第一列: 第二列}
+	 * @throws SQLException sql执行异常
+	 */
+	public static <K, V>Map<K, V> convert2Map(ResultSet rs, Class<K> classOfK, Class<V> classOfV) throws SQLException {
+		return convert2Map(rs, rs1-> (K) rs1.getObject(1), rs1->(V)rs.getObject(2));
 	}
 	
 	/*-----数据库结构层面的工具方法-----*/
