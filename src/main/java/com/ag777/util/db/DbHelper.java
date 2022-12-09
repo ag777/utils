@@ -422,7 +422,7 @@ public class DbHelper implements Disposable, Closeable {
 	 * @return list
 	 * @throws SQLException SQLException
 	 */
-	public List<Map<String, Object>> queryList(String sql) throws SQLException {
+	public List<Map<String, Object>> queryMapList(String sql) throws SQLException {
 		ResultSet rs = getResultSet(sql);
 		return convert2List(rs);
 	}
@@ -434,7 +434,7 @@ public class DbHelper implements Disposable, Closeable {
 	 * @return list
 	 * @throws SQLException SQLException
 	 */
-	public List<Map<String, Object>> queryList(String sql, Object[] params) throws SQLException {
+	public List<Map<String, Object>> queryMapList(String sql, Object[] params) throws SQLException {
 		ResultSet rs = getResultSet(sql, params);
 		return convert2List(rs);
 	}
@@ -503,7 +503,7 @@ public class DbHelper implements Disposable, Closeable {
 	 * @return map
 	 */
 	public Map<String, Object> getMap(String sql) throws SQLException {
-		List<Map<String, Object>> list = queryList(sql);
+		List<Map<String, Object>> list = queryMapList(sql);
 		if(list == null || list.isEmpty()) {
 			return null;
 		}
@@ -521,7 +521,7 @@ public class DbHelper implements Disposable, Closeable {
 		if(isNullOrEmpty(params)) {
 			return getMap(sql);
 		}
-		List<Map<String, Object>> list = queryList(sql, params);
+		List<Map<String, Object>> list = queryMapList(sql, params);
 		if(list == null || list.isEmpty()) {
 			return null;
 		}
@@ -1032,7 +1032,7 @@ public class DbHelper implements Disposable, Closeable {
 	 */
 	private Map<String, TypePojo> typeMap_Mysql(String tableName) throws SQLException {
 		Map<String, TypePojo> typeMap = new HashMap<>();
-		List<Map<String, Object>> typeList = queryList("SHOW COLUMNS FROM `"+tableName+"`");	//有些表名带关键字会报错
+		List<Map<String, Object>> typeList = queryMapList("SHOW COLUMNS FROM `"+tableName+"`");	//有些表名带关键字会报错
 		for (Map<String, Object> map : typeList) {
 			String field = (String) map.get("Field");
 			String type = (String) map.get("Type");
@@ -1051,7 +1051,7 @@ public class DbHelper implements Disposable, Closeable {
 	 */
 	private Map<String, TypePojo> typeMap_Sqlite(String tableName) throws SQLException {
 		Map<String, TypePojo> typeMap = new HashMap<>();
-		List<Map<String, Object>> typeList = queryList("pragma table_info( "+tableName+");");
+		List<Map<String, Object>> typeList = queryMapList("pragma table_info( "+tableName+");");
 		for (Map<String, Object> map : typeList) {
 			String field = (String) map.get("name");
 			String type = (String) map.get("type");
