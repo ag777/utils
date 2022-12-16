@@ -13,6 +13,7 @@ import com.ag777.util.lang.exception.model.JsonSyntaxException;
 import okhttp3.*;
 import okhttp3.Request.Builder;
 
+import javax.net.ssl.X509TrustManager;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
@@ -88,8 +89,8 @@ public class HttpUtils {
 		return new OkHttpClient().newBuilder()  
 	         .connectTimeout(15, TimeUnit.SECONDS)  
 	         .readTimeout(15, TimeUnit.SECONDS)  	//读取超时
-	         .writeTimeout(15, TimeUnit.SECONDS)  
-	         .sslSocketFactory(SSLSocketClient.getSSLSocketFactory())
+	         .writeTimeout(15, TimeUnit.SECONDS)
+	         .sslSocketFactory(SSLSocketClient.getSSLSocketFactory(), (X509TrustManager) SSLSocketClient.getTrustManager()[0])
 	         .hostnameVerifier(SSLSocketClient.getHostnameVerifier());
 	}
 	

@@ -1,22 +1,12 @@
 package com.ag777.util.http.model;
 
+import javax.net.ssl.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 
 /**
  * 用于连接https
@@ -30,7 +20,7 @@ public class SSLSocketClient {
 	
 	/**
      * 绕过https
-     * @return
+     * @return SSLSocketFactory
      */
     public static SSLSocketFactory getSSLSocketFactory() {  
         try {  
@@ -45,7 +35,7 @@ public class SSLSocketClient {
     /**
      * 导入ssl证书
      * @param certificates certificates
-     * @return
+     * @return SSLSocketFactory
      * @throws KeyStoreException KeyStoreException
      * @throws CertificateException CertificateException
      * @throws NoSuchAlgorithmException NoSuchAlgorithmException
@@ -64,7 +54,7 @@ public class SSLSocketClient {
             try {
                 if (certificate != null)
                     certificate.close();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
             }
         }
         SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -73,39 +63,36 @@ public class SSLSocketClient {
         sslContext.init(null, trustManagerFactory.getTrustManagers(), new SecureRandom());
         return sslContext.getSocketFactory();
 	}
-  
-    //获取TrustManager  
-    private static TrustManager[] getTrustManager() {  
-        TrustManager[] trustAllCerts = new TrustManager[]{  
-                new X509TrustManager() {
 
-                	@Override  
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) {  
-                    }  
-  
-                    @Override  
-                    public void checkServerTrusted(X509Certificate[] chain, String authType) {  
-                    }  
-  
-                    @Override  
-                    public X509Certificate[] getAcceptedIssuers() {  	//okhttp3.0之前返回的是null,参考资料:https://blog.csdn.net/u014752325/article/details/73185351
-                        return new X509Certificate[]{};  
-                    }  
-                    
-                }  
-        };  
-        return trustAllCerts;  
+    //获取TrustManager  
+    public static TrustManager[] getTrustManager() {
+        return new TrustManager[]{
+                getX509TrustManager()
+        };
     }  
   
     //获取HostnameVerifier  
-    public static HostnameVerifier getHostnameVerifier() {  
-        HostnameVerifier hostnameVerifier = new HostnameVerifier() {  
-            @Override  
-            public boolean verify(String s, SSLSession sslSession) {  
-                return true;  
+    public static HostnameVerifier getHostnameVerifier() {
+        return (s, sslSession) -> true;
+    }
+
+    private static X509TrustManager getX509TrustManager() {
+        return new X509TrustManager() {
+            //检查客户端的证书是否可信
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) {
+
             }
-            
-        };  
-        return hostnameVerifier;  
-    }  
+            //检查服务器端的证书是否可信
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) {
+
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        };
+    }
 }
