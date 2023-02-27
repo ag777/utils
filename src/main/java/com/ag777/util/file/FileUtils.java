@@ -29,9 +29,12 @@ import java.util.regex.Pattern;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2020年08月04日,last modify at 2022年10月19日
+ * @version create on 2020年08月04日,last modify at 2023年02月27日
  */
 public class FileUtils {
+	public static final Pattern P_EXTENSION_LONG = Pattern.compile("\\..+$");
+	public static final Pattern P_EXTENSION_SHORT = Pattern.compile("\\.[^.]*$");
+
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
     private static Charset FILE_READING_CHARSET = Charsets.UTF_8;
     private static int BUFFSIZE = 1024;	//一次性读取的字节
@@ -49,6 +52,54 @@ public class FileUtils {
     	FILE_WRITING_CHARSET = charset;
     }
 
+
+	/**
+	 * @param fileName 文件名
+	 * @return 拓展名(长，如.tar.gz)
+	 */
+	public static String getLongExtension(String fileName) {
+		Matcher m = P_EXTENSION_LONG.matcher(fileName);
+		if (m.find()) {
+			return m.group();
+		}
+		return "";
+	}
+
+	/**
+	 * @param fileName 文件名
+	 * @return 拓展名(短，如.gz)
+	 */
+	public static String getShortExtension(String fileName) {
+		Matcher m = P_EXTENSION_SHORT.matcher(fileName);
+		if (m.find()) {
+			return m.group();
+		}
+		return "";
+	}
+
+	/**
+	 * {@code
+	 * a.tar.gz, zip => a.zip
+	 * }
+	 * @param fileName 文件名
+	 * @param replacement 替换字符串
+	 * @return 替换后的文件名
+	 */
+	public static String replaceLongExtension(String fileName, String replacement) {
+		return P_EXTENSION_LONG.matcher(fileName).replaceFirst(replacement);
+	}
+
+	/**
+	 * {@code
+	 * a.tar.gz, zip => a.tar.zip
+	 * }
+	 * @param fileName 文件名
+	 * @param replacement 替换字符串
+	 * @return 替换后的文件名
+	 */
+	public static String replaceShortExtension(String fileName, String replacement) {
+		return P_EXTENSION_SHORT.matcher(fileName).replaceFirst(replacement);
+	}
 
 	/**
 	 *
