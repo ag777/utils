@@ -86,7 +86,12 @@ public class FileUtils {
 	 * @return 替换后的文件名
 	 */
 	public static String replaceLongExtension(String fileName, String replacement) {
-		return P_EXTENSION_LONG.matcher(fileName).replaceFirst(replacement);
+		Matcher m = P_EXTENSION_LONG.matcher(fileName);
+		if (m.find()) {
+			return fileName.substring(m.start())+replacement+fileName.substring(m.end());
+		}
+		// 文件原本就没后缀名时，直接加后缀名
+		return fileName+replacement;
 	}
 
 	/**
@@ -98,7 +103,12 @@ public class FileUtils {
 	 * @return 替换后的文件名
 	 */
 	public static String replaceShortExtension(String fileName, String replacement) {
-		return P_EXTENSION_SHORT.matcher(fileName).replaceFirst(replacement);
+		Matcher m = P_EXTENSION_SHORT.matcher(fileName);
+		if (m.find()) {
+			return fileName.substring(m.start())+replacement+fileName.substring(m.end());
+		}
+		// 文件原本就没后缀名时，直接加后缀名
+		return fileName+replacement;
 	}
 
 	/**
