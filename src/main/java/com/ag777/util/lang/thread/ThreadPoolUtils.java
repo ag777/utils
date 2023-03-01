@@ -1,12 +1,17 @@
 package com.ag777.util.lang.thread;
 
+import com.ag777.util.lang.thread.model.ComparableFutureTask;
+import com.ag777.util.lang.thread.model.ComparableTask;
+
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 线程池工具类
  * @author ag777 <837915770@vip.qq.com>
- * @Description 线程池工具类
- * @Date 2021/6/7 14:58
+ * Time: created at 2023/3/1. last modify at 2023/3/1.
  */
 public class ThreadPoolUtils {
 
@@ -36,6 +41,22 @@ public class ThreadPoolUtils {
         pool.shutdown();
         while(!pool.awaitTermination(timeout, unit)) {	//如果结束则关闭线程池
         }
+    }
+
+    /**
+     * 包含PriorityBlockingQueue的线程池通过submit提交callable,报错
+     * {@code FutureTask cannot be cast to java.lang.Comparable},
+     * 针对这种情况，手动封装callable解决问题
+     * @param pool 线程池,包含优先队列，如:PriorityBlockingQueue
+     * @param task 异步带返回的任务，同时实现Callable和Comparable
+     * @param <E> 任务返回类型
+     * @param <T> 任务类本身类型
+     * @return 异步任务,实际是ComparableFutureTask
+     */
+    public static <E, T extends ComparableTask<E, T>>FutureTask<E> executePriority(ThreadPoolExecutor pool, T task) {
+        FutureTask<E> t = new ComparableFutureTask<>(task);
+        pool.execute(t);
+        return t;
     }
 
     private ThreadPoolUtils() {}
