@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2020年08月04日,last modify at 2023年02月27日
+ * @version create on 2020年08月04日,last modify at 2023年03月07日
  */
 public class FileUtils {
 	public static final Pattern P_EXTENSION_LONG = Pattern.compile("\\..+$");
@@ -55,22 +55,29 @@ public class FileUtils {
 
 	/**
 	 * @param fileName 文件名
-	 * @return 拓展名(长，如.tar.gz)
+	 * @return 拓展名(长，如tar.gz)
 	 */
 	public static String getLongExtension(String fileName) {
-		Matcher m = P_EXTENSION_LONG.matcher(fileName);
-		if (m.find()) {
-			return m.group();
-		}
-		return "";
+		return getExtension(P_EXTENSION_LONG, fileName);
 	}
 
 	/**
 	 * @param fileName 文件名
-	 * @return 拓展名(短，如.gz)
+	 * @return 拓展名(短，如gz)
 	 */
 	public static String getShortExtension(String fileName) {
-		Matcher m = P_EXTENSION_SHORT.matcher(fileName);
+		return getExtension(P_EXTENSION_SHORT, fileName);
+	}
+
+	/**
+	 * 获取文件拓展名
+	 * @param pattern 拓展名提取正则(不包含.)
+	 * @param fileName 文件名
+	 * @return 文件拓展名
+	 */
+	private static String getExtension(Pattern pattern, String fileName) {
+		fileName = fileName.toLowerCase();
+		Matcher m = pattern.matcher(fileName);
 		if (m.find()) {
 			return m.group();
 		}
@@ -86,12 +93,7 @@ public class FileUtils {
 	 * @return 替换后的文件名
 	 */
 	public static String replaceLongExtension(String fileName, String replacement) {
-		Matcher m = P_EXTENSION_LONG.matcher(fileName);
-		if (m.find()) {
-			return fileName.substring(0, m.start())+replacement+fileName.substring(m.end());
-		}
-		// 文件原本就没后缀名时，直接加后缀名
-		return fileName+replacement;
+		return replaceExtension(P_EXTENSION_LONG, fileName, replacement);
 	}
 
 	/**
@@ -103,12 +105,36 @@ public class FileUtils {
 	 * @return 替换后的文件名
 	 */
 	public static String replaceShortExtension(String fileName, String replacement) {
-		Matcher m = P_EXTENSION_SHORT.matcher(fileName);
-		if (m.find()) {
-			return fileName.substring(0, m.start())+replacement+fileName.substring(m.end());
+		return replaceExtension(P_EXTENSION_SHORT, fileName, replacement);
+	}
+
+	/**
+	 * 替换文件拓展名
+	 * @param pattern 拓展名提取正则(不包含.)
+	 * @param fileName 文件名
+	 * @param replacement 替换字符串
+	 * @return 替换后的文件名
+	 */
+	private static String replaceExtension(Pattern pattern, String fileName, String replacement) {
+		fileName = fileName.toLowerCase();
+		Matcher m = pattern.matcher(fileName);
+		if (!StringUtils.isEmpty(replacement)) { // 需要替换成新的后缀名
+			if (replacement.startsWith(".")) {
+				replacement = replacement.substring(1);
+			}
+			if (m.find()) {
+				return fileName.substring(0, m.start())+replacement+fileName.substring(m.end());
+			}
+			// 文档没有后缀名时，直接加后缀名
+			return fileName + "." + replacement;
+		} else {    // 需要删除后缀名
+			if (m.find()) {
+				return fileName.substring(0, m.start()-1);
+			}
+			// 文档本来就没有后缀名，并且也不需要加后缀名
+			return fileName;
 		}
-		// 文件原本就没后缀名时，直接加后缀名
-		return fileName+replacement;
+
 	}
 
 	/**
