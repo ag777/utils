@@ -29,11 +29,11 @@ import java.util.regex.Pattern;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2020年08月04日,last modify at 2023年03月07日
+ * @version create on 2020年08月04日,last modify at 2023年03月10日
  */
 public class FileUtils {
-	public static final Pattern P_EXTENSION_LONG = Pattern.compile("\\..+$");
-	public static final Pattern P_EXTENSION_SHORT = Pattern.compile("\\.[^.]*$");
+	public static final Pattern P_EXTENSION_LONG = Pattern.compile("(?<=\\.)[\\w\\d]{1,5}(.[\\w\\d]{1,5})*$");
+	public static final Pattern P_EXTENSION_SHORT = Pattern.compile("(?<=\\.)[\\w\\d]{1,5}$");
 
     private static Charset FILE_WRITING_CHARSET = Charsets.UTF_8;
     private static Charset FILE_READING_CHARSET = Charsets.UTF_8;
