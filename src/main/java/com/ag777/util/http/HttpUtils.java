@@ -54,10 +54,11 @@ import java.util.concurrent.TimeUnit;
 public class HttpUtils {
 	
 	private static OkHttpClient mOkHttpClient;
-	
+
 	public static final MediaType FORM_CONTENT_TYPE
-    									= MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");//"Content-Type: application/json; charset=utf-8");//
-	
+			= MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");//"Content-Type: application/json; charset=utf-8");//
+	public static final MediaType JSON_CONTENT_TYPE
+			= MediaType.parse("application/json; charset=utf-8");
 	private HttpUtils() {}
 	
 	/**
@@ -86,14 +87,15 @@ public class HttpUtils {
 	 */
 	@SuppressWarnings("deprecation")
 	public static OkHttpClient.Builder defaultBuilder() {
-		return new OkHttpClient().newBuilder()  
-	         .connectTimeout(15, TimeUnit.SECONDS)  
-	         .readTimeout(15, TimeUnit.SECONDS)  	//读取超时
-	         .writeTimeout(15, TimeUnit.SECONDS)
-	         .sslSocketFactory(SSLSocketClient.getSSLSocketFactory(), (X509TrustManager) SSLSocketClient.getTrustManager()[0])
-	         .hostnameVerifier(SSLSocketClient.getHostnameVerifier());
+		return new OkHttpClient().newBuilder()
+				.connectTimeout(15, TimeUnit.SECONDS)
+				.readTimeout(15, TimeUnit.SECONDS)  	//读取超时
+				.writeTimeout(15, TimeUnit.SECONDS)
+				// 不换第二个传输会报错: clientBuilder.sslSocketFactory(SSLSocketFactory) not supported on JDK 9+
+				.sslSocketFactory(SSLSocketClient.getSSLSocketFactory(), (X509TrustManager) SSLSocketClient.getTrustManager()[0])
+				.hostnameVerifier(SSLSocketClient.getHostnameVerifier());
 	}
-	
+
 	/**
 	 * 定制读取超时时间
 	 * @param builder builder
@@ -115,8 +117,8 @@ public class HttpUtils {
 	 * <p>
 	 * 以下资料来源于:https://blog.csdn.net/briblue/article/details/52911998
 	 * 不必关心url的重定向和重连。
-		只执行一次，即使Resopnse是来自于缓存。
-		只关心request的原始意图，而不用关心额外添加的Header信息如If-None-Match
+	 只执行一次，即使Resopnse是来自于缓存。
+	 只关心request的原始意图，而不用关心额外添加的Header信息如If-None-Match
 	 * </p>
 	 * 
 	 * @param builder builder
@@ -161,8 +163,8 @@ public class HttpUtils {
 	 * 构建带网络拦截器的okhttpBuilder
 	 * <p>
 	 * 能够详尽地追踪访问链接的重定向。
-		短时间内的网络访问，它将不执行缓存过来的回应。
-		监测整个网络访问过程中的数据流向。
+	 短时间内的网络访问，它将不执行缓存过来的回应。
+	 监测整个网络访问过程中的数据流向。
 	 * </p>
 	 * 
 	 * @param builder builder
@@ -222,13 +224,13 @@ public class HttpUtils {
 		}
 		if(listener != null) {
 			return builder
-		        .addNetworkInterceptor(chain -> {
-					Response response = chain.proceed(chain.request());
-					//这里将ResponseBody包装成我们的ProgressResponseBody
-					return response.newBuilder()
-							.body(new ProgressResponseBody(response.body(),listener))
-							.build();
-				});
+					.addNetworkInterceptor(chain -> {
+						Response response = chain.proceed(chain.request());
+						//这里将ResponseBody包装成我们的ProgressResponseBody
+						return response.newBuilder()
+								.body(new ProgressResponseBody(response.body(),listener))
+								.build();
+					});
 		}
 		//监听事件和builder都为null则不重构client
 		return builder;
@@ -237,10 +239,13 @@ public class HttpUtils {
 	/**===================GET请求===========================*/
 	/**
 	 * 取消所有请求
-	 * @param client client
+	 * @param clients 客户端
 	 */
-	public static void cancelAll(OkHttpClient client) {
-		if(client != null) {
+	public static void cancelAll(OkHttpClient... clients) {
+		if (clients == null) {
+			return;
+		}
+		for (OkHttpClient client : clients) {
 			client.dispatcher().cancelAll();
 		}
 	}
@@ -260,18 +265,18 @@ public class HttpUtils {
 		}
 		if(client != null) {
 			Dispatcher dispatcher = client.dispatcher();
-		    synchronized (Dispatcher.class){
-		        for (Call call : dispatcher.queuedCalls()) {
-		            if (tag.equals(call.request().tag())) {
-		                call.cancel();
-		            }
-		        }
-		        for (Call call : dispatcher.runningCalls()) {
-		            if (tag.equals(call.request().tag())) {
-		                call.cancel();
-		            }
-		        }
-		    }
+			synchronized (Dispatcher.class){
+				for (Call call : dispatcher.queuedCalls()) {
+					if (tag.equals(call.request().tag())) {
+						call.cancel();
+					}
+				}
+				for (Call call : dispatcher.runningCalls()) {
+					if (tag.equals(call.request().tag())) {
+						call.cancel();
+					}
+				}
+			}
 		}
 	}
 	
@@ -348,7 +353,7 @@ public class HttpUtils {
 	 */
 	public static Call postByClient(OkHttpClient client, String url, RequestBody body, Headers headers, Object tag) throws IllegalArgumentException {
 		return call(
-				getRequest(url, headers, tag).post(body).build(), 
+				getRequest(url, headers, tag).post(body).build(),
 				client);
 	}
 	
@@ -366,8 +371,8 @@ public class HttpUtils {
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 * @throws FileNotFoundException FileNotFoundException
 	 */
-	public static <K, V>Call postMultiFilesByClient(OkHttpClient client, String url, File[] files, Map<K, V> paramMap, Map<K, V> headerMap, Object tag) throws IllegalArgumentException, FileNotFoundException {
-		return postByClient(client, url, getRequestBody(files, paramMap), getHeaders(headerMap), tag);
+	public static <K, V>Call postMultiFilesByClient(OkHttpClient client, String url, String fileKey, File[] files, Map<K, V> paramMap, Map<K, V> headerMap, Object tag) throws IllegalArgumentException, FileNotFoundException {
+		return postByClient(client, url, getRequestBody(fileKey, files, paramMap), getHeaders(headerMap), tag);
 	}
 	
 	/**
@@ -461,7 +466,7 @@ public class HttpUtils {
 	 */
 	public static Call putByClient(OkHttpClient client, String url, RequestBody body, Headers headers, Object tag) throws IllegalArgumentException {
 		return call(
-				getRequest(url, headers, tag).put(body).build(), 
+				getRequest(url, headers, tag).put(body).build(),
 				client);
 	}
 	
@@ -735,7 +740,7 @@ public class HttpUtils {
 		if(in.isPresent()) {
 			File file = FileUtils.write(in.get(), targetPath);
 			if(file.exists() && file.isFile()) {
-				return Optional.of(file);
+				return Optional.ofNullable(file);
 			}
 		}
 		return Optional.empty();
@@ -810,7 +815,7 @@ public class HttpUtils {
 		String paramStr = getParamStr(params, false);	//get请求不错encode测试也没出现问题
 
 		if(!paramStr.isEmpty()) {
-			 return url+"?"+paramStr;
+			return url+"?"+paramStr;
 		}
 		return url;
 	}
@@ -825,7 +830,7 @@ public class HttpUtils {
 	 */
 	private static Builder getRequest(String url, Headers headers, Object tag) throws IllegalArgumentException {
 		Builder builder = new Builder()
-															.url(url);
+				.url(url);
 
 		if(headers != null) {
 			builder.headers(headers);
@@ -849,10 +854,10 @@ public class HttpUtils {
 	 */
 	private static <K,V>RequestBody getRequestBody(Map<K, V> params) {
 		String paramStr = getParamStr(params, true);
-		 if(!paramStr.isEmpty()) {
-			 return RequestBody.create(FORM_CONTENT_TYPE,  paramStr);
-		 }
-		 return  new FormBody.Builder().build();
+		if(!paramStr.isEmpty()) {
+			return RequestBody.create(FORM_CONTENT_TYPE,  paramStr);
+		}
+		return  new FormBody.Builder().build();
 	}
 
 	/**
@@ -862,11 +867,12 @@ public class HttpUtils {
 	 * 	请事先对附件的存在性进行验证
 	 * </p>
 	 *
+	 * @param fileKey 文件对应的key
 	 * @param params params
 	 * @return 请求体
 	 * @throws FileNotFoundException FileNotFoundException
 	 */
-	private static <K,V>RequestBody getRequestBody(File[] files, Map<K, V> params) throws FileNotFoundException {
+	private static <K,V>RequestBody getRequestBody(String fileKey, File[] files, Map<K, V> params) throws FileNotFoundException {
 		Map<File, String> fileMap = null;
 		/*附件部分*/
 		if(!ListUtils.isEmpty(files)) {
@@ -876,7 +882,7 @@ public class HttpUtils {
 			}
 		}
 
-		return  getRequestBody(fileMap, "file", params);
+		return  getRequestBody(fileMap, fileKey, params);
 	}
 
 	/**

@@ -18,7 +18,7 @@ import java.util.Map;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2020年11月25日
+ * @version create on 2018年03月30日,last modify at 2023年04月03日
  */
 public class HttpHelper {
 	
@@ -35,8 +35,8 @@ public class HttpHelper {
 		return mInstance;
 	}
 	
-	private OkHttpClient client;
-	private Object tag;
+	private final OkHttpClient client;
+	private final Object tag;
 	
 	/**
 	 * 构造函数
@@ -58,7 +58,7 @@ public class HttpHelper {
 	/**
 	 * 返回自定义client的HttpHelper
 	 * @param client 默认为HttpUtils.client()
-	 * @return
+	 * @return self
 	 */
 	public static HttpHelper client(OkHttpClient client) {
 		return new HttpHelper(client, null);
@@ -67,13 +67,13 @@ public class HttpHelper {
 	/**
 	 * 返回自定义tag的HttpHelper
 	 * @param tag tag
-	 * @return
+	 * @return self
 	 */
 	public static HttpHelper tag(Object tag) {
 		return new HttpHelper(null, tag);
 	}
-	
-	/**===================其他方法===========================*/
+
+	/*===================其他方法===========================*/
 	/**
 	 * 取消tag对应的所有请求
 	 * 该tag不应与其余tag重复
@@ -101,10 +101,10 @@ public class HttpHelper {
 	 * get请求
 	 * @param url url
 	 * @param headers headers
-	 * @return
+	 * @return MyCall
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public <K,V> MyCall get(String url, Headers headers) throws IllegalArgumentException {
+	public MyCall get(String url, Headers headers) throws IllegalArgumentException {
 		Call call = HttpUtils.getByClient(client, url, headers, tag);
 		return new MyCall(call);
 	}
@@ -126,21 +126,21 @@ public class HttpHelper {
 	 * @param url url
 	 * @param body body
 	 * @param headers headers
-	 * @return
+	 * @return MyCall
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public MyCall post(String url, RequestBody body, Headers headers) throws IllegalArgumentException {
 		Call call = HttpUtils.postByClient(client, url, body, headers, tag);
 		return new MyCall(call);
 	}
-	
-	/**===================DELETE请求===========================*/
+
+	/*===================DELETE请求===========================*/
 	/**
 	 * delete请求
 	 * @param url url
 	 * @param paramMap paramMap
 	 * @param headerMap headerMap
-	 * @return
+	 * @return MyCall
 	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public <K,V> MyCall delete(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
@@ -160,29 +160,29 @@ public class HttpHelper {
 	 * @param url url
 	 * @param paramMap paramMap
 	 * @param headerMap headerMap
-	 * @return
+	 * @return MyCall
 	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public <K,V> MyCall put(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.putByClient(client, url, paramMap, headerMap, tag);
 		return new MyCall(call);
 	}
-	
-	/**===================HEAD请求===========================*/
+
+	/*===================HEAD请求===========================*/
 	/**
 	 * head请求
 	 * @param url url
 	 * @param paramMap paramMap
 	 * @param headerMap headerMap
-	 * @return
+	 * @return MyCall
 	 * @throws IllegalArgumentException IllegalArgumentException
 	 */
 	public <K,V> MyCall head(String url, Map<K, V> paramMap, Map<K, V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.headByClient(client, url, paramMap, headerMap, tag);
 		return new MyCall(call);
 	}
-	
-	/**===================文件上传下载=========================== */
+
+	/*===================文件上传下载=========================== */
 	
 	/**
 	 * 带进度条的文件下载
@@ -190,7 +190,7 @@ public class HttpHelper {
 	 * @param paramMap paramMap
 	 * @param headerMap headerMap
 	 * @param listener listener
-	 * @return
+	 * @return MyCall
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public <K, V> MyCall downLoad(String url, Map<K, V> paramMap, Map<K,V> headerMap, ProgressResponseBody.ProgressListener listener) throws IllegalArgumentException {
@@ -202,15 +202,16 @@ public class HttpHelper {
 	/**
 	 * post请求带附件
 	 * @param url url
+	 * @param fileKey 文件对应的key
 	 * @param files files
 	 * @param params params
 	 * @param headerMap headerMap
-	 * @return
+	 * @return MyCall
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 * @throws FileNotFoundException FileNotFoundException
 	 */
-	public <K, V> MyCall postMultiFiles(String url, File[] files, Map<K, V> params, Map<K, V> headerMap) throws IllegalArgumentException, FileNotFoundException {
-		Call call = HttpUtils.postMultiFilesByClient(client, url, files, params, headerMap, tag);
+	public <K, V> MyCall postMultiFiles(String url, String fileKey, File[] files, Map<K, V> params, Map<K, V> headerMap) throws IllegalArgumentException, FileNotFoundException {
+		Call call = HttpUtils.postMultiFilesByClient(client, url, fileKey, files, params, headerMap, tag);
 		return new MyCall(call);
 	}
 	
@@ -221,7 +222,7 @@ public class HttpHelper {
 	 * @param fileKey 请求体里对应的key
 	 * @param params params
 	 * @param headerMap headerMap
-	 * @return
+	 * @return MyCall
 	 * @throws IllegalArgumentException IllegalArgumentException
 	 * @throws FileNotFoundException FileNotFoundException
 	 */

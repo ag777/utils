@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -56,7 +55,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	
 	/**
 	 * 获取返回码
-	 * @return
+	 * @return http请求码
 	 */
 	public Integer code() {
 		if(response == null) {
@@ -67,7 +66,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	
 	/**
 	 * 获取返回头对应的map
-	 * @return
+	 * @return 请求头map
 	 */
 	public Map<String, Object> headers() {
 		if(response == null) {
@@ -75,9 +74,7 @@ public class MyCall implements Disposable, AutoCloseable {
 		}
 		Map<String, Object> map = new HashMap<>();
 		Headers headers = response.headers();
-		Iterator<String> itor = headers.names().iterator();
-		while(itor.hasNext()) {
-			String name = itor.next();
+		for (String name : headers.names()) {
 			String value = headers.get(name);
 			map.put(name, value);
 		}
@@ -86,7 +83,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	
 	/**
 	 * 发送请求并获取返回的封装
-	 * @return
+	 * @return Response
 	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 */
@@ -97,7 +94,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	
 	/**
 	 * 请求并获取返回码
-	 * @return
+	 * @return http请求码
 	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 */
@@ -108,7 +105,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	
 	/**
 	 * 发送请求并得到返回字符串
-	 * @return
+	 * @return 响应体中的字符串
 	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 */
@@ -123,7 +120,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	 *  不论返回什么强制获取字符串
 	 * </p>
 	 * 
-	 * @return
+	 * @return 响应体中的字符串
 	 * @throws SocketTimeoutException 一般为连不上接口
 	 * @throws IOException 其他异常
 	 */
@@ -138,7 +135,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
 	 * </p>
 	 * 
-	 * @return
+	 * @return 响应体中的Map
 	 * @throws SocketTimeoutException 一般为连不上接口
 	 * @throws IOException 其他异常
 	 */
@@ -153,7 +150,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	 *  不论返回什么强制转化为json
 	 * </p>
 	 * 
-	 * @return
+	 * @return 响应体中的Map
 	 * @throws SocketTimeoutException 一般为连不上接口
 	 * @throws IOException 其他异常
 	 */
@@ -170,12 +167,12 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * </p>
 	 * 
 	 * @param clazz clazz
-	 * @return
+	 * @return 响应体中的对象
 	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
-	public <T>Optional<T> executeForObj(Class<T> clazz) throws SocketTimeoutException, IOException, JsonSyntaxException  {
+	public <T>Optional<T> executeForObj(Class<T> clazz) throws SocketTimeoutException, IOException, JsonSyntaxException {
 		executeForResponse();
 		return HttpUtils.responseObj(response, clazz);
 	}
@@ -188,7 +185,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * </p>
 	 * 
 	 * @param clazz clazz
-	 * @return
+	 * @return 响应体中的对象
 	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
@@ -206,7 +203,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * </p>
 	 * 
 	 * @param type type
-	 * @return
+	 * @return 响应体中的对象
 	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
@@ -224,7 +221,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * </p>
 	 * 
 	 * @param type type
-	 * @return
+	 * @return 响应体中的对象
 	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
@@ -240,7 +237,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * 	只有response.isSuccessful()时才有返回,否则抛出异常
 	 * </p>
 	 * 
-	 * @return
+	 * @return 响应体中的流
 	 * @throws SocketTimeoutException 一般为连不上接口
 	 * @throws IOException 其他异常
 	 */
@@ -256,7 +253,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * </p>
 	 * 
 	 * @param targetPath targetPath
-	 * @return
+	 * @return 响应体中的流
 	 * @throws SocketTimeoutException 一般为连不上接口
 	 * @throws IOException 其他异常
 	 */
@@ -269,7 +266,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	public void dispose() {
 		try {
 			close();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 	}
 
