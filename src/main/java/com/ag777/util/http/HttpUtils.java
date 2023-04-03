@@ -17,9 +17,9 @@ import javax.net.ssl.X509TrustManager;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
-import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
@@ -49,7 +49,7 @@ import java.util.concurrent.TimeUnit;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2022年08月17日
+ * @version last modify at 2023年04月03日
  */
 public class HttpUtils {
 	
@@ -502,10 +502,10 @@ public class HttpUtils {
 	 * 发送请求并得到返回
 	 * @param call call
 	 * @return Response
-	 * @throws ConnectException 一般为连不上接口
+	 * @throws SocketTimeoutException 一般为连不上接口
 	 * @throws IOException 其他异常
 	 */
-	public static Response execute(Call call) throws ConnectException, IOException {
+	public static Response execute(Call call) throws SocketTimeoutException, IOException {
 		return call.execute();
 	}
 	

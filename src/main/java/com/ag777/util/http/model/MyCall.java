@@ -1,23 +1,22 @@
 package com.ag777.util.http.model;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.net.ConnectException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
-
 import com.ag777.util.http.HttpUtils;
 import com.ag777.util.lang.IOUtils;
 import com.ag777.util.lang.exception.model.JsonSyntaxException;
 import com.ag777.util.lang.interf.Disposable;
-
 import okhttp3.Call;
 import okhttp3.Headers;
 import okhttp3.Response;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.net.SocketTimeoutException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 有关Call的工具类(二次封装okhttp3)
@@ -27,7 +26,7 @@ import okhttp3.Response;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2018年07月31日
+ * @version create on 2018年03月30日,last modify at 2023年04月03日
  */
 public class MyCall implements Disposable, AutoCloseable {
 	
@@ -88,10 +87,10 @@ public class MyCall implements Disposable, AutoCloseable {
 	/**
 	 * 发送请求并获取返回的封装
 	 * @return
-	 * @throws ConnectException ConnectException
+	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 */
-	public Response executeForResponse() throws ConnectException, IOException {
+	public Response executeForResponse() throws SocketTimeoutException, IOException {
 		response = HttpUtils.execute(call);
 		return response;
 	}
@@ -99,10 +98,10 @@ public class MyCall implements Disposable, AutoCloseable {
 	/**
 	 * 请求并获取返回码
 	 * @return
-	 * @throws ConnectException ConnectException
+	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 */
-	public Integer executeForCode() throws ConnectException, IOException {
+	public Integer executeForCode() throws SocketTimeoutException, IOException {
 		executeForResponse();
 		return HttpUtils.responseCode(response);
 	}
@@ -110,10 +109,10 @@ public class MyCall implements Disposable, AutoCloseable {
 	/**
 	 * 发送请求并得到返回字符串
 	 * @return
-	 * @throws ConnectException ConnectException
+	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 */
-	public Optional<String> executeForStr() throws ConnectException, IOException{
+	public Optional<String> executeForStr() throws SocketTimeoutException, IOException{
 		executeForResponse();
 		return HttpUtils.responseStr(response);
 	}
@@ -125,10 +124,10 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * </p>
 	 * 
 	 * @return
-	 * @throws ConnectException 一般为连不上接口
+	 * @throws SocketTimeoutException 一般为连不上接口
 	 * @throws IOException 其他异常
 	 */
-	public Optional<String> executeForStrForce() throws ConnectException, IOException {
+	public Optional<String> executeForStrForce() throws SocketTimeoutException, IOException {
 		executeForResponse();
 		return HttpUtils.responseStrForce(response);
 	}
@@ -140,10 +139,10 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * </p>
 	 * 
 	 * @return
-	 * @throws ConnectException 一般为连不上接口
+	 * @throws SocketTimeoutException 一般为连不上接口
 	 * @throws IOException 其他异常
 	 */
-	public Optional<Map<String, Object>> executeForMap() throws ConnectException, IOException {
+	public Optional<Map<String, Object>> executeForMap() throws SocketTimeoutException, IOException {
 		executeForResponse();
 		return HttpUtils.responseMap(response);
 	}
@@ -155,10 +154,10 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * </p>
 	 * 
 	 * @return
-	 * @throws ConnectException 一般为连不上接口
+	 * @throws SocketTimeoutException 一般为连不上接口
 	 * @throws IOException 其他异常
 	 */
-	public Optional<Map<String, Object>> executeForMapForce() throws ConnectException, IOException{
+	public Optional<Map<String, Object>> executeForMapForce() throws SocketTimeoutException, IOException{
 		executeForResponse();
 		return HttpUtils.responseMapForce(response);
 	}
@@ -172,11 +171,11 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * 
 	 * @param clazz clazz
 	 * @return
-	 * @throws ConnectException ConnectException
+	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
-	public <T>Optional<T> executeForObj(Class<T> clazz) throws ConnectException, IOException, JsonSyntaxException  {
+	public <T>Optional<T> executeForObj(Class<T> clazz) throws SocketTimeoutException, IOException, JsonSyntaxException  {
 		executeForResponse();
 		return HttpUtils.responseObj(response, clazz);
 	}
@@ -190,11 +189,11 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * 
 	 * @param clazz clazz
 	 * @return
-	 * @throws ConnectException ConnectException
+	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
-	public <T>Optional<T> executeForObjForce(Class<T> clazz) throws ConnectException, IOException, JsonSyntaxException  {
+	public <T>Optional<T> executeForObjForce(Class<T> clazz) throws SocketTimeoutException, IOException, JsonSyntaxException  {
 		executeForResponse();
 		return HttpUtils.responseObjForce(response, clazz);
 	}
@@ -208,11 +207,11 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * 
 	 * @param type type
 	 * @return
-	 * @throws ConnectException ConnectException
+	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
-	public <T>Optional<T> executeForObj(Type type) throws ConnectException, IOException, JsonSyntaxException {
+	public <T>Optional<T> executeForObj(Type type) throws SocketTimeoutException, IOException, JsonSyntaxException {
 		executeForResponse();
 		return HttpUtils.responseObj(response, type);
 	}
@@ -226,11 +225,11 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * 
 	 * @param type type
 	 * @return
-	 * @throws ConnectException ConnectException
+	 * @throws SocketTimeoutException SocketTimeoutException
 	 * @throws IOException IOException
 	 * @throws JsonSyntaxException json转化异常
 	 */
-	public <T>Optional<T> executeForObjForce(Type type) throws ConnectException, IOException, JsonSyntaxException  {
+	public <T>Optional<T> executeForObjForce(Type type) throws SocketTimeoutException, IOException, JsonSyntaxException  {
 		executeForResponse();
 		return HttpUtils.responseObjForce(response, type);
 	}
@@ -242,10 +241,10 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * </p>
 	 * 
 	 * @return
-	 * @throws ConnectException 一般为连不上接口
+	 * @throws SocketTimeoutException 一般为连不上接口
 	 * @throws IOException 其他异常
 	 */
-	public Optional<InputStream> executeForInputStream() throws ConnectException, IOException {
+	public Optional<InputStream> executeForInputStream() throws SocketTimeoutException, IOException {
 		executeForResponse();
 		return HttpUtils.responseInputStream(response);
 	}
@@ -258,10 +257,10 @@ public class MyCall implements Disposable, AutoCloseable {
 	 * 
 	 * @param targetPath targetPath
 	 * @return
-	 * @throws ConnectException 一般为连不上接口
+	 * @throws SocketTimeoutException 一般为连不上接口
 	 * @throws IOException 其他异常
 	 */
-	public  Optional<File> executeForFile(String targetPath) throws ConnectException, IOException {
+	public  Optional<File> executeForFile(String targetPath) throws SocketTimeoutException, IOException {
 		executeForResponse();
 		return HttpUtils.responseFile(response, targetPath);
 	}
