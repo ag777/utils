@@ -59,6 +59,8 @@ public class HttpUtils {
 			= MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");//"Content-Type: application/json; charset=utf-8");//
 	public static final MediaType JSON_CONTENT_TYPE
 			= MediaType.parse("application/json; charset=utf-8");
+	public static final MediaType OCTET_STREAM
+			= MediaType.parse("application/octet-stream");
 	private HttpUtils() {}
 	
 	/**
@@ -85,7 +87,6 @@ public class HttpUtils {
 	 * </p>
 	 * @return OkHttpClient.Builder
 	 */
-	@SuppressWarnings("deprecation")
 	public static OkHttpClient.Builder defaultBuilder() {
 		return new OkHttpClient().newBuilder()
 				.connectTimeout(15, TimeUnit.SECONDS)
@@ -236,7 +237,7 @@ public class HttpUtils {
 		return builder;
 	}
 	
-	/**===================GET请求===========================*/
+	/*===================GET请求===========================*/
 	/**
 	 * 取消所有请求
 	 * @param clients 客户端
@@ -309,7 +310,7 @@ public class HttpUtils {
 				client);
 	}
 	
-	/**===================POST请求===========================*/
+	/*===================POST请求===========================*/
 	
 	/**
 	 * post请求
@@ -357,7 +358,7 @@ public class HttpUtils {
 				client);
 	}
 	
-	/**===================文件上传/下载===========================*/
+	/*===================文件上传/下载===========================*/
 	
 	/**
 	 * post请求带附件
@@ -391,9 +392,9 @@ public class HttpUtils {
 	public static <K, V>Call postMultiFilesByClient(OkHttpClient client, String url, Map<File, String> fileMap, String fileKey, Map<K, V> paramMap, Map<K, V> headerMap, Object tag) throws IllegalArgumentException, FileNotFoundException {
 		return postByClient(client, url, getRequestBody(fileMap, fileKey, paramMap), getHeaders(headerMap), tag);
 	}
-	
-	/**===================delete===========================*/
-	
+
+	/*===================delete===========================*/
+
 	/**
 	 * delete请求
 	 * @param client client
@@ -423,7 +424,7 @@ public class HttpUtils {
 				client);
 	}
 	
-	/**===================put===========================*/
+	/*===================put===========================*/
 
 	/**
 	 * put请求
@@ -470,7 +471,7 @@ public class HttpUtils {
 				client);
 	}
 	
-	/**===================head===========================*/
+	/*===================head===========================*/
 	
 	/**
 	 * head请求
@@ -501,7 +502,7 @@ public class HttpUtils {
 				client);
 	}
 	
-	/**===================其他方法===========================*/
+	/*===================其他方法===========================*/
 	
 	/**
 	 * 发送请求并得到返回
@@ -740,7 +741,7 @@ public class HttpUtils {
 		if(in.isPresent()) {
 			File file = FileUtils.write(in.get(), targetPath);
 			if(file.exists() && file.isFile()) {
-				return Optional.ofNullable(file);
+				return Optional.of(file);
 			}
 		}
 		return Optional.empty();
@@ -855,7 +856,7 @@ public class HttpUtils {
 	private static <K,V>RequestBody getRequestBody(Map<K, V> params) {
 		String paramStr = getParamStr(params, true);
 		if(!paramStr.isEmpty()) {
-			return RequestBody.create(FORM_CONTENT_TYPE,  paramStr);
+			return RequestBody.create(paramStr,  FORM_CONTENT_TYPE);
 		}
 		return  new FormBody.Builder().build();
 	}
@@ -943,8 +944,8 @@ public class HttpUtils {
 				if (fileName == null) {
 					fileName = file.getName();
 				}
-				RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), file);
-				builder = builder.addFormDataPart(fileKey != null ? fileKey : "file", fileName, fileBody);
+				RequestBody fileBody = RequestBody.create(file, OCTET_STREAM);
+				builder.addFormDataPart(fileKey != null ? fileKey : "file", fileName, fileBody);
 			}
 		}
 	}
