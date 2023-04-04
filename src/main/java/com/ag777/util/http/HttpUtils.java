@@ -49,7 +49,7 @@ import java.util.concurrent.TimeUnit;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2023年04月03日
+ * @version last modify at 2023年04月04日
  */
 public class HttpUtils {
 	
@@ -323,7 +323,7 @@ public class HttpUtils {
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K,V>Call postJsonByClient(OkHttpClient client, String url, String json, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
-		RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
+		RequestBody requestBody = RequestBody.create(json, JSON_CONTENT_TYPE);
 		return postByClient(client, getGetUrl(url, paramMap), requestBody, getHeaders(headerMap), tag);
 	}
 	
@@ -437,7 +437,7 @@ public class HttpUtils {
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K,V>Call putJsonByClient(OkHttpClient client, String url, String json, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
-		RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
+		RequestBody requestBody = RequestBody.create(json, JSON_CONTENT_TYPE);
 		return putByClient(client, getGetUrl(url, paramMap), requestBody, getHeaders(headerMap), tag);
 	}
 	/**
