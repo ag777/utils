@@ -138,7 +138,17 @@ public class DateUtils {
 	public static long toLong(int year,int month,int day) {
 		return new LocalDate(year,month,day).toDate().getTime();
 	}
-	
+
+	/**
+	 * 转换long型时间为字符串
+	 * @param time time
+	 * @param formatter 时间格式配置
+	 * @return 时间(字符串)
+	 */
+	public static String toString(long time,DateTimeFormatter formatter) {
+		return new DateTime(time).toString(formatter);
+	}
+
 	/**
 	 * 转换long型时间为字符串
 	 * @param time time
@@ -147,6 +157,19 @@ public class DateUtils {
 	 */
 	public static String toString(long time,String template) {
 		return new DateTime(time).toString(template);
+	}
+
+	/**
+	 * 转换long型时间为字符串
+	 * @param cld 时间
+	 * @param formatter 时间格式配置
+	 * @return 时间(字符串)
+	 */
+	public static String toString(Calendar cld,DateTimeFormatter formatter) {
+		if(cld == null) {
+			return null;
+		}
+		return new DateTime(cld).toString(formatter);
 	}
 
 	/**
@@ -161,20 +184,79 @@ public class DateUtils {
 		}
 		return new DateTime(cld).toString(template);
 	}
-	//重载
+
+	/**
+	 * 转换Date型时间为字符串
+	 * @param date 时间
+	 * @param formatter 时间格式配置
+	 * @return 时间(字符串)
+	 */
+	public static String toString(java.util.Date date,DateTimeFormatter formatter) {
+		if (date == null) {
+			return null;
+		}
+		return new DateTime(date).toString(formatter);
+	}
+
+	/**
+	 * 转换Date型时间为字符串
+	 * @param date 时间
+	 * @param template 时间格式配置
+	 * @return 时间(字符串)
+	 */
 	public static String toString(java.util.Date date,String template) {
+		if (date == null) {
+			return null;
+		}
 		return new DateTime(date).toString(template);
 	}
-	//重载
+
+	/**
+	 * 转换Timestamp型时间为字符串
+	 * @param ts 时间
+	 * @param formatter 时间格式配置
+	 * @return 时间(字符串)
+	 */
+	public static String toString(Timestamp ts, DateTimeFormatter formatter) {
+		if (ts == null) {
+			return null;
+		}
+		return new DateTime(ts).toString(formatter);
+	}
+
+	/**
+	 * 转换Timestamp型时间为字符串
+	 * @param ts 时间
+	 * @param template 时间格式配置
+	 * @return 时间(字符串)
+	 */
 	public static String toString(Timestamp ts, String template) {
+		if (ts == null) {
+			return null;
+		}
 		return new DateTime(ts).toString(template);
 	}
-	
+
 	/**
 	 * 转化时间格式
-	 * @param date date
-	 * @param templateSrc templateSrc
-	 * @param templateTarget templateTarget
+	 * @param date 时间
+	 * @param formatterSrc 源时间格式
+	 * @param formatterTarget 目标时间格式
+	 * @return 时间(字符串)
+	 */
+	public static String toString(String date, DateTimeFormatter formatterSrc, DateTimeFormatter formatterTarget) {
+		DateTime dt = toDateTime(date, formatterSrc);
+		if(dt == null) {
+			return null;
+		}
+		return dt.toString(formatterTarget);
+	}
+
+	/**
+	 * 转化时间格式
+	 * @param date 时间
+	 * @param templateSrc 源时间格式
+	 * @param templateTarget 目标时间格式
 	 * @return 时间(字符串)
 	 */
 	public static String toString(String date, String templateSrc, String templateTarget) {
@@ -184,31 +266,50 @@ public class DateUtils {
 		}
 		return dt.toString(templateTarget);
 	}
-	
+
+	public static String toString(DateTime dt, DateTimeFormatter formatter) {
+		if(dt == null) {
+			return null;
+		}
+		return dt.toString(formatter);
+	}
+
 	/**
 	 * 等同于dt.toString(FORMATTER_TIME);
 	 * @param dt dt
 	 * @return 时间(字符串)
 	 */
 	public static String toString(DateTime dt) {
-		if(dt == null) {
+		return toString(dt, FORMATTER_TIME);
+	}
+
+	public static String toString(LocalDate ld, DateTimeFormatter formatter) {
+		if(ld == null) {
 			return null;
 		}
-		return dt.toString(FORMATTER_TIME);
+		return ld.toString(formatter);
 	}
-	
+
 	/**
 	 * 等同于ld.toString(FORMATTER_DATE);
 	 * @param ld ld
 	 * @return 日期(字符串)
 	 */
 	public static String toString(LocalDate ld) {
-		if(ld == null) {
+		return toString(ld, FORMATTER_DATE);
+	}
+
+	public static Calendar toCalendar(String date, DateTimeFormatter formatter) {
+		if(StringUtils.isBlank(date)) {
 			return null;
 		}
-		return ld.toString(FORMATTER_DATE);
+		DateTime dt = toDateTime(date, formatter);
+		if(dt!=null){
+			return dt.toCalendar(null);
+		}
+		return null;
 	}
-	
+
 	/**
 	 * 转换字符串型时间为Calendar
 	 * @param date date
@@ -216,14 +317,8 @@ public class DateUtils {
 	 * @return  失败返回null
 	 */
 	public static Calendar toCalendar(String date,String template) {
-		if(StringUtils.isBlank(date)) {
-			return null;
-		}
-		DateTime dt = toDateTime(date, template);
-		if(dt!=null){
-			return dt.toCalendar(null);
-		}
-		return null;
+		DateTimeFormatter formatter = DateTimeFormat.forPattern(template);
+		return toCalendar(date, formatter);
 	}
 	/**
 	 * 转换为Date
