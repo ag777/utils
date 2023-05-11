@@ -18,7 +18,7 @@ import java.util.Optional;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2023年04月03日
+ * @version create on 2018年03月30日,last modify at 2023年05月11日
  */
 public class HttpEasy {
 	
@@ -179,6 +179,24 @@ public class HttpEasy {
 	public static <K, V>Optional<String> putJson(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.putJsonByClient(null, url, json, paramMap, headerMap, null);
 		return callForStrForce(call);
+	}
+
+	/**
+	 * put请求向服务端发送json串
+	 * <p>
+	 * 	不论接口返回是否是200都去获取返回字符串
+	 * </p>
+	 *
+	 * @param url url
+	 * @param json json
+	 * @param paramMap 放在请求头里的参数
+	 * @param headerMap 请求头
+	 * @return map
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K, V> Optional<Map<String, Object>> putJsonForMap(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.putJsonByClient(null, url, json, paramMap, headerMap, null);
+		return callForMapForce(call);
 	}
 
 	/**
