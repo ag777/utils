@@ -18,7 +18,7 @@ import java.util.Map;
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2022年11月16日
+ * @version create on 2017年09月22日,last modify at 2023年06月02日
  */
 public class ObjectUtils {
 
@@ -257,10 +257,42 @@ public class ObjectUtils {
 	 * 如果obj为null则返回默认值
 	 * @param obj obj
 	 * @param defaultValue defaultValue
-	 * @return
+	 * @return obj不为null返回obj,否则返回defaultValue
 	 */
 	public static <T>T getOrDefault(T obj, T defaultValue) {
 		return obj != null?obj:defaultValue;
+	}
+
+	/**
+	 * 按参数优先级，判断直至参数不为null，则返回
+	 * @param obj 第一个参数
+	 * @param obj2 第二个参数
+	 * @param obj3 第三个参数
+	 * @param objs 其它参数
+	 * @return 不为null的参数或最后一个参数
+	 * @param <T> T
+	 */
+	@SafeVarargs
+	public static <T>T getOrDefault(T obj, T obj2, T obj3, T... objs) {
+		if (obj != null) {
+			return obj;
+		}
+		if (obj2 != null) {
+			return obj2;
+		}
+		if (objs != null) {
+			if (obj3 != null) {
+				return obj3;
+			}
+			for (int i = 0; i < objs.length-1; i++) {
+				T o = objs[i];
+				if (o != null) {
+					return o;
+				}
+			}
+			return objs[objs.length-1];
+		}
+		return obj3;
 	}
 	
 	/**
@@ -325,7 +357,7 @@ public class ObjectUtils {
 	/**
 	 * 判断对象是否为数值类型
 	 * @param obj obj
-	 * @return
+	 * @return 是否为数值类型
 	 * @throws Exception Exception
 	 */
 	public static boolean isNumber(Object obj) throws Exception {
@@ -360,13 +392,10 @@ public class ObjectUtils {
 	/**
 	 * 判断Boolean变量是否为true，防止控指针异常
 	 * @param bool bool
-	 * @return
+	 * @return 是否为true
 	 */
 	public static boolean isBooleanTrue(Boolean bool) {
-		if(bool != null && bool) {
-			return true;
-		}
-		return false;
+		return bool != null && bool;
 	}
 	
 	/**
@@ -377,7 +406,7 @@ public class ObjectUtils {
 	 * 
 	 * @param a a
 	 * @param b b
-	 * @return
+	 * @return 是否相同
 	 */
 	public static boolean equals(Object a, Object b) {
 		if(a==null || b==null) {
@@ -390,7 +419,7 @@ public class ObjectUtils {
 	 * 都为null时返回true
 	 * @param a a
 	 * @param b b
-	 * @return
+	 * @return 是否都为null
 	 */
 	public static boolean bothNull(Object a, Object... b) {
 		if(a != null) {
@@ -419,7 +448,7 @@ public class ObjectUtils {
 	 * @param otherMappings 键值对，参数数量为2N个:键2,值2,键3,值3...
 	 * @param <T> 键的类型
 	 * @param <V> 值的类型
-	 * @return
+	 * @return 判断结果
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T, V>V switchCase(T target, V defaultValue, T key1, V val1, Object... otherMappings) {
