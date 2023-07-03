@@ -1,29 +1,30 @@
 package com.ag777.util.lang.thread;
 
-import com.ag777.util.lang.interf.Disposable;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.concurrent.*;
 
 /**
  * 回调线程池CompletionService辅助类
  * 
  * @author ag777
- * @version  create on 2018年08月03日,last modify at 2022年08月04日
+ * @version  create on 2018年08月03日,last modify at 2023年07月03日
  */
-public class CompletionServiceHelper<T> implements Disposable {
+public class CompletionServiceHelper<T, V> {
 	private ExecutorService pool;
 	private CompletionService<T> completionService;
+	private final Map<Future<T>, V> taskInfoMap;
 
 	public CompletionServiceHelper(int poolSize) {
-		pool = Executors.newFixedThreadPool(poolSize);
-		completionService = new ExecutorCompletionService<>(pool);
+		this(Executors.newFixedThreadPool(poolSize));
 	}
 	
 	public CompletionServiceHelper(ExecutorService pool) {
 		this.pool = pool;
 		completionService = new ExecutorCompletionService<>(pool);
+		taskInfoMap = new ConcurrentHashMap<>(1);
 	}
-	
 	public ExecutorService getExecutorService() {
 		return pool;
 	}
@@ -34,13 +35,19 @@ public class CompletionServiceHelper<T> implements Disposable {
 	}
 
 
-	public CompletionServiceHelper<T> add(Callable<T> task) {
-		completionService.submit(task);
+	public CompletionServiceHelper<T, V> submit(Callable<T> task, V bindData) {
+		Future<T> myTask = completionService.submit(task);
+		if (bindData != null) {
+			taskInfoMap.put(myTask, bindData);
+		}
 		return this;
 	}
 
-	public CompletionServiceHelper<T> add(Runnable task, T result) {
-		completionService.submit(task, result);
+	public CompletionServiceHelper<T, V> submit(Runnable task, T result, V bindData) {
+		Future<T> myTask = completionService.submit(task, result);
+		if (bindData != null) {
+			taskInfoMap.put(myTask, bindData);
+		}
 		return this;
 	}
 
@@ -49,8 +56,9 @@ public class CompletionServiceHelper<T> implements Disposable {
 	 * @return 一个执行完成的任务
 	 * @throws InterruptedException 等待中断
 	 */
-	public Future<T> take() throws InterruptedException {
-		return completionService.take();
+	public Task<T, V> take() throws InterruptedException {
+		Future<T> task = completionService.take();
+		return new Task<>(task, taskInfoMap.get(task));
 	}
 
 	/**
@@ -58,7 +66,11 @@ public class CompletionServiceHelper<T> implements Disposable {
 	 * @return 一个执行完成的任务
 	 */
 	public Future<T> poll() {
-		return completionService.poll();
+		Future<T> task = completionService.poll();
+		if (task == null) {
+			return null;
+		}
+		return new Task<>(task, taskInfoMap.get(task));
 	}
 
 	/**
@@ -75,7 +87,6 @@ public class CompletionServiceHelper<T> implements Disposable {
 	/**
 	 * 释放资源
 	 */
-	@Override
 	public void dispose() {
 		if(pool == null) {
 			return;
@@ -84,7 +95,7 @@ public class CompletionServiceHelper<T> implements Disposable {
 		pool = null;
 		completionService = null;
 	}
-	
+
 	/**
 	 * 等待任务执行结束并且关闭线程池
 	 */
@@ -180,4 +191,43 @@ public class CompletionServiceHelper<T> implements Disposable {
 		}
 		return true;
 	}
+
+	public static class Task<T, V> implements Future<T>{
+		private Future<T> task;
+		private V data;
+		public Task(Future<T> task, V data) {
+			this.task = task;
+			this.data = data;
+		}
+
+		public V getData() {
+			return data;
+		}
+
+		@Override
+		public boolean cancel(boolean mayInterruptIfRunning) {
+			return task.cancel(mayInterruptIfRunning);
+		}
+
+		@Override
+		public boolean isCancelled() {
+			return task.isCancelled();
+		}
+
+		@Override
+		public boolean isDone() {
+			return task.isDone();
+		}
+
+		@Override
+		public T get() throws InterruptedException, ExecutionException {
+			return task.get();
+		}
+
+		@Override
+		public T get(long timeout, @NotNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+			return task.get(timeout, unit);
+		}
+	}
+
 }
