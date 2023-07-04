@@ -9,7 +9,7 @@ import java.util.concurrent.*;
  * 回调线程池CompletionService辅助类
  * 
  * @author ag777
- * @version  create on 2018年08月03日,last modify at 2023年07月03日
+ * @version  create on 2018年08月03日,last modify at 2023年07月04日
  */
 public class CompletionServiceHelper<T, V> {
 	private ExecutorService pool;
@@ -58,7 +58,7 @@ public class CompletionServiceHelper<T, V> {
 	 */
 	public Task<T, V> take() throws InterruptedException {
 		Future<T> task = completionService.take();
-		return new Task<>(task, taskInfoMap.get(task));
+		return new Task<>(task, taskInfoMap.remove(task));
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class CompletionServiceHelper<T, V> {
 		if (task == null) {
 			return null;
 		}
-		return new Task<>(task, taskInfoMap.get(task));
+		return new Task<>(task, taskInfoMap.remove(task));
 	}
 
 	/**
@@ -82,6 +82,16 @@ public class CompletionServiceHelper<T, V> {
 	 */
 	public Future<T> poll(long timeout, TimeUnit timeunit) throws InterruptedException {
 		return completionService.poll(timeout, timeunit);
+	}
+
+	/**
+	 * 取消剩余任务
+	 * @param mayInterruptIfRunning 是否强制中断
+	 */
+	public void cancel(boolean mayInterruptIfRunning) {
+		for (Future<T> task : taskInfoMap.keySet()) {
+			task.cancel(mayInterruptIfRunning);
+		}
 	}
 	
 	/**
