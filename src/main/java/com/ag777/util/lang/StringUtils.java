@@ -310,7 +310,7 @@ public class StringUtils {
 	public static String formatNum(double num, int decimalPlaces) {
 		NumberFormat nf = NumberFormat.getNumberInstance();
 		nf.setMaximumFractionDigits(2);
-		return nf.format(num);
+		return nf.format(decimalPlaces);
 	}
 	
 	/**
