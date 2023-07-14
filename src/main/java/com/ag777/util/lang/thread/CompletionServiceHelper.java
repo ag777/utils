@@ -34,6 +34,9 @@ public class CompletionServiceHelper<T, V> {
 		return completionService;
 	}
 
+	public int getTaskCount() {
+		return taskInfoMap.size();
+	}
 
 	public CompletionServiceHelper<T, V> submit(Callable<T> task, V bindData) {
 		Future<T> myTask = completionService.submit(task);
