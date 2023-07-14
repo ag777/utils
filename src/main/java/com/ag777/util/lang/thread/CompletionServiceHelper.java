@@ -65,7 +65,7 @@ public class CompletionServiceHelper<T, V> {
 	 * <p>不会阻塞线程，如果当前没有任务结束，则返回null
 	 * @return 一个执行完成的任务
 	 */
-	public Future<T> poll() {
+	public Task<T, V> poll() {
 		Future<T> task = completionService.poll();
 		if (task == null) {
 			return null;
