@@ -2,6 +2,8 @@ package com.ag777.util.lang.thread;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -23,7 +25,7 @@ public class CompletionServiceHelper<T, V> {
 	public CompletionServiceHelper(ExecutorService pool) {
 		this.pool = pool;
 		completionService = new ExecutorCompletionService<>(pool);
-		taskInfoMap = new ConcurrentHashMap<>(1);
+		taskInfoMap = Collections.synchronizedMap(new HashMap<>(1));
 	}
 	public ExecutorService getExecutorService() {
 		return pool;
@@ -40,17 +42,13 @@ public class CompletionServiceHelper<T, V> {
 
 	public CompletionServiceHelper<T, V> submit(Callable<T> task, V bindData) {
 		Future<T> myTask = completionService.submit(task);
-		if (bindData != null) {
-			taskInfoMap.put(myTask, bindData);
-		}
+		taskInfoMap.put(myTask, bindData);
 		return this;
 	}
 
 	public CompletionServiceHelper<T, V> submit(Runnable task, T result, V bindData) {
 		Future<T> myTask = completionService.submit(task, result);
-		if (bindData != null) {
-			taskInfoMap.put(myTask, bindData);
-		}
+		taskInfoMap.put(myTask, bindData);
 		return this;
 	}
 
