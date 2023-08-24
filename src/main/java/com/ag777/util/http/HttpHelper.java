@@ -51,6 +51,13 @@ public class HttpHelper {
 		this.client = client;
 		this.tag = tag;
 	}
+
+	/**
+	 * @return httpClient
+	 */
+	public OkHttpClient getClient() {
+		return client;
+	}
 	
 	/**
 	 * 返回自定义client的HttpHelper
