@@ -2,10 +2,7 @@ package com.ag777.util.http;
 
 import com.ag777.util.http.model.MyCall;
 import com.ag777.util.http.model.ProgressResponseBody;
-import okhttp3.Call;
-import okhttp3.Headers;
-import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
+import okhttp3.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,7 +15,7 @@ import java.util.Map;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2023年04月03日
+ * @version create on 2018年03月30日,last modify at 2023年08月24日
  */
 public class HttpHelper {
 	
@@ -71,6 +68,17 @@ public class HttpHelper {
 	 */
 	public static HttpHelper tag(Object tag) {
 		return new HttpHelper(null, tag);
+	}
+
+	/**
+	 *
+	 * @param request 请求内容
+	 * @return MyCall
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public MyCall fetch(Request request) throws IllegalArgumentException {
+		Call call = HttpUtils.call(request, client);
+		return new MyCall(call);
 	}
 
 	/*===================其他方法===========================*/

@@ -49,11 +49,11 @@ import java.util.concurrent.TimeUnit;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2023年04月04日
+ * @version last modify at 2023年08月24日
  */
 public class HttpUtils {
 	
-	private static OkHttpClient mOkHttpClient;
+	private static volatile OkHttpClient mOkHttpClient;
 
 	public static final MediaType FORM_CONTENT_TYPE
 			= MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");//"Content-Type: application/json; charset=utf-8");//
@@ -801,6 +801,42 @@ public class HttpUtils {
 	}
 
 
+	/**
+	 * 根据参数,请求头等数据构造request
+	 * @param url url
+	 * @param headers headers
+	 * @param tag tag
+	 * @return Builder
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static Builder getRequest(String url, Headers headers, Object tag) throws IllegalArgumentException {
+		Builder builder = new Builder()
+				.url(url);
+
+		if(headers != null) {
+			builder.headers(headers);
+		}
+
+		if(tag != null) {
+			builder.tag(tag);
+		}
+		return builder;
+	}
+
+	/**
+	 *
+	 * @param bytes 请求体内容(二进制)
+	 * @param contentTypeStr 媒体类型
+	 * @return 请求体
+	 */
+	public static RequestBody getRequestBody(byte[] bytes, String contentTypeStr) {
+		MediaType mediaType = null;
+		if (!StringUtils.isEmpty(contentTypeStr)) {
+			mediaType = MediaType.parse(contentTypeStr);
+		}
+		return RequestBody.create(bytes, mediaType);
+	}
+
 	/**===================内部方法===========================*/
 
 	/**
@@ -821,27 +857,7 @@ public class HttpUtils {
 		return url;
 	}
 
-	/**
-	 * 根据参数,请求头等数据构造request
-	 * @param url url
-	 * @param headers headers
-	 * @param tag tag
-	 * @return Builder
-	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
-	 */
-	private static Builder getRequest(String url, Headers headers, Object tag) throws IllegalArgumentException {
-		Builder builder = new Builder()
-				.url(url);
 
-		if(headers != null) {
-			builder.headers(headers);
-		}
-
-		if(tag != null) {
-			builder.tag(tag);
-		}
-		return builder;
-	}
 
 	/**
 	 * 通过参数构建请求体
