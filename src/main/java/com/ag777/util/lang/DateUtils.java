@@ -27,7 +27,7 @@ import java.util.*;
     </ul>
  * 
  * @author ag777
- * @version create on 2016年07月07日,last modify at 2023年05月04日
+ * @version create on 2016年07月07日,last modify at 2023年09月23日
  */
 public class DateUtils {
 
@@ -39,6 +39,10 @@ public class DateUtils {
 	public static final DateTimeFormatter FORMATTER_TIME = DateTimeFormat.forPattern(DEFAULT_TEMPLATE_TIME);
 	public static final DateTimeFormatter FORMATTER_MONTH = DateTimeFormat.forPattern(DEFAULT_TEMPLATE_MONTH);
 
+	public static final java.time.format.DateTimeFormatter FORMATTER_DATE_JAVA = java.time.format.DateTimeFormatter.ofPattern(DEFAULT_TEMPLATE_DATE);
+	public static final java.time.format.DateTimeFormatter FORMATTER_TIME_JAVA = java.time.format.DateTimeFormatter.ofPattern(DEFAULT_TEMPLATE_TIME);
+	public static final java.time.format.DateTimeFormatter FORMATTER_MONTH_JAVA = java.time.format.DateTimeFormatter.ofPattern(DEFAULT_TEMPLATE_MONTH);
+
 	public enum TimeUnit {	//时间单位枚举
 		SECOND,MINUTE,HOUR,DAY,WEEK,MONTH,YEAR
 	}
@@ -46,7 +50,7 @@ public class DateUtils {
 	private DateUtils(){}
 	
 	/*==============转换==============*/
-	
+
 	/**
 	 * 字符串转DateTime
 	 * @param date date
@@ -77,7 +81,7 @@ public class DateUtils {
 	public static DateTime toDateTime(String date){
 		return toDateTime(date, FORMATTER_TIME);
 	}
-	
+
 	/**
 	 * LocalDate转DateTime
 	 * @param ld ld
@@ -89,7 +93,7 @@ public class DateUtils {
 		}
 		return ld.toDateTimeAtStartOfDay();
 	}
-	
+
 	/**
 	 * 字符串转LocalDate
 	 * @param date date
@@ -308,6 +312,27 @@ public class DateUtils {
 			return dt.toCalendar(null);
 		}
 		return null;
+	}
+
+	public static String toString(java.time.LocalDateTime ldt, java.time.format.DateTimeFormatter formatter) {
+		if (ldt == null) {
+			return null;
+		}
+		return ldt.format(formatter);
+	}
+
+	public static String toString(java.time.LocalTime lt, java.time.format.DateTimeFormatter formatter) {
+		if (lt == null) {
+			return null;
+		}
+		return lt.format(formatter);
+	}
+
+	public static String toString(java.time.LocalDate lt, java.time.format.DateTimeFormatter formatter) {
+		if (lt == null) {
+			return null;
+		}
+		return lt.format(formatter);
 	}
 
 	/**
