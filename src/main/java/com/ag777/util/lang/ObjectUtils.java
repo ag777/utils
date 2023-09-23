@@ -18,7 +18,7 @@ import java.util.Map;
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2023年06月02日
+ * @version create on 2017年09月22日,last modify at 2023年09月23日
  */
 public class ObjectUtils {
 
@@ -41,16 +41,30 @@ public class ObjectUtils {
 	}
 	
 	//--转换
+
+	/**
+	 * 将对象转换为字符串表示。
+	 *
+	 * @param obj 要转换的对象
+	 * @return 对象的字符串表示
+	 */
 	public static String toStr(Object obj) {
-		if(obj == null) {
+		if (obj == null) {
 			return null;
 		}
 		if (obj instanceof String) {
 			return (String) obj;
-		} else if(obj instanceof Date) {
-			return DateUtils.toString(((Date)obj), DateUtils.DEFAULT_TEMPLATE_TIME);
+		} else if (obj instanceof Date) {
+			return DateUtils.toString((Date) obj, DateUtils.DEFAULT_TEMPLATE_TIME);
+		} else if (obj instanceof java.time.LocalDateTime) {
+			return DateUtils.toString((java.time.LocalDateTime) obj, DateUtils.FORMATTER_TIME_JAVA);
+		} else if (obj instanceof java.time.LocalDate) {
+			return DateUtils.toString((java.time.LocalDate) obj, DateUtils.FORMATTER_DATE_JAVA);
+		} else if (obj instanceof java.time.LocalTime) {
+			java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss");
+			return DateUtils.toString((java.time.LocalTime) obj, formatter);
 		}
-		return obj.toString();
+		return String.valueOf(obj);
 	}
 	
 	public static String toStr(Object obj, String defaultValue) {
