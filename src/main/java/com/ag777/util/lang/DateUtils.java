@@ -11,36 +11,50 @@ import java.util.*;
 /**
  * 有关 <code>List</code> 列表工具类。
  * <p>
- * 	需要jar包:
+ * 需要的jar包:
  * <ul>
- * <li>joda-time-xxx.jar</li>
+ *     <li>joda-time-xxx.jar</li>
  * </ul>
- * 
  * <p>
- * 	巧妙的考勤统计:http://www.01happy.com/mysql-bit_count-bit_or/<br>
+ * 巧妙的考勤统计: <a href="http://www.01happy.com/mysql-bit_count-bit_or/">http://www.01happy.com/mysql-bit_count-bit_or/</a>
  * <pre>{@code
- * 	SELECT year,month,BIT_COUNT(BIT_OR(1<<day)) AS days FROM t1
-       GROUP BY year,month;
-    }</pre>
-    <ul>
-    <li>更新日志:https://www.joda.org/joda-time/changes-report.html</li>
-    </ul>
- * 
+ * SELECT year, month, BIT_COUNT(BIT_OR(1<<day)) AS days FROM t1
+ * GROUP BY year, month;
+ * }</pre>
+ * <ul>
+ *     <li>更新日志: <a href="https://www.joda.org/joda-time/changes-report.html">https://www.joda.org/joda-time/changes-report.html</a></li>
+ * </ul>
+ *
  * @author ag777
  * @version create on 2016年07月07日,last modify at 2023年09月23日
  */
 public class DateUtils {
 
-	public static final String DEFAULT_TEMPLATE_DATE = "yyyy-MM-dd";		//日期标准格式
-	public static final String DEFAULT_TEMPLATE_TIME = "yyyy-MM-dd HH:mm:ss";	//时间标准格式
-	public static final String DEFAULT_TEMPLATE_MONTH = "yyyy-MM";	//月份标准格式
+	/** 日期标准格式 */
+	public static final String DEFAULT_TEMPLATE_DATE = "yyyy-MM-dd";
 
+	/** 时间标准格式 */
+	public static final String DEFAULT_TEMPLATE_TIME = "yyyy-MM-dd HH:mm:ss";
+
+	/** 月份标准格式 */
+	public static final String DEFAULT_TEMPLATE_MONTH = "yyyy-MM";
+
+	/** 日期格式化器 */
 	public static final DateTimeFormatter FORMATTER_DATE = DateTimeFormat.forPattern(DEFAULT_TEMPLATE_DATE);
+
+	/** 时间格式化器 */
 	public static final DateTimeFormatter FORMATTER_TIME = DateTimeFormat.forPattern(DEFAULT_TEMPLATE_TIME);
+
+	/** 月份格式化器 */
 	public static final DateTimeFormatter FORMATTER_MONTH = DateTimeFormat.forPattern(DEFAULT_TEMPLATE_MONTH);
 
+	/** Java 日期格式化器 */
 	public static final java.time.format.DateTimeFormatter FORMATTER_DATE_JAVA = java.time.format.DateTimeFormatter.ofPattern(DEFAULT_TEMPLATE_DATE);
+
+	/** Java 时间格式化器 */
 	public static final java.time.format.DateTimeFormatter FORMATTER_TIME_JAVA = java.time.format.DateTimeFormatter.ofPattern(DEFAULT_TEMPLATE_TIME);
+
+	/** Java 月份格式化器 */
 	public static final java.time.format.DateTimeFormatter FORMATTER_MONTH_JAVA = java.time.format.DateTimeFormatter.ofPattern(DEFAULT_TEMPLATE_MONTH);
 
 	public enum TimeUnit {	//时间单位枚举
@@ -52,150 +66,178 @@ public class DateUtils {
 	/*==============转换==============*/
 
 	/**
-	 * 字符串转DateTime
-	 * @param date date
-	 * @param template template
-	 * @return DateTime
+	 * 将字符串转换为 DateTime 对象。
+	 *
+	 * @param date     日期时间字符串
+	 * @param template 日期时间格式模板
+	 * @return DateTime 对象，转换失败返回 null
 	 */
-	public static DateTime toDateTime(String date, String template){
-		if(StringUtils.isBlank(date)) {
+	public static DateTime toDateTime(String date, String template) {
+		if (StringUtils.isBlank(date)) {
 			return null;
 		}
 		try {
 			DateTimeFormatter formatter = DateTimeFormat.forPattern(template);
 			return toDateTime(date, formatter);
-		} catch(Exception ex) {
-//			ex.printStackTrace();
+		} catch (Exception ex) {
+			// ex.printStackTrace();
 		}
 		return null;
 	}
-	public static DateTime toDateTime(String date, DateTimeFormatter formatter){
+
+	/**
+	 * 将字符串转换为 DateTime 对象。
+	 *
+	 * @param date      日期时间字符串
+	 * @param formatter 日期时间格式化器
+	 * @return DateTime 对象，转换失败返回 null
+	 */
+	public static DateTime toDateTime(String date, DateTimeFormatter formatter) {
 		try {
 			return DateTime.parse(date, formatter);
-		} catch(Exception ex) {
-//			ex.printStackTrace();
+		} catch (Exception ex) {
+			// ex.printStackTrace();
 		}
 		return null;
 	}
-	//重载
-	public static DateTime toDateTime(String date){
+
+	// 重载
+	public static DateTime toDateTime(String date) {
 		return toDateTime(date, FORMATTER_TIME);
 	}
 
 	/**
-	 * LocalDate转DateTime
-	 * @param ld ld
-	 * @return DateTime
+	 * 将 LocalDate 转换为 DateTime 对象。
+	 *
+	 * @param ld LocalDate 对象
+	 * @return DateTime 对象，转换失败返回 null
 	 */
-	public static DateTime toDateTime(LocalDate ld){
-		if(ld == null) {
+	public static DateTime toDateTime(LocalDate ld) {
+		if (ld == null) {
 			return null;
 		}
 		return ld.toDateTimeAtStartOfDay();
 	}
 
 	/**
-	 * 字符串转LocalDate
-	 * @param date date
-	 * @param template template
-	 * @return LocalDate
+	 * 将字符串转换为 LocalDate 对象。
+	 *
+	 * @param date     日期字符串
+	 * @param template 日期格式模板
+	 * @return LocalDate 对象，转换失败返回 null
 	 */
-	public static LocalDate toLocalDate(String date, String template){
-		if(StringUtils.isBlank(date)) {
+	public static LocalDate toLocalDate(String date, String template) {
+		if (StringUtils.isBlank(date)) {
 			return null;
 		}
 		try {
 			DateTimeFormatter format = DateTimeFormat.forPattern(template);
 			return toLocalDate(date, format);
-		} catch(Exception ex) {
-//			ex.printStackTrace();
+		} catch (Exception ex) {
+			// ex.printStackTrace();
 		}
 		return null;
 	}
-	public static LocalDate toLocalDate(String date, DateTimeFormatter formatter){
+
+	/**
+	 * 将字符串转换为 LocalDate 对象。
+	 *
+	 * @param date      日期字符串
+	 * @param formatter 日期格式化器
+	 * @return LocalDate 对象，转换失败返回 null
+	 */
+	public static LocalDate toLocalDate(String date, DateTimeFormatter formatter) {
 		return LocalDate.parse(date, formatter);
 	}
-	//重载
-	public static LocalDate toLocalDate(String date){
+
+	// 重载
+	public static LocalDate toLocalDate(String date) {
 		return toLocalDate(date, FORMATTER_DATE);
 	}
-	
+
 	/**
-	 * DateTime转LocalDate
-	 * @param dt dt
-	 * @return LocalDate
+	 * 将 DateTime 转换为 LocalDate 对象。
+	 *
+	 * @param dt DateTime 对象
+	 * @return LocalDate 对象，转换失败返回 null
 	 */
-	public static LocalDate toLocalDate(DateTime dt){
-		if(dt == null) {
+	public static LocalDate toLocalDate(DateTime dt) {
+		if (dt == null) {
 			return null;
 		}
 		return dt.toLocalDate();
 	}
-	
+
 	/**
-	 * 获取某个时间的long型值
-	 * @param year year
-	 * @param month month
-	 * @param day day
+	 * 获取某个时间的 long 型值。
+	 *
+	 * @param year  年份
+	 * @param month 月份
+	 * @param day   日期
 	 * @return 时间戳
 	 */
-	public static long toLong(int year,int month,int day) {
-		return new LocalDate(year,month,day).toDate().getTime();
+	public static long toLong(int year, int month, int day) {
+		return new LocalDate(year, month, day).toDate().getTime();
 	}
 
 	/**
-	 * 转换long型时间为字符串
-	 * @param time time
+	 * 转换 long 型时间为字符串。
+	 *
+	 * @param time      时间戳
 	 * @param formatter 时间格式配置
 	 * @return 时间(字符串)
 	 */
-	public static String toString(long time,DateTimeFormatter formatter) {
+	public static String toString(long time, DateTimeFormatter formatter) {
 		return new DateTime(time).toString(formatter);
 	}
 
 	/**
-	 * 转换long型时间为字符串
-	 * @param time time
-	 * @param template template
+	 * 转换 long 型时间为字符串。
+	 *
+	 * @param time     时间戳
+	 * @param template 时间格式模板
 	 * @return 时间(字符串)
 	 */
-	public static String toString(long time,String template) {
+	public static String toString(long time, String template) {
 		return new DateTime(time).toString(template);
 	}
 
 	/**
-	 * 转换long型时间为字符串
-	 * @param cld 时间
+	 * 转换 Calendar 型时间为字符串。
+	 *
+	 * @param cld       Calendar 对象
 	 * @param formatter 时间格式配置
-	 * @return 时间(字符串)
+	 * @return 时间(字符串)，转换失败返回 null
 	 */
-	public static String toString(Calendar cld,DateTimeFormatter formatter) {
-		if(cld == null) {
+	public static String toString(Calendar cld, DateTimeFormatter formatter) {
+		if (cld == null) {
 			return null;
 		}
 		return new DateTime(cld).toString(formatter);
 	}
 
 	/**
-	 * 转换Calendar型时间为字符串
-	 * @param cld cld
-	 * @param template template
-	 * @return 时间(字符串)
+	 * 转换 Calendar 型时间为字符串。
+	 *
+	 * @param cld      Calendar 对象
+	 * @param template 时间格式模板
+	 * @return 时间(字符串)，转换失败返回 null
 	 */
-	public static String toString(Calendar cld,String template) {
-		if(cld == null) {
+	public static String toString(Calendar cld, String template) {
+		if (cld == null) {
 			return null;
 		}
 		return new DateTime(cld).toString(template);
 	}
 
 	/**
-	 * 转换Date型时间为字符串
-	 * @param date 时间
+	 * 转换 Date 型时间为字符串。
+	 *
+	 * @param date      Date 对象
 	 * @param formatter 时间格式配置
-	 * @return 时间(字符串)
+	 * @return 时间(字符串)，转换失败返回 null
 	 */
-	public static String toString(java.util.Date date,DateTimeFormatter formatter) {
+	public static String toString(java.util.Date date, DateTimeFormatter formatter) {
 		if (date == null) {
 			return null;
 		}
@@ -203,12 +245,13 @@ public class DateUtils {
 	}
 
 	/**
-	 * 转换Date型时间为字符串
-	 * @param date 时间
-	 * @param template 时间格式配置
-	 * @return 时间(字符串)
+	 * 转换 Date 型时间为字符串。
+	 *
+	 * @param date     Date 对象
+	 * @param template 时间格式模板
+	 * @return 时间(字符串)，转换失败返回 null
 	 */
-	public static String toString(java.util.Date date,String template) {
+	public static String toString(java.util.Date date, String template) {
 		if (date == null) {
 			return null;
 		}
@@ -216,10 +259,11 @@ public class DateUtils {
 	}
 
 	/**
-	 * 转换Timestamp型时间为字符串
-	 * @param ts 时间
+	 * 转换 Timestamp 型时间为字符串。
+	 *
+	 * @param ts        Timestamp 对象
 	 * @param formatter 时间格式配置
-	 * @return 时间(字符串)
+	 * @return 时间(字符串)，转换失败返回 null
 	 */
 	public static String toString(Timestamp ts, DateTimeFormatter formatter) {
 		if (ts == null) {
@@ -229,10 +273,11 @@ public class DateUtils {
 	}
 
 	/**
-	 * 转换Timestamp型时间为字符串
-	 * @param ts 时间
-	 * @param template 时间格式配置
-	 * @return 时间(字符串)
+	 * 转换 Timestamp 型时间为字符串。
+	 *
+	 * @param ts       Timestamp 对象
+	 * @param template 时间格式模板
+	 * @return 时间(字符串)，转换失败返回 null
 	 */
 	public static String toString(Timestamp ts, String template) {
 		if (ts == null) {
@@ -242,78 +287,110 @@ public class DateUtils {
 	}
 
 	/**
-	 * 转化时间格式
-	 * @param date 时间
-	 * @param formatterSrc 源时间格式
-	 * @param formatterTarget 目标时间格式
-	 * @return 时间(字符串)
+	 * 转换时间格式
+	 *
+	 * @param date            时间字符串
+	 * @param formatterSrc    源时间格式化器
+	 * @param formatterTarget 目标时间格式化器
+	 * @return 转换后的时间字符串，转换失败返回 null
 	 */
 	public static String toString(String date, DateTimeFormatter formatterSrc, DateTimeFormatter formatterTarget) {
 		DateTime dt = toDateTime(date, formatterSrc);
-		if(dt == null) {
+		if (dt == null) {
 			return null;
 		}
 		return dt.toString(formatterTarget);
 	}
 
 	/**
-	 * 转化时间格式
-	 * @param date 时间
-	 * @param templateSrc 源时间格式
-	 * @param templateTarget 目标时间格式
-	 * @return 时间(字符串)
+	 * 转换时间格式
+	 *
+	 * @param date           时间字符串
+	 * @param templateSrc    源时间格式模板
+	 * @param templateTarget 目标时间格式模板
+	 * @return 转换后的时间字符串，转换失败返回 null
 	 */
 	public static String toString(String date, String templateSrc, String templateTarget) {
 		DateTime dt = toDateTime(date, templateSrc);
-		if(dt == null) {
+		if (dt == null) {
 			return null;
 		}
 		return dt.toString(templateTarget);
 	}
 
+	/**
+	 * 将 DateTime 对象转换为指定格式的字符串
+	 *
+	 * @param dt        DateTime 对象
+	 * @param formatter 时间格式化器
+	 * @return 转换后的时间字符串，转换失败返回 null
+	 */
 	public static String toString(DateTime dt, DateTimeFormatter formatter) {
-		if(dt == null) {
+		if (dt == null) {
 			return null;
 		}
 		return dt.toString(formatter);
 	}
 
 	/**
-	 * 等同于dt.toString(FORMATTER_TIME);
-	 * @param dt dt
-	 * @return 时间(字符串)
+	 * 将 DateTime 对象转换为默认时间格式的字符串
+	 *
+	 * @param dt DateTime 对象
+	 * @return 转换后的时间字符串，转换失败返回 null
 	 */
 	public static String toString(DateTime dt) {
 		return toString(dt, FORMATTER_TIME);
 	}
 
+	/**
+	 * 将 LocalDate 对象转换为指定格式的字符串
+	 *
+	 * @param ld        LocalDate 对象
+	 * @param formatter 日期格式化器
+	 * @return 转换后的日期字符串，转换失败返回 null
+	 */
 	public static String toString(LocalDate ld, DateTimeFormatter formatter) {
-		if(ld == null) {
+		if (ld == null) {
 			return null;
 		}
 		return ld.toString(formatter);
 	}
 
 	/**
-	 * 等同于ld.toString(FORMATTER_DATE);
-	 * @param ld ld
-	 * @return 日期(字符串)
+	 * 将 LocalDate 对象转换为默认日期格式的字符串
+	 *
+	 * @param ld LocalDate 对象
+	 * @return 转换后的日期字符串，转换失败返回 null
 	 */
 	public static String toString(LocalDate ld) {
 		return toString(ld, FORMATTER_DATE);
 	}
 
+	/**
+	 * 将字符串转换为 Calendar 对象
+	 *
+	 * @param date      时间字符串
+	 * @param formatter 时间格式化器
+	 * @return 转换后的 Calendar 对象，转换失败返回 null
+	 */
 	public static Calendar toCalendar(String date, DateTimeFormatter formatter) {
-		if(StringUtils.isBlank(date)) {
+		if (StringUtils.isBlank(date)) {
 			return null;
 		}
 		DateTime dt = toDateTime(date, formatter);
-		if(dt!=null){
+		if (dt != null) {
 			return dt.toCalendar(null);
 		}
 		return null;
 	}
 
+	/**
+	 * 将 java.time.LocalDateTime 对象转换为指定格式的字符串
+	 *
+	 * @param ldt       LocalDateTime 对象
+	 * @param formatter 时间格式化器
+	 * @return 转换后的时间字符串，转换失败返回 null
+	 */
 	public static String toString(java.time.LocalDateTime ldt, java.time.format.DateTimeFormatter formatter) {
 		if (ldt == null) {
 			return null;
@@ -321,6 +398,13 @@ public class DateUtils {
 		return ldt.format(formatter);
 	}
 
+	/**
+	 * 将 java.time.LocalTime 对象转换为指定格式的字符串
+	 *
+	 * @param lt        LocalTime 对象
+	 * @param formatter 时间格式化器
+	 * @return 转换后的时间字符串，转换失败返回 null
+	 */
 	public static String toString(java.time.LocalTime lt, java.time.format.DateTimeFormatter formatter) {
 		if (lt == null) {
 			return null;
@@ -328,6 +412,13 @@ public class DateUtils {
 		return lt.format(formatter);
 	}
 
+	/**
+	 * 将 java.time.LocalDate 对象转换为指定格式的字符串
+	 *
+	 * @param lt        LocalDate 对象
+	 * @param formatter 日期格式化器
+	 * @return 转换后的日期字符串，转换失败返回 null
+	 */
 	public static String toString(java.time.LocalDate lt, java.time.format.DateTimeFormatter formatter) {
 		if (lt == null) {
 			return null;
@@ -336,145 +427,160 @@ public class DateUtils {
 	}
 
 	/**
-	 * 转换字符串型时间为Calendar
-	 * @param date date
-	 * @param template template
-	 * @return  失败返回null
+	 * 将字符串形式的时间转换为Calendar对象
+	 *
+	 * @param date     字符串形式的日期
+	 * @param template 日期格式模板
+	 * @return 转换成功返回Calendar对象，失败返回null
 	 */
-	public static Calendar toCalendar(String date,String template) {
+	public static Calendar toCalendar(String date, String template) {
 		DateTimeFormatter formatter = DateTimeFormat.forPattern(template);
 		return toCalendar(date, formatter);
 	}
+
 	/**
-	 * 转换为Date
-	 * @param date 日期
-	 * @param template 格式
-	 * @return Date
+	 * 将字符串形式的时间转换为Date对象
+	 *
+	 * @param date     字符串形式的日期
+	 * @param template 日期格式模板
+	 * @return 转换成功返回Date对象，失败返回null
 	 */
-	public static java.util.Date toDate(String date,String template) {
-		if(StringUtils.isBlank(date)) {
+	public static java.util.Date toDate(String date, String template) {
+		if (StringUtils.isBlank(date)) {
 			return null;
 		}
 		DateTime dt = toDateTime(date, template);
-		if(dt!=null){
+		if (dt != null) {
 			return dt.toDate();
 		}
 		return null;
 	}
+
 	/**
-	 * 转换为TimeStamp
-	 * @param date 日期
-	 * @param template 格式
-	 * @return Timestamp
+	 * 将字符串形式的时间转换为TimeStamp对象
+	 *
+	 * @param date     字符串形式的日期
+	 * @param template 日期格式模板
+	 * @return 转换成功返回Timestamp对象，失败返回null
 	 */
 	public static Timestamp toTimeStamp(String date, String template) {
-		if(StringUtils.isBlank(date)) {
+		if (StringUtils.isBlank(date)) {
 			return null;
 		}
 		DateTime dt = toDateTime(date, template);
-		if(dt!=null){
+		if (dt != null) {
 			return new Timestamp(dt.getMillis());
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 转换日期的显示格式
-	 * @param date	日期
-	 * @param templateSrc	源格式
-	 * @param templateDest	目标格式
-	 * @return 时间(字符串)
+	 *
+	 * @param date         字符串形式的日期
+	 * @param templateSrc  源日期格式模板
+	 * @param templateDest 目标日期格式模板
+	 * @return 转换后的日期字符串
 	 */
 	public String format(String date, String templateSrc, String templateDest) {
 		return toDateTime(date, templateSrc).toString(templateDest);
 	}
 	
 	/*==============遍历==============*/
-	
+
 	/**
-	 * 获取一年内的所有月份列表
-	 * @param year year
+	 * 获取指定年份内的所有月份列表
+	 *
+	 * @param year      指定年份
 	 * @param formatter 日期格式化配置
 	 * @return 月份列表
 	 */
-	public static List<String> getMonthListOfYear(int year, DateTimeFormatter formatter){
+	public static List<String> getMonthListOfYear(int year, DateTimeFormatter formatter) {
 		LocalDate now = new LocalDate();
 		LocalDate ld = now.year().setCopy(year).monthOfYear().setCopy(1);
 
 		List<String> list = new ArrayList<>();
-		while(ld.getYear() == year){
+		while (ld.getYear() == year) {
 			list.add(ld.toString(formatter));
 			ld = ld.plusMonths(1);
 		}
 
 		return list;
 	}
-	//重载
-	public static List<String> getMonthListOfYear(int year){
+
+	/**
+	 * 获取指定年份内的所有月份列表（默认格式）
+	 *
+	 * @param year 指定年份
+	 * @return 月份列表
+	 */
+	public static List<String> getMonthListOfYear(int year) {
 		return getMonthListOfYear(year, FORMATTER_MONTH);
 	}
 
 	/**
-	 * 遍历起止时间间固定间隔的时间(通用)
-	 * @param startDate startDate
-	 * @param endDate endDate
-	 * @param template template
-	 * @param unit 时间单位/遍历的步长,如TimeUnit.SECONDS表示每次增加一秒
-	 * @param viewer 可以为null
+	 * 遍历起止时间间固定间隔的时间（通用）
+	 *
+	 * @param startDate 开始日期
+	 * @param endDate   结束日期
+	 * @param template  日期格式模板
+	 * @param unit      时间单位/遍历的步长，如TimeUnit.SECONDS表示每次增加一秒
+	 * @param viewer    用于查看遍历过程中的日期，可以为null
 	 */
-	public static void ergodiceDateList(String startDate,String endDate,String template,TimeUnit unit,Viewer<DateTime> viewer) {
+	public static void ergodiceDateList(String startDate, String endDate, String template, TimeUnit unit, Viewer<DateTime> viewer) {
 		DateTime start = toDateTime(startDate, template);
 		DateTime end = toDateTime(endDate, template);
-		Assert.notNull(start, "开始时间参数转换失败:"+startDate);
-		Assert.notNull(end, "结束时间参数转换失败:"+endDate);
-		
-		while(!start.isAfter(end)){
-			if(viewer != null) {
-				viewer.doView(new DateTime(start));	//查看副本以防影响遍历结果
+		Assert.notNull(start, "开始时间参数转换失败:" + startDate);
+		Assert.notNull(end, "结束时间参数转换失败:" + endDate);
+
+		while (!start.isAfter(end)) {
+			if (viewer != null) {
+				viewer.doView(new DateTime(start)); // 查看副本以防影响遍历结果
 			}
-			
+
 			start = plusToCopy(start, unit, 1);
 		}
-		
 	}
-	
+
 	/**
-	 * 获取起止时间间固定间隔的时间列表(通用)
-	 * @param startDate startDate
-	 * @param endDate endDate
-	 * @param templateSrc templateSrc
-	 * @param templateDest templateDest
-	 * @param unit 时间单位/遍历的步长,如TimeUnit.SECONDS表示每次增加一秒
-	 * @param filter 返回true则写入列表,为null则都写入列表
+	 * 获取起止时间间固定间隔的时间列表（通用）
+	 *
+	 * @param startDate    开始日期
+	 * @param endDate      结束日期
+	 * @param templateSrc  源日期格式模板
+	 * @param templateDest 目标日期格式模板
+	 * @param unit         时间单位/遍历的步长，如TimeUnit.SECONDS表示每次增加一秒
+	 * @param filter       过滤条件，返回true则写入列表，为null则都写入列表
 	 * @return 时间列表
 	 */
-	public static List<String> getList(String startDate,String endDate,String templateSrc,String templateDest,TimeUnit unit, Filter<DateTime> filter) {
+	public static List<String> getList(String startDate, String endDate, String templateSrc, String templateDest, TimeUnit unit, Filter<DateTime> filter) {
 		List<String> list = new ArrayList<>();
 		DateTime start = toDateTime(startDate, templateSrc);
 		DateTime end = toDateTime(endDate, templateSrc);
-		Assert.notNull(start, "开始时间参数转换失败:"+startDate);
-		Assert.notNull(end, "结束时间参数转换失败:"+endDate);
-		while(!start.isAfter(end)){
-				
-			if(filter == null || filter.doFilter(new DateTime(start))) {		//过滤 || 建立副本以防影响遍历结果
+		Assert.notNull(start, "开始时间参数转换失败:" + startDate);
+		Assert.notNull(end, "结束时间参数转换失败:" + endDate);
+		while (!start.isAfter(end)) {
+
+			if (filter == null || filter.doFilter(new DateTime(start))) { // 过滤 || 建立副本以防影响遍历结果
 				String item = start.toString(templateDest);
 				list.add(item);
 			}
-			
+
 			start = plusToCopy(start, unit, 1);
 		}
-		
+
 		return list;
 	}
-	
+
 	/**
 	 * 获取起止时间间固定间隔的时间列表(通用)
-	 * @param startDate startDate
-	 * @param endDate endDate
-	 * @param formatterSrc 源日期格式配置
+	 *
+	 * @param startDate     开始日期
+	 * @param endDate       结束日期
+	 * @param formatterSrc  源日期格式配置
 	 * @param formatterDest 目标日期格式配置
-	 * @param unit 时间单位/遍历的步长,如TimeUnit.SECONDS表示每次增加一秒
-	 * @param editor 返回null则表示不写入列表
+	 * @param unit          时间单位/遍历的步长,如TimeUnit.SECONDS表示每次增加一秒
+	 * @param editor        返回null则表示不写入列表
 	 * @return 时间列表
 	 */
 	public static List<String> getList(String startDate,String endDate,DateTimeFormatter formatterSrc,DateTimeFormatter formatterDest,TimeUnit unit, Editor<DateTime> editor) {
@@ -495,29 +601,39 @@ public class DateUtils {
 		
 		return list;
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用字符串模板作为日期格式
+	 */
 	public static List<String> getList(String startDate,String endDate,String templateSrc,String templateDest,TimeUnit unit, Editor<DateTime> editor) {
 		DateTimeFormatter formatterSrc = DateTimeFormat.forPattern(templateSrc);
 		DateTimeFormatter formatterDest = DateTimeFormat.forPattern(templateDest);
 		return getList(startDate, endDate, formatterSrc, formatterDest, unit, editor);
 	}
-	//重载
+
+	/**
+	 * 重载方法，不需要传入Editor参数
+	 */
 	public static List<String> getList(String startDate,String endDate,String templateSrc,String templateDest,TimeUnit unit) {
 		return getList(startDate, endDate, templateSrc, templateDest, unit, (Filter<DateTime>)null);
 	}
-	//重载
+
+	/**
+	 * 重载方法，不需要传入Editor参数
+	 */
 	public static List<String> getList(String startDate,String endDate,DateTimeFormatter formatterSrc,DateTimeFormatter formatterDest,TimeUnit unit) {
 		return getList(startDate, endDate, formatterSrc, formatterDest, unit, null);
 	}
-	
+
 	/**
-	 * 获取起止时间间固定间隔的时间列表(通用)
-	 * @param startDate startDate
-	 * @param endDate endDate
-	 * @param templateSrc templateSrc
-	 * @param unit 时间单位/遍历的步长,如TimeUnit.SECONDS表示每次增加一秒
-	 * @param editor 返回null则表示不写入列表
-	 * @return 列表项为editor1的返回值,null不加入列表
+	 * 获取起止时间间固定间隔的时间列表(通用)，返回值类型为泛型T
+	 *
+	 * @param startDate   开始日期
+	 * @param endDate     结束日期
+	 * @param templateSrc 源日期格式
+	 * @param unit        时间单位/遍历的步长,如TimeUnit.SECONDS表示每次增加一秒
+	 * @param editor      返回null则表示不写入列表
+	 * @return 列表项为editor1的返回值, null不加入列表
 	 */
 	public static <T>List<T> getList(String startDate,String endDate,String templateSrc,TimeUnit unit, Editor1<DateTime,T> editor) {
 		List<T> list = new ArrayList<>();
@@ -537,42 +653,56 @@ public class DateUtils {
 		}
 		return list;
 	}
-	
+
 
 	/**
 	 * 获取两个时间间隔(天)内的所有日期
-	 * @param startDate		开始日期
-	 * @param endDate		结束日期
-	 * @param templateSrc	源日期格式("yyyy-MM-dd")
-	 * @param templateDest	目标日期格式("yyyy-MM-dd")
+	 *
+	 * @param startDate    开始日期
+	 * @param endDate      结束日期
+	 * @param templateSrc  源日期格式("yyyy-MM-dd")
+	 * @param templateDest 目标日期格式("yyyy-MM-dd")
 	 * @return 日期列表
 	 */
 	public static List<String> getDateList(String startDate,String endDate,String templateSrc, String templateDest){
 		return getList(startDate, endDate, templateSrc, templateDest, TimeUnit.DAY);
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用DateTimeFormatter作为日期格式
+	 */
 	public static List<String> getDateList(String startDate,String endDate, DateTimeFormatter formatterSrc, DateTimeFormatter formatterDest){
 		return getList(startDate, endDate, formatterSrc, formatterDest, TimeUnit.DAY);
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用单一模板作为源和目标日期格式
+	 */
 	public static List<String> getDateList(String startDate,String endDate,String template){
 		DateTimeFormatter formatter = DateTimeFormat.forPattern(template);
 		return getDateList(startDate, endDate, formatter, FORMATTER_DATE);
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用DateTimeFormatter作为源和目标日期格式
+	 */
 	public static List<String> getDateList(String startDate,String endDate, DateTimeFormatter formatter){
 		return getDateList(startDate, endDate, formatter, FORMATTER_DATE);
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用默认日期格式
+	 */
 	public static List<String> getDateList(String startDate,String endDate){
 		return getDateList(startDate, endDate, FORMATTER_DATE);
 	}
-	
+
 	/**
 	 * 获取两个时间间隔(天)内的所有日期(排除周末)
-	 * @param startDate startDate
-	 * @param endDate endDate
-	 * @param formatterSrc 源日期格式配置
+	 *
+	 * @param startDate     开始日期
+	 * @param endDate       结束日期
+	 * @param formatterSrc  源日期格式配置
 	 * @param formatterDest 目标日期格式配置
 	 * @return 日期列表
 	 */
@@ -595,31 +725,44 @@ public class DateUtils {
 
 		return list;
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用字符串模板作为日期格式
+	 */
 	public static List<String> getDateListWithoutWeekend(String startDate, String endDate, String templateSrc, String templateDest){
 		DateTimeFormatter formatterSrc = DateTimeFormat.forPattern(templateSrc);
 		DateTimeFormatter formatterDest = DateTimeFormat.forPattern(templateDest);
 		return getDateListWithoutWeekend(startDate, endDate, formatterSrc, formatterDest);
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用单一模板作为源和目标日期格式
+	 */
 	public static List<String> getDateListWithoutWeekend(String startDate, String endDate, String template){
 		DateTimeFormatter formatter = DateTimeFormat.forPattern(template);
 		return getDateListWithoutWeekend(startDate, endDate, formatter);
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用DateTimeFormatter作为源和目标日期格式
+	 */
 	public static List<String> getDateListWithoutWeekend(String startDate, String endDate, DateTimeFormatter formatter){
 		return getDateListWithoutWeekend(startDate, endDate, formatter, FORMATTER_DATE);
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用默认日期格式
+	 */
 	public static List<String> getDateListWithoutWeekend(String startDate, String endDate){
 		return getDateListWithoutWeekend(startDate, endDate, FORMATTER_DATE);
 	}
 
 	/**
 	 * 获取两个时间间隔(天)内的周末日期
-	 * @param startDate startDate
-	 * @param endDate endDate
-	 * @param formatterSrc 源日期格式配置
+	 *
+	 * @param startDate     开始日期
+	 * @param endDate       结束日期
+	 * @param formatterSrc  源日期格式配置
 	 * @param formatterDest 目标日期格式配置
 	 * @return 日期列表
 	 */
@@ -640,32 +783,45 @@ public class DateUtils {
 		}
 		return list;
 	}
-	// 重载
+
+	/**
+	 * 重载方法，使用字符串模板作为日期格式
+	 */
 	public static List<String> getWeekendDateList(String startDate, String endDate, String templateSrc, String templateDest){
 		DateTimeFormatter formatterSrc = DateTimeFormat.forPattern(templateSrc);
 		DateTimeFormatter formatterDest = DateTimeFormat.forPattern(templateDest);
 		return getWeekendDateList(startDate, endDate, formatterSrc, formatterDest);
 	}
-	// 重载
+
+	/**
+	 * 重载方法，使用单一模板作为源和目标日期格式
+	 */
 	public static List<String> getWeekendDateList(String startDate, String endDate, String template){
 		DateTimeFormatter formatter = DateTimeFormat.forPattern(template);
 		return getWeekendDateList(startDate, endDate, formatter);
 	}
-	// 重载
+
+	/**
+	 * 重载方法，使用DateTimeFormatter作为源和目标日期格式
+	 */
 	public static List<String> getWeekendDateList(String startDate, String endDate, DateTimeFormatter formatter){
 		return getWeekendDateList(startDate, endDate, formatter, FORMATTER_DATE);
 	}
-	// 重载
+
+	/**
+	 * 重载方法，使用默认日期格式
+	 */
 	public static List<String> getWeekendDateList(String startDate, String endDate){
 		return getWeekendDateList(startDate, endDate, FORMATTER_DATE);
 	}
-	
-	
+
+
 	/**
 	 * 获取两个时间间隔内的所有月份（包含首尾时间）
-	 * @param startDate 开始日期
-	 * @param endDate	结束日期
-	 * @param formatterSrc 源日期格式配置
+	 *
+	 * @param startDate     开始日期
+	 * @param endDate       结束日期
+	 * @param formatterSrc  源日期格式配置
 	 * @param formatterDest 目标日期格式配置
 	 * @return 月份列表
 	 */
@@ -683,21 +839,34 @@ public class DateUtils {
 		}
 		return list;
 	}
-	// 重载
+
+	/**
+	 * 重载方法，使用字符串模板作为日期格式
+	 */
 	public static List<String> getMonthList(String startDate,String endDate,String templateSrc, String templateDest){
 		DateTimeFormatter formatterSrc = DateTimeFormat.forPattern(templateSrc);
 		DateTimeFormatter formatterDest = DateTimeFormat.forPattern(templateDest);
 		return getMonthList(startDate,endDate,formatterSrc,formatterDest);
 	}
-	// 重载
+
+	/**
+	 * 重载方法，使用单一模板作为源和目标日期格式
+	 */
 	public static List<String> getMonthList(String startDate,String endDate,String template){
 		DateTimeFormatter formatter = DateTimeFormat.forPattern(template);
 		return getMonthList(startDate, endDate, formatter);
 	}
+
+	/**
+	 * 重载方法，使用DateTimeFormatter作为源和目标日期格式
+	 */
 	public static List<String> getMonthList(String startDate,String endDate,DateTimeFormatter formatter){
 		return getMonthList(startDate, endDate, formatter, FORMATTER_MONTH);
 	}
-	// 重载,默认传进来的时间格式为DEFAULT_TEMPLATE(天)
+
+	/**
+	 * 重载方法，使用默认日期格式
+	 */
 	public static List<String> getMonthList(String startDate,String endDate){
 		return getMonthList(startDate, endDate, FORMATTER_MONTH);
 	}
@@ -730,11 +899,12 @@ public class DateUtils {
 	public static String getToday(){
 		return getNow(FORMATTER_DATE);
 	}
-	
-	
+
+
 	/**
 	 * 获取某天的开始时间00:00:00
-	 * @param date date
+	 *
+	 * @param date      日期
 	 * @param formatter 日期格式配置
 	 * @return 时间
 	 */
@@ -742,18 +912,26 @@ public class DateUtils {
 		return getMinimumToCopy(toDateTime(date, formatter), TimeUnit.DAY)
 				.toString(FORMATTER_TIME);
 	}
+
+	/**
+	 * 重载方法，使用字符串模板作为日期格式
+	 */
 	public static String getBeginOfDay(String date,String template) {
 		DateTimeFormatter formatter = DateTimeFormat.forPattern(template);
 		return getBeginOfDay(date, formatter);
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用默认日期格式
+	 */
 	public static String getBeginOfDay(String date) {
 		return getBeginOfDay(date, FORMATTER_DATE);
 	}
-	
+
 	/**
 	 * 获取某天的结束时间23:59:59
-	 * @param date date
+	 *
+	 * @param date      日期
 	 * @param formatter 日期格式配置
 	 * @return 时间
 	 */
@@ -761,33 +939,52 @@ public class DateUtils {
 		return getMaximumToCopy(toDateTime(date, formatter), TimeUnit.DAY)
 				.toString(FORMATTER_TIME);
 	}
+
+	/**
+	 * 重载方法，使用字符串模板作为日期格式
+	 */
 	public static String getEndOfDay(String date,String template) {
 		DateTimeFormatter formatter = DateTimeFormat.forPattern(template);
 		return getEndOfDay(date, formatter);
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用默认日期格式
+	 */
 	public static String getEndOfDay(String date) {
 		return getEndOfDay(date, FORMATTER_DATE);
 	}
-	
+
 	/**
-	 * @param ld ld
+	 * 判断给定的LocalDate是否为周末
+	 *
+	 * @param ld LocalDate对象
 	 * @return 日期是否为周末
 	 */
 	public static boolean isWeekend(LocalDate ld) {
+		Assert.notNull(ld, "日期不能为空");
 		return ld.getDayOfWeek() == 6||ld.getDayOfWeek() == 7;
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用DateTimeFormatter作为日期格式
+	 */
 	public static boolean isWeekend(String date, DateTimeFormatter formatter) {
 		LocalDate ld = toLocalDate(date,formatter);
 		return isWeekend(ld);
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用字符串模板作为日期格式
+	 */
 	public static boolean isWeekend(String date, String template) {
 		LocalDate ld = toLocalDate(date,template);
 		return isWeekend(ld);
 	}
-	//重载
+
+	/**
+	 * 重载方法，使用默认日期格式
+	 */
 	public static boolean isWeekend(String date) {
 		return isWeekend(date, FORMATTER_DATE);
 	}
@@ -842,8 +1039,9 @@ public class DateUtils {
 	
 	/**====================================日期比较===================================**/
 	/**
-	 * yyyy-MM-dd格式的日期是否小于目标日期
-	 * @param target 日期
+	 * 判断给定的日期是否小于目标日期
+	 *
+	 * @param target  日期
 	 * @param compare 目标日期
 	 * @return 日期是否小于目标日期
 	 */
@@ -856,10 +1054,11 @@ public class DateUtils {
 		
 		return ldTarget.isBefore(ldCompare);
 	}
-	
+
 	/**
-	 * yyyy-MM-dd格式的日期是否大于目标日期
-	 * @param target 日期
+	 * 判断给定的日期是否大于目标日期
+	 *
+	 * @param target  日期
 	 * @param compare 目标日期
 	 * @return 日期是否大于目标日期
 	 */
@@ -872,12 +1071,14 @@ public class DateUtils {
 		
 		return ldTarget.isAfter(ldCompare);
 	}
-	
+
 	/**
-	 * @param target target
-	 * @param compare compare
-	 * @param template template
-	 * @return target 时间是否在 compare 时间之前
+	 * 判断给定的时间是否在目标时间之前
+	 *
+	 * @param target   时间
+	 * @param compare  目标时间
+	 * @param template 时间格式模板
+	 * @return 时间是否在目标时间之前
 	 */
 	public static boolean isBefore(String target, String compare, String template) {
 		DateTime dt1 = toDateTime(target, template);
@@ -888,12 +1089,14 @@ public class DateUtils {
 		
 		return isBefore(dt1, dt2);
 	}
-	
+
 	/**
-	 * @param target target
-	 * @param compare compare
-	 * @param template template
-	 * @return target 时间是否不在 compare 时间之前(大等于)
+	 * 判断给定的时间是否不在目标时间之前(大等于)
+	 *
+	 * @param target   时间
+	 * @param compare  目标时间
+	 * @param template 时间格式模板
+	 * @return 时间是否不在目标时间之前(大等于)
 	 */
 	public static boolean isNotBefore(String target, String compare, String template) {
 		DateTime dt1 = toDateTime(target, template);
@@ -904,12 +1107,14 @@ public class DateUtils {
 		
 		return isNotBefore(dt1, dt2);
 	}
-	
+
 	/**
-	 * @param target target
-	 * @param compare compare
-	 * @param template template
-	 * @return target 时间是否不在 compare 时间之后(小等于)
+	 * 判断给定的时间是否不在目标时间之后(小等于)
+	 *
+	 * @param target   时间
+	 * @param compare  目标时间
+	 * @param template 时间格式模板
+	 * @return 时间是否不在目标时间之后(小等于)
 	 */
 	public static boolean isNotAfter(String target, String compare, String template) {
 		DateTime dt1 = toDateTime(target, template);
@@ -920,12 +1125,14 @@ public class DateUtils {
 		
 		return isNotAfter(dt1, dt2);
 	}
-	
+
 	/**
-	 * @param target target
-	 * @param compare compare
-	 * @param template template
-	 * @return target 时间是否在 compare 时间之后
+	 * 判断给定的时间是否在目标时间之后
+	 *
+	 * @param target   时间
+	 * @param compare  目标时间
+	 * @param template 时间格式模板
+	 * @return 时间是否在目标时间之后
 	 */
 	public static boolean isAfter(String target, String compare, String template) {
 		DateTime dt1 = toDateTime(target, template);
@@ -936,11 +1143,13 @@ public class DateUtils {
 		
 		return isAfter(dt1, dt2);
 	}
-	
+
 	/**
-	 * @param target target
-	 * @param compare compare
-	 * @return target 时间是否在 compare 时间之前
+	 * 判断给定的DateTime是否在目标DateTime之前
+	 *
+	 * @param target  DateTime对象
+	 * @param compare 目标DateTime对象
+	 * @return 时间是否在目标时间之前
 	 */
 	public static boolean isBefore(DateTime target,DateTime compare) {
 		Assert.notNull(target, "原始时间参数不能为空");
@@ -951,11 +1160,13 @@ public class DateUtils {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * @param target target
-	 * @param compare compare
-	 * @return target 时间是否在 compare 时间之后
+	 * 判断给定的DateTime是否在目标DateTime之后
+	 *
+	 * @param target  DateTime对象
+	 * @param compare 目标DateTime对象
+	 * @return 时间是否在目标时间之后
 	 */
 	public static boolean isAfter(DateTime target,DateTime compare) {
 		Assert.notNull(target, "原始时间参数不能为空");
@@ -966,11 +1177,13 @@ public class DateUtils {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * @param target target
-	 * @param compare compare
-	 * @return target 时间是否不在 compare 时间之前(大等于)
+	 * 判断给定的DateTime是否不在目标DateTime之前(大等于)
+	 *
+	 * @param target  DateTime对象
+	 * @param compare 目标DateTime对象
+	 * @return 时间是否不在目标时间之前(大等于)
 	 */
 	public static boolean isNotBefore(DateTime target,DateTime compare) {
 		Assert.notNull(target, "原始时间参数不能为空");
@@ -981,11 +1194,13 @@ public class DateUtils {
 		}
 		return true;
 	}
-	
+
 	/**
-	 * @param target target
-	 * @param compare compare
-	 * @return target 时间是否不在 compare 时间之后(小等于)
+	 * 判断给定的DateTime是否不在目标DateTime之后(小等于)
+	 *
+	 * @param target  DateTime对象
+	 * @param compare 目标DateTime对象
+	 * @return 时间是否不在目标时间之后(小等于)
 	 */
 	public static boolean isNotAfter(DateTime target,DateTime compare) {
 		Assert.notNull(target, "原始时间参数不能为空");
@@ -1065,7 +1280,7 @@ public class DateUtils {
 	 * 获取两个时间差(通用)
 	 * 注意00:15和01:00之间的分钟差 相当于00:00和01:00之间的分钟差,所以结果是1分钟,相差的时间为1分钟
 	 * @param startTime	开始时间
-	 * @param startTime		结束时间
+	 * @param endTime		结束时间
 	 * @param template		时间格式("yyyy-MM-dd")
 	 * @param unit 时间单位/遍历的步长,如TimeUnit.SECONDS表示计算另个时间差多少秒
 	 * @return 时间差
@@ -1396,6 +1611,17 @@ public class DateUtils {
 			return date+" 23:59:59";
 		}
 	}
+
+	/**
+	 * 计算两个LocalDate之间的月份差
+	 *
+	 * @param startDate 起始日期
+	 * @param endDate   结束日期
+	 * @return 月份差
+	 */
+	public static int betweenMonth(LocalDate startDate, LocalDate endDate) {
+		return Months.monthsBetween(startDate, endDate).getMonths();
+	}
 	
 	/**====================================辅助类===================================**/
 	
@@ -1414,10 +1640,6 @@ public class DateUtils {
 	
 	public interface Editor1<T, V> {
 		V doEdit(T item);		
-	}
-	
-	public static int betweenMonth(LocalDate startDate,LocalDate endDate) {
-		return Months.monthsBetween(startDate, endDate).getMonths();
 	}
 	
 	public static void main(String[] args) {
