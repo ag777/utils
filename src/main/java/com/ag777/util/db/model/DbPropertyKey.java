@@ -1,8 +1,8 @@
 package com.ag777.util.db.model;
 
-public class DbPropertieKey {
+public class DbPropertyKey {
 
-	private DbPropertieKey() {}
+	private DbPropertyKey() {}
 	
 	/**
 	 * 用户名

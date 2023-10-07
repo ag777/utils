@@ -115,13 +115,13 @@ public class DbHelper implements Disposable, Closeable {
 		if(props == null) {
 			props = new Properties();
 		}
-		props.put(DbPropertieKey.COMMON_USER, user);	//账号
-		props.put(DbPropertieKey.COMMON_PASSWORD, password);		//密码
-		if(!props.containsKey(DbPropertieKey.COMMON_USEUNICODE)) {	//使用本地编码,value得是字符串类型,不然回报空指针异常
-			props.put(DbPropertieKey.COMMON_USEUNICODE, "true");
+		props.put(DbPropertyKey.COMMON_USER, user);	//账号
+		props.put(DbPropertyKey.COMMON_PASSWORD, password);		//密码
+		if(!props.containsKey(DbPropertyKey.COMMON_USEUNICODE)) {	//使用本地编码,value得是字符串类型,不然回报空指针异常
+			props.put(DbPropertyKey.COMMON_USEUNICODE, "true");
 		}
-		if(!props.containsKey(DbPropertieKey.COMMON_ENCODING)) {	//编码
-			props.put(DbPropertieKey.COMMON_ENCODING, "utf-8");
+		if(!props.containsKey(DbPropertyKey.COMMON_ENCODING)) {	//编码
+			props.put(DbPropertyKey.COMMON_ENCODING, "utf-8");
 		}
 		if(!props.containsKey("zeroDateTimeBehavior")) {
 			props.put("zeroDateTimeBehavior", "convertToNull");	//CONVERT_TO_NULL
