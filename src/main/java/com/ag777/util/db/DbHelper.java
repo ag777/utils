@@ -7,6 +7,7 @@ import com.ag777.util.db.connection.SqliteConnection;
 import com.ag777.util.db.interf.ColConverter;
 import com.ag777.util.db.interf.DBTransactionInterf;
 import com.ag777.util.db.model.*;
+import com.ag777.util.lang.ObjectUtils;
 import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.interf.Disposable;
 import com.ag777.util.lang.reflection.ReflectionUtils;
@@ -18,13 +19,14 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.*;
 import java.util.*;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 /**
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2022年12月09日
+ * @version create on 2017年07月28日,last modify at 2023年10月26日
  */
 public class DbHelper implements Disposable, Closeable {
 	
@@ -735,7 +737,7 @@ public class DbHelper implements Disposable, Closeable {
 		}
     	return pstmt;
 	}
-	
+
 	/**
 	 * 将resultset转化为List&lt;Map&lt;String, Object&gt;&gt;
 	 * <p>
@@ -792,6 +794,15 @@ public class DbHelper implements Disposable, Closeable {
 					Field[] fields = clazz.getDeclaredFields();
 					for (Field field : fields) {
 						if(field.getName().equalsIgnoreCase(cols[i-1])) {
+							// 类型转换
+							if (field.getType() == Boolean.class) {
+								value = ObjectUtils.toBoolean(value);
+							} else if (field.getType() == boolean.class) {
+								value = ObjectUtils.toBoolean(value);
+							} else if (field.getType() == Date.class) {
+								value = ObjectUtils.toDate(value);
+							}
+							// 设置字段
 							boolean flag = field.isAccessible();
 							field.setAccessible(true);
 							field.set(rowData, value);
