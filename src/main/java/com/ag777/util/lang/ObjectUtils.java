@@ -18,7 +18,7 @@ import java.util.Map;
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2023年09月23日
+ * @version create on 2017年09月22日,last modify at 2023年10月26日
  */
 public class ObjectUtils {
 
@@ -26,7 +26,7 @@ public class ObjectUtils {
 	 * 实例化class对象,支持内部类
 	 * @see ReflectionUtils#newInstace(Class)
 	 */
-	public static <T>T newInstace(Class<T> clazz) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
+	public static <T>T newInstance(Class<T> clazz) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
 		return ReflectionUtils.newInstace(clazz);
 	}
 	
@@ -211,7 +211,12 @@ public class ObjectUtils {
 		Long result = toLong(obj);
 		return getOrDefault(result, defaultValue);
 	}
-	
+
+	/**
+	 *
+	 * @param obj obj
+	 * @return Boolean
+	 */
 	public static Boolean toBoolean(Object obj) {
 		if(obj != null) {
 			if(obj instanceof Boolean) {
@@ -222,12 +227,23 @@ public class ObjectUtils {
 		}
 		return null;
 	}
-	
+
+	/**
+	 *
+	 * @param obj obj
+	 * @param defaultValue 默认值
+	 * @return boolean
+	 */
 	public static boolean toBoolean(Object obj, boolean defaultValue) {
 		Boolean result = toBoolean(obj);
 		return getOrDefault(result, defaultValue);
 	}
-	
+
+	/**
+	 *
+	 * @param obj obj
+	 * @return Date
+	 */
 	public static Date toDate(Object obj) {
 		if(obj != null) {
 			if(obj instanceof Date) {
@@ -236,13 +252,25 @@ public class ObjectUtils {
 				return Date.from(((java.time.LocalDateTime) obj).atZone(ZoneId.systemDefault()).toInstant());
 			} else if (obj instanceof java.time.LocalDate) {
 				return Date.from(((java.time.LocalDate) obj).atStartOfDay(ZoneId.systemDefault()).toInstant());
+			} else if (obj instanceof Long){
+				// 时间戳
+				return new Date((long) obj);
+			} else if(obj instanceof Integer) {
+				// 去掉毫秒级的时间戳
+				return new Date((int) obj * 1000);
 			} else {
 				return StringUtils.toDate(obj.toString());
 			}
 		}
 		return null;
 	}
-	
+
+	/**
+	 *
+	 * @param obj obj
+	 * @param defaultValue 默认值
+	 * @return Date
+	 */
 	public static Date toDate(Object obj, Date defaultValue) {
 		Date result = toDate(obj);
 		return getOrDefault(result, defaultValue);
