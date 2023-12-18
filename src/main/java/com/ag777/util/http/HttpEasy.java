@@ -18,7 +18,7 @@ import java.util.Optional;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2023年05月11日
+ * @version create on 2018年03月30日,last modify at 2023年12月18日
  */
 public class HttpEasy {
 	
@@ -80,6 +80,24 @@ public class HttpEasy {
 		Call call = HttpUtils.postJsonByClient(null, url, json, paramMap, headerMap, null);
 		return callForStrForce(call);
 	}
+
+	/**
+	 * post请求向服务端发送字符串
+	 * <p>
+	 * 	不论接口返回是否是200都去获取返回字符串
+	 * </p>
+	 *
+	 * @param url url
+	 * @param text 文本
+	 * @param paramMap 放在请求头里的参数
+	 * @param headerMap 请求头
+	 * @return 字符串
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K, V>Optional<String> postText(String url, String text, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.postTextByClient(null, url, text, paramMap, headerMap, null);
+		return callForStrForce(call);
+	}
 	
 	/**
 	 * 发送post请求
@@ -114,6 +132,24 @@ public class HttpEasy {
 	 */
 	public static <K, V>Optional<Map<String, Object>> postJsonForMap(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.postJsonByClient(null, url, json, paramMap, headerMap, null);
+		return callForMapForce(call);
+	}
+
+	/**
+	 * post请求向服务端发送字符串并将返回字符串转化为map
+	 * <p>
+	 * 	不论接口返回是否是200都去获取返回字符串
+	 * </p>
+	 *
+	 * @param url url
+	 * @param text 字符串
+	 * @param paramMap 放在请求头里的参数
+	 * @param headerMap 请求头
+	 * @return map对象
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K, V>Optional<Map<String, Object>> postTextForMap(String url, String text, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.postTextByClient(null, url, text, paramMap, headerMap, null);
 		return callForMapForce(call);
 	}
 	
@@ -182,6 +218,24 @@ public class HttpEasy {
 	}
 
 	/**
+	 * put请求向服务端发送字符串
+	 * <p>
+	 * 	不论接口返回是否是200都去获取返回字符串
+	 * </p>
+	 *
+	 * @param url url
+	 * @param text 字符串
+	 * @param paramMap 放在请求头里的参数
+	 * @param headerMap 请求头
+	 * @return 字符串
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K, V>Optional<String> putText(String url, String text, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.putTextByClient(null, url, text, paramMap, headerMap, null);
+		return callForStrForce(call);
+	}
+
+	/**
 	 * put请求向服务端发送json串
 	 * <p>
 	 * 	不论接口返回是否是200都去获取返回字符串
@@ -196,6 +250,24 @@ public class HttpEasy {
 	 */
 	public static <K, V> Optional<Map<String, Object>> putJsonForMap(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.putJsonByClient(null, url, json, paramMap, headerMap, null);
+		return callForMapForce(call);
+	}
+
+	/**
+	 * put请求向服务端发送字符串
+	 * <p>
+	 * 	不论接口返回是否是200都去获取返回字符串
+	 * </p>
+	 *
+	 * @param url url
+	 * @param text 字符串
+	 * @param paramMap 放在请求头里的参数
+	 * @param headerMap 请求头
+	 * @return map
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K, V> Optional<Map<String, Object>> putTextForMap(String url, String text, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.putTextByClient(null, url, text, paramMap, headerMap, null);
 		return callForMapForce(call);
 	}
 

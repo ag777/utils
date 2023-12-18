@@ -15,7 +15,7 @@ import java.util.Map;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2023年08月24日
+ * @version create on 2018年03月30日,last modify at 2023年12月18日
  */
 public class HttpHelper {
 	
@@ -130,6 +130,11 @@ public class HttpHelper {
 		Call call = HttpUtils.postJsonByClient(client, url, json, paramMap, headerMap, tag);
 		return new MyCall(call);
 	}
+
+	public <K,V> MyCall postText(String url, String text, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.postTextByClient(client, url, text, paramMap, headerMap, tag);
+		return new MyCall(call);
+	}
 	
 	public <K,V> MyCall post(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.postByClient(client, url, paramMap, headerMap, tag);
@@ -167,6 +172,11 @@ public class HttpHelper {
 
 	public <K,V> MyCall putJson(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.putJsonByClient(client, url, json, paramMap, headerMap, tag);
+		return new MyCall(call);
+	}
+
+	public <K,V> MyCall putText(String url, String text, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+		Call call = HttpUtils.putTextByClient(client, url, text, paramMap, headerMap, tag);
 		return new MyCall(call);
 	}
 

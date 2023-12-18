@@ -49,7 +49,7 @@ import java.util.concurrent.TimeUnit;
  * </ul>
  * 
  * @author ag777
- * @version last modify at 2023年08月24日
+ * @version last modify at 2023年12月18日
  */
 public class HttpUtils {
 	
@@ -59,6 +59,8 @@ public class HttpUtils {
 			= MediaType.parse("application/x-www-form-urlencoded; charset=utf-8");//"Content-Type: application/json; charset=utf-8");//
 	public static final MediaType JSON_CONTENT_TYPE
 			= MediaType.parse("application/json; charset=utf-8");
+	public static final MediaType TEXT_CONTENT_TYPE
+			= MediaType.parse("text/plain");
 	public static final MediaType OCTET_STREAM
 			= MediaType.parse("application/octet-stream");
 	private HttpUtils() {}
@@ -327,6 +329,23 @@ public class HttpUtils {
 		RequestBody requestBody = RequestBody.create(json, JSON_CONTENT_TYPE);
 		return postByClient(client, getGetUrl(url, paramMap), requestBody, getHeaders(headerMap), tag);
 	}
+
+	/**
+	 * 发送 POST 请求，发送文本数据
+	 *
+	 * @param client OkHttpClient
+	 * @param url 请求地址
+	 * @param text 文本数据
+	 * @param paramMap 放在url里的参数
+	 * @param headerMap headerMap
+	 * @param tag tag
+	 * @return Call
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K,V>Call postTextByClient(OkHttpClient client, String url, String text, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
+		RequestBody requestBody = RequestBody.create(text, TEXT_CONTENT_TYPE);
+		return postByClient(client, getGetUrl(url, paramMap), requestBody, getHeaders(headerMap), tag);
+	}
 	
 	/**
 	 * post请求
@@ -441,6 +460,24 @@ public class HttpUtils {
 		RequestBody requestBody = RequestBody.create(json, JSON_CONTENT_TYPE);
 		return putByClient(client, getGetUrl(url, paramMap), requestBody, getHeaders(headerMap), tag);
 	}
+
+	/**
+	 * put请求
+	 *
+	 * @param client OkHttpClient
+	 * @param url 请求地址
+	 * @param text 文本数据
+	 * @param paramMap 放在url里的参数
+	 * @param headerMap headerMap
+	 * @param tag tag
+	 * @return Call
+	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 */
+	public static <K,V>Call putTextByClient(OkHttpClient client, String url, String text, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
+		RequestBody requestBody = RequestBody.create(text, TEXT_CONTENT_TYPE);
+		return putByClient(client, getGetUrl(url, paramMap), requestBody, getHeaders(headerMap), tag);
+	}
+
 	/**
 	 * put请求
 	 * @param client client
