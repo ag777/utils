@@ -13,12 +13,16 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 /**
  * 有关 <code>Object</code> 工具类
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2023年10月26日
+ * @version create on 2017年09月22日,last modify at 2023年12月19日
  */
 public class ObjectUtils {
 
@@ -508,6 +512,41 @@ public class ObjectUtils {
 			i+=2;
 		}
 		return defaultValue;
+	}
+
+	/**
+	 * 在超时时间内等待达到预期状态，判定是否达到目标状态
+	 * @param judgement 判定是否达到条件
+	 * @param time 时间
+	 * @param timeUnit 时间单位
+	 * @throws InterruptedException 中断
+	 * @throws TimeoutException 超时
+	 */
+	public static void monitor(Supplier<Boolean> judgement, long time, TimeUnit timeUnit) throws InterruptedException, TimeoutException {
+		// 创建一个 CountDownLatch
+		CountDownLatch latch = new CountDownLatch(1);
+		// 创建一个线程来判断状态
+		Thread thread = new Thread(() -> {
+			try {
+				while (!judgement.get()) {
+					TimeUnit.MILLISECONDS.sleep(100);
+				}
+				// 状态达到目标状态，释放 CountDownLatch
+				latch.countDown();
+			} catch (InterruptedException ignored) {
+			}
+		});
+		// 启动线程
+		thread.start();
+		// 等待 CountDownLatch 计数到 0
+		try {
+			boolean b = latch.await(time, timeUnit);
+			if (!b) {
+				throw new TimeoutException();
+			}
+		} finally {
+			thread.interrupt();
+		}
 	}
 	
 }
