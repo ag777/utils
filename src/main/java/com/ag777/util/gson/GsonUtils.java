@@ -445,7 +445,7 @@ public class GsonUtils implements JsonUtilsInterf{
 				if (dbNum > Long.MAX_VALUE) {
 					return dbNum;
 				}
-				return (long)dbNum;
+				return Long.parseLong(temp);
 			case BOOLEAN:
 				return in.nextBoolean();
 
