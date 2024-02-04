@@ -281,6 +281,22 @@ public class GsonUtils implements JsonUtilsInterf {
 			return null;
 		}
 	}
+
+	public <K, V>Map<K, V> toMap(String json, Class<K> classOfK, Class<V> classOfV) {
+		try {
+			return toMapWithException(json, classOfK, classOfV);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public <K, V>Map<K, V> toMap(JsonElement json, Class<K> classOfK, Class<V> classOfV) {
+		try {
+			return toMapWithException(json, classOfK, classOfV);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 	
 	@Override
 	public Map<String, Object> toMapWithException(String json) throws JsonSyntaxException {
@@ -294,6 +310,22 @@ public class GsonUtils implements JsonUtilsInterf {
 	public Map<String, Object> toMapWithException(JsonElement json) throws JsonSyntaxException {
 		try {
 			return fromJsonWithException(json, new TypeFactory(Map.class, String.class, Object.class));
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
+	}
+
+	public <K, V>Map<K, V> toMapWithException(String json, Class<K> classOfK, Class<V> classOfV) throws JsonSyntaxException {
+		try {
+			return fromJsonWithException(json, new TypeFactory(Map.class, classOfK, classOfV));
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
+	}
+
+	public <K, V>Map<K, V> toMapWithException(JsonElement json, Class<K> classOfK, Class<V> classOfV) throws JsonSyntaxException {
+		try {
+			return fromJsonWithException(json, new TypeFactory(Map.class, classOfK, classOfV));
 		} catch(Exception ex) {
 			throw new JsonSyntaxException(ex);
 		}
