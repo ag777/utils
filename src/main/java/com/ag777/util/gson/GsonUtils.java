@@ -16,6 +16,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * gson统一管理类，全局保持一个gson对象
@@ -24,33 +25,33 @@ import java.util.Map;
  * <ul>
  * <li>gson-xxx.jar</li>
  * </ul>
- * GSON更新日志:https://github.com/google/gson/blob/master/CHANGELOG.md
- * 
+ * GSON更新日志:<a href="https://github.com/google/gson/blob/master/CHANGELOG.md">...</a>
+ *
  * @author ag777
- * @version create on 2017年05月27日,last modify at 2020年08月18日
+ * @version create on 2017年05月27日,last modify at 2024年02月04日
  */
-public class GsonUtils implements JsonUtilsInterf{
+public class GsonUtils implements JsonUtilsInterf {
 	
-	private static GsonUtils mInstance;
-	
-	private GsonBuilder builder;
-	private Gson gson;
+	private static volatile GsonUtils mInstance;
+
+    private final GsonBuilder builder;
+    private volatile Gson gson;
 	
 	private GsonUtils() {
 		builder = getDefaultBuilder();
 	}
 	
-	private GsonUtils(GsonBuilder builder) {
+	public GsonUtils(GsonBuilder builder) {
 		this.builder = builder;
 	}
 	
 	/*==================入口函数========================*/
 	/**
 	 * 获取一般情况下的gson
-	 * @return
+	 * @return GsonUtils
 	 */
 	public static GsonUtils get() {
-		if(mInstance == null) {
+		if (mInstance == null) {
 			synchronized(GsonUtils.class) {
 				if(mInstance == null) {
 					mInstance = new GsonUtils();
@@ -61,7 +62,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	}
 	/**
 	 * 获取默认的gson
-	 * @return
+	 * @return GsonUtils
 	 */
 	public static GsonUtils def() {
 		return new GsonUtils(new GsonBuilder());
@@ -76,6 +77,19 @@ public class GsonUtils implements JsonUtilsInterf{
 	}
 	
 	/*==================下面添加配置(可拓展)========================*/
+
+	/**
+	 * 修改默认的配置, 最好在程序刚加载的时候执行
+	 * @param builderModifier 默认的构造器修改方法
+	 */
+	public void init(Consumer<GsonBuilder> builderModifier) {
+		synchronized (GsonUtils.class) {
+			builderModifier.accept(builder);
+			gson = builder.create();
+		}
+
+	}
+
 	/**
 	 * 定制时间格式
 	 * @param pattern pattern
@@ -87,7 +101,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * null值也参与序列化
-	 * @return
+	 * @return GsonUtils
 	 */
 	public GsonUtils serializeNulls() {
 		return new GsonUtils(builder.serializeNulls());
@@ -95,7 +109,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 格式化输出
-	 * @return
+	 * @return GsonUtils
 	 */
 	public GsonUtils prettyPrinting() {
 		return new GsonUtils(builder.setPrettyPrinting());
@@ -103,7 +117,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/**
 	 * 禁此序列化内部类 
-	 * @return
+	 * @return GsonUtils
 	 */
 	public GsonUtils disableInnerClassSerialization() {
 		return new GsonUtils(builder.disableInnerClassSerialization());
@@ -140,7 +154,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	
 	/*==================内部方法========================*/
 	private Gson gson() {
-		if(gson == null) {
+		if (gson == null) {
 			synchronized(GsonUtils.class) {
 				if(gson == null) {
 					gson = builder.create();
@@ -153,7 +167,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	/*==================工具方法========================*/
 	/**
 	 * 获取该工具默认的builder
-	 * @return
+	 * @return GsonBuilder
 	 */
 	public static GsonBuilder getDefaultBuilder() {
 		MapTypeAdapter objAdapter = new MapTypeAdapter();
@@ -175,19 +189,29 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * 转换json串为JsonObject
 	 * @param json json
 	 * @return JsonObject
+	 * @throws JsonSyntaxException json解析异常
 	 */
-	public static JsonObject toJsonObject(String json) {
+	public static JsonObject toJsonObjectWithException(String json) throws JsonSyntaxException {
 		/*源码说明(下同):No need to instantiate this class, use the static methods instead.*/
-		return JsonParser.parseString(json).getAsJsonObject();
+		try {
+			return JsonParser.parseString(json).getAsJsonObject();
+		} catch (Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
 	}
 	
 	/**
 	 * 转换json对象为JsonArray
 	 * @param json json
 	 * @return JsonArray
+	 * @throws JsonSyntaxException json解析异常
 	 */
-	public static JsonArray toJsonArray(String json) {
-		return JsonParser.parseString(json).getAsJsonArray();
+	public static JsonArray toJsonArrayWithException(String json) throws JsonSyntaxException {
+		try {
+			return JsonParser.parseString(json).getAsJsonArray();
+		} catch (Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
 	}
 	
 	/**
@@ -249,9 +273,25 @@ public class GsonUtils implements JsonUtilsInterf{
 			return null;
 		}
 	}
+
+	public Map<String, Object> toMap(JsonElement json) {
+		try {
+			return toMapWithException(json);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 	
 	@Override
 	public Map<String, Object> toMapWithException(String json) throws JsonSyntaxException {
+		try {
+			return fromJsonWithException(json, new TypeFactory(Map.class, String.class, Object.class));
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
+	}
+
+	public Map<String, Object> toMapWithException(JsonElement json) throws JsonSyntaxException {
 		try {
 			return fromJsonWithException(json, new TypeFactory(Map.class, String.class, Object.class));
 		} catch(Exception ex) {
@@ -267,9 +307,25 @@ public class GsonUtils implements JsonUtilsInterf{
 			return null;
 		}
 	}
+
+	public List<Map<String, Object>> toListMap(JsonElement json) {
+		try {
+			return toListMapWithException(json);
+		} catch (Exception e) {
+			return null;
+		}
+	}
 	
 	@Override
 	public List<Map<String, Object>> toListMapWithException(String json)  throws JsonSyntaxException {
+		try {
+			return fromJsonWithException(json, new TypeToken<List<Map<String, Object>>>() {}.getType());
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
+	}
+
+	public List<Map<String, Object>> toListMapWithException(JsonElement json)  throws JsonSyntaxException {
 		try {
 			return fromJsonWithException(json, new TypeToken<List<Map<String, Object>>>() {}.getType());
 		} catch(Exception ex) {
@@ -281,13 +337,21 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * 转化json为对象列表
 	 * @param json json
 	 * @param classOfT classOfT
-	 * @return
+	 * @return List
 	 */
 	@Override
 	public <T>List<T> toList(String json, Class<T> classOfT) {
 		try {
 			return toListWithException(json, classOfT);
-		} catch (JsonSyntaxException e) {
+		} catch (JsonSyntaxException ignored) {
+		}
+		return null;
+	}
+
+	public <T>List<T> toList(JsonElement json, Class<T> classOfT) {
+		try {
+			return toListWithException(json, classOfT);
+		} catch (JsonSyntaxException ignored) {
 		}
 		return null;
 	}
@@ -300,11 +364,19 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * 
 	 * @param json json
 	 * @param classOfT classOfT
-	 * @return
+	 * @return List
 	 * @throws JsonSyntaxException JsonSyntaxException
 	 */
 	@Override
 	public <T>List<T> toListWithException(String json, Class<T> classOfT) throws JsonSyntaxException {
+		try {
+			return gson().fromJson(json, new TypeFactory(List.class, classOfT));
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
+	}
+
+	public <T>List<T> toListWithException(JsonElement json, Class<T> classOfT) throws JsonSyntaxException {
 		try {
 			return gson().fromJson(json, new TypeFactory(List.class, classOfT));
 		} catch(Exception ex) {
@@ -316,12 +388,12 @@ public class GsonUtils implements JsonUtilsInterf{
 	 * 转换对象为JsonElement
 	 * 
 	 * @param obj obj
-	 * @return
+	 * @return JsonElement
 	 */
 	public JsonElement toJsonTree(Object obj) {
 		try {
 			return toJsonTreeWithException(obj);
-		} catch (JsonSyntaxException e) {
+		} catch (JsonSyntaxException ignored) {
 		}
 		return null;
 	}
@@ -329,7 +401,7 @@ public class GsonUtils implements JsonUtilsInterf{
 	/**
 	 * 转换对象为JsonElement
 	 * @param obj obj
-	 * @return
+	 * @return JsonElement
 	 * @throws JsonSyntaxException JsonSyntaxException
 	 */
 	public JsonElement toJsonTreeWithException(Object obj)  throws JsonSyntaxException {
@@ -355,6 +427,14 @@ public class GsonUtils implements JsonUtilsInterf{
 			return null;
 		}
 	}
+
+	public <T> T fromJson(JsonElement json,Class<T> classOfT) {
+		try {
+			return fromJsonWithException(json, classOfT);
+		} catch(Exception ex) {
+			return null;
+		}
+	}
 	
 	@Override
 	public <T> T fromJsonWithException(String json,Class<T> classOfT) throws JsonSyntaxException{
@@ -363,7 +443,14 @@ public class GsonUtils implements JsonUtilsInterf{
 		} catch(Exception ex) {
 			throw new JsonSyntaxException(ex);
 		}
-		
+	}
+
+	public <T> T fromJsonWithException(JsonElement json,Class<T> classOfT) throws JsonSyntaxException{
+		try {
+			return gson().fromJson(json, (Type) classOfT);
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
 	}
 	
 	/**
@@ -380,6 +467,14 @@ public class GsonUtils implements JsonUtilsInterf{
 			return null;
 		}
 	}
+
+	public <T> T fromJson(JsonElement json, Type type) {
+		try {
+			return fromJsonWithException(json, type);
+		} catch(Exception ex) {
+			return null;
+		}
+	}
 	
 	@Override
 	public <T> T fromJsonWithException(String json, Type type) throws JsonSyntaxException{
@@ -389,7 +484,15 @@ public class GsonUtils implements JsonUtilsInterf{
 			throw new JsonSyntaxException(ex);
 		}
 	}
-	
+
+	public <T> T fromJsonWithException(JsonElement json, Type type) throws JsonSyntaxException{
+		try {
+			return gson().fromJson(json ,type);
+		} catch(Exception ex) {
+			throw new JsonSyntaxException(ex);
+		}
+	}
+
 	/*=================辅助类============*/
 	/**
 	 * 重载json转换类,主要目的是为了防止转为map时double型变量错误地转换为long型变量
@@ -398,14 +501,14 @@ public class GsonUtils implements JsonUtilsInterf{
 	 */
 	public static class MapTypeAdapter extends TypeAdapter<Object> {
 
-		private TypeAdapter<Object> defaultAdapter = new Gson().getAdapter(Object.class);
+		private final TypeAdapter<Object> defaultAdapter = new Gson().getAdapter(Object.class);
 		
 		@Override
 		public Object read(JsonReader in) throws IOException {
 			JsonToken token = in.peek();
 			switch (token) {
 			case BEGIN_ARRAY:
-				List<Object> list = new ArrayList<Object>();
+				List<Object> list = new ArrayList<>();
 				in.beginArray();
 				while (in.hasNext()) {
 					list.add(read(in));
@@ -414,7 +517,7 @@ public class GsonUtils implements JsonUtilsInterf{
 				return list;
 
 			case BEGIN_OBJECT:
-				Map<String, Object> map = new LinkedTreeMap<String, Object>();
+				Map<String, Object> map = new LinkedTreeMap<>();
 				in.beginObject();
 				while (in.hasNext()) {
 					map.put(in.nextName(), read(in));
@@ -426,7 +529,7 @@ public class GsonUtils implements JsonUtilsInterf{
 				return in.nextString();
 
 			case NUMBER:
-				/**
+				/*
 				 * 改写数字的处理逻辑，将数字值分为整型与浮点型。
 				 * 流程（规则）:
 				 * 1.先读取字符串，并转为为double类型
@@ -481,7 +584,7 @@ public class GsonUtils implements JsonUtilsInterf{
 				throws JsonParseException {
 			try {
 				return Class.forName(json.getAsString());
-			} catch (ClassNotFoundException e) {
+			} catch (ClassNotFoundException ignored) {
 			}
 			return null;
 		}
