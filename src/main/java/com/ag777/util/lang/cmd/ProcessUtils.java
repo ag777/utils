@@ -63,7 +63,7 @@ public class ProcessUtils {
      * @throws IOException 如果执行命令或读取输出时发生I/O错误。
      */
     public static List<String> readLines(String cmd, String baseDir, boolean redirectErrStream, Charset charset) throws IOException {
-        Process pro = newProcess(cmd, baseDir, true, redirectErrStream);
+        Process pro = newProcess(cmd, baseDir, true, redirectErrStream, false);
         try {
             // 确保进程的输入流被正确关闭
             try (InputStream in = pro.getInputStream()) {
@@ -96,7 +96,7 @@ public class ProcessUtils {
      * @throws IOException 如果执行命令或读取输出时发生I/O错误。
      */
     public static String readText(String cmd, String baseDir, boolean redirectErrStream, Charset charset) throws IOException {
-        Process pro = newProcess(cmd, baseDir, true, redirectErrStream);
+        Process pro = newProcess(cmd, baseDir, true, redirectErrStream, false);
         try {
             // 确保进程的输入流被正确关闭
             try (InputStream in = pro.getInputStream()) {
@@ -116,7 +116,7 @@ public class ProcessUtils {
      * @throws InterruptedException 如果等待进程结束时被中断。
      */
     public boolean exec(String cmd, String baseDir) throws IOException, InterruptedException {
-        Process pro = newProcess(cmd, baseDir, true, false);
+        Process pro = newProcess(cmd, baseDir, true, false, true);
         try {
             int exitValue = pro.waitFor();
             return exitValue == 0;
@@ -130,16 +130,20 @@ public class ProcessUtils {
      * @param cmd 要执行的命令。
      * @param baseDir 命令执行的工作目录。
      * @param closeOutput 是否关闭标准输出。
-     * @param redirectErrStream 是否将错误输出重定向到标准输出。
+     * @param redirectErrStream 是否将错误输出重定向到标准输出
+     * @param discardInput 是否丢弃标准输入。
      * @return 创建的进程。
      * @throws IOException 如果启动进程时发生I/O错误。
      */
-    public static Process newProcess(String cmd, String baseDir, boolean closeOutput, boolean redirectErrStream) throws IOException {
+    public static Process newProcess(String cmd, String baseDir, boolean closeOutput, boolean redirectErrStream, boolean discardInput) throws IOException {
         ProcessBuilder builder = newProcessBuilder(cmd, baseDir);
         if (redirectErrStream) {
             builder.redirectErrorStream(true);
         } else {
             builder.redirectError(DISCARD);
+        }
+        if (discardInput) {
+            builder.redirectInput(DISCARD);
         }
         Process pro = builder.start();
         if (closeOutput) {
