@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -40,6 +41,15 @@ public class ProcessUtils {
      */
     public static final ProcessBuilder.Redirect DISCARD = ProcessBuilder.Redirect.to(NULL_FILE);
 
+    private static Charset charsetDefault = SystemUtils.isWindows()?Charset.forName("GBK"):StandardCharsets.UTF_8;
+
+    /**
+     * 设置全局的默认字符集。建议最多只在服务启动时调用一次
+     * @param charset 编码
+     */
+    public static void setDefaultCharset(Charset charset) {
+        charsetDefault = charset;
+    }
 
     /**
      * 读取命令执行的输出，使用系统默认字符集。
@@ -50,7 +60,7 @@ public class ProcessUtils {
      * @throws IOException 如果执行命令或读取输出时发生I/O错误。
      */
     public static List<String> readLines(String cmd, String baseDir, boolean redirectErrStream) throws IOException {
-        return readLines(cmd, baseDir, redirectErrStream, Charset.defaultCharset());
+        return readLines(cmd, baseDir, redirectErrStream, charsetDefault);
     }
 
     /**
@@ -83,7 +93,7 @@ public class ProcessUtils {
      * @throws IOException 如果执行命令或读取输出时发生I/O错误。
      */
     public static String readText(String cmd, String baseDir, boolean redirectErrStream) throws IOException {
-        return readText(cmd, baseDir, redirectErrStream, Charset.defaultCharset());
+        return readText(cmd, baseDir, redirectErrStream, charsetDefault);
     }
 
     /**
