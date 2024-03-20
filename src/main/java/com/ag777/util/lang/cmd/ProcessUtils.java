@@ -125,7 +125,7 @@ public class ProcessUtils {
      * @throws IOException 如果执行命令时发生I/O错误。
      * @throws InterruptedException 如果等待进程结束时被中断。
      */
-    public boolean exec(String cmd, String baseDir) throws IOException, InterruptedException {
+    public static boolean exec(String cmd, String baseDir) throws IOException, InterruptedException {
         Process pro = newProcess(cmd, baseDir, true, false, true);
         try {
             int exitValue = pro.waitFor();
@@ -153,11 +153,14 @@ public class ProcessUtils {
             builder.redirectError(DISCARD);
         }
         if (discardInput) {
-            builder.redirectInput(DISCARD);
+            builder.redirectInput(NULL_FILE);
         }
         Process pro = builder.start();
         if (closeOutput) {
             IOUtils.close(pro.getOutputStream());
+        }
+        if (discardInput) {
+            IOUtils.close(pro.getInputStream());
         }
         return pro;
     }
