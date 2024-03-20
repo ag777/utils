@@ -172,12 +172,23 @@ public class ProcessUtils {
      * @return 配置好的ProcessBuilder。
      */
     public static ProcessBuilder newProcessBuilder(String cmd, String baseDir) {
-        ProcessBuilder builder;
         if (SystemUtils.isWindows()) {
-            builder = new ProcessBuilder("cmd.exe", "/c", cmd);
+            return newProcessBuilder(new String[]{"cmd.exe", "/c", cmd}, baseDir);
         } else {
-            builder = new ProcessBuilder("/bin/sh", "-c", cmd);
+            return newProcessBuilder(new String[]{"/bin/sh", "-c", cmd}, baseDir);
         }
+    }
+
+    /**
+     * 创建一个新的ProcessBuilder以执行指定的命令。
+     *
+     * @param cmds    要执行的命令及其参数。命令和每个参数都应作为数组的独立元素提供。
+     *                例如，如果要执行命令 "ls -l /home"，则应该将其作为 {"ls", "-l", "/home"} 传递。
+     * @param baseDir 命令执行的工作目录。如果此参数为null，则命令将在当前Java进程的工作目录中执行。
+     * @return        配置好的ProcessBuilder实例。使用此实例的start()方法可以启动命令的执行。
+     */
+    public static ProcessBuilder newProcessBuilder(String[] cmds, String baseDir) {
+        ProcessBuilder builder = new ProcessBuilder(cmds);
 
         if(baseDir != null) {
             builder.directory(new File(baseDir));
