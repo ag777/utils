@@ -25,7 +25,7 @@ import java.util.List;
  *
  *
  * @author ag777 <837915770@vip.qq.com>
- * @version 2024/3/20 10:27
+ * @version 2024/04/05 19:39
  */
 public class ProcessUtils {
 
@@ -52,30 +52,31 @@ public class ProcessUtils {
     }
 
     /**
-     * 读取命令执行的输出，使用系统默认字符集。
-     * @param cmd 要执行的命令。
-     * @param baseDir 命令执行的工作目录。
-     * @param redirectErrStream 是否将错误输出重定向到标准输出。
-     * @return 命令执行的输出内容，以行为单位。
-     * @throws IOException 如果执行命令或读取输出时发生I/O错误。
+     * 读取命令行执行后的输出行。
+     *
+     * @param cmds       要执行的命令数组。
+     * @param baseDir    命令执行的基目录。
+     * @param redirectErrStream 是否将错误流重定向到输出流。
+     * @return 包含命令输出的所有行的列表。
+     * @throws IOException 如果读取输入流时发生错误。
      */
-    public static List<String> readLines(String cmd, String baseDir, boolean redirectErrStream) throws IOException {
-        return readLines(cmd, baseDir, redirectErrStream, charsetDefault);
+    public static List<String> readLines(String[] cmds, String baseDir, boolean redirectErrStream) throws IOException {
+        return readLines(cmds, baseDir, redirectErrStream, charsetDefault);
     }
 
     /**
-     * 读取命令执行的输出。
-     * @param cmd 要执行的命令。
-     * @param baseDir 命令执行的工作目录。
-     * @param redirectErrStream 是否将错误输出重定向到标准输出。
-     * @param charset 输出内容的字符集。
-     * @return 命令执行的输出内容，以行为单位。
-     * @throws IOException 如果执行命令或读取输出时发生I/O错误。
+     * 读取命令行执行后的输出行。
+     *
+     * @param cmds               要执行的命令数组。
+     * @param baseDir            命令执行的基目录。
+     * @param redirectErrStream  是否将错误流重定向到输出流。
+     * @param charset            用于读取输出的字符集。
+     * @return 包含命令输出的所有行的列表。
+     * @throws IOException 如果读取输入流时发生错误。
      */
-    public static List<String> readLines(String cmd, String baseDir, boolean redirectErrStream, Charset charset) throws IOException {
-        Process pro = newProcess(cmd, baseDir, true, redirectErrStream, false);
+    public static List<String> readLines(String[] cmds, String baseDir, boolean redirectErrStream, Charset charset) throws IOException {
+        Process pro = newProcess(cmds, baseDir, true, redirectErrStream, false);
         try {
-            // 确保进程的输入流被正确关闭
             try (InputStream in = pro.getInputStream()) {
                 return IOUtils.readLines(in, charset);
             }
@@ -85,30 +86,31 @@ public class ProcessUtils {
     }
 
     /**
-     * 读取命令执行的输出文本，使用系统默认字符集。
-     * @param cmd 要执行的命令。
-     * @param baseDir 命令执行的工作目录。
-     * @param redirectErrStream 是否将错误输出重定向到标准输出。
-     * @return 命令执行的输出内容，作为一个字符串返回。
-     * @throws IOException 如果执行命令或读取输出时发生I/O错误。
+     * 读取命令行执行后的完整输出文本。
+     *
+     * @param cmds       要执行的命令数组。
+     * @param baseDir    命令执行的基目录。
+     * @param redirectErrStream 是否将错误流重定向到输出流。
+     * @return 命令输出的完整文本。
+     * @throws IOException 如果读取输入流时发生错误。
      */
-    public static String readText(String cmd, String baseDir, boolean redirectErrStream) throws IOException {
-        return readText(cmd, baseDir, redirectErrStream, charsetDefault);
+    public static String readText(String[] cmds, String baseDir, boolean redirectErrStream) throws IOException {
+        return readText(cmds, baseDir, redirectErrStream, charsetDefault);
     }
 
     /**
-     * 读取命令执行的输出文本。
-     * @param cmd 要执行的命令。
-     * @param baseDir 命令执行的工作目录。
-     * @param redirectErrStream 是否将错误输出重定向到标准输出。
-     * @param charset 输出内容的字符集。
-     * @return 命令执行的输出内容，作为一个字符串返回。
-     * @throws IOException 如果执行命令或读取输出时发生I/O错误。
+     * 读取命令行执行后的完整输出文本。
+     *
+     * @param cmds               要执行的命令数组。
+     * @param baseDir            命令执行的基目录。
+     * @param redirectErrStream  是否将错误流重定向到输出流。
+     * @param charset            用于读取输出的字符集。
+     * @return 命令输出的完整文本。
+     * @throws IOException 如果读取输入流时发生错误。
      */
-    public static String readText(String cmd, String baseDir, boolean redirectErrStream, Charset charset) throws IOException {
-        Process pro = newProcess(cmd, baseDir, true, redirectErrStream, false);
+    public static String readText(String[] cmds, String baseDir, boolean redirectErrStream, Charset charset) throws IOException {
+        Process pro = newProcess(cmds, baseDir, true, redirectErrStream, false);
         try {
-            // 确保进程的输入流被正确关闭
             try (InputStream in = pro.getInputStream()) {
                 return new String(IOUtils.readBytes(in), charset);
             }
@@ -118,15 +120,16 @@ public class ProcessUtils {
     }
 
     /**
-     * 执行命令并等待其完成。
-     * @param cmd 要执行的命令。
-     * @param baseDir 命令执行的工作目录。
-     * @return 如果命令成功执行（退出值为0），则返回true；否则返回false。
-     * @throws IOException 如果执行命令时发生I/O错误。
-     * @throws InterruptedException 如果等待进程结束时被中断。
+     * 执行命令并等待其完成，返回命令执行是否成功。
+     *
+     * @param cmds       要执行的命令数组。
+     * @param baseDir    命令执行的基目录。
+     * @return 命令执行成功返回true，否则返回false。
+     * @throws IOException 如果创建进程时发生错误。
+     * @throws InterruptedException 如果等待进程完成时被中断。
      */
-    public static boolean exec(String cmd, String baseDir) throws IOException, InterruptedException {
-        Process pro = newProcess(cmd, baseDir, true, false, true);
+    public static boolean exec(String[] cmds, String baseDir) throws IOException, InterruptedException {
+        Process pro = newProcess(cmds, baseDir, true, false, true);
         try {
             int exitValue = pro.waitFor();
             return exitValue == 0;
@@ -136,17 +139,18 @@ public class ProcessUtils {
     }
 
     /**
-     * 创建一个新的进程。
-     * @param cmd 要执行的命令。
-     * @param baseDir 命令执行的工作目录。
-     * @param closeOutput 是否关闭标准输出。
-     * @param redirectErrStream 是否将错误输出重定向到标准输出
-     * @param discardInput 是否丢弃标准输入。
-     * @return 创建的进程。
-     * @throws IOException 如果启动进程时发生I/O错误。
+     * 创建一个新的进程来执行指定的命令。
+     *
+     * @param cmds               要执行的命令数组。
+     * @param baseDir            命令执行的基目录。
+     * @param closeOutput        是否关闭进程的输出流。
+     * @param redirectErrStream  是否将错误流重定向到输出流。
+     * @param discardInput       是否丢弃进程的输入流。
+     * @return 启动的进程实例。
+     * @throws IOException 如果创建进程时发生错误。
      */
-    public static Process newProcess(String cmd, String baseDir, boolean closeOutput, boolean redirectErrStream, boolean discardInput) throws IOException {
-        ProcessBuilder builder = newProcessBuilder(cmd, baseDir);
+    public static Process newProcess(String[] cmds, String baseDir, boolean closeOutput, boolean redirectErrStream, boolean discardInput) throws IOException {
+        ProcessBuilder builder = newProcessBuilder(cmds, baseDir);
         if (redirectErrStream) {
             builder.redirectErrorStream(true);
         } else {
@@ -166,48 +170,30 @@ public class ProcessUtils {
     }
 
     /**
-     * 根据命令和工作目录创建一个新的ProcessBuilder。
-     * @param cmd 要执行的命令。
-     * @param baseDir 命令执行的工作目录。
-     * @return 配置好的ProcessBuilder。
-     */
-    public static ProcessBuilder newProcessBuilder(String cmd, String baseDir) {
-        if (SystemUtils.isWindows()) {
-            return newProcessBuilder(new String[]{"cmd.exe", "/c", cmd}, baseDir);
-        } else {
-            return newProcessBuilder(new String[]{"/bin/sh", "-c", cmd}, baseDir);
-        }
-    }
-
-    /**
-     * 创建一个新的ProcessBuilder以执行指定的命令。
+     * 创建一个进程构建器来执行指定的命令。
      *
-     * @param cmds    要执行的命令及其参数。命令和每个参数都应作为数组的独立元素提供。
-     *                例如，如果要执行命令 "ls -l /home"，则应该将其作为 {"ls", "-l", "/home"} 传递。
-     * @param baseDir 命令执行的工作目录。如果此参数为null，则命令将在当前Java进程的工作目录中执行。
-     * @return        配置好的ProcessBuilder实例。使用此实例的start()方法可以启动命令的执行。
+     * @param cmds       要执行的命令数组。
+     * @param baseDir    命令执行的基目录。
+     * @return 配置好的进程构建器实例。
      */
     public static ProcessBuilder newProcessBuilder(String[] cmds, String baseDir) {
-        ProcessBuilder builder = new ProcessBuilder(cmds);
-
-        if(baseDir != null) {
-            builder.directory(new File(baseDir));
+        if (SystemUtils.isWindows()) {
+            return new ProcessBuilder("cmd.exe", "/c").command(cmds).directory(new File(baseDir));
+        } else {
+            return new ProcessBuilder("/bin/sh", "-c").command(cmds).directory(new File(baseDir));
         }
-        return builder;
     }
 
     /**
-     * 获取进程的PID（进程ID）。
-     * <p>
-     * 通过反射机制访问进程实例的{@code pid}字段来获取其PID值。这种方法依赖于JVM实现的内部细节，
-     * 并且可能在不同版本或不同JVM实现中不可用。
-     * </p>
-     * @param pro 要获取PID的进程实例。
+     * 获取进程的PID（已弃用）。
+     *
+     * @param pro 进程实例。
      * @return 进程的PID。
-     * @throws IllegalArgumentException 如果反射调用的方法参数不合法。
-     * @throws IllegalAccessException 如果反射调用试图访问不可访问的字段。
-     * @throws NoSuchFieldException 如果在进程类中找不到{@code pid}字段。
-     * @throws SecurityException 如果安全管理器存在并且阻止了反射操作的执行。
+     * @throws IllegalArgumentException 如果传入的进程为null。
+     * @throws IllegalAccessException 如果无法访问pid字段。
+     * @throws NoSuchFieldException 如果找不到pid字段。
+     * @throws SecurityException 如果访问控制不允许。
+     * @deprecated 由于依赖于内部实现，此方法可能不稳定。
      */
     @Deprecated
     public int getPid(Process pro) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
@@ -220,12 +206,12 @@ public class ProcessUtils {
     }
 
     /**
-     * 销毁给定的进程。
+     * 销毁进程，关闭其输入输出流并请求其终止。
+     *
      * @param process 要销毁的进程。
      */
     protected static void destroy(Process process) {
-        if(process != null) {
-            // 调用process.destroy();确实会请求终止进程，但它不会自动关闭与该进程关联的输入/输出流。这意味着您需要手动管理这些流的关闭，以避免潜在的资源泄露。
+        if (process != null) {
             IOUtils.close(process.getOutputStream(), process.getInputStream());
             process.destroy();
         }
