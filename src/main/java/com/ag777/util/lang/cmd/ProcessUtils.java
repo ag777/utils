@@ -1,6 +1,7 @@
 package com.ag777.util.lang.cmd;
 
 import com.ag777.util.lang.IOUtils;
+import com.ag777.util.lang.StringUtils;
 import com.ag777.util.lang.SystemUtils;
 
 import java.io.File;
@@ -169,19 +170,47 @@ public class ProcessUtils {
         return pro;
     }
 
+
     /**
-     * 创建一个进程构建器来执行指定的命令。
+     * 创建一个新的ProcessBuilder实例，用于执行外部命令。
      *
-     * @param cmds       要执行的命令数组。
-     * @param baseDir    命令执行的基目录。
-     * @return 配置好的进程构建器实例。
+     * @param cmds 一个包含要执行的命令及其参数的字符串数组。
+     * @param baseDir 执行命令时的基础目录路径，如果为空或null，则使用当前工作目录。
+     * @return 一个配置好的ProcessBuilder实例，准备好启动外部过程。
      */
     public static ProcessBuilder newProcessBuilder(String[] cmds, String baseDir) {
+        String[] command;
         if (SystemUtils.isWindows()) {
-            return new ProcessBuilder("cmd.exe", "/c").command(cmds).directory(new File(baseDir));
+            // 为Windows系统准备命令，包括"cmd.exe"和"/c"参数
+            command = new String[cmds.length + 2];
+            command[0] = "cmd.exe";
+            command[1] = "/c";
+            System.arraycopy(cmds, 0, command, 2, cmds.length);
         } else {
-            return new ProcessBuilder("/bin/sh", "-c").command(cmds).directory(new File(baseDir));
+            // 为非Windows系统准备命令，使用"/bin/sh"和"-c"参数，并合并所有命令为一个字符串
+            // 对于非Windows系统，需要将cmds数组转换为单一字符串
+            // 并且额外的2个空间用于"/bin/sh"和"-c"
+            // 因为所有命令合并成一个字符串，所以长度是3
+            command = new String[3];
+            command[0] = "/bin/sh";
+            command[1] = "-c";
+            StringBuilder cmdBuilder = new StringBuilder();
+            for (String cmd : cmds) {
+                if (cmdBuilder.length() > 0) {
+                    cmdBuilder.append(" ");
+                }
+                cmdBuilder.append(cmd);
+            }
+            command[2] = cmdBuilder.toString();
         }
+
+        // 初始化ProcessBuilder并设置执行目录
+        ProcessBuilder pb = new ProcessBuilder(command);
+        if (!StringUtils.isEmpty(baseDir)) {
+            pb.directory(new File(baseDir));
+        }
+
+        return pb;
     }
 
     /**
