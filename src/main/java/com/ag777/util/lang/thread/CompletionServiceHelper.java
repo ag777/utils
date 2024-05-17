@@ -1,17 +1,14 @@
 package com.ag777.util.lang.thread;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.function.BiConsumer;
 
 /**
  * 回调线程池CompletionService辅助类
  * 
  * @author ag777
- * @version  create on 2018年08月03日,last modify at 2023年07月14日
+ * @version  create on 2018年08月03日,last modify at 2024年05月17日
  */
 public class CompletionServiceHelper<T, V> {
 	private ExecutorService pool;
@@ -25,7 +22,7 @@ public class CompletionServiceHelper<T, V> {
 	public CompletionServiceHelper(ExecutorService pool) {
 		this.pool = pool;
 		completionService = new ExecutorCompletionService<>(pool);
-		taskInfoMap = Collections.synchronizedMap(new HashMap<>(1));
+		taskInfoMap = new ConcurrentHashMap<>(1);
 	}
 	public ExecutorService getExecutorService() {
 		return pool;
@@ -36,20 +33,42 @@ public class CompletionServiceHelper<T, V> {
 		return completionService;
 	}
 
+	/**
+	 * 获取当前任务的数量。
+	 * <p>该方法不接受任何参数，通过计算任务信息映射表中的条目数量来确定当前任务的总数。</p>
+	 *
+	 * @return 返回当前任务数量，类型为int。
+	 */
 	public int getTaskCount() {
-		return taskInfoMap.size();
+	    // 返回任务信息映射表的大小，即当前任务的数量
+	    return taskInfoMap.size();
 	}
 
+	/**
+	 * 提交一个Callable任务到CompletionService中，并关联一个数据。
+	 *
+	 * @param task 要提交的Callable任务，任务执行后会返回一个结果。
+	 * @param bindData 与该任务关联的数据，便于后续处理或查询。
+	 * @return 返回CompletionServiceHelper实例，支持链式调用。
+	 */
 	public CompletionServiceHelper<T, V> submit(Callable<T> task, V bindData) {
-		Future<T> myTask = completionService.submit(task);
-		taskInfoMap.put(myTask, bindData);
-		return this;
+	    Future<T> myTask = completionService.submit(task); // 提交任务
+	    taskInfoMap.put(myTask, bindData); // 将任务与关联数据绑定
+	    return this;
 	}
 
+	/**
+	 * 提交一个Runnable任务到CompletionService中，并关联一个数据。
+	 *
+	 * @param task 要提交的Runnable任务，任务执行后不会返回结果。
+	 * @param result 任务执行后要返回的默认结果，通常用于Runnable任务。
+	 * @param bindData 与该任务关联的数据，便于后续处理或查询。
+	 * @return 返回CompletionServiceHelper实例，支持链式调用。
+	 */
 	public CompletionServiceHelper<T, V> submit(Runnable task, T result, V bindData) {
-		Future<T> myTask = completionService.submit(task, result);
-		taskInfoMap.put(myTask, bindData);
-		return this;
+	    Future<T> myTask = completionService.submit(task, result); // 提交任务并指定结果
+	    taskInfoMap.put(myTask, bindData); // 将任务与关联数据绑定
+	    return this;
 	}
 
 	/**
@@ -98,7 +117,22 @@ public class CompletionServiceHelper<T, V> {
 			task.cancel(mayInterruptIfRunning);
 		}
 	}
-	
+
+	/**
+	 * 遍历任务信息映射中的所有任务，并对每个任务应用提供的双参数消费者。
+	 *
+	 * @param consumer 一个接受Future<T>任务和与之关联的V类型值的双参数消费者。该消费者将在每个任务上执行。
+	 *                 第一个参数是任务的Future对象，第二个参数是该任务对应的值。
+	 * @see BiConsumer 一个函数式接口，表示可以接受两个参数并执行操作的消费者。
+	 */
+	public void forEachTask(BiConsumer<Future<T>, V> consumer) {
+	    // 遍历任务映射表的所有任务，对每个任务应用提供的consumer
+	    for (Future<T> task : taskInfoMap.keySet()) {
+	        consumer.accept(task, taskInfoMap.get(task));
+	    }
+	}
+
+
 	/**
 	 * 释放资源
 	 */
@@ -240,7 +274,7 @@ public class CompletionServiceHelper<T, V> {
 		}
 
 		@Override
-		public T get(long timeout, @NotNull TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+		public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
 			return task.get(timeout, unit);
 		}
 	}
