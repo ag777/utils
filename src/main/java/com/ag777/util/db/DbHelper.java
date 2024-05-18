@@ -14,7 +14,9 @@ import com.ag777.util.lang.reflection.ReflectionUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.*;
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
  * 数据库操作辅助类
  * 
  * @author ag777
- * @version create on 2017年07月28日,last modify at 2023年10月26日
+ * @version create on 2017年07月28日,last modify at 2024年05月18日
  */
 public class DbHelper implements Disposable, Closeable {
 	
@@ -135,7 +137,27 @@ public class DbHelper implements Disposable, Closeable {
 	
 	public static DbHelper connectDB(String url, String user, String password, DbDriver driver, Properties props) throws ClassNotFoundException, SQLException {
 		return new DbHelper(
-				getConnection(url, user, password, driver, props));
+				DbConnectionUtil.connect(url, user, password, driver, props));
+	}
+
+	/**
+	 * 动态加载指定类名的JDBC驱动，并返回Driver实例。
+	 *
+	 * @param driverClassName 驱动类的全限定名
+	 * @param classLoader     使用的类加载器，如果为null，则使用当前线程的上下文类加载器
+	 * @return 加载的Driver实例
+	 * @throws ClassNotFoundException    当找不到驱动类时抛出
+	 * @throws IllegalAccessException    当访问驱动类的构造函数时抛出
+	 * @throws InstantiationException    当实例化驱动类时抛出
+	 * @throws NoSuchMethodException     当找不到驱动类的无参构造函数时抛出
+	 * @throws InvocationTargetException 当调用驱动类的构造函数时抛出
+	 */
+	public static Driver loadDriver(String driverClassName, ClassLoader classLoader)
+			throws ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+		ClassLoader loader = classLoader != null ? classLoader : Thread.currentThread().getContextClassLoader();
+		Class<?> driverClass = Class.forName(driverClassName, true, loader);
+		Constructor<?> constructor = driverClass.getDeclaredConstructor();
+		return (Driver) constructor.newInstance();
 	}
 	
 	//--静态方法

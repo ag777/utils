@@ -1,12 +1,12 @@
 package com.ag777.util.db.connection;
 
+import com.ag777.util.db.DbConnectionUtil;
+import com.ag777.util.db.model.DbDriver;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
-
-import com.ag777.util.db.DbHelper;
-import com.ag777.util.db.model.DbDriver;
 
 /**
  * Mysql数据库连接辅助类
@@ -66,7 +66,7 @@ public class Db2Connection extends BaseDbConnectionUtils {
 	 */
 	public static Connection connect(String url, String user, String password, Map<String, Object> propMap) throws ClassNotFoundException, SQLException {
 		Properties props = getProperties(propMap);
-		return DbHelper.getConnection(url, user, password, DbDriver.DB2, props);
+		return DbConnectionUtil.connect(url, user, password, DbDriver.DB2, props);
 	}
 	
 	@Override

@@ -1,13 +1,13 @@
 package com.ag777.util.db.connection;
 
+import com.ag777.util.db.DbConnectionUtil;
+import com.ag777.util.db.model.DbDriver;
+import com.ag777.util.db.model.OracleRole;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.Properties;
-
-import com.ag777.util.db.DbHelper;
-import com.ag777.util.db.model.DbDriver;
-import com.ag777.util.db.model.OracleRole;
 
 /**
  * Oracle数据库连接辅助类
@@ -190,7 +190,7 @@ public class OracleConnection extends BaseDbConnectionUtils{
 			props.put("internal_logon", role.getName());
 		}
 		
-		return DbHelper.getConnection(url, user, password, DbDriver.ORACLE, props);
+		return DbConnectionUtil.connect(url, user, password, DbDriver.ORACLE, props);
 	}
 
 	@Override
