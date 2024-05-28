@@ -1,16 +1,20 @@
 package com.ag777.util.file;
 
+import com.ag777.util.lang.StringUtils;
+
 import java.io.File;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystems;
 import java.nio.file.Paths;
-
-import com.ag777.util.lang.StringUtils;
 
 /**
  * 路径工具类
  * 
  * @author ag777
- * @version last modify at 2018年05月21日
+ * @version last modify at 2024年05月28日
  */
 public class PathUtils {
 	
@@ -82,4 +86,41 @@ public class PathUtils {
 	public static String getRelativizePath(String targetPath, String basePath) {
 		return Paths.get(basePath).relativize(Paths.get(targetPath)).toString();
 	}
+
+	/**
+	 * 类是否在jar包中
+	 * @param clazz 参照类，用于获取路径
+	 * @return 当前代码是否处于jar包中
+	 */
+	public static boolean inJar(Class<?> clazz) {
+		String protocol = clazz.getResource("").getProtocol();
+		return "jar".equals(protocol);
+	}
+
+
+	/**
+	 * 获取给定类的根路径。如果类是在JAR文件中，则返回运行时的根路径；如果类是在文件系统中，则返回类的代码源位置路径。
+	 * @param clazz 任意类，用于确定根路径。
+	 * @return 根路径的字符串表示，末尾包含文件分隔符。
+	 */
+	public static String getRootPath(Class<?> clazz) {
+	    String path;
+	    if (inJar(clazz)) {
+	        // 当类在JAR中时，获取当前运行时的根路径
+	        path = FileSystems.getDefault().getPath("").toAbsolutePath().toString();
+	    } else {
+	        // 当类在文件系统中时，获取类的代码源位置路径
+	        path = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
+	        path = new File(path).getAbsolutePath();
+	    }
+	    try {
+	        // 尝试将路径URL解码为UTF-8格式
+	        path = URLDecoder.decode(path, StandardCharsets.UTF_8.toString());
+	    } catch (UnsupportedEncodingException ignored) {
+	        // 忽略解码异常
+	    }
+	    // 返回解码后的路径的父路径，并在末尾添加一个文件分隔符
+	    return path + File.separator;
+	}
+
 }
