@@ -28,7 +28,7 @@ import java.util.function.Consumer;
  * GSON更新日志:<a href="https://github.com/google/gson/blob/master/CHANGELOG.md">...</a>
  *
  * @author ag777
- * @version create on 2017年05月27日,last modify at 2024年02月04日
+ * @version create on 2017年05月27日,last modify at 2024年06月09日
  */
 public class GsonUtils implements JsonUtilsInterf {
 	
@@ -248,6 +248,26 @@ public class GsonUtils implements JsonUtilsInterf {
 	}
 
 	/**
+	 * 将对象转换为JSON字符串。
+	 * <p>
+	 * 此方法提供了一个通用的接口，用于将任何给定的对象转换为JSON格式的字符串。
+	 * 它特别处理了对象为null的情况，避免了因尝试转换null而导致的异常。
+	 * 使用Gson库的toJson方法进行实际的转换操作。
+	 *
+	 * @param obj       要转换为JSON的对象。可以是任何类型的对象，如果为null，则直接返回null。
+	 * @param typeOfSrc 对象的类型信息，用于更精确地控制JSON转换过程。这可以是类类型、泛型类型等。
+	 * @return 转换后的JSON字符串，如果输入对象为null，则返回null。
+	 */
+	public String toJson(Object obj, Type typeOfSrc) {
+		// 检查对象是否为null，避免不必要的转换尝试
+		if (obj == null) {
+			return null;
+		}
+		// 使用Gson实例将对象转换为JSON字符串
+		return gson().toJson(obj, typeOfSrc);
+	}
+
+	/**
 	 *
 	 * @param obj 任意对象
 	 * @return 格式化的json串
@@ -429,6 +449,25 @@ public class GsonUtils implements JsonUtilsInterf {
 		}
 		return null;
 	}
+
+	/**
+	 * 将对象转换为JsonElement树形结构。
+	 * 此方法尝试将给定的对象转换为JsonElement，如果转换失败，则返回null。
+	 * 使用者应该通过捕获JsonSyntaxException来处理可能的转换异常。
+	 *
+	 * @param obj 要转换为JsonElement的Java对象。
+	 * @param typeOfSrc Java对象的类型信息，用于复杂对象的类型指示。
+	 * @return 成功转换后的JsonElement，如果转换失败则返回null。
+	 */
+	public JsonElement toJsonTree(Object obj, Type typeOfSrc) {
+	    try {
+	        // 尝试将对象转换为JsonElement，可能抛出JsonSyntaxException。
+	        return toJsonTreeWithException(obj, typeOfSrc);
+	    } catch (JsonSyntaxException ignored) {
+	        // 捕获并忽略JsonSyntaxException，允许方法在异常情况下优雅地返回null。
+	    }
+	    return null;
+	}
 	
 	/**
 	 * 转换对象为JsonElement
@@ -442,6 +481,27 @@ public class GsonUtils implements JsonUtilsInterf {
 		} catch(Exception ex) {
 			throw new JsonSyntaxException(ex);
 		}
+	}
+
+	/**
+	 * 将对象转换为JsonElement，处理可能的异常。
+	 * <p>
+	 * 此方法提供了一种将任意对象转换为JsonElement的安全方式。它使用Gson库进行转换，并在转换过程中捕获任何异常。
+	 * 如果转换失败，将抛出JsonSyntaxException，以便调用者可以了解转换过程中发生的问题。
+	 *
+	 * @param obj 要转换为Json的Java对象。
+	 * @param typeOfSrc Java对象的类型信息，用于更精确的转换。
+	 * @return 转换成功的JsonElement。
+	 * @throws JsonSyntaxException 如果转换过程中发生错误，则抛出此异常。
+	 */
+	public JsonElement toJsonTreeWithException(Object obj, Type typeOfSrc) throws JsonSyntaxException {
+	    try {
+	        // 尝试使用Gson将对象转换为JsonElement。
+	        return gson().toJsonTree(obj, typeOfSrc);
+	    } catch (Exception ex) {
+	        // 捕获转换过程中可能出现的任何异常，并抛出JsonSyntaxException。
+	        throw new JsonSyntaxException(ex);
+	    }
 	}
 	
 	
