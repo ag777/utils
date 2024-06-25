@@ -187,7 +187,7 @@ public class FileUtils {
 			FileInputStream fis = new FileInputStream(file);
 			return IOUtils.readBytes(fis);
 		} catch (FileNotFoundException ex) {
-			throw new IOException(StringUtils.concat("文件[", file.getAbsolutePath(), "]不存在"), ex);
+			throw new FileNotFoundException(StringUtils.concat("文件[", file.getAbsolutePath(), "]不存在"));
 		} catch (IOException ex) {
 			throw new IOException(StringUtils.concat("读取文件[",file.getAbsolutePath(),"]时发生错误!"), ex);
 		}
