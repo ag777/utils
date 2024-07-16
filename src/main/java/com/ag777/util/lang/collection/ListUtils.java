@@ -29,7 +29,7 @@ import com.ag777.util.lang.ObjectUtils;
  * 有关 <code>List</code> 列表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2020年03月18日
+ * @version create on 2017年09月22日,last modify at 2024年07月16日
  */
 public class ListUtils {
 
@@ -822,29 +822,76 @@ public class ListUtils {
 	
 	//--获取
 	/**
-	 * 获取列表第index项的值，避免空指针
-	 * @param list list
-	 * @param index index
-	 * @return
+	 * 从列表中获取指定索引的元素。
+	 *
+	 * 此方法提供了一种安全的方式来访问列表中的元素，通过检查索引是否超出列表大小，
+	 * 避免了IndexOutOfBoundsException的抛出。
+	 *
+	 * @param list 目标列表，从中获取元素。
+	 * @param index 要获取元素的索引。
+	 * @return 如果索引有效，则返回列表中对应索引的元素；如果索引超出列表范围，则返回null。
+	 * @param <T> 泛型参数，表示列表和返回值的类型。
 	 */
 	public static <T>T get(List<T> list, int index) {
-		if(list == null || list.size()<=index) {
+		// 检查索引是否超出列表范围，如果超出，则直接返回null
+		if (index >= list.size()) {
 			return null;
 		}
 		return list.get(index);
 	}
-	
+
 	/**
-	 * 获取数组第index项的值，避免空指针
-	 * @param arrays arrays
-	 * @param index index
-	 * @return
+	 * 从列表中获取指定索引的元素，如果索引超出范围或元素为null，则返回默认值。
+	 * 这个方法提供了对列表访问时的容错能力，确保了即使在访问不存在或为空的元素时，也能返回一个预设的默认值。
+	 *
+	 * @param list 要访问的列表。
+	 * @param index 要获取元素的索引。
+	 * @param defaultValue 如果索引超出范围或元素为null时返回的默认值。
+	 * @param <T> 泛型参数，表示列表和返回值的类型。
+	 * @return 列表中指定索引的元素，如果索引超出范围或元素为null，则返回默认值。
 	 */
-	public static <T>T get(T[] arrays, int index) {
-		if(arrays == null || arrays.length<=index) {
-			return null;
+	public static <T>T get(List<T> list, int index, T defaultValue) {
+		T item = get(list, index);
+		// 检查获取的元素是否为null，为null则返回默认值
+		if (item == null) {
+			return defaultValue;
 		}
-		return arrays[index];
+		return item;
+	}
+
+	/**
+	 * 从数组中获取指定索引的元素。
+	 * 如果数组为空或索引超出范围，则返回null。
+	 *
+	 * @param array 输入的泛型数组。
+	 * @param index 要获取元素的索引。
+	 * @param <T> 泛型参数，表示数组的元素类型。
+	 * @return 如果数组有效且索引存在，则返回对应元素；否则返回null。
+	 */
+	public static <T>T get(T[] array, int index) {
+	    if(array == null || array.length<=index) {
+	        return null;
+	    }
+	    return array[index];
+	}
+
+	/**
+	 * 从数组中获取指定索引的元素，如果元素为null，则返回默认值。
+	 * 这个方法为调用者提供了处理null值的灵活性，避免了直接的NullPointerException。
+	 *
+	 * @param array 输入的泛型数组。
+	 * @param index 要获取元素的索引。
+	 * @param defaultValue 如果指定索引的元素为null，将返回此默认值。
+	 * @param <T> 泛型参数，表示数组的元素类型。
+	 * @return 如果数组有效且索引存在且元素不为null，则返回对应元素；否则返回默认值。
+	 */
+	public static <T>T get(T[] array, int index, T defaultValue) {
+	    T item = get(array, index);
+	    // 检查获取的元素是否为null，为null则返回默认值
+	    if (item == null) {
+	        return defaultValue;
+	    }
+	    return item;
 	}
 	
 	/**
