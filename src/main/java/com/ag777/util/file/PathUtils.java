@@ -3,6 +3,7 @@ package com.ag777.util.file;
 import com.ag777.util.lang.StringUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -55,7 +56,12 @@ public class PathUtils {
 		if(!file.isDirectory()) {	//可能是jar包，因为结果是/xxxx/xx.jar,所以我们要去得到jar包的同级路径
 			return file.getParent();
 		}
-		return filePath;
+		try {
+			// 尝试标准化路径
+			return new File(filePath).getCanonicalPath();
+		} catch (IOException e) {
+			return filePath;
+		}
 	}
 	
 	/**
