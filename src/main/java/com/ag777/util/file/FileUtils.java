@@ -4,32 +4,29 @@ import com.ag777.util.file.model.FileAnnotation;
 import com.ag777.util.lang.Console;
 import com.ag777.util.lang.*;
 import com.ag777.util.lang.collection.ListUtils;
-import com.ag777.util.lang.exception.Assert;
-import com.ag777.util.lang.interf.ProgressListener;
 import com.ag777.util.lang.model.Charsets;
 
 import java.io.*;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2020年08月04日,last modify at 2023年03月10日
+ * @version create on 2020年08月04日,last modify at 2024年09月20日
  */
 public class FileUtils {
 	public static final Pattern P_EXTENSION_LONG = Pattern.compile("(?<=\\.)[\\w\\d]{1,5}(.[\\w\\d]{1,5})*$");
@@ -151,17 +148,23 @@ public class FileUtils {
     /**
      * 遍历所有子文件(夹)，寻找符合要求的文件(夹)
      * @param basePath 基础路径
-     * @param filter 过滤器
+     * @param filter 过滤器, [文件，相对路径]返回true则加入列表
      * @return 文件列表
      */
-    public static List<File> findSubFile(String basePath, FileFilter filter) {
+    public static List<File> findSubFile(String basePath, BiPredicate<Path, Path> filter) {
 		List<File> fileList = ListUtils.newArrayList();
-		File baseFile = new File(basePath);
-		if(baseFile.exists() && baseFile.isDirectory()) {
-			if(filter == null) {
-				filter = (file)->true;
-			}
-			fillSubFile(baseFile, fileList, filter);
+		try {
+			scanSubFiles(
+					Paths.get(basePath),
+					(path, relativizePath)->{
+						if (filter.test(path, relativizePath)) {
+							fileList.add(path.toFile());
+						}
+					}
+
+			);
+		} catch (IOException e) {
+			// 忽略异常
 		}
 		return fileList;
 	}
@@ -241,7 +244,6 @@ public class FileUtils {
      * @throws IOException IOException
      */
     public static String readText(String filePath, String lineSparator, Charset charset) throws IOException {
-
         try {
         	if(charset == null) {
         		charset = FILE_READING_CHARSET;
@@ -841,8 +843,25 @@ public class FileUtils {
     
     
     //--文件操作
-    /**
-     * 移动文件或者文件夹,如从e:/aa/到f:/bb/aa/
+	/**
+	 * 移动文件或者文件夹,如从e:/aa/到f:/bb/aa/
+	 * 遇到已经存在的文件会进行覆盖
+	 * <p>
+	 * 为什么不能用renameTo,请参考文章https://blog.csdn.net/findmyself_for_world/article/details/41648095
+	 * 简单来说,renameTo不能跨文件系统移动文件,比如C盘是NTFS格式,E盘是FAT32格式，在这两个盘移动文件就会返回false
+	 * 相对的，用Files包下的方法就没这种问题,对应本工具包的FileNioUtils中的move方法
+	 * </p>
+	 *
+	 * @param sourcePath 源文件或文件夹的路径
+	 * @param targetPath 目标文件或文件夹的路径
+	 * @throws IOException 如果在移动过程中发生输入输出错误
+	 */
+	public static void move(String sourcePath, String targetPath) throws IOException {
+		move(sourcePath, targetPath, true);
+	}
+
+	/**
+	 * 移动文件或者文件夹,如从e:/aa/到f:/bb/aa/
 	 * <p>
 	 * 实质是复制文件到对应的位置,成功后删除源文件
 	 * </p>
@@ -851,110 +870,98 @@ public class FileUtils {
 	 * 简单来说,renameTo不能跨文件系统移动文件,比如C盘是NTFS格式,E盘是FAT32格式，在这两个盘移动文件就会返回false
 	 * 相对的，用Files包下的方法就没这种问题,对应本工具包的FileNioUtils中的move方法
 	 * </p>
-	 * 
-     * @param source source
-     * @param target target
-     * @return 是否成功
-     * @throws IllegalArgumentException 文件路径为空
-     * @throws NoSuchFileException 源文件不存在
-     */
-	public static boolean move(String source, String target) throws IllegalArgumentException, NoSuchFileException {
-		Assert.notBlank(source, "源文件路径不能为空");
-		Assert.notBlank(target, "目标文件路径不能为空");
-		File srcFile = new File(source);
-		Assert.notExisted(srcFile, NoSuchFileException.class, "源文件["+source+"]不存在");
-		if(srcFile.isFile()) {
-			return moveFile(source, target);
-		} else if(srcFile.isDirectory()) {
-			return moveFolder(source, target);
-		}
-		return false;
-	}
-    
-	/**
-	 * 移动单个文件带进度监听
-	 * <p>
-	 * 实质是复制文件到对应的位置,成功后删除源文件
-	 * </p>
-	 * 
-	 * @param source source
-	 * @param target target
-	 * @param listener listener
-	 * @return 是否成功
+	 *
+	 * @param sourcePath source
+	 * @param targetPath target
+	 * @param overrideWhenExists 覆盖目标文件
 	 * @throws IllegalArgumentException 文件路径为空
-	 * @throws NoSuchFileException 源文件不存在，源文件不是个文件(可能是文件夹)
+	 * @throws NoSuchFileException      源文件不存在
 	 */
-	public static boolean moveFileWithProgress(String source, String target, ProgressListener listener) throws IllegalArgumentException, NoSuchFileException {
-		if(copyFileWithProgress(source, target, listener)) {
-			new File(source).delete();
-			return true;
+	public static void move(String sourcePath, String targetPath, boolean overrideWhenExists) throws IllegalArgumentException, IOException {
+		Path source = Paths.get(sourcePath);
+		Path target = Paths.get(targetPath);
+		// 检查源文件夹是否存在，不存在则抛出异常
+		if (!Files.exists(source)) {
+			throw new NoSuchFileException(StringUtils.concat("源文件夹[", source, "]不存在"));
 		}
-		return false;
+		if (Files.isRegularFile(source)) {
+			// 创建目标父文件夹
+			Files.createDirectories(target.getParent());
+			moveFile(source, target, overrideWhenExists);
+		} else if (Files.isDirectory(source)) {
+			// 创建目标文件夹
+			Files.createDirectories(target);
+			moveFolder(source, target, overrideWhenExists);
+		}
+		delete(sourcePath);
 	}
-	
+
+	/**
+	 * 将指定源路径下的文件或目录复制到目标路径下
+	 * 此方法调用应避免在高并发环境下使用，因为它可能会导致性能瓶颈
+	 * 遇到已经存在的文件会进行覆盖
+	 *
+	 * @param sourcePath 源文件或目录的路径
+	 * @param targetPath 目标文件或目录的路径
+	 * @throws IOException 如果复制过程中发生错误
+	 */
+	public static void copy(String sourcePath, String targetPath) throws IOException {
+		// 调用带有一个额外参数的 copy 方法，默认值为 false，表示不覆盖已存在文件
+		copy(sourcePath, targetPath, true);
+	}
+
 	/**
 	 * 复制文件或文件夹
-	 * @param source source
-	 * @param target target
-	 * @return 是否成功
+	 * @param sourcePath source
+	 * @param targetPath target
 	 * @throws IllegalArgumentException 文件路径为空,源文件不存在
 	 * @throws NoSuchFileException NoSuchFileException
 	 */
-	public static boolean copy(String source, String target) throws IllegalArgumentException, NoSuchFileException {
-		Assert.notBlank(source, "源文件路径不能为空");
-		Assert.notBlank(target, "目标文件路径不能为空");
-		File srcFile = new File(source);
-		Assert.notExisted(srcFile, "源文件["+source+"]不存在");
-		if(srcFile.isFile()) {
-			return copyFile(source, target);
-		} else if(srcFile.isDirectory()) {
-			return copyFolder(source, target);
+	public static void copy(String sourcePath, String targetPath, boolean overrideWhenExists) throws IllegalArgumentException, IOException {
+		Path source = Paths.get(sourcePath);
+		Path target = Paths.get(targetPath);
+		// 检查源文件夹是否存在，不存在则抛出异常
+		if (!Files.exists(source)) {
+			throw new NoSuchFileException(StringUtils.concat("源文件夹[", source, "]不存在"));
 		}
-		return false;
+		if (Files.isRegularFile(source)) {
+			// 创建目标父文件夹
+			Files.createDirectories(target.getParent());
+			copyFile(source, target, overrideWhenExists);
+		} else if (Files.isDirectory(source)) {
+			// 创建目标文件夹
+			Files.createDirectories(target);
+			copyFolder(source, target, overrideWhenExists);
+		}
 	}
-	
+
+
+
 	/**
-	 * 复制单个文件带进度条
-	 * <p>
-	 * 进度监听参数传null则单做普通的单个文件复制使用，不如直接调用copy方法
-	 * </p>
-	 * 
-	 * @param source source
-	 * @param target target
-	 * @param listener listener
-	 * @return 是否成功
-	 * @throws IllegalArgumentException 文件路径为空
-	 * @throws NoSuchFileException 源文件不存在，源文件不是个文件(可能是文件夹)
+	 * 递归扫描指定目录下的所有子文件
+	 *
+	 * @param dir 目标目录，必须是一个存在的目录
+	 * @param fileWalker 实现了 FileWalker 接口的实例，用于处理扫描到的文件
+	 * @throws IOException 如果扫描过程中发生 IO 错误
+	 * @throws NoSuchFileException 如果指定的目录不存在
 	 */
-	public static boolean copyFileWithProgress(String source, String target, ProgressListener listener) throws IllegalArgumentException, NoSuchFileException {
-		Assert.notBlank(source, "源文件路径不能为空");
-		Assert.notBlank(target, "目标文件路径不能为空");
-		BufferedInputStream bis;
-		BufferedOutputStream bos;
-		File fin = new File(source);
-		Assert.notExisted(fin, "源文件["+source+"]不存在");
-		if(!fin.isFile()) {
-			throw new NoSuchFileException("copyFileWithProgress方法只支持复制单个文件:["+source+"]");
+	public static void scanSubFiles(Path dir, FileWalker fileWalker) throws IOException {
+		// 检查目录是否存在，不存在则抛出异常
+		if (!Files.exists(dir)) {
+			throw new NoSuchFileException(StringUtils.concat("源文件夹[", dir.toString(), "]不存在"));
 		}
-		try {
-			File fout = new File(target);
-			if (!fout.exists()) {
-				File parent = fout.getParentFile(); // 得到父文件夹
-				if (!parent.exists()) {
-					parent.mkdirs();
-				}
-				fout.createNewFile();
+		// 使用 Files.walk 递归地遍历文件夹
+		try (Stream<Path> walk = Files.walk(dir)) {
+			// 将 Stream 转换为迭代器，手动遍历
+			Iterator<Path> iterator = walk.iterator();
+			while (iterator.hasNext()) {
+				Path path = iterator.next();
+				// 获取相对路径
+				Path relativizePath = dir.relativize(path);
+				// 调用 FileWalker 接口的 visit 方法，直接抛出异常
+				fileWalker.visit(path, relativizePath);
 			}
-			bis = new BufferedInputStream(
-					new FileInputStream(fin));
-			bos = new BufferedOutputStream(
-					new FileOutputStream(fout));
-			IOUtils.write(bis, bos, BUFFSIZE, listener);
-			return true;
-		} catch(IOException ex) {
-			ex.printStackTrace();
-		} 
-		return false;
+		}
 	}
 	
 	/**
@@ -1136,139 +1143,101 @@ public class FileUtils {
     }
    
     /*----------内部工具-----------*/
-    /**
+	/**
 	 * 移动单个文件
 	 * <p>
 	 * 实质是复制文件到对应的位置,成功后删除源文件
 	 * </p>
-	 * 
-	 * @param source	源文件路径
-	 * @param target	目标路径
-     * @throws IllegalArgumentException IllegalArgumentException
-     * @throws NoSuchFileException NoSuchFileException
+	 *
+	 * @param source 源文件路径
+	 * @param target 目标路径
+	 * @param overrideWhenExists 存在则覆盖
+	 * @throws IllegalArgumentException IllegalArgumentException
+	 * @throws NoSuchFileException      NoSuchFileException
+	 * @throws IOException              IOException
 	 */
-	private static boolean moveFile(String source, String target) throws NoSuchFileException, IllegalArgumentException {
-		if(moveFileWithProgress(source, target, null)) {
-			delete(source);
-			return true;
+	private static void moveFile(Path source, Path target, boolean overrideWhenExists) throws IOException, IllegalArgumentException {
+		// 移动文件或目录
+		if (overrideWhenExists) {
+			// 当目标已存在且允许覆盖时，使用替换已存在的方式进行复制
+			Files.move(source, target, StandardCopyOption.REPLACE_EXISTING);
+		} else if (!Files.exists(target)) {
+			// 当目标不存在时，直接进行复制
+			Files.move(source, target);
 		}
-		return false;
 	}
-	
+
 	/**
 	 * 移动文件夹及其子文件夹
 	 * <p>
 	 * 实质是复制文件到对应的位置,成功后删除源文件
 	 * </p>
-	 * 
+	 *
 	 * @param source 源文件夹,如: d:/tmp
 	 * @param target 目标文件夹,如: e:/tmp
+	 * @param overrideWhenExists 存在则覆盖
 	 * @throws IllegalArgumentException IllegalArgumentException
-	 * @throws NoSuchFileException NoSuchFileException
-	 * @throws IOException IOException
+	 * @throws NoSuchFileException      NoSuchFileException
+	 * @throws IOException              IOException
 	 */
-	private static boolean moveFolder(String source, String target) throws NoSuchFileException, IllegalArgumentException {
-		File f1 = new File(source);
-		File f2 = new File(target);
-		if (!f1.exists()) {
-			Console.err(StringUtils.concat("源文件夹[", source,"]不存在"));
-			return false;
-		}
-		if ((!f2.exists()) && (f1.isDirectory())) {
-			f2.mkdirs();
-		}
-		String[] fileList = f1.list();
-		if (!ListUtils.isEmpty(fileList)) {
-			for (String file : fileList) {
-				String newSource = f1.getAbsolutePath() + File.separator + file;
-				String newTarget = f2.getAbsolutePath() + File.separator + file;
-				if (new File(newSource).isDirectory()) {
-					if(!moveFolder(newSource, newTarget)) {
-						return false;
-					}
-				} else {
-					if(!moveFile(newSource, newTarget)) {
-						Console.err(StringUtils.concat("移动文件[", newSource,"]失败"));
-						return false;
-					}
-				}
+	private static void moveFolder(Path source, Path target, boolean overrideWhenExists) throws IOException, IllegalArgumentException {
+		scanSubFiles(source, (p, rp)->{
+			Path targetEntry = target.resolve(rp);
+			// 只处理文件，跳过目录
+			if (Files.isDirectory(targetEntry)) {
+				Files.createDirectories(targetEntry);
+				return;
 			}
-		}
-		f1.delete();	//删除源文件夹
-		return true;
+			// 移动
+			moveFile(p, targetEntry, overrideWhenExists);
+		});
 	}
-	/**
-	 * 复制单个文件
-	 * 
-	 * @param source	源文件路径
-	 * @param target	目标路径
-	 * @throws IllegalArgumentException IllegalArgumentException
-	 * @throws NoSuchFileException NoSuchFileException
 
-	 */
-	private static boolean copyFile(String source, String target) throws NoSuchFileException, IllegalArgumentException {
-		return copyFileWithProgress(source, target, null);
-	}
-	
 	/**
-	 * 复制文件夹及其子文件夹
-	 * 
-	 * @param source 源文件夹,如: d:/tmp
-	 * @param target 目标文件夹,如: e:/tmp
-	 * @throws IllegalArgumentException IllegalArgumentException
-	 * @throws NoSuchFileException NoSuchFileException
+	 * 复制单个文件带进度条
+	 * <p>
+	 * 进度监听参数传null则单做普通的单个文件复制使用，不如直接调用copy方法
+	 * </p>
+	 *
+	 * @param source source
+	 * @param target target
+	 * @throws IllegalArgumentException 文件路径为空
+	 * @throws NoSuchFileException      源文件不存在，源文件不是个文件(可能是文件夹)
+	 * @throws IOException              io异常
 	 */
-	private static boolean copyFolder(String source, String target) throws NoSuchFileException, IllegalArgumentException {
-		File f1 = new File(source);
-		File f2 = new File(target);
-		if (!f1.exists()) {
-			Console.err(StringUtils.concat("源文件夹[", source,"]不存在"));
-			return false;
+	private static void copyFile(Path source, Path target, boolean overrideWhenExists) throws IllegalArgumentException, IOException {
+		// 移动文件或目录
+		if (overrideWhenExists) {
+			// 当目标已存在且允许覆盖时，使用替换已存在的方式进行复制
+			Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+		} else if (!Files.exists(target)) {
+			// 当目标不存在时，直接进行复制
+			Files.copy(source, target);
 		}
-		if ((!f2.exists()) && (f1.isDirectory())) {
-			f2.mkdirs();
-		}
-		String[] fileList = f1.list();
-		if (ListUtils.isEmpty(fileList)) {
-			return true;
-		}
-		for (String file : fileList) {
-			String newSource = f1.getAbsolutePath() + File.separator + file;
-			String newTarget = f2.getAbsolutePath() + File.separator + file;
-			if (new File(newSource).isDirectory()) {
-				if(!copyFolder(newSource, newTarget)) {
-					return false;
-				}
-			} else {
-				if(!copyFile(newSource, newTarget)) {
-					Console.err(StringUtils.concat("移动文件[", newSource,"]失败"));
-					return false;
-				}
-			}
-		}
-		return true;
+
 	}
-	
+
 	/**
-	 * 递归填充所有符合条件的文件(夹)到列表中
-	 * @param dir 目录
-	 * @param list 文件列表
-	 * @param filter 过滤器
+	 * 复制文件夹及其内容
+	 *
+	 * @param source           源文件夹的路径
+	 * @param target           目标文件夹的路径
+	 * @param overrideWhenExists 当目标文件或文件夹已存在时是否覆盖
+	 * @throws IOException      如果发生I/O错误
+	 * @throws IllegalArgumentException 如果源文件夹不存在或目标是文件而不是目录
 	 */
-	private static void fillSubFile(File dir, List<File> list, FileFilter filter) {
-		File[] files = dir.listFiles();
-		if (files == null) {
-			return;
-		}
-		for (File f : files) {
-			if(filter.accept(f)) {
-				list.add(f);
+	private static void copyFolder(Path source, Path target, boolean overrideWhenExists) throws IOException, IllegalArgumentException {
+		// 遍历源文件夹的所有子文件和子目录
+		scanSubFiles(source, (p, rp)->{
+			Path targetEntry = target.resolve(rp);
+			// 只处理文件，跳过目录
+			if (Files.isDirectory(targetEntry)) {
+				Files.createDirectories(targetEntry);
+				return;
 			}
-			if(f.isDirectory()) {
-				fillSubFile(f, list, filter);
-			}
-		}
-		
+			// 移动文件，如果已存在且允许覆盖，则覆盖原有文件
+			copyFile(p, targetEntry, overrideWhenExists);
+		});
 	}
 	
 	/**
@@ -1295,6 +1264,11 @@ public class FileUtils {
         } finally {
         	IOUtils.close(fis);
         }
+	}
+
+	@FunctionalInterface
+	public interface FileWalker {
+		void visit(Path path, Path relativizePath) throws IOException;
 	}
 	
 }
