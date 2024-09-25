@@ -36,6 +36,9 @@ public class DateUtils {
 	/** 时间标准格式 */
 	public static final String DEFAULT_TEMPLATE_TIME = "yyyy-MM-dd HH:mm:ss";
 
+	/** 时分秒标准格式 */
+	public static final String DEFAULT_TEMPLATE_HH_MM_SS = "HH:mm:ss";
+
 	/** 月份标准格式 */
 	public static final String DEFAULT_TEMPLATE_MONTH = "yyyy-MM";
 
@@ -45,6 +48,9 @@ public class DateUtils {
 	/** 时间格式化器 */
 	public static final DateTimeFormatter FORMATTER_TIME = DateTimeFormat.forPattern(DEFAULT_TEMPLATE_TIME);
 
+	/** 时分秒格式化器 */
+	public static final DateTimeFormatter FORMATTER_HH_MM_SS = DateTimeFormat.forPattern(DEFAULT_TEMPLATE_HH_MM_SS);
+
 	/** 月份格式化器 */
 	public static final DateTimeFormatter FORMATTER_MONTH = DateTimeFormat.forPattern(DEFAULT_TEMPLATE_MONTH);
 
@@ -53,6 +59,9 @@ public class DateUtils {
 
 	/** Java 时间格式化器 */
 	public static final java.time.format.DateTimeFormatter FORMATTER_TIME_JAVA = java.time.format.DateTimeFormatter.ofPattern(DEFAULT_TEMPLATE_TIME);
+
+	/** Java 时分秒格式化器 */
+	public static final java.time.format.DateTimeFormatter FORMATTER_HH_MM_SS_JAVA = java.time.format.DateTimeFormatter.ofPattern(DEFAULT_TEMPLATE_HH_MM_SS);
 
 	/** Java 月份格式化器 */
 	public static final java.time.format.DateTimeFormatter FORMATTER_MONTH_JAVA = java.time.format.DateTimeFormatter.ofPattern(DEFAULT_TEMPLATE_MONTH);
@@ -166,6 +175,48 @@ public class DateUtils {
 			return null;
 		}
 		return dt.toLocalDate();
+	}
+
+	public static LocalTime toLocalTime(String date, String template) {
+		if (StringUtils.isBlank(date)) {
+			return null;
+		}
+		try {
+			DateTimeFormatter format = DateTimeFormat.forPattern(template);
+			return toLocalTime(date, format);
+		} catch (Exception ex) {
+			// ex.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * 将字符串转换为 LocalTime 对象。
+	 *
+	 * @param date      日期字符串
+	 * @param formatter 日期格式化器
+	 * @return LocalDate 对象，转换失败返回 null
+	 */
+	public static LocalTime toLocalTime(String date, DateTimeFormatter formatter) {
+		return LocalTime.parse(date, formatter);
+	}
+
+	// 重载
+	public static LocalTime toLocalTime(String date) {
+		return toLocalTime(date, FORMATTER_HH_MM_SS);
+	}
+
+	/**
+	 * 将 DateTime 转换为 LocalDate 对象。
+	 *
+	 * @param dt DateTime 对象
+	 * @return LocalDate 对象，转换失败返回 null
+	 */
+	public static LocalTime toLocalTime(DateTime dt) {
+		if (dt == null) {
+			return null;
+		}
+		return dt.toLocalTime();
 	}
 
 	/**

@@ -65,8 +65,7 @@ public class ObjectUtils {
 		} else if (obj instanceof java.time.LocalDate) {
 			return DateUtils.toString((java.time.LocalDate) obj, DateUtils.FORMATTER_DATE_JAVA);
 		} else if (obj instanceof java.time.LocalTime) {
-			java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm:ss");
-			return DateUtils.toString((java.time.LocalTime) obj, formatter);
+			return DateUtils.toString((java.time.LocalTime) obj, DateUtils.FORMATTER_HH_MM_SS_JAVA);
 		}
 		return String.valueOf(obj);
 	}
