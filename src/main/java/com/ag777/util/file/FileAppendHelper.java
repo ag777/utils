@@ -15,7 +15,7 @@ import com.ag777.util.lang.interf.Disposable;
  * 文件追加辅助类
  * 
  * @author ag777
- * @version create on 2020年05月29日,last modify at 2020年05月29日
+ * @version create on 2020年05月29日,last modify at 2024年09月25日
  */
 public class FileAppendHelper implements AutoCloseable, Disposable {
 
@@ -25,6 +25,11 @@ public class FileAppendHelper implements AutoCloseable, Disposable {
 
 	public FileAppendHelper(File file) {
 		this.charset = StandardCharsets.UTF_8;
+		this.to = file.toPath();
+	}
+
+	public FileAppendHelper(File file, Charset charset) {
+		this.charset = charset;
 		this.to = file.toPath();
 	}
 	
