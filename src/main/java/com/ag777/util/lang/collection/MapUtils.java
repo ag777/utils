@@ -13,7 +13,7 @@ import java.util.function.Predicate;
  * 有关 <code>Map</code> 哈希表工具类。
  * 
  * @author ag777
- * @version create on 2017年09月22日,last modify at 2022年10月25日
+ * @version create on 2017年09月22日,last modify at 2024年10月27日
  */
 public class MapUtils {
 
@@ -464,9 +464,46 @@ public class MapUtils {
 			if(map != null && map.containsKey(key) && map.get(key) != null) {
 				return (T) map.get(key);
 			}
-		}catch(Exception ex) {
+		}catch(Exception ignored) {
 		}
 		return defaultValue;
+	}
+
+	/**
+	 * 从Map中获取第一个匹配的键对应的值
+	 * 如果Map为空、没有匹配的键、或匹配的值为null，则返回默认值
+	 * 此方法用于在多个备选键中寻找第一个有效（非null）的值
+	 *
+	 * @param <K> 键的类型
+	 * @param <V> 值的类型
+	 * @param <T> 返回值的类型，与V兼容
+	 * @param map 要查询的Map
+	 * @param keys 备选键数组，按此顺序查找
+	 * @param defaultValue 如果找不到非null值时返回的默认值
+	 * @return 第一个匹配的非null值，否则返回默认值
+	 */
+	public static <K,V,T>T getFirst(Map<K, V> map, K[] keys, T defaultValue) {
+	    // 检查Map是否为空或为空Map，如果是，则直接返回null
+	    if (map == null || map.isEmpty()) {
+	        return null;
+	    }
+	    try {
+	        // 遍历备选键数组
+	        for (K key : keys) {
+	            // 检查当前键是否在Map中存在
+	            if (map.containsKey(key)) {
+	                V v = map.get(key);
+	                // 如果找到的值非null，则将其转换为T类型并返回
+	                if (v != null) {
+	                    return (T) v;
+	                }
+	            }
+	        }
+	    } catch (Exception ignored) {
+	        // 忽略任何异常，即使出现异常也不影响程序继续执行
+	    }
+	    // 如果所有备选键都不匹配或匹配的值均为null，则返回默认值
+	    return defaultValue;
 	}
 	
 	
@@ -487,16 +524,33 @@ public class MapUtils {
 	public static <K,V,T>T get(Map<K, V> map, K key) {
 		return get(map, key, null);
 	}
-	
+
 	/**
-	 * 获取String
-	 * @param map map
-	 * @param key key
-	 * @return
+	 * 从映射中获取第一个匹配的值
+	 *
+	 * @param <K> 键的类型
+	 * @param <V> 值的类型
+	 * @param <T> 返回值的类型
+	 * @param map 要查询的映射
+	 * @param keys 用于查询的键数组
+	 * @return 第一个匹配的值，如果找不到则返回null
 	 */
-	public static <K,V>String getStr(Map<K, V> map, K key) {
-		return ObjectUtils.toStr(
-				get(map, key));
+	public static <K,V,T>T getFirst(Map<K, V> map, K[] keys) {
+	    return getFirst(map, keys, null);
+	}
+
+	/**
+	 * 从给定的Map中获取与指定key关联的值，并将其转换为字符串表示形式
+	 * 如果指定的key在Map中不存在，或者其关联的值为null，则返回空字符串
+	 * 此方法结合了Map的get操作和对象到字符串的转换操作，简化了处理流程
+	 *
+	 * @param map 要从中获取值的Map
+	 * @param key 要获取其关联值的键
+	 * @return 与指定key关联的值的字符串表示形式，如果值为null或key不存在，则返回空字符串
+	 */
+	public static <K,V> String getStr(Map<K, V> map, K key) {
+	    return ObjectUtils.toStr(
+	            get(map, key));
 	}
 	
 	/**
@@ -504,103 +558,244 @@ public class MapUtils {
 	 * @param map map
 	 * @param key key
 	 * @param defaultValue defaultValue
-	 * @return
+	 * @return 与指定key关联的值的字符串表示形式，如果值为null或key不存在，则返回空字符串
 	 */
 	public static <K,V>String getStr(Map<K, V> map, K key, String defaultValue) {
 		return ObjectUtils.toStr(
 				get(map, key), defaultValue);
 	}
-	
+
 	/**
-	 * 获取Double
-	 * @param map map
-	 * @param key key
-	 * @return
+	 * 获取第一个匹配的键对应的值并转换为字符串
+	 * 如果没有找到匹配的键或者值为null，则返回空字符串
+	 * 此方法用于简化从Map中获取值并进行类型转换的过程
+	 *
+	 * @param map   要查询的Map
+	 * @param keys  可能的键数组，方法会尝试使用每个键来获取值，直到找到第一个匹配的键
+	 * @param <K>   键的类型
+	 * @param <V>   值的类型
+	 * @return      第一个匹配的键对应的值的字符串表示，如果没有找到则返回空字符串
+	 */
+	public static <K,V> String getFirstStr(Map<K, V> map, K[] keys) {
+	    return ObjectUtils.toStr(
+	            getFirst(map, keys));
+	}
+
+	/**
+	 * 获取第一个匹配的键对应的值并转换为字符串
+	 * 如果没有找到匹配的键或者值为null，则返回默认值
+	 * 此方法扩展了getFirstStr，增加了默认值参数，使得在未找到匹配键时可以返回一个自定义的默认值
+	 *
+	 * @param map          要查询的Map
+	 * @param keys         可能的键数组，方法会尝试使用每个键来获取值，直到找到第一个匹配的键
+	 * @param defaultValue 默认值，如果没有找到匹配的键或者值为null时返回
+	 * @param <K>          键的类型
+	 * @param <V>          值的类型
+	 * @return             第一个匹配的键对应的值的字符串表示，如果没有找到则返回默认值
+	 */
+	public static <K,V> String getFirstStr(Map<K, V> map, K[] keys, String defaultValue) {
+	    return ObjectUtils.toStr(
+	            getFirst(map, keys), defaultValue);
+	}
+
+	/**
+	 * 从map中获取与指定key关联的值，并将其转换为Double类型。
+	 * 如果指定的key不存在于map中，或者其关联的值无法转换为Double类型，则返回null。
+	 *
+	 * @param map 包含键值对的map。
+	 * @param key 需要获取值的键。
+	 * @return 转换为Double类型的值，如果无法获取或转换，则返回null。
 	 */
 	public static <K,V>Double getDouble(Map<K, V> map, K key) {
-		return ObjectUtils.toDouble(
-				get(map, key));
+	    return ObjectUtils.toDouble(
+	            get(map, key));
 	}
-	
+
 	/**
-	 * 获取double
-	 * @param map map
-	 * @param key key
-	 * @param defaultValue defaultValue
-	 * @return
+	 * 从map中获取与指定key关联的值，并将其转换为double类型。
+	 * 如果指定的key不存在于map中，或者其关联的值无法转换为double类型，则返回默认值。
+	 *
+	 * @param map 包含键值对的map。
+	 * @param key 需要获取值的键。
+	 * @param defaultValue 如果无法获取或转换值时返回的默认值。
+	 * @return 转换为double类型的值，如果无法获取或转换，则返回默认值。
 	 */
 	public static <K,V>double getDouble(Map<K, V> map, K key, double defaultValue) {
-		return ObjectUtils.toDouble(
-				get(map, key), defaultValue);
+	    return ObjectUtils.toDouble(
+	            get(map, key), defaultValue);
+	}
+
+	/**
+	 * 从map中获取与指定键数组中的第一个匹配键关联的值，并将其转换为Double类型。
+	 * 如果键数组中的任何一个键在map中不存在，或者其关联的值无法转换为Double类型，则返回null。
+	 *
+	 * @param map 包含键值对的map。
+	 * @param keys 包含可能的键的数组。
+	 * @return 转换为Double类型的值，如果无法获取或转换，则返回null。
+	 */
+	public static <K,V>Double getFirstDouble(Map<K, V> map, K[] keys) {
+	    return ObjectUtils.toDouble(
+	            getFirst(map, keys));
+	}
+
+	/**
+	 * 从map中获取与指定键数组中的第一个匹配键关联的值，并将其转换为Double类型。
+	 * 如果键数组中的任何一个键在map中不存在，或者其关联的值无法转换为Double类型，则返回默认值。
+	 *
+	 * @param map 包含键值对的map。
+	 * @param keys 包含可能的键的数组。
+	 * @param defaultValue 如果无法获取或转换值时返回的默认值。
+	 * @return 转换为Double类型的值，如果无法获取或转换，则返回默认值。
+	 */
+	public static <K,V>Double getFirstDouble(Map<K, V> map, K[] keys, double defaultValue) {
+	    return ObjectUtils.toDouble(
+	            getFirst(map, keys), defaultValue);
 	}
 	
 	/**
-	 * 获取Float
-	 * @param map map
-	 * @param key key
-	 * @return
+	 * 从map中获取与指定key关联的值，并将其转换为Float类型。
+	 * 如果key不存在或对应的值为null，则返回null。
+	 *
+	 * @param map 包含键值对的map。
+	 * @param key 要获取值的键。
+	 * @return 转换为Float类型的值，如果key不存在或对应的值为null，则返回null。
 	 */
 	public static <K,V>Float getFloat(Map<K, V> map, K key) {
-		return ObjectUtils.toFloat(
-				get(map, key));
+	    return ObjectUtils.toFloat(
+	            get(map, key));
 	}
-	
+
 	/**
-	 * 获取float
-	 * @param map map
-	 * @param key key
-	 * @param defaultValue defaultValue
-	 * @return
+	 * 从map中获取与指定key关联的值，并将其转换为float类型。
+	 * 如果key不存在或对应的值为null，则返回默认值defaultValue。
+	 *
+	 * @param map 包含键值对的map。
+	 * @param key 要获取值的键。
+	 * @param defaultValue 如果key不存在或对应的值为null时返回的默认值。
+	 * @return 转换为float类型的值，如果key不存在或对应的值为null，则返回默认值。
 	 */
 	public static <K,V>float getFloat(Map<K, V> map, K key, float defaultValue) {
-		return ObjectUtils.toFloat(
-				get(map, key), defaultValue);
+	    return ObjectUtils.toFloat(
+	            get(map, key), defaultValue);
+	}
+
+	/**
+	 * 从map中获取与指定keys数组中的第一个存在的key关联的值，并将其转换为Float类型。
+	 * 如果所有key都不存在或对应的值为null，则返回null。
+	 *
+	 * @param map 包含键值对的map。
+	 * @param keys 要获取值的键数组。
+	 * @return 转换为Float类型的值，如果所有key都不存在或对应的值为null，则返回null。
+	 */
+	public static <K,V>Float getFirstFloat(Map<K, V> map, K[] keys) {
+	    return ObjectUtils.toFloat(
+	            getFirst(map, keys));
+	}
+
+	/**
+	 * 从map中获取与指定keys数组中的第一个存在的key关联的值，并将其转换为float类型。
+	 * 如果所有key都不存在或对应的值为null，则返回默认值defaultValue。
+	 *
+	 * @param map 包含键值对的map。
+	 * @param keys 要获取值的键数组。
+	 * @param defaultValue 如果所有key都不存在或对应的值为null时返回的默认值。
+	 * @return 转换为float类型的值，如果所有key都不存在或对应的值为null，则返回默认值。
+	 */
+	public static <K,V>float getFirstFloat(Map<K, V> map, K[] keys, float defaultValue) {
+	    return ObjectUtils.toFloat(
+	            getFirst(map, keys), defaultValue);
 	}
 	
 	/**
-	 * 获取Integer
-	 * @param map map
-	 * @param key key
-	 * @return
+	 * 从Map中获取Integer值
+	 * @param map 包含键值对的Map
+	 * @param key 需要获取值的键
+	 * @return 对应键的Integer值，如果键不存在或对应值无法转换为Integer，则返回null
 	 */
 	public static <K,V>Integer getInt(Map<K, V> map, K key) {
-		return ObjectUtils.toInt(
-				get(map, key));
+	    return ObjectUtils.toInt(
+	            get(map, key));
 	}
-	
+
 	/**
-	 * 获取int
-	 * @param map map
-	 * @param key key
-	 * @param defaultValue defaultValue
-	 * @return
+	 * 从Map中获取int值，如果键不存在或转换失败，则使用默认值
+	 * @param map 包含键值对的Map
+	 * @param key 需要获取值的键
+	 * @param defaultValue 默认值
+	 * @return 对应键的int值，如果键不存在或转换失败，则返回默认值
 	 */
 	public static <K,V>int getInt(Map<K, V> map, K key, int defaultValue) {
-		return ObjectUtils.toInt(
-				get(map, key), defaultValue);
+	    return ObjectUtils.toInt(
+	            get(map, key), defaultValue);
+	}
+
+	/**
+	 * 从Map中获取第一个Integer值
+	 * @param map 包含键值对的Map
+	 * @param keys 键数组，用于尝试获取值
+	 * @return 第一个键对应的Integer值，如果键不存在或对应值无法转换为Integer，则返回null
+	 */
+	public static <K,V>Integer getFirstInt(Map<K, V> map, K[] keys) {
+	    return ObjectUtils.toInt(
+	            getFirst(map, keys));
+	}
+
+	/**
+	 * 从Map中获取第一个int值，如果键不存在或转换失败，则使用默认值
+	 * @param map 包含键值对的Map
+	 * @param keys 键数组，用于尝试获取值
+	 * @param defaultValue 默认值
+	 * @return 第一个键对应的int值，如果键不存在或转换失败，则返回默认值
+	 */
+	public static <K,V>int getFirstInt(Map<K, V> map, K[] keys, int defaultValue) {
+	    return ObjectUtils.toInt(
+	            getFirst(map, keys), defaultValue);
 	}
 	
 	/**
-	 * 获取Long
-	 * @param map map
-	 * @param key key
-	 * @return
+	 * 从Map中获取Long值，如果键不存在或转换失败，则返回null
+	 * @param map 包含键值对的Map
+	 * @param key 要获取值的键
+	 * @return 对应键的Long值，如果键不存在或转换失败，则返回null
 	 */
 	public static <K,V>Long getLong(Map<K, V> map, K key) {
-		return ObjectUtils.toLong(
-				get(map, key));
+	    return ObjectUtils.toLong(
+	            get(map, key));
 	}
-	
+
 	/**
-	 * 获取Long
-	 * @param map map
-	 * @param key key
-	 * @param defaultValue defaultValue
-	 * @return
+	 * 从Map中获取Long值，如果键不存在或转换失败，则返回默认值
+	 * @param map 包含键值对的Map
+	 * @param key 要获取值的键
+	 * @param defaultValue 默认值
+	 * @return 对应键的Long值，如果键不存在或转换失败，则返回默认值
 	 */
 	public static <K,V>long getLong(Map<K, V> map, K key, long defaultValue) {
-		return ObjectUtils.toLong(
-				get(map, key), defaultValue);
+	    return ObjectUtils.toLong(
+	            get(map, key), defaultValue);
+	}
+
+	/**
+	 * 从Map中获取第一个Long值，如果键不存在或转换失败，则返回null
+	 * @param map 包含键值对的Map
+	 * @param keys 键数组，用于尝试获取值
+	 * @return 第一个键对应的Long值，如果键不存在或转换失败，则返回null
+	 */
+	public static <K,V>Long getFirstLong(Map<K, V> map, K[] keys) {
+	    return ObjectUtils.toLong(
+	            getFirst(map, keys));
+	}
+
+	/**
+	 * 从Map中获取第一个long值，如果键不存在或转换失败，则使用默认值
+	 * @param map 包含键值对的Map
+	 * @param keys 键数组，用于尝试获取值
+	 * @param defaultValue 默认值
+	 * @return 第一个键对应的long值，如果键不存在或转换失败，则返回默认值
+	 */
+	public static <K,V>long getFirstLong(Map<K, V> map, K[] keys, long defaultValue) {
+	    return ObjectUtils.toLong(
+	            getFirst(map, keys), defaultValue);
 	}
 	
 	/**
@@ -613,33 +808,72 @@ public class MapUtils {
 	 * 
 	 * @param map map
 	 * @param key key
-	 * @return
+	 * @return 对应键的boolean值，如果键不存在或转换失败，则返回null
 	 */
 	public static <K,V>Boolean getBoolean(Map<K, V> map, K key) {
-		return ObjectUtils.toBoolean(
-				get(map, key));
+	    // 使用ObjectUtils将get方法获取的值转换为Boolean
+	    return ObjectUtils.toBoolean(
+	            get(map, key));
 	}
-	
+
 	/**
 	 * 获取Boolean
 	 * <p>
 	 * 	当字符串为"true"或者"1"时返回true
 	 * 	当字符串为"false"或者"0"时返回flase
-	 * 	其余情况返回null
+	 * 	其余情况返回默认值
 	 * </p>
-	 * 
+	 *
 	 * @param map map
 	 * @param key key
-	 * @param defaultValue defaultValue
-	 * @return
+	 * @param defaultValue 默认值
+	 * @return 对应键的boolean值，如果键不存在或转换失败，则返回默认值
 	 */
 	public static <K,V>boolean getBoolean(Map<K, V> map, K key, boolean defaultValue) {
-		return ObjectUtils.toBoolean(
-				get(map, key), defaultValue);
+	    // 使用ObjectUtils将get方法获取的值转换为Boolean，如果转换失败则返回默认值
+	    return ObjectUtils.toBoolean(
+	            get(map, key), defaultValue);
+	}
+
+	/**
+	 * 获取第一个Boolean
+	 * <p>
+	 * 	当字符串为"true"或者"1"时返回true
+	 * 	当字符串为"false"或者"0"时返回flase
+	 * 	其余情况返回null
+	 * </p>
+	 *
+	 * @param map map
+	 * @param keys keys
+	 * @return 第一个键对应的boolean值，如果键不存在或转换失败，则返回null
+	 */
+	public static <K,V>Boolean getFirstBoolean(Map<K, V> map, K[] keys) {
+	    // 使用ObjectUtils将getFirst方法获取的值转换为Boolean
+	    return ObjectUtils.toBoolean(
+	            getFirst(map, keys));
+	}
+
+	/**
+	 * 获取第一个Boolean
+	 * <p>
+	 * 	当字符串为"true"或者"1"时返回true
+	 * 	当字符串为"false"或者"0"时返回flase
+	 * 	其余情况返回默认值
+	 * </p>
+	 *
+	 * @param map map
+	 * @param keys keys
+	 * @param defaultValue 默认值
+	 * @return 第一个键对应的boolean值，如果键不存在或转换失败，则返回默认值
+	 */
+	public static <K,V>boolean getFirstBoolean(Map<K, V> map, K[] keys, boolean defaultValue) {
+	    // 使用ObjectUtils将getFirst方法获取的值转换为Boolean，如果转换失败则返回默认值
+	    return ObjectUtils.toBoolean(
+	            getFirst(map, keys), defaultValue);
 	}
 	
 	/**
-	 * 获取Date
+	 * 从Map中获取指定键的Date值
 	 * <p>
 	 * 	支持四种格式
 	 *	yyyy-MM-dd HH:mm:ss
@@ -647,58 +881,113 @@ public class MapUtils {
 	 * 	yyyy-MM-dd
 	 * 	HH:mm:ss
 	 * </p>
-	 * 
-	 * @param map map
-	 * @param key key
-	 * @return
+	 *
+	 * @param map 包含键值对的Map
+	 * @param key 需要获取的键
+	 * @return 对应键的Date值，如果键不存在或转换失败，则返回null
 	 */
 	public static <K,V>Date getDate(Map<K, V> map, K key) {
-		return ObjectUtils.toDate(
-				get(map, key));
+	    return ObjectUtils.toDate(
+	            get(map, key));
 	}
-	
+
 	/**
-	 * 获取Date
+	 * 从Map中获取指定键的Date值，并指定默认值
 	 * <p>
 	 * 支持三种格式
 	 *	 yyyy-MM-dd HH:mm:ss
 	 * 	yyyy-MM-dd
 	 * 	HH:mm:ss
 	 * </p>
-	 * 
-	 * @param map map
-	 * @param key key
-	 * @param defaultValue defaultValue
-	 * @return
+	 *
+	 * @param map 包含键值对的Map
+	 * @param key 需要获取的键
+	 * @param defaultValue 默认的Date值
+	 * @return 对应键的Date值，如果键不存在或转换失败，则返回默认值
 	 */
 	public static <K,V>Date getDate(Map<K, V> map, K key, Date defaultValue) {
-		return ObjectUtils.toDate(
-				get(map, key), defaultValue);
+	    return ObjectUtils.toDate(
+	            get(map, key), defaultValue);
+	}
+
+	/**
+	 * 从Map中获取多个键中的第一个Date值
+	 * <p>
+	 * 	支持四种格式
+	 *	yyyy-MM-dd HH:mm:ss
+	 *	yyyy-MM-dd HH:mm
+	 * 	yyyy-MM-dd
+	 * 	HH:mm:ss
+	 * </p>
+	 *
+	 * @param map 包含键值对的Map
+	 * @param keys 需要尝试获取的键数组
+	 * @return 第一个找到的Date值，如果键不存在或转换失败，则返回null
+	 */
+	public static <K,V>Date getFirstDate(Map<K, V> map, K[] keys) {
+	    return ObjectUtils.toDate(
+	            getFirst(map, keys));
+	}
+
+	/**
+	 * 从Map中获取多个键中的第一个Date值，并指定默认值
+	 * <p>
+	 * 支持三种格式
+	 *	 yyyy-MM-dd HH:mm:ss
+	 * 	yyyy-MM-dd
+	 * 	HH:mm:ss
+	 * </p>
+	 *
+	 * @param map 包含键值对的Map
+	 * @param keys 需要尝试获取的键数组
+	 * @param defaultValue 默认的Date值
+	 * @return 第一个找到的Date值，如果键不存在或转换失败，则返回默认值
+	 */
+	public static <K,V>Date getFirstDate(Map<K, V> map, K[] keys, Date defaultValue) {
+	    return ObjectUtils.toDate(
+	            getFirst(map, keys), defaultValue);
 	}
 	
-	public <K,V> Map<K,V>remove(Map<K, V> map, K key) {
-		if(map == null) {
-			return null;
-		}
-		map.remove(key);
-		return map;
+	/**
+	 * 从给定的Map中移除指定的键
+	 *
+	 * @param <K> Map中键的类型
+	 * @param <V> Map中值的类型
+	 * @param map 要从中移除键的Map
+	 * @param key 要移除的键
+	 * @return 移除指定键后的Map如果输入的Map为null，则返回null
+	 */
+	public <K,V> Map<K,V> remove(Map<K, V> map, K key) {
+	    // 检查输入的Map是否为null，如果为null则返回null
+	    if(map == null) {
+	        return null;
+	    }
+	    // 从Map中移除指定的键
+	    map.remove(key);
+	    // 返回移除指定键后的Map
+	    return map;
 	}
 	
 	/**
 	 * 转换map中的key
 	 * 
-	 * @param src src
+	 * @param src 需要进行key转换的源map
 	 * @param convertMap 源key和转换的目标key的对应map
-	 * @return
+	 * @return 返回转换key后的map
 	 */
 	public static <K,V>Map<K,V> convertKeys(Map<K,V> src, Map<K,K> convertMap) {
-		Iterator<K> itor = convertMap.keySet().iterator();
-		while(itor.hasNext()) {
-			K key1 = itor.next();
-			K key2 = convertMap.get(key1);
-			convertKey(src, key1, key2);
-		}
-		return src;
+	    // 遍历转换map的key集合
+	    Iterator<K> itor = convertMap.keySet().iterator();
+	    while(itor.hasNext()) {
+	        // 获取当前遍历的源key
+	        K key1 = itor.next();
+	        // 获取源key对应的转换后的key
+	        K key2 = convertMap.get(key1);
+	        // 调用convertKey方法进行key的转换
+	        convertKey(src, key1, key2);
+	    }
+	    // 返回转换key后的源map
+	    return src;
 	}
 	
 	/**
