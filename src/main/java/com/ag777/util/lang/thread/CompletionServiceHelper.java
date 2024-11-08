@@ -8,7 +8,7 @@ import java.util.function.BiConsumer;
  * 回调线程池CompletionService辅助类
  * 
  * @author ag777
- * @version  create on 2018年08月03日,last modify at 2024年05月17日
+ * @version  create on 2018年08月03日,last modify at 2024年11月08日
  */
 public class CompletionServiceHelper<T, V> {
 	private ExecutorService pool;
@@ -54,7 +54,8 @@ public class CompletionServiceHelper<T, V> {
 	public CompletionServiceHelper<T, V> submit(Callable<T> task, V bindData) {
 	    Future<T> myTask = completionService.submit(task); // 提交任务
 	    taskInfoMap.put(myTask, bindData); // 将任务与关联数据绑定
-	    return this;
+		whenTaskAdd(myTask, bindData);
+		return this;
 	}
 
 	/**
@@ -68,7 +69,16 @@ public class CompletionServiceHelper<T, V> {
 	public CompletionServiceHelper<T, V> submit(Runnable task, T result, V bindData) {
 	    Future<T> myTask = completionService.submit(task, result); // 提交任务并指定结果
 	    taskInfoMap.put(myTask, bindData); // 将任务与关联数据绑定
-	    return this;
+		whenTaskAdd(myTask, bindData);
+		return this;
+	}
+
+	/**
+	 * 添加时任务时执行
+	 * @param task 异步任务
+	 */
+	protected void whenTaskAdd(Future<T> task, V bindData) {
+
 	}
 
 	/**
@@ -143,6 +153,7 @@ public class CompletionServiceHelper<T, V> {
 		pool.shutdownNow();
 		pool = null;
 		completionService = null;
+		taskInfoMap.clear();
 	}
 
 	/**
