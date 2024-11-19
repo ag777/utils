@@ -11,27 +11,45 @@ public class ValidateException extends Exception {
 	private static final long serialVersionUID = -1358796764058245553L;
 
 	private String extraMsg;	//拓展信息
-	
+	private Boolean isException;	// 可以用于确定是系统异常还是输入异常
+
 	public String getExtraMsg() {
 		return extraMsg;
 	}
-	
+
 	public ValidateException(String message){
 		super(message);
+		this.isException = false;
 	}
-	
+
 	public ValidateException(String message, String extraMsg){
 		super(message);
 		this.extraMsg = extraMsg;
+		this.isException = false;
 	}
-	
+
 	public ValidateException(String message, Throwable cause) {
-        super(message, cause);
-    }
-	
+		super(message, cause);
+		this.isException = cause != null;
+	}
+
 	public ValidateException(String message, String extraMsg, Throwable cause) {
-        super(message, cause);
-        this.extraMsg = extraMsg;
-    }
+		super(message, cause);
+		this.extraMsg = extraMsg;
+		this.isException = cause != null;
+	}
+
+	public Boolean getException() {
+		return isException;
+	}
+
+	public ValidateException setException(Boolean exception) {
+		isException = exception;
+		return this;
+	}
+
+	public ValidateException setMessage(String newMessage) {
+		return new ValidateException(newMessage, getCause());
+	}
 
 }
