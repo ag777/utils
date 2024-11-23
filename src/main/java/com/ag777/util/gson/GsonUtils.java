@@ -28,7 +28,7 @@ import java.util.function.Consumer;
  * GSON更新日志:<a href="https://github.com/google/gson/blob/master/CHANGELOG.md">...</a>
  *
  * @author ag777
- * @version create on 2017年05月27日,last modify at 2024年06月09日
+ * @version create on 2017年05月27日,last modify at 2024年11月23日
  */
 public class GsonUtils implements JsonUtilsInterf {
 	
@@ -184,7 +184,27 @@ public class GsonUtils implements JsonUtilsInterf {
 				)
 				.registerTypeAdapter(Class.class, new ClassTypeAdapter());
 	}
-	
+
+	/**
+	 * 解析JSON字符串
+	 *
+	 * 该方法旨在将给定的JSON字符串解析为一个JsonElement对象
+	 * 它封装了Gson库的JsonParser类的解析功能，并提供了对解析过程中可能发生的异常的处理
+	 *
+	 * @param json 待解析的JSON字符串
+	 * @return 解析后的JsonElement对象
+	 * @throws JsonSyntaxException 如果JSON字符串格式不正确，将抛出此异常
+	 */
+	public static JsonElement parse(String json) throws JsonSyntaxException {
+	    try {
+	        // 使用JsonParser类的静态方法parseString来解析JSON字符串
+	        return JsonParser.parseString(json);
+	    } catch (Exception ex) {
+	        // 捕获解析过程中可能发生的任何异常，并将其包装为JsonSyntaxException重新抛出
+	        throw new JsonSyntaxException(ex);
+	    }
+	}
+
 	/**
 	 * 转换json串为JsonObject
 	 * @param json json
@@ -193,11 +213,7 @@ public class GsonUtils implements JsonUtilsInterf {
 	 */
 	public static JsonObject toJsonObjectWithException(String json) throws JsonSyntaxException {
 		/*源码说明(下同):No need to instantiate this class, use the static methods instead.*/
-		try {
-			return JsonParser.parseString(json).getAsJsonObject();
-		} catch (Exception ex) {
-			throw new JsonSyntaxException(ex);
-		}
+		return parse(json).getAsJsonObject();
 	}
 	
 	/**
@@ -207,11 +223,7 @@ public class GsonUtils implements JsonUtilsInterf {
 	 * @throws JsonSyntaxException json解析异常
 	 */
 	public static JsonArray toJsonArrayWithException(String json) throws JsonSyntaxException {
-		try {
-			return JsonParser.parseString(json).getAsJsonArray();
-		} catch (Exception ex) {
-			throw new JsonSyntaxException(ex);
-		}
+		return parse(json).getAsJsonArray();
 	}
 	
 	/**
