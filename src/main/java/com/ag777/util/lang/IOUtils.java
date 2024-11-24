@@ -1,13 +1,10 @@
 package com.ag777.util.lang;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.Flushable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import com.ag777.util.lang.collection.ListUtils;
+import com.ag777.util.lang.function.ConsumerE;
+import com.ag777.util.lang.interf.ProgressListener;
+
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,18 +12,14 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import com.ag777.util.lang.collection.ListUtils;
-import com.ag777.util.lang.function.ConsumerE;
-import com.ag777.util.lang.interf.ProgressListener;
-
 /**
  * IO操作工具类
  * <p>
  * 		有很多操作，比如文件，cmd命令，都是通过操作流来完成目的，为了避免重复及统一代码新建此类
  * </p>
- * <p>讲IO的文章:https://www.zhihu.com/question/382972191</>
+ * <p><a href="https://www.zhihu.com/question/382972191">讲IO的文章</a></>
  * @author ag777
- * @version create on 2017年06月16日,last modify at 2020年07月20日
+ * @version create on 2017年06月16日,last modify at 2024年11月24日
  */
 public class IOUtils {
 
@@ -72,42 +65,24 @@ public class IOUtils {
 	/**
 	 * 从流中读取文本
 	 * @param in in
-	 * @param lineSparator lineSparator
 	 * @param encoding encoding
 	 * @return text
 	 * @throws IOException IOException
 	 */
 	public static String readText(InputStream in, String lineSparator, String encoding) throws IOException {
-		return readText(in, lineSparator, Charset.forName(encoding));
+		return readText(in, Charset.forName(encoding));
 	}
 	
 	/**
 	 * 从流中读取文本
 	 * @param in in
-	 * @param lineSparator lineSparator
 	 * @param encoding encoding
 	 * @return text
 	 * @throws IOException IOException
 	 */
-	public static String readText(InputStream in, String lineSparator, Charset encoding) throws IOException {
-		
-		try{
-			StringBuilder sb = null;
-			BufferedReader procin = new BufferedReader(new InputStreamReader(in, encoding));
-			String s;
-			while((s  = procin.readLine()) !=null){
-				if(sb == null) {
-					sb = new StringBuilder();
-				} else if(lineSparator != null) {	//在除了第一行后面的每一行前都加上分隔符
-					sb.append(lineSparator);	//换行符
-				}
-				sb.append(s);
-				
-			}
-			return sb!=null?sb.toString():"";
-		} finally {
-			close(in);
-		}
+	public static String readText(InputStream in, Charset encoding) throws IOException {
+		byte[] bytes = readBytes(in);
+		return new String(bytes, encoding);
 	}
 	
 	/**
