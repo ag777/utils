@@ -1,16 +1,16 @@
 package com.ag777.util.lang.cmd;
 
+import com.ag777.util.lang.IOUtils;
+import com.ag777.util.lang.SystemUtils;
+import com.ag777.util.lang.function.ConsumerE;
+import com.ag777.util.lang.model.Charsets;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import com.ag777.util.lang.IOUtils;
-import com.ag777.util.lang.SystemUtils;
-import com.ag777.util.lang.function.ConsumerE;
-import com.ag777.util.lang.model.Charsets;
 
 /**
  * 执行控制台(cmd/shell)命令的工具类
@@ -238,25 +238,30 @@ public abstract class AbstractCmdUtils {
 			pro = null;
 		}
 	}
-	
+
 	/**
-	 * 执行cmd命令获取返回
-	 * 
-	 * @param cmd cmd
-	 * @param baseDir baseDir
-	 * @param lineSparator 行分隔符
-	 * @return
-	 * @throws IOException IOException
+	 * 读取文本内容
+	 * 通过执行给定的命令在指定的目录下启动一个进程，并读取该进程的输出
+	 *
+	 * @param cmd    要执行的命令
+	 * @param baseDir 进程执行的基目录
+	 * @return 进程输出的文本内容
+	 * @throws IOException 如果执行进程或读取进程输出时发生错误
 	 */
-	public String readText(String cmd, String baseDir, String lineSparator) throws IOException {
-		Process pro = getProcess(cmd, baseDir);
-		try {
-			InputStream in = execByProcess(pro);
-			return IOUtils.readText(in, lineSparator, charsetDefault);
-		} finally {
-			destroy(pro);
-			pro = null;
-		}
+	public String readText(String cmd, String baseDir) throws IOException {
+	    // 获取进程
+	    Process pro = getProcess(cmd, baseDir);
+	    try {
+	        // 执行进程并获取输入流
+	        InputStream in = execByProcess(pro);
+	        // 读取输入流中的文本内容并返回
+	        return IOUtils.readText(in, charsetDefault);
+	    } finally {
+	        // 销毁进程释放资源
+	        destroy(pro);
+	        // 设置进程对象为null，便于垃圾回收
+	        pro = null;
+	    }
 	}
 	
 	/**
@@ -266,7 +271,7 @@ public abstract class AbstractCmdUtils {
 	 * </p>
 	 * @param cmd cmd
 	 * @param baseDir baseDir
-	 * @return
+	 * @return 进程输出的文本内容
 	 * @throws IOException IOException
 	 */
 	@Deprecated
@@ -280,9 +285,9 @@ public abstract class AbstractCmdUtils {
 	 * 执行cmd命令(防进程挂起),只关心成功与否,不关心返回
 	 * @param cmd cmd
 	 * @param baseDir baseDir
-	 * @return
+	 * @return 进程执行后的退出码
 	 */
-	public  boolean exec(String cmd, String baseDir) {
+	public boolean exec(String cmd, String baseDir) {
 		try {
 			return execWithException(cmd, baseDir);
 		} catch (IOException | InterruptedException e) {

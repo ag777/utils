@@ -197,20 +197,6 @@ public class FileUtils {
 	}
 
 	/**
-	 * @param filePath filePath
-	 * @param charset charset
-	 * @return 文件内容
-	 * @throws IOException io异常
-	 */
-	public static String readText(String filePath, Charset charset) throws IOException {
-		if(charset == null) {
-			charset = FILE_READING_CHARSET;
-		}
-		byte[] bytes = readBytes(filePath);
-		return new String(bytes, charset);
-	}
-
-	/**
 	 * @param file 文件
 	 * @param charset charset
 	 * @return 文件内容
@@ -227,29 +213,27 @@ public class FileUtils {
     /**
      * 读取文件内容
      * @param filePath 文件路径
-     * @param lineSparator 换行时插入的字符
      * @return 所有行
      * @throws IOException IOException
      */
-    public static String readText(String filePath, String lineSparator) throws IOException {
-       return readText(filePath, lineSparator, FILE_READING_CHARSET);
+    public static String readText(String filePath) throws IOException {
+       return readText(filePath, FILE_READING_CHARSET);
     }
     
     /**
      * 读取文件内容
      * @param filePath 文件路径
-     * @param lineSparator 换行时插入的字符
      * @param charset charset
      * @return 所有行
      * @throws IOException IOException
      */
-    public static String readText(String filePath, String lineSparator, Charset charset) throws IOException {
+    public static String readText(String filePath, Charset charset) throws IOException {
         try {
         	if(charset == null) {
         		charset = FILE_READING_CHARSET;
         	}
         	FileInputStream fis = new FileInputStream(filePath);
-            return IOUtils.readText(fis, lineSparator, charset);
+            return IOUtils.readText(fis, charset);
         } catch (FileNotFoundException ex) {
             throw new IOException(StringUtils.concat("文件[", filePath, "]不存在"), ex);
         } catch (IOException ex) {
@@ -510,7 +494,7 @@ public class FileUtils {
      * @throws IOException IOException
      */
     public static void replaceByWhole(String filePath, String regex, String replacement, boolean isReplaceAll) throws IOException {
-    	String content = readText(filePath, SystemUtils.lineSeparator());
+    	String content = readText(filePath);
     	if(isReplaceAll) {
 			content = content.replaceAll(regex, replacement);
     	} else {
