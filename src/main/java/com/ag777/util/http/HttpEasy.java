@@ -18,7 +18,7 @@ import java.util.Optional;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2023年12月18日
+ * @version create on 2018年03月30日,last modify at 2024年12月05日
  */
 public class HttpEasy {
 	
@@ -173,29 +173,97 @@ public class HttpEasy {
 
 	//===================DELETE请求===========================
 	/**
-	 * delete请求
-	 * @param url url
-	 * @param paramMap 请求参数
-	 * @param headerMap 请求头
-	 * @return 字符串
-	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 * 发起一个DELETE请求，并返回字符串结果
+	 * 该方法使用泛型参数，允许传入任意类型的键值对作为请求参数和请求头
+	 *
+	 * @param url 请求的URL地址
+	 * @param paramMap 请求参数的键值对映射
+	 * @param headerMap 请求头的键值对映射
+	 * @return 返回一个包含请求结果字符串的Optional对象
+	 * @throws IllegalArgumentException 如果URL格式不正确，例如缺少http(s)协议前缀，抛出此异常
 	 */
 	public static <K,V> Optional<String> delete(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
-		Call call = HttpUtils.deleteByClient(null, url, paramMap, headerMap, null);
-		return callForStrForce(call);
+	    Call call = HttpUtils.deleteByClient(null, url, paramMap, headerMap, null);
+	    return callForStrForce(call);
 	}
 
 	/**
-	 * delete请求
-	 * @param url url
-	 * @param paramMap 请求参数
-	 * @param headerMap 请求头
-	 * @return map对象
-	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
+	 * 发起一个带有JSON数据的DELETE请求，并返回字符串结果
+	 * 该方法允许传入JSON字符串作为请求体，适用于需要发送结构化数据的场景
+	 *
+	 * @param url 请求的URL地址
+	 * @param json 请求体中的JSON字符串
+	 * @param paramMap 请求参数的键值对映射
+	 * @param headerMap 请求头的键值对映射
+	 * @return 返回一个包含请求结果字符串的Optional对象
+	 * @throws IllegalArgumentException 如果URL格式不正确，抛出此异常
+	 */
+	public static <K,V> Optional<String> deleteJson(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+	    Call call = HttpUtils.deleteJsonByClient(null, url, json, paramMap, headerMap, null);
+	    return callForStrForce(call);
+	}
+
+	/**
+	 * 发起一个带有纯文本数据的DELETE请求，并返回字符串结果
+	 * 该方法允许传入纯文本字符串作为请求体，适用于需要发送非结构化数据的场景
+	 *
+	 * @param url 请求的URL地址
+	 * @param text 请求体中的纯文本字符串
+	 * @param paramMap 请求参数的键值对映射
+	 * @param headerMap 请求头的键值对映射
+	 * @return 返回一个包含请求结果字符串的Optional对象
+	 * @throws IllegalArgumentException 如果URL格式不正确，抛出此异常
+	 */
+	public static <K,V> Optional<String> deleteText(String url, String text, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+	    Call call = HttpUtils.deleteTextByClient(null, url, text, paramMap, headerMap, null);
+	    return callForStrForce(call);
+	}
+
+	/**
+	 * 发起一个DELETE请求，并返回一个包含键值对结果的Map对象
+	 * 该方法适用于需要解析响应体为结构化数据的场景
+	 *
+	 * @param url 请求的URL地址
+	 * @param paramMap 请求参数的键值对映射
+	 * @param headerMap 请求头的键值对映射
+	 * @return 返回一个包含请求结果Map对象的Optional对象，其中包含键值对形式的响应数据
+	 * @throws IllegalArgumentException 如果URL格式不正确，抛出此异常
 	 */
 	public static <K,V> Optional<Map<String, Object>> deleteForMap(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
-		Call call = HttpUtils.deleteByClient(null, url, paramMap, headerMap, null);
-		return callForMapForce(call);
+	    Call call = HttpUtils.deleteByClient(null, url, paramMap, headerMap, null);
+	    return callForMapForce(call);
+	}
+
+	/**
+	 * 发起一个带有JSON数据的DELETE请求，并返回一个包含键值对结果的Map对象
+	 * 该方法允许传入JSON字符串作为请求体，并解析响应体为结构化数据
+	 *
+	 * @param url 请求的URL地址
+	 * @param json 请求体中的JSON字符串
+	 * @param paramMap 请求参数的键值对映射
+	 * @param headerMap 请求头的键值对映射
+	 * @return 返回一个包含请求结果Map对象的Optional对象，其中包含键值对形式的响应数据
+	 * @throws IllegalArgumentException 如果URL格式不正确，抛出此异常
+	 */
+	public static <K,V> Optional<Map<String, Object>> deleteJsonForMap(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+	    Call call = HttpUtils.deleteJsonByClient(null, url, json, paramMap, headerMap, null);
+	    return callForMapForce(call);
+	}
+
+	/**
+	 * 发起一个带有纯文本数据的DELETE请求，并返回一个包含键值对结果的Map对象
+	 * 该方法允许传入纯文本字符串作为请求体，并解析响应体为结构化数据
+	 *
+	 * @param url 请求的URL地址
+	 * @param text 请求体中的纯文本字符串
+	 * @param paramMap 请求参数的键值对映射
+	 * @param headerMap 请求头的键值对映射
+	 * @return 返回一个包含请求结果Map对象的Optional对象，其中包含键值对形式的响应数据
+	 * @throws IllegalArgumentException 如果URL格式不正确，抛出此异常
+	 */
+	public static <K,V> Optional<Map<String, Object>> deleteTextForMap(String url, String text, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+	    Call call = HttpUtils.deleteTextByClient(null, url, text, paramMap, headerMap, null);
+	    return callForMapForce(call);
 	}
 
 	//===================PUT请求===========================*/

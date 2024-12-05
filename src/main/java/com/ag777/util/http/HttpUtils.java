@@ -30,26 +30,29 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 有关http请求的方法类(二次封装okhttp3)
+ * 有关HTTP请求的方法类（二次封装OkHttp3）
  * <p>
- * 需要jar包:
+ * 需要的JAR包:
  * <ul>
- * <li>okhttp-xxx.jar</li>
- * <li>okio-xxx.jar</li>
+ *     <li>okhttp-xxx.jar</li>
+ *     <li>okio-xxx.jar</li>
  * </ul>
- * 		<pre>{@code
- * 		2017/6/8:尝试通过反射机制参数callback<T>来转换结果为类达成优雅代码的目的,没成功,原因如下:<br>
- * 		1.直接用反射从参数中取泛型的类型只实现了一个递归获取的方法（已删）<br>
- * 		2.通过gson的typetoken类来获取T的类型失败，原因应该是java在编译时擦除泛型类型导致的<br>
- * 		2018/03/30重写
- * 		}</pre>
+ *
+ * <pre>{@code
+ * 2017/6/8: 尝试通过反射机制参数callback<T>来转换结果为类，以达到优雅代码的目的，但未成功，原因如下:
+ * 1. 直接用反射从参数中取泛型的类型，只实现了一个递归获取的方法（已删除）
+ * 2. 通过Gson的TypeToken类来获取T的类型失败，原因可能是Java在编译时擦除了泛型类型
+ * 2018/03/30: 重写
+ * }</pre>
+ *
+ * 更新日志:
  * <ul>
- * <li>ohttp更新日志:https://github.com/square/okhttp/blob/master/CHANGELOG.md</li>
- * <li>okio更新日志:https://github.com/square/okio/blob/master/CHANGELOG.md</li>
+ *     <li>OkHttp更新日志: <a href="https://github.com/square/okhttp/blob/master/CHANGELOG.md">OkHttp CHANGELOG</a></li>
+ *     <li>Okio更新日志: <a href="https://github.com/square/okio/blob/master/CHANGELOG.md">Okio CHANGELOG</a></li>
  * </ul>
- * 
+ *
  * @author ag777
- * @version last modify at 2023年12月18日
+ * @version 最后修改于 2024年12月05日
  */
 public class HttpUtils {
 	
@@ -425,7 +428,41 @@ public class HttpUtils {
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
 	public static <K,V>Call deleteByClient(OkHttpClient client, String url, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
-		return deleteByClient(client, getGetUrl(url, paramMap), getHeaders(headerMap), tag);
+		return deleteByClient(client, getGetUrl(url, paramMap), null, getHeaders(headerMap), tag);
+	}
+
+	/**
+	 * 使用指定的OkHttpClient删除JSON数据
+	 *
+	 * @param client OkHttpClient实例，用于发起网络请求
+	 * @param url 请求的URL
+	 * @param json 作为请求体的JSON字符串
+	 * @param paramMap 请求参数键值对
+	 * @param headerMap 请求头键值对
+	 * @param tag 请求的标签，用于跟踪或取消请求
+	 * @return 返回Call对象，可用于执行请求或进一步配置
+	 * @throws IllegalArgumentException 如果参数不合法，抛出此异常
+	 */
+	public static <K,V>Call deleteJsonByClient(OkHttpClient client, String url, String json, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
+	    RequestBody requestBody = RequestBody.create(json, JSON_CONTENT_TYPE);
+	    return deleteByClient(client, getGetUrl(url, paramMap), requestBody, getHeaders(headerMap), tag);
+	}
+
+	/**
+	 * 使用指定的OkHttpClient删除文本数据
+	 *
+	 * @param client OkHttpClient实例，用于发起网络请求
+	 * @param url 请求的URL
+	 * @param json 作为请求体的文本字符串
+	 * @param paramMap 请求参数键值对
+	 * @param headerMap 请求头键值对
+	 * @param tag 请求的标签，用于跟踪或取消请求
+	 * @return 返回Call对象，可用于执行请求或进一步配置
+	 * @throws IllegalArgumentException 如果参数不合法，抛出此异常
+	 */
+	public static <K,V>Call deleteTextByClient(OkHttpClient client, String url, String json, Map<K, V> paramMap, Map<K,V> headerMap, Object tag) throws IllegalArgumentException {
+	    RequestBody requestBody = RequestBody.create(json, TEXT_CONTENT_TYPE);
+	    return deleteByClient(client, getGetUrl(url, paramMap), requestBody, getHeaders(headerMap), tag);
 	}
 	
 	/**
@@ -437,9 +474,9 @@ public class HttpUtils {
 	 * @return Call
 	 * @throws IllegalArgumentException 一般为url异常，比如没有http(s):\\的前缀
 	 */
-	public static Call deleteByClient(OkHttpClient client, String url, Headers headers, Object tag) throws IllegalArgumentException {
+	public static Call deleteByClient(OkHttpClient client, String url, RequestBody body, Headers headers, Object tag) throws IllegalArgumentException {
 		return call(
-				getRequest(url, headers, tag).delete().build(),
+				getRequest(url, headers, tag).delete(body).build(),
 				client);
 	}
 	

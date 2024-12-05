@@ -15,7 +15,7 @@ import java.util.Map;
  * </p>
  * 
  * @author ag777
- * @version create on 2018年03月30日,last modify at 2023年12月18日
+ * @version create on 2018年03月30日,last modify at 2024年12月05日
  */
 public class HttpHelper {
 	
@@ -166,6 +166,38 @@ public class HttpHelper {
 	public <K,V> MyCall delete(String url, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
 		Call call = HttpUtils.deleteByClient(client, url, paramMap, headerMap, tag);
 		return new MyCall(call);
+	}
+
+	/**
+	 * 执行一个带有JSON体的DELETE请求
+	 * 该方法用于发送一个DELETE请求，其中请求体为JSON格式，可以包含URL参数和自定义的HTTP头
+	 *
+	 * @param url 请求的URL
+	 * @param json 请求体的内容，为JSON格式
+	 * @param paramMap URL参数的键值对映射
+	 * @param headerMap HTTP头的键值对映射
+	 * @return 返回一个MyCall对象，封装了DELETE请求的调用
+	 * @throws IllegalArgumentException 如果参数不合法，抛出此异常
+	 */
+	public <K,V> MyCall deleteJson(String url, String json, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+	    Call call = HttpUtils.deleteJsonByClient(client, url, json, paramMap, headerMap, tag);
+	    return new MyCall(call);
+	}
+
+	/**
+	 * 执行一个带有文本体的DELETE请求
+	 * 该方法用于发送一个DELETE请求，其中请求体为普通文本格式，可以包含URL参数和自定义的HTTP头
+	 *
+	 * @param url 请求的URL
+	 * @param text 请求体的内容，为普通文本格式
+	 * @param paramMap URL参数的键值对映射
+	 * @param headerMap HTTP头的键值对映射
+	 * @return 返回一个MyCall对象，封装了DELETE请求的调用
+	 * @throws IllegalArgumentException 如果参数不合法，抛出此异常
+	 */
+	public <K,V> MyCall deleteText(String url, String text, Map<K, V> paramMap, Map<K,V> headerMap) throws IllegalArgumentException {
+	    Call call = HttpUtils.deleteTextByClient(client, url, text, paramMap, headerMap, tag);
+	    return new MyCall(call);
 	}
 	
 	/**===================PUT请求===========================*/
