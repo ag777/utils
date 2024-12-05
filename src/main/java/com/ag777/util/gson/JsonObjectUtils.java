@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 /**
  * com.google.gson.JsonObject操作类
  * @author ag777＜ag777@vip.qq.com＞
- * @version 2024/10/27 16:31
+ * @version 2024/12/05 10:50
  */
 public class JsonObjectUtils {
 
@@ -906,7 +906,7 @@ public class JsonObjectUtils {
      * @param key 键
      * @return JsonElement元素，如果不存在或值为JsonNull则返回null
      */
-    private static JsonElement get(JsonObject jo, String key) {
+    public static JsonElement get(JsonObject jo, String key) {
         JsonElement element = jo.get(key);
         if (element == null || element.isJsonNull()) {
             return null;
