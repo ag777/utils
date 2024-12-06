@@ -271,7 +271,7 @@ public class MyCall implements Disposable, AutoCloseable {
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close() {
 		call=null;
 		IOUtils.close(response);
 		response = null;
