@@ -69,7 +69,7 @@ public class IOUtils {
 	 * @return text
 	 * @throws IOException IOException
 	 */
-	public static String readText(InputStream in, String lineSparator, String encoding) throws IOException {
+	public static String readText(InputStream in, String encoding) throws IOException {
 		return readText(in, Charset.forName(encoding));
 	}
 	
