@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  * 文件操作工具类
  * 
  * @author ag777
- * @version create on 2020年08月04日,last modify at 2024年09月20日
+ * @version create on 2020年08月04日,last modify at 2024年12月25日
  */
 public class FileUtils {
 	public static final Pattern P_EXTENSION_LONG = Pattern.compile("(?<=\\.)[\\w\\d]{1,5}(.[\\w\\d]{1,5})*$");
@@ -683,7 +683,7 @@ public class FileUtils {
      * @param lines lines
      */
     public static void appendFileContent(String filePath, List<String> lines) throws IOException {
-    	appendFileContent(filePath, ListUtils.toString(lines, "\r\n"));
+    	appendFileContent(filePath, ListUtils.toString(lines, System.lineSeparator()));
     }
 
     
