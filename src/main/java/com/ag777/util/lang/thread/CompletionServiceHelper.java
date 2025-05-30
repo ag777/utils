@@ -8,7 +8,7 @@ import java.util.function.BiConsumer;
  * 回调线程池CompletionService辅助类
  * 
  * @author ag777
- * @version  create on 2018年08月03日,last modify at 2024年11月08日
+ * @version  create on 2018年08月03日,last modify at 20254年05月29日
  */
 public class CompletionServiceHelper<T, V> {
 	private ExecutorService pool;
@@ -18,7 +18,7 @@ public class CompletionServiceHelper<T, V> {
 	public CompletionServiceHelper(int poolSize) {
 		this(Executors.newFixedThreadPool(poolSize));
 	}
-	
+
 	public CompletionServiceHelper(ExecutorService pool) {
 		this.pool = pool;
 		completionService = new ExecutorCompletionService<>(pool);
@@ -40,8 +40,8 @@ public class CompletionServiceHelper<T, V> {
 	 * @return 返回当前任务数量，类型为int。
 	 */
 	public int getTaskCount() {
-	    // 返回任务信息映射表的大小，即当前任务的数量
-	    return taskInfoMap.size();
+		// 返回任务信息映射表的大小，即当前任务的数量
+		return taskInfoMap.size();
 	}
 
 	/**
@@ -52,8 +52,10 @@ public class CompletionServiceHelper<T, V> {
 	 * @return 返回CompletionServiceHelper实例，支持链式调用。
 	 */
 	public CompletionServiceHelper<T, V> submit(Callable<T> task, V bindData) {
-	    Future<T> myTask = completionService.submit(task); // 提交任务
-	    taskInfoMap.put(myTask, bindData); // 将任务与关联数据绑定
+		Future<T> myTask = completionService.submit(task); // 提交任务
+		if (bindData != null) {
+			taskInfoMap.put(myTask, bindData); // 将任务与关联数据绑定
+		}
 		whenTaskAdd(myTask, bindData);
 		return this;
 	}
@@ -67,8 +69,10 @@ public class CompletionServiceHelper<T, V> {
 	 * @return 返回CompletionServiceHelper实例，支持链式调用。
 	 */
 	public CompletionServiceHelper<T, V> submit(Runnable task, T result, V bindData) {
-	    Future<T> myTask = completionService.submit(task, result); // 提交任务并指定结果
-	    taskInfoMap.put(myTask, bindData); // 将任务与关联数据绑定
+		Future<T> myTask = completionService.submit(task, result); // 提交任务并指定结果
+		if (bindData != null) {
+			taskInfoMap.put(myTask, bindData); // 将任务与关联数据绑定
+		}
 		whenTaskAdd(myTask, bindData);
 		return this;
 	}
@@ -136,10 +140,10 @@ public class CompletionServiceHelper<T, V> {
 	 * @see BiConsumer 一个函数式接口，表示可以接受两个参数并执行操作的消费者。
 	 */
 	public void forEachTask(BiConsumer<Future<T>, V> consumer) {
-	    // 遍历任务映射表的所有任务，对每个任务应用提供的consumer
-	    for (Future<T> task : taskInfoMap.keySet()) {
-	        consumer.accept(task, taskInfoMap.get(task));
-	    }
+		// 遍历任务映射表的所有任务，对每个任务应用提供的consumer
+		for (Future<T> task : taskInfoMap.keySet()) {
+			consumer.accept(task, taskInfoMap.get(task));
+		}
 	}
 
 
@@ -171,7 +175,7 @@ public class CompletionServiceHelper<T, V> {
 			dispose();
 		}
 	}
-	
+
 	/**
 	 * 等待任务执行结束并且关闭线程池
 	 */
@@ -185,28 +189,47 @@ public class CompletionServiceHelper<T, V> {
 			dispose();
 		}
 	}
-	
+
 	/**
-	 * 等待子线程都结束
+	 * 等待所有已提交的任务执行完成并关闭线程池。
 	 * <p>
-	 * 	调用此方法后线程池不再接受新的任务,之后每根据参数指定的时间间隔检查一次子线程是否都完成（阻塞当前线程）,如果任务均完成则可以继续执行后续代码
+	 * 此方法会先调用线程池的shutdown()方法停止接受新任务，
+	 * 然后以指定的时间间隔轮询检查线程池是否已完全终止。
+	 * 这是一个阻塞方法，会一直等待直到所有任务完成或线程被中断。
 	 * </p>
-	 * @param timeout timeout
-	 * @param unit unit
-	 * @throws InterruptedException InterruptedException
+	 *
+	 * @param timeout 轮询检查的时间间隔
+	 * @param unit 时间单位
+	 * @throws InterruptedException 如果当前线程在等待时被中断
+	 * @throws IllegalStateException 如果线程池已被释放或为null
+	 * @throws IllegalArgumentException 如果时间单位为null
 	 */
 	private void waitFor(long timeout, TimeUnit unit) throws InterruptedException {
+		if (pool == null) {
+			throw new IllegalStateException("线程池已被释放或未初始化");
+		}
+		if (unit == null) {
+			throw new IllegalArgumentException("时间单位不能为null");
+		}
+
+		// 停止接受新任务
 		pool.shutdown();
-		while(!pool.awaitTermination(timeout, unit)) {	//如果结束则关闭线程池
+
+		// 等待所有任务完成
+		while (!pool.awaitTermination(timeout, unit)) {
+			// 轮询检查线程池是否已终止
 		}
 	}
-	
+
 	/**
-	 * 等待子线程都结束
+	 * 等待所有已提交的任务执行完成并关闭线程池。
 	 * <p>
-	 * 	调用此方法后线程池不再接受新的任务,之后每100毫秒检查一次子线程是否都完成（阻塞当前线程）,如果任务均完成则可以继续执行后续代码
+	 * 此方法是{@link #waitFor(long, TimeUnit)}的便捷方法，
+	 * 使用默认的100毫秒作为轮询检查的时间间隔。
 	 * </p>
-	 * @throws InterruptedException InterruptedException
+	 *
+	 * @throws InterruptedException 如果当前线程在等待时被中断
+	 * @throws IllegalStateException 如果线程池已被释放或为null
 	 */
 	private void waitFor() throws InterruptedException {
 		waitFor(100, TimeUnit.MILLISECONDS);
